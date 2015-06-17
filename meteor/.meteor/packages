@@ -9,7 +9,13 @@ iron:router
 aldeed:simple-schema
 aldeed:collection2
 dburles:collection-helpers
-twbs:bootstrap
 alanning:roles
 matb33:collection-hooks
 materialize:materialize
+dburles:factory
+anti:fake
+underscore
+u2622:persistent-session
+accounts-base
+accounts-password
+accounts-ui

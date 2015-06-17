@@ -1,1 +1,1 @@
-Meteor.subscribe('chatrooms');
+Meteor.subscribe('channels');
