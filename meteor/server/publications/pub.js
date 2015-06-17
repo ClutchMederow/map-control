@@ -3,6 +3,7 @@ Meteor.publish('chatrooms', function() {
 });
 
 Meteor.publish('messages', function(channel) {
+  check(channel, String);
   return Messages.find({channel: channel});
 });
 

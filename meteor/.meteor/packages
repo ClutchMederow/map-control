@@ -19,3 +19,4 @@ u2622:persistent-session
 accounts-base
 accounts-password
 accounts-ui
+audit-argument-checks

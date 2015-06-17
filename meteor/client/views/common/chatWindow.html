@@ -21,6 +21,8 @@
           {{#if Template.subscriptionsReady}}
             {{#each messages}}
               {{> message}}
+            {{else}}
+              <h5>This channel is currently empty</h5>
             {{/each}}
           {{else}}
             Loading...
