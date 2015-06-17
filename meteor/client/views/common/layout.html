@@ -1,0 +1,44 @@
+<template name="layout">
+{{#if isInRole 'admin'}}
+{{> superAdminNav}}
+{{/if}}
+
+{{#if isInRole 'user'}}
+{{> memberNav}}
+{{/if}}
+
+<!--this handles weird situation where user is logged in with token -->
+<!-- e.g. if a user stops the FB sign up process halfway through -->
+{{#if currentUser}}
+<div class="nav-layout-padding">
+  <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar-header">
+      <button type="button" data-target="#navbarCollapse" data-toggle="collapse" 
+                                                          class="navbar-toggle">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="nav navbar-nav navbar-right">
+        {{> loginButtons}}
+      </ul>
+    </div>
+  </nav>
+</div>
+{{/if}}
+
+<div class="container-fluid {{ isLoggedIn  }}">
+  <div class="row top-level-row">
+    {{> alerts}}
+  </div>
+  <div class="row top-level-row">
+    {{> yield}}
+  </div>
+  <div class="row top-level-row footer-row">
+    <!-- This is just used for margin currently - add templates here when needed -->
+  </div>
+</div>
+</template>

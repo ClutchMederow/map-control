@@ -1,3 +1,4 @@
 .meteor/local
 .meteor/meteorite
-.meteor/private
+/meteor/private
+*.swp
