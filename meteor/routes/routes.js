@@ -1,6 +1,5 @@
-Router.route('/', {
-  name: 'home',
-  template: 'home'
+Router.route('/', function() {
+  this.redirect('Trading Floor');
 });
 
 Router.route('/chats', {
@@ -8,7 +7,7 @@ Router.route('/chats', {
   template: 'chats'
 });
 
-Router.route('/chatWindow',{
+Router.route('/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'
 });
