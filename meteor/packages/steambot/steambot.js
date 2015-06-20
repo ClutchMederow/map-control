@@ -3,15 +3,21 @@ SteamBot = function(accountName, password, authCode) {
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
 
-  this.steam = new Steam.SteamClient();
-  this.offers = new SteamTradeOffers();
-  this.sessionID = '';
+  // params
   this.logOnOptions = {
     accountName: accountName,
     password: password
   };
   this.authCode = authCode;
+
+  this.steam = new Steam.SteamClient();
+  this.offers = new SteamTradeOffers();
+  this.sessionID = '';
   this.items = new Meteor.Collection(null);
+  this.inventoryOptions = {
+    appId: 730,
+    contextId: 2
+  }
 };
 
 
@@ -78,6 +84,25 @@ SteamBot.prototype.getItems = function() {
   return this.items.find().fetch();
 };
 
+SteamBot.prototype.loadInventory = function() {
+  var self = this;
+  var Future = Npm.require('fibers/future');
+
+  var future = new Future();
+
+  self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
+    console.log(items);
+    self.items.remove({});
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].tradable) {
+        self.items.insert({ name: items[i].maket_hash_name, itemId: items[i].id, classId: items[i].classId, instanceId: items[i].instanceId, iconUrl: items[i].icon_url });
+        // item = items[i];
+      }
+    }
+    future.return(items);
+  });
+  Future.wait(future);
+}
 
 
         // offers.loadMyInventory({
