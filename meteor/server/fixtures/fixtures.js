@@ -1,4 +1,25 @@
 Meteor.startup(function() {
+  //setup steam api
+  configureSteam = function(config) {
+    ServiceConfiguration.configurations.upsert(
+      {service: "steam"},
+      {
+        $set: {
+          loginStyle: config.loginStyle, //NOTE: changing to redirect causes bug right now 
+          apiKey: config.apiKey
+        }
+    });
+  };
+
+  var steamConfig = Meteor.settings.steam;
+  if(steamConfig) { 
+    configureSteam(steamConfig);
+  } else {
+    console.log("You do not have steam service configured");
+  }
+
+  //Fixture data
+
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();

@@ -17,6 +17,11 @@ Router.route('/steam', {
   template: "configureLoginServiceDialogForSteam"
 });
 
+Router.route('/memberHomePage', {
+  name: 'memberHomePage',
+  template: 'memberHomePage'
+});
+
 Router.route('/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'
