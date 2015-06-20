@@ -5,7 +5,22 @@
 # but you can also edit it by hand.
 
 meteor-platform
-autopublish
-insecure
 iron:router
 drewproud:steambot
+aldeed:simple-schema
+aldeed:collection2
+dburles:collection-helpers
+alanning:roles
+matb33:collection-hooks
+materialize:materialize
+dburles:factory
+anti:fake
+underscore
+u2622:persistent-session
+accounts-base
+accounts-password
+accounts-ui
+audit-argument-checks
+mrt:steam
+service-configuration
+mrt:accounts-steam
