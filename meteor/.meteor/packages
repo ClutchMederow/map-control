@@ -21,3 +21,6 @@ accounts-password
 accounts-ui
 audit-argument-checks
 fourseven:scss
+mrt:steam
+service-configuration
+mrt:accounts-steam

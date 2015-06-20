@@ -12,7 +12,13 @@ Router.route('/chats', {
   template: 'chats'
 });
 
+Router.route('/steam', {
+  name: "configureLoginServiceDialogForSteam",
+  template: "configureLoginServiceDialogForSteam"
+});
+
 Router.route('/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'
 });
+
