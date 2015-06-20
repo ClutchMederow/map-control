@@ -20,3 +20,6 @@ accounts-base
 accounts-password
 accounts-ui
 audit-argument-checks
+mrt:steam
+service-configuration
+mrt:accounts-steam
