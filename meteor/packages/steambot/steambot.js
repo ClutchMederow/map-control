@@ -80,8 +80,8 @@ SteamBot.prototype.logOn = function() {
   Future.wait([logOnFuture, sessionFuture]);
 };
 
-SteamBot.prototype.getItems = function() {
-  return this.items.find().fetch();
+SteamBot.prototype.getBotItems = function() {
+  return this.items.find();
 };
 
 SteamBot.prototype.loadInventory = function() {
@@ -91,17 +91,54 @@ SteamBot.prototype.loadInventory = function() {
   var future = new Future();
 
   self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
-    console.log(items);
-    self.items.remove({});
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].tradable) {
-        self.items.insert({ name: items[i].maket_hash_name, itemId: items[i].id, classId: items[i].classId, instanceId: items[i].instanceId, iconUrl: items[i].icon_url });
-        // item = items[i];
-      }
-    }
+    if (err) throw err;
+
     future.return(items);
   });
-  Future.wait(future);
+  var items = future.wait();
+
+  self.items.remove({});
+  for (var i = 0; i < items.length; i++) {
+    console.log(items[i]);
+    self.items.insert(items[i]);
+  }
+};
+
+SteamBot.prototype.takeItem = function(userSteamId) {
+
+}
+
+SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, callback) {
+
+  if (typeof itemsToSend === 'string')
+    itemsToSend = [itemsToSend];
+
+  if (typeof itemsToReceive === 'string')
+    itemsToReceive = [itemsToReceive];
+
+  check(arguments, {
+    userSteamId: String,
+    itemsToSend: [Object],
+    itemsToReceive: [Object],
+  });
+        // {
+        //   appid: 730,
+        //   contextid: 2,
+        //   amount: 1,
+        //   assetid: item.id
+        // }
+
+  self.offers.makeOffer ({
+    partnerSteamId: userSteamId,
+    itemsFromMe: itemsToSend,
+    itemsFromThem: itemsToReceive,
+    message: 'This is test'
+  }, function(err, response){
+    if (err) {
+      throw err;
+    }
+    console.log(response);
+  });
 }
 
 
