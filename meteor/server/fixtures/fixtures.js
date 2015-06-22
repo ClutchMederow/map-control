@@ -22,6 +22,31 @@ Meteor.startup(function() {
 
   //Users
 
+  //Offers
+  Factory.define('tradeRequest', TradeRequest, {
+    userId: function() {
+
+    },
+    userProfile: function() {
+
+    }, 
+    items: function() {
+
+    },
+    requests: function() {
+      
+    },
+    offers: function() {
+
+    }, 
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
+    notes: function() {
+      return Fake.paragraph();
+    }
+  });
+
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();

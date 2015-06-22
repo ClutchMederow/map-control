@@ -1,4 +1,4 @@
-TradeRequest = new Mongo.Collection('TradeRequest');
+TradeRequest = new Mongo.Collection('tradeRequest');
 
 TradeRequest.attachSchema({
   userId: {
