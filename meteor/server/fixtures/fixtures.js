@@ -20,6 +20,33 @@ Meteor.startup(function() {
 
   //Fixture data
 
+  //Users
+
+  //Offers
+  Factory.define('tradeRequest', TradeRequest, {
+    userId: function() {
+
+    },
+    userProfile: function() {
+
+    }, 
+    items: function() {
+
+    },
+    requests: function() {
+      
+    },
+    offers: function() {
+
+    }, 
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
+    notes: function() {
+      return Fake.paragraph();
+    }
+  });
+
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();
@@ -33,6 +60,24 @@ Meteor.startup(function() {
     }
   });
 
+  //Inventory Items
+  var itemClasses = ['Rifle', 'Pistol', 'SMG', 'Sniper Rifle'];
+  Factory.define('item', InventoryItems, {
+    name: function() {
+      return Fake.word();
+    }, 
+    itemId: function() {
+      return Fake.word();
+    },
+    classId: function() {
+      return Fake.word();
+    },
+    type: function() {
+      return Fake.fromArray(itemClasses);
+    },
+    deleteInd: false 
+  });
+
   //TODO: put in dev / production flag here
   if (Messages.find().count() === 0) {
     _(10).times(function(n) {
@@ -44,6 +89,12 @@ Meteor.startup(function() {
     Channels.insert({name: 'Trading Floor'});
     _(5).times(function(n) {
       Factory.create('channel');
+    });
+  }
+
+  if (InventoryItems.find().count() === 0) {
+    _(100).times(function(n) {
+      Factory.create('item');
     });
   }
 });
