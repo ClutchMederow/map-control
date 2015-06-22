@@ -20,6 +20,8 @@ Meteor.startup(function() {
 
   //Fixture data
 
+  //Users
+
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();

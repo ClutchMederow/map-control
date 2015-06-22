@@ -26,6 +26,11 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
+Router.route('/market', {
+  name: 'market', 
+  template: 'market'
+});
+
 Router.route('/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'

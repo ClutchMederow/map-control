@@ -16,7 +16,8 @@
         <h5 class="left-align">Chat</h5>
       </div>
       <div class="divider"></div>
-      <div class="section">
+      <!-- TODO: move style to sass file -->
+      <div class="section" style="overflow: auto; height:400px;">
         {{#if Template.subscriptionsReady}}
           {{#each messages}}
             {{> message}}
