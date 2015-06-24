@@ -1,4 +1,4 @@
-SteamBot = function(accountName, password, authCode) {
+SteamBot = function(accountName, password, authCode, SteamAPI) {
   // TODO: verify inputs
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
@@ -9,6 +9,7 @@ SteamBot = function(accountName, password, authCode) {
     password: password
   };
   this.authCode = authCode;
+  this.SteamAPI = SteamAPI;
 
   this.steam = new Steam.SteamClient();
   this.offers = new SteamTradeOffers();
@@ -104,16 +105,40 @@ SteamBot.prototype.loadInventory = function() {
   }
 };
 
-SteamBot.prototype.takeItem = function(userSteamId) {
+SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive) {
+  if (typeof itemsToReceive === 'string')
+    itemsToReceive = [itemsToReceive];
 
+  check(arguments, {
+    userSteamId: String,
+    itemsToReceive: [String],
+  });
+
+  itemObjectArray = _.map(itemsToReceive, function(itemId) {
+  });
+}
+
+SteamBot.prototype.test = function(steamAPI) {
+  var test = new SteamBot('bungerblaster', 'igor1122', 'qrb6t', steamAPI);
+  test.logOn();
+
+  var item =  {
+    appid: 730,
+    contextid: 2,
+    amount: 1,
+    assetid: ''
+  };
+
+  // test.takeItems
+  return test.loadInventory();
 }
 
 SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, callback) {
 
-  if (typeof itemsToSend === 'string')
+  if (typeof itemsToSend === 'object')
     itemsToSend = [itemsToSend];
 
-  if (typeof itemsToReceive === 'string')
+  if (typeof itemsToReceive === 'object')
     itemsToReceive = [itemsToReceive];
 
   check(arguments, {
