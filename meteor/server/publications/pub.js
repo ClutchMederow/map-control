@@ -10,3 +10,7 @@ Meteor.publish('messages', function(channel) {
 Meteor.publish('channels', function() {
   return Channels.find();
 });
+
+Meteor.publish('inventoryItems', function() {
+  return InventoryItems.find();
+});

@@ -1,0 +1,12 @@
+<template name="itemSearch">
+<form>
+  <div class="input-field">
+    <input id="search" type="search" required>
+    <label for="search"><i class="mdi-action-search"></i></label>
+  </div>
+</form>
+{{#each getItems}}
+  {{type}} - {{name}}
+  <br>
+{{/each}}
+</template>

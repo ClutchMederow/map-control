@@ -1,7 +1,12 @@
 <template name="memberHomePage">
 <div class="row">
+  <div class="col s6">
+    {{> itemSearch}}
+  </div>
+</div>
+<div class="row">
   <div class="col s12">
-    <h5>Market</h5>
+    <h5><a href="{{pathFor route='market'}}">Market</a></h5>
   </div>
   <div class="col s12">
     <h5>Trading Floor</h5>
