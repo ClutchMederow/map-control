@@ -7,18 +7,27 @@ SteamAPI = (function () {
   var steamCDN = "http://steamcommunity-a.akamaihd.net/economy/image/";
   
   //declaration of all functions, best practice due to hoisting
-  http://steamcommunity.com/profiles/76561197965124635/inventory/json/730/2
+  var getPlayerInventory = function(profileId) {
+      var inventoryData;
+      var callString = "http://steamcommunity.com/profiles/" + profileId + 
+      "/inventory/json/" + csAppId + "/" + csContextId;
+      try {
+        inventoryData = HTTP.get(callString).data;
+      } catch(error) {
+        console.log(error.stack);
+        throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve player's inventory");
+      }
+      return inventoryData;
+  };
+
+
 
   //Public variables
   return {
-    getPlayerItems: function(profileId) {
-      var callString = "http://steamcommunity.com/profiles/" + profileId + 
-      "/inventory/json/" + csAppId + "/" + csContextId;
-      console.log(callString);
-      var data = HTTP.get(callString).data;
-      return data;
+    getAllItemsForPlayer: function(profileId) {
+      return getPlayerInventory(profileId);
     },
-    checkTrade: function() {
+    verifyItemTraded: function(item, profile1, profile2) {
 
     }
   };
