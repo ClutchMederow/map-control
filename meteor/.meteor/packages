@@ -24,3 +24,4 @@ mrt:steam
 service-configuration
 mrt:accounts-steam
 reactive-var
+http
