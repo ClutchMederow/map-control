@@ -1,3 +1,7 @@
+var testId = '76561197965124635'; // target
+
+var tradeOfferUrl = 'https://steamcommunity.com/tradeoffer/new/?partner=181099894&token=3WGBlP0T'
+
 SteamBot = function(accountName, password, authCode, SteamAPI) {
   // TODO: verify inputs
   var Steam = Npm.require('steam');
@@ -31,7 +35,7 @@ SteamBot.prototype.logOn = function() {
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
   var Future = Npm.require('fibers/future')
 
-  var admin = '76561197965124635'; // target
+  var admin = testId;
 
   var baseDir = process.cwd().split('.meteor')[0];
   var tokenPath = baseDir + 'private/steambot-auth/sentry';
@@ -130,8 +134,21 @@ SteamBot.prototype.test = function(steamAPI) {
   };
 
   // test.takeItems
-  return test.loadInventory();
-}
+  // return test.loadInventory();
+  test.getOffers();
+};
+
+SteamBot.prototype.getOffers = function() {
+  var options = {
+    get_received_offers: 1,
+    active_only: 1,
+    // time_historical_cutoff: (new Date().getTime()/1000).toFixed()
+  };
+
+  this.offers.getOffers(options, function(error,result) {
+    console.log(result.response.trade_offers_received);
+  });
+};
 
 SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, callback) {
 
