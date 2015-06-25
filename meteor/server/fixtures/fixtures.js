@@ -29,21 +29,14 @@ Meteor.startup(function() {
       Users.insert(user);
     });
   }
-  var user1 = Fake.user({
-    fields: ['profile.name', 'emails.address']
-  });
-
+  
 
   //Offers
   Factory.define('tradeRequest', TradeRequest, {
-    userId: function() {
-
+    user: function() {
+      return Fake.fromArray(users);
     },
-    userProfile: function() {
-
-    }, 
     items: function() {
-
     },
     requests: function() {
       
