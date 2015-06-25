@@ -27,8 +27,28 @@ SteamAPI = (function () {
     getAllItemsForPlayer: function(profileId) {
       return getPlayerInventory(profileId);
     },
-    verifyItemTraded: function(item, profile1, profile2) {
+      //check that item exists OR the amount of that item has incremented 1
+      //check that item doesn't exist OR that amount of item has decremented 1
+      //is there risk that a different trade happens between establishing # of
+      //items pre-trade and then verifying trade?
+      //Note it is up to calling function to check each item swap
+    tradeCompletedSuccessfully: function(itemId, senderOriginalItemCount, receiverOriginalItemCount, senderId, receiverId) {
+      //get count of item post-trade
+      var inventoryData1 = getPlayerInventory(senderId).rgInventory;
+      var senderItemCount = parseInt(_.find(inventoryData1, function(item) {
+        return itemId === item.id;
+      }).amount, 10);  //amount is stored as string for some reason
 
+      var inventoryData2 = getPlayerInventory(receiverId).rgInventory;
+      var receiverItemCount = parseInt(_.find(inventoryData2, function(item) {
+        return itemId === item.id;
+      }).amount, 10);  //amount is stored as string for some reason
+      
+      if((senderItemCount < senderOriginalItemCount) && (receiverItemCount > receiverOriginalItemCount)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 }) (); //Immediately Invoked Function that returns object
