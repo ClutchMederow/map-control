@@ -21,6 +21,18 @@ Meteor.startup(function() {
   //Fixture data
 
   //Users
+  Users = Meteor.users;
+  if(Users.find().count() === 0) {
+    _(5).times(function(n) {
+      var user = Fake.user({fields: ['emails.address', 'profile.name']});
+      console.log(user);
+      Users.insert(user);
+    });
+  }
+  var user1 = Fake.user({
+    fields: ['profile.name', 'emails.address']
+  });
+
 
   //Offers
   Factory.define('tradeRequest', TradeRequest, {

@@ -34,13 +34,13 @@ SteamAPI = (function () {
       //Note it is up to calling function to check each item swap
     tradeCompletedSuccessfully: function(itemId, senderOriginalItemCount, receiverOriginalItemCount, senderId, receiverId) {
       //get count of item post-trade
-      var inventoryData1 = getPlayerInventory(senderId).rgInventory;
-      var senderItemCount = parseInt(_.find(inventoryData1, function(item) {
+      var senderInventory = getPlayerInventory(senderId).rgInventory;
+      var senderItemCount = parseInt(_.find(senderInventory, function(item) {
         return itemId === item.id;
       }).amount, 10);  //amount is stored as string for some reason
 
-      var inventoryData2 = getPlayerInventory(receiverId).rgInventory;
-      var receiverItemCount = parseInt(_.find(inventoryData2, function(item) {
+      var receiverInventory = getPlayerInventory(receiverId).rgInventory;
+      var receiverItemCount = parseInt(_.find(receiverInventory, function(item) {
         return itemId === item.id;
       }).amount, 10);  //amount is stored as string for some reason
       
