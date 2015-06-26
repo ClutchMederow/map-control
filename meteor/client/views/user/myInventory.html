@@ -1,0 +1,46 @@
+<template name="myInventory">
+    <h1 class="center-align">My Inventory</h1>
+    <form>
+      <div class="input-field">
+        <input placeholder="Search Inventory" id="search" type="search" required>
+        <label for="search"><i class="mdi-action-search"></i></label>
+      </div>
+    </form>
+    <br>
+    {{#each items}}
+    <div class="row">
+      <div class="col s4 left-align">
+        <img src="{{iconURL}}" class="responsive-img">
+      </div>
+      <div class="col s8">
+        <div class="card blue-grey darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Item Info</span>
+            <p>
+            Type: {{type}} 
+            <br>
+            Name: {{name}}
+            <br>
+            Amount: {{amount}}
+            <br>
+            Colors: {{nameColor}} - {{backgroundColor}}
+            <br>
+            Descriptions: 
+            {{#each descriptions}}
+            {{#if existsValue value}}
+            {{value}}
+            {{/if}}
+            {{/each}}
+            <br>
+            Tags: 
+            </p>
+          </div>
+          <div class="card-action">
+            <a href="#">Trade this Item</a>
+            <a href="#">See market for item</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+</template>

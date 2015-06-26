@@ -97,9 +97,11 @@ Meteor.startup(function() {
     });
   }
 
+  /*
   if (InventoryItems.find().count() === 0) {
     _(100).times(function(n) {
       Factory.create('item');
     });
   }
+ */
 });
