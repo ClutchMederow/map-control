@@ -8,3 +8,15 @@ Template.message.onRendered( function() {
     belowOrigin: true // Displays dropdown below the button
   });
 });
+
+Template.message.events({
+  'click .privateChat': function(e) {
+    e.preventDefault();
+    console.log(this);
+    Meteor.call('startPrivateChat',this.user.userId,function(error) {
+      if(error) {
+        console.log(error.reason);
+      }
+    });
+  }
+});
