@@ -31,6 +31,11 @@ Router.route('/market', {
   template: 'market'
 });
 
+Router.route('/myinventory', {
+  name: 'myInventory',
+  template: 'myInventory'
+});
+
 Router.route('/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'

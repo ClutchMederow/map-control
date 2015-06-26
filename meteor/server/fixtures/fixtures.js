@@ -21,17 +21,22 @@ Meteor.startup(function() {
   //Fixture data
 
   //Users
+  Users = Meteor.users;
+  if(Users.find().count() === 0) {
+    _(5).times(function(n) {
+      var user = Fake.user({fields: ['emails.address', 'profile.name']});
+      console.log(user);
+      Users.insert(user);
+    });
+  }
+  
 
   //Offers
   Factory.define('tradeRequest', TradeRequest, {
-    userId: function() {
-
+    user: function() {
+      return Fake.fromArray(users);
     },
-    userProfile: function() {
-
-    }, 
     items: function() {
-
     },
     requests: function() {
       
@@ -92,9 +97,11 @@ Meteor.startup(function() {
     });
   }
 
+  /*
   if (InventoryItems.find().count() === 0) {
     _(100).times(function(n) {
       Factory.create('item');
     });
   }
+ */
 });

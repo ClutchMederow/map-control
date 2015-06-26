@@ -1,13 +1,9 @@
 TradeRequest = new Mongo.Collection('tradeRequest');
 
 TradeRequest.attachSchema({
-  userId: {
-    type: String,
-    label: 'UserId'
-  },
-  userProfile: {
+  user: {
     type: Object,
-    label: 'denormalized user profile for easy refernece'
+    label: 'denormalized user for easy refernece'
   },
   items: {
     type: [Object],
