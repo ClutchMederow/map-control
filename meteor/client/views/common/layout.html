@@ -2,11 +2,12 @@
     <!-- Nav Bar -->
     <nav>
       <div class="nav-wrapper">
-        <a href="#" class="brand-logo">Map Control</a>
+        <a href="{{pathFor route='memberHomePage'}}" class="brand-logo">Map Control</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
           <li>{{> loginButtons}}</li>
-          <li><a href="#">Trading Floor</a></li>
+          <li><a href="tradingFloor/TradingFloor">Trading Floor</a></li>
           <li><a href="#">Market</a></li>
+          <li><a href="{{pathFor route='myInventory'}}">My Inventory</a></li>
           <li><a href="#">Command Center</a></li>
         </ul>
       </div>

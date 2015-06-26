@@ -2,11 +2,7 @@ Router.configure({
   layoutTemplate: 'layout'
 });
 
-Router.route('/', function() {
-  this.redirect('Trading Floor');
-});
-
-Router.route('/landing', {
+Router.route('/', {
   name: 'landing',
   template: 'landing'
 });
@@ -36,7 +32,7 @@ Router.route('/myinventory', {
   template: 'myInventory'
 });
 
-Router.route('/:channel',{
+Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'
 });
