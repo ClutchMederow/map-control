@@ -51,16 +51,28 @@ Meteor.startup(function() {
       return Fake.paragraph();
     }
   });
-
+ 
+  var users = Users.find().fetch();
+  var userIds = _.map(users, function(user) {
+    return user._id;
+  });
+  console.log(userIds);
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();
+    },
+    userId: function() {
+      return Fake.fromArray(userIds);
     },
     channel: 'Trading Floor'
   });
 
   Factory.define('channel', Channels, {
     name: function() {
+      return Fake.word();
+    },
+    publishedToUsers: ['Public'],
+    category: function() {
       return Fake.word();
     }
   });
@@ -91,7 +103,7 @@ Meteor.startup(function() {
   }
 
   if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor'});
+    Channels.insert({name: 'Trading Floor', publishedToUsers: ['Public']});
     _(5).times(function(n) {
       Factory.create('channel');
     });
