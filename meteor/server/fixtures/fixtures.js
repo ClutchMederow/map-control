@@ -53,18 +53,23 @@ Meteor.startup(function() {
   });
  
   var users = Users.find().fetch();
-  var userIds = _.map(users, function(user) {
-    return user._id;
+  var userProfiles = _.map(users, function(user) {
+    return {
+      userId: user._id,
+      profile: user.profile
+    };
   });
-  console.log(userIds);
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();
     },
-    userId: function() {
-      return Fake.fromArray(userIds);
+    user: function() {
+      return Fake.fromArray(userProfiles);
     },
-    channel: 'Trading Floor'
+    channel: 'Trading Floor',
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
   });
 
   Factory.define('channel', Channels, {

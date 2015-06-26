@@ -1,9 +1,25 @@
 Messages = new Mongo.Collection('messages');
 
 Messages.attachSchema({
-  userId: {
+  user: {
+    type: Object,
+    label: "User Profile and Id",
+    blackbox: true
+  },
+  /*
+  "user.$.userId": {
     type: String,
-    label: "user Id"
+    label: "User Id"
+  },
+  "user.$.profile": {
+    type: Object,
+    label: "User profile",
+    blackbox: true
+  },
+   */
+  datePosted: {
+    type: Date,
+    label: 'date message posted'
   },
   text: {
     type: String,

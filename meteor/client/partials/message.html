@@ -1,8 +1,15 @@
 <template name="message">
 <div>
   <i class="medium mdi-action-account-box"></i>
-  <a href="">User Name</a>
-  <span>1:00 PM</span>
+  <a href="#" class="dropdown-button btn" data-activates="{{user.userId}}">{{user.profile.name}}</a>
+  <!-- Dropdown Structure -->
+  <ul id="{{user.userId}}" class="dropdown-content">
+    <li><a href="#!">Start Private Chat</a></li>
+    <li><a href="#!">Current Market Items </a></li>
+    <li class="divider"></li>
+    <li><a href="#!">View Profile</a></li>
+  </ul>
+  <span>{{datePosted}}</span>
   <span>{{text}}</span>
 </div>
 </template>

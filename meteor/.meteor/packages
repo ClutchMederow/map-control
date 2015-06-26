@@ -25,3 +25,4 @@ service-configuration
 mrt:accounts-steam
 reactive-var
 http
+jquery
