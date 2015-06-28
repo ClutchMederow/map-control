@@ -108,7 +108,9 @@ Meteor.startup(function() {
   }
 
   if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor', publishedToUsers: ['Public']});
+    Channels.insert({name: 'Trading Floor', 
+                    publishedToUsers: ['Public'],
+                    category: 'Trading Floor'});
     _(5).times(function(n) {
       Factory.create('channel');
     });
