@@ -72,13 +72,15 @@ Meteor.startup(function() {
     },
   });
 
+  //Channels
+  var categories = ['Rifles', 'Pistols', 'SMG', 'Sniper Rifles'];
   Factory.define('channel', Channels, {
     name: function() {
       return Fake.word();
     },
     publishedToUsers: ['Public'],
     category: function() {
-      return Fake.word();
+      return Fake.fromArray(categories);
     }
   });
 
