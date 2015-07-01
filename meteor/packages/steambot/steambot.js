@@ -23,6 +23,9 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
     appId: 730,
     contextId: 2
   }
+
+  this.logOn();
+  this.loadBotInventory();
 };
 
 
@@ -89,100 +92,179 @@ SteamBot.prototype.getBotItems = function() {
   return this.items.find();
 };
 
-SteamBot.prototype.loadInventory = function() {
+SteamBot.prototype.loadBotInventory = function() {
   var self = this;
   var Future = Npm.require('fibers/future');
 
   var future = new Future();
 
   self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
-    if (err) throw err;
-
-    future.return(items);
+    if (err)
+      future.throw(err);
+    else
+      future.return(items);
   });
   var items = future.wait();
 
   self.items.remove({});
   for (var i = 0; i < items.length; i++) {
-    console.log(items[i]);
     self.items.insert(items[i]);
   }
 };
 
-SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive) {
-  if (typeof itemsToReceive === 'string')
-    itemsToReceive = [itemsToReceive];
+SteamBot.prototype._getItemObjsWithIds = function(partnerSteamId, items) {
+  if(!items)
+    return [];
 
-  check(arguments, {
-    userSteamId: String,
-    itemsToReceive: [String],
-  });
-
-  itemObjectArray = _.map(itemsToReceive, function(itemId) {
-  });
-}
-
-SteamBot.prototype.test = function(steamAPI) {
-  var test = new SteamBot('bungerblaster', 'igor1122', 'qrb6t', steamAPI);
-  test.logOn();
-
-  var item =  {
-    appid: 730,
-    contextid: 2,
-    amount: 1,
-    assetid: ''
-  };
-
-  // test.takeItems
-  // return test.loadInventory();
-  test.getOffers();
-};
-
-SteamBot.prototype.getOffers = function() {
   var options = {
-    get_received_offers: 1,
-    active_only: 1,
-    // time_historical_cutoff: (new Date().getTime()/1000).toFixed()
+    partnerSteamId: partnerSteamId,
+    appId: 730,
+    contextId: 2
   };
 
-  this.offers.getOffers(options, function(error,result) {
-    console.log(result.response.trade_offers_received);
+  var Future = require('fibers/future');
+  var future = new Future();
+
+  this.offers.loadPartnerInventory(options, function(err, res) {
+    if (err)
+      future.throw(new Error(err));
+    else
+      future.return(res);
+  });
+
+  var userItems = future.wait();
+  var foundItemArray;
+
+  // Wrap each id in an object - should revisit 'amount' in the future
+  return _.map(items, function(itemToFind) {
+
+    foundItemArray = _.where(userItems, {
+      classid: itemToFind.classId,
+      instanceid: itemToFind.instanceId
+    });
+
+    if(foundItemArray.length !== 1)
+      throw new Error('Bad item match: Should get 1, got ' + foundItemArray.length)
+
+    return {
+      appid: 730,
+      contextid: 2,
+      amount: 1,
+      assetid: foundItemArray[0].id
+    };
   });
 };
 
-SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, callback) {
+SteamBot.prototype._getOwnedItemObjsWithIds = function(items) {
+  var self = this;
 
-  if (typeof itemsToSend === 'object')
-    itemsToSend = [itemsToSend];
+  if (!items)
+    return [];
 
-  if (typeof itemsToReceive === 'object')
-    itemsToReceive = [itemsToReceive];
+  this.loadBotInventory();
+  var foundItem;
 
-  check(arguments, {
-    userSteamId: String,
-    itemsToSend: [Object],
-    itemsToReceive: [Object],
+  var out = _.map(items, function(itemToFind) {
+    foundItem = self.items.findOne({ classid: itemToFind.classId, instanceId: itemToFind.instanceId });
+
+    if (!foundItem)
+      throw new Error('Item not found: ' + itemToFind.classId + '|' + itemToFind.instanceId);
+
+    return {
+      appid: 730,
+      contextid: 2,
+      amount: 1,
+      assetid: foundItem.id
+    };
   });
-        // {
-        //   appid: 730,
-        //   contextid: 2,
-        //   amount: 1,
-        //   assetid: item.id
-        // }
 
-  self.offers.makeOffer ({
+  return out;
+};
+
+
+
+SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive) {
+  // if (typeof itemsToReceive === 'string')
+  //   itemsToReceive = [itemsToReceive];
+  return this._makeOffer(userSteamId, [], itemsToReceive);
+};
+
+SteamBot.prototype.giveItems = function(userSteamId, itemsToGive) {
+  // if (typeof itemsToReceive === 'string')
+  //   itemsToReceive = [itemsToReceive];
+  return this._makeOffer(userSteamId, itemsToGive, []);
+};
+
+SteamBot.prototype.test = function(steamAPI, pw) {
+  var test = new SteamBot('bungerblaster', pw, 'qrb6t', steamAPI);
+
+  // var out = test.takeItems('76561197965124635', [{ classId: '1046175032', instanceId: '188530139' }]);
+  var out = test.giveItems('76561197965124635', [{ classId: '1046175032', instanceId: '188530139' }]);
+  console.log(out);
+
+  test.loadBotInventory();
+  console.log(test.items.find().fetch());
+
+  // var userSteamId = '76561197965124635';
+
+};
+
+
+// items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
+SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive) {
+
+  // if (typeof itemsToSend === 'object')
+  //   itemsToSend = [itemsToSend];
+
+  // if (typeof itemsToReceive === 'object')
+  //   itemsToReceive = [itemsToReceive];
+
+  // var args = Array.prototype.slice.call(arguments);
+
+  // check(args, {
+  //   userSteamId: String,
+  //   itemsToSend: Match.Optional([Object]),
+  //   itemsToReceive: Match.Optional([Object]),
+  // });
+
+  var itemObjsToSend = this._getOwnedItemObjsWithIds(itemsToSend);
+  var itemObjsToReceive = this._getItemObjWithIds(userSteamId, itemsToReceive);
+
+  var Future = require('fibers/future');
+  var future = new Future();
+
+  // TODO: Add some transaction id in message
+  this.offers.makeOffer({
     partnerSteamId: userSteamId,
-    itemsFromMe: itemsToSend,
-    itemsFromThem: itemsToReceive,
+    itemsFromMe: itemObjsToSend,
+    itemsFromThem: itemObjsToReceive,
     message: 'This is test'
-  }, function(err, response){
-    if (err) {
-      throw err;
-    }
-    console.log(response);
+  }, function(err, res){
+    if (err)
+      future.throw(err);
+    else
+      future.return(res);
   });
+
+  // TODO: Add a callback to reload inventory on acceptance...?
+
+  var offer = future.wait();
+  return offer.tradeofferid;
 }
 
+
+
+// SteamBot.prototype.getOffers = function() {
+//   var options = {
+//     get_received_offers: 1,
+//     active_only: 1,
+//     // time_historical_cutoff: (new Date().getTime()/1000).toFixed()
+//   };
+
+//   this.offers.getOffers(options, function(error,result) {
+//     console.log(result.response.trade_offers_received);
+//   });
+// };
 
         // offers.loadMyInventory({
         //   appId: 730,

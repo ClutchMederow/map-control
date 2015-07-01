@@ -1,9 +1,9 @@
 TradeOffers = new Mongo.Collection('tradeOffers');
 
 TradeOffers.attachSchema({
-  userId: {
+  botSteamId64: {
     type: String,
-    label: 'UserId'
+    label: 'Steam bot id64'
   },
 
   userProfile: {
