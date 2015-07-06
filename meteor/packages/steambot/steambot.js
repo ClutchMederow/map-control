@@ -58,7 +58,10 @@ SteamBot.prototype.logOn = function() {
   self.steam.on('loggedOn', function(result) {
     console.log('Logged in!');
     self.steam.setPersonaState(Steam.EPersonaState.Online);
-    logOnResolver(result);
+
+    // We need to avoid resolving this future more than once if we get disconnected and reconnect
+    if (!logOnFuture.isResolved())
+      logOnResolver(result);
   });
 
   var sessionFuture = new Future();
@@ -75,7 +78,10 @@ SteamBot.prototype.logOn = function() {
           throw err;
         }
         self.cookie = newCookie;
-        sessionResolver(newCookie);
+
+        // We need to avoid resolving this future more than once if we get disconnected and reconnect
+        if (!sessionFuture.isResolved())
+          sessionResolver(newCookie);
       });
     });
   });
@@ -164,8 +170,10 @@ SteamBot.prototype._getOwnedItemObjsWithIds = function(items) {
   this.loadBotInventory();
   var foundItem;
 
+  console.log(items);
+
   var out = _.map(items, function(itemToFind) {
-    foundItem = self.items.findOne({ classid: itemToFind.classId, instanceId: itemToFind.instanceId });
+    foundItem = self.items.findOne({ classid: itemToFind.classId, instanceid: itemToFind.instanceId });
 
     if (!foundItem)
       throw new Error('Item not found: ' + itemToFind.classId + '|' + itemToFind.instanceId);
@@ -180,8 +188,6 @@ SteamBot.prototype._getOwnedItemObjsWithIds = function(items) {
 
   return out;
 };
-
-
 
 SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive) {
   // if (typeof itemsToReceive === 'string')
@@ -198,12 +204,12 @@ SteamBot.prototype.giveItems = function(userSteamId, itemsToGive) {
 SteamBot.prototype.test = function(steamAPI, pw) {
   var test = new SteamBot('bungerblaster', pw, 'qrb6t', steamAPI);
 
-  // var out = test.takeItems('76561197965124635', [{ classId: '1046175032', instanceId: '188530139' }]);
-  var out = test.giveItems('76561197965124635', [{ classId: '1046175032', instanceId: '188530139' }]);
+  // var out = test.takeItems('76561197965124635', [{ classId: '1011934384', instanceId: '188530139' }]);
+  var out = test.giveItems('76561197965124635', [{ classId: '1011934384', instanceId: '188530139' }]);
   console.log(out);
 
-  test.loadBotInventory();
-  console.log(test.items.find().fetch());
+  // test.loadBotInventory();
+  // console.log(test.items.find().fetch());
 
   // var userSteamId = '76561197965124635';
 
@@ -228,7 +234,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   // });
 
   var itemObjsToSend = this._getOwnedItemObjsWithIds(itemsToSend);
-  var itemObjsToReceive = this._getItemObjWithIds(userSteamId, itemsToReceive);
+  var itemObjsToReceive = this._getItemObjsWithIds(userSteamId, itemsToReceive);
 
   var Future = require('fibers/future');
   var future = new Future();
