@@ -1,26 +1,65 @@
 InventoryItems = new Mongo.Collection('inventoryItems');
 
 InventoryItems.attachSchema({
+  userId: {
+    type: String,
+    label: "user Id"
+  },
   name: {
     type: String,
     label: 'Item Name'
+  },
+  nameColor: {
+    type: String,
+    label: 'Item Color',
+    optional: true
+  },
+  backgroundColor: {
+    type: String,
+    label: 'Background Color',
+    optional: true
   },
   type: {
     type: String,
     label: 'Item Category'
   },
+  descriptions: {
+    type: [Object],
+    label: 'Item Description',
+    blackbox: true,
+    optional: true
+  },
   tags: {
     type: [Object],
     label: 'Item Tags',
+    blackbox: true,
     optional: true
   },
   itemId: {
     type: String,
     label: 'Steam ID of item'
   }, 
+  amount: {
+    type: Number,
+    label: 'Quantity of Item'
+  },
+  marketable: {
+    type: Number,
+    label: 'Is item marketable?',
+    allowedValues: [0,1]
+  },
+  tradable: {
+    type: Number,
+    label: 'Is item tradable',
+    allowedValues: [0,1]
+  },
   classId: {
     type: String,
     label: 'Steam class ID of item'
+  },
+  instanceId: {
+    type: String,
+    label: 'Steam instance id of item'
   },
   iconURL: {
     type: String,
