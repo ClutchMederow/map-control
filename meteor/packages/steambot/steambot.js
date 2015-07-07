@@ -1,13 +1,8 @@
-var testId = '76561197965124635'; // target
-
-var tradeOfferUrl = 'https://steamcommunity.com/tradeoffer/new/?partner=181099894&token=3WGBlP0T'
-
 SteamBot = function(accountName, password, authCode, SteamAPI) {
   // TODO: verify inputs
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
 
-  // params
   this.logOnOptions = {
     accountName: accountName,
     password: password
@@ -28,7 +23,6 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.loadBotInventory();
 };
 
-
 SteamBot.prototype.logOn = function() {
   // NOTES
   // May want to reference some master list of steam servers in case we don't receive a valid one
@@ -37,8 +31,6 @@ SteamBot.prototype.logOn = function() {
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
   var Future = Npm.require('fibers/future')
-
-  var admin = testId;
 
   var baseDir = process.cwd().split('.meteor')[0];
   var tokenPath = baseDir + 'private/steambot-auth/sentry';
@@ -149,7 +141,7 @@ SteamBot.prototype._getItemObjsWithIds = function(partnerSteamId, items) {
       instanceid: itemToFind.instanceId
     });
 
-    if(foundItemArray.length !== 1)
+    if(itemToFind.instanceId != '0' && foundItemArray.length !== 1)
       throw new Error('Bad item match: Should get 1, got ' + foundItemArray.length)
 
     return {
@@ -169,8 +161,6 @@ SteamBot.prototype._getOwnedItemObjsWithIds = function(items) {
 
   this.loadBotInventory();
   var foundItem;
-
-  console.log(items);
 
   var out = _.map(items, function(itemToFind) {
     foundItem = self.items.findOne({ classid: itemToFind.classId, instanceid: itemToFind.instanceId });
@@ -200,21 +190,6 @@ SteamBot.prototype.giveItems = function(userSteamId, itemsToGive) {
   //   itemsToReceive = [itemsToReceive];
   return this._makeOffer(userSteamId, itemsToGive, []);
 };
-
-SteamBot.prototype.test = function(steamAPI, pw) {
-  var test = new SteamBot('bungerblaster', pw, 'qrb6t', steamAPI);
-
-  // var out = test.takeItems('76561197965124635', [{ classId: '1011934384', instanceId: '188530139' }]);
-  var out = test.giveItems('76561197965124635', [{ classId: '1011934384', instanceId: '188530139' }]);
-  console.log(out);
-
-  // test.loadBotInventory();
-  // console.log(test.items.find().fetch());
-
-  // var userSteamId = '76561197965124635';
-
-};
-
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
 SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive) {
@@ -271,39 +246,3 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
 //     console.log(result.response.trade_offers_received);
 //   });
 // };
-
-        // offers.loadMyInventory({
-        //   appId: 730,
-        //   contextId: 2
-        // }, function(err, items) {
-        //   console.log(items);
-        //   var item;
-        //   // picking first tradable item
-        //   for (var i = 0; i < items.length; i++) {
-        //     if (items[i].tradable) {
-        //       item = items[i];
-        //       break;
-        //     }
-        //   }
-        //   // if there is such an item, making an offer with it
-        //   if (item) {
-        //     offers.makeOffer ({
-        //       partnerSteamId: admin,
-        //       itemsFromMe: [
-        //         {
-        //           appid: 730,
-        //           contextid: 2,
-        //           amount: 1,
-        //           assetid: item.id
-        //         }
-        //       ],
-        //       itemsFromThem: [],
-        //       message: 'This is test'
-        //     }, function(err, response){
-        //       if (err) {
-        //         throw err;
-        //       }
-        //       console.log(response);
-        //     });
-        //   }
-        // });
