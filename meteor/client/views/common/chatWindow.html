@@ -6,9 +6,20 @@
       </div>
       <div class="divider"></div>
       <div class="section">
-        {{#each channels}}
-          {{> channel}}
+        <ul class="collapsible" data-collapsible="accordion">
+        {{#each arrayify channelsByCategory}}
+          <li>
+            <div class="collapsible-header">
+              {{name}}
+            </div>
+            <div class="collapsible-body">
+              {{#each value}}
+                {{> channel}}
+              {{/each}}
+            </div>
+          </li>
         {{/each}}
+        </ul>
       </div>
     </div>
     <div class="col s9 grey lighten-5">

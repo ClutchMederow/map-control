@@ -1,9 +1,10 @@
 DB = {
   insertChat: function(attributes) {
     Messages.insert({
-      userId: attributes.userId,
+      user: attributes.user,
       channel: attributes.channel,
-      text: attributes.text
+      text: attributes.text,
+      datePosted: new Date()
     });
   }
 };

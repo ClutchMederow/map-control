@@ -32,6 +32,16 @@ Router.route('/myinventory', {
   template: 'myInventory'
 });
 
+Router.route('/posttraderequest', {
+  name: 'postTradeRequest',
+  template: 'postTradeRequest'
+});
+
+Router.route('/stripepayment', {
+  name: 'stripePayment',
+  template: 'stripePayment'
+});
+
 Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'

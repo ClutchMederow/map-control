@@ -8,7 +8,11 @@ Meteor.publish('messages', function(channel) {
 });
 
 Meteor.publish('channels', function() {
-  return Channels.find();
+  return Channels.find({$or: [
+    {publishedToUsers: {$in: [this.userId]}}, 
+    {publishedToUsers: {$in: ['Public']}}
+    ]
+  });
 });
 
 Meteor.publish('inventoryItems', function() {

@@ -51,17 +51,36 @@ Meteor.startup(function() {
       return Fake.paragraph();
     }
   });
-
+ 
+  var users = Users.find().fetch();
+  var userProfiles = _.map(users, function(user) {
+    return {
+      userId: user._id,
+      profile: user.profile
+    };
+  });
   Factory.define('message', Messages, {
     text: function() {
       return Fake.sentence();
     },
-    channel: 'Trading Floor'
+    user: function() {
+      return Fake.fromArray(userProfiles);
+    },
+    channel: 'Trading Floor',
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
   });
 
+  //Channels
+  var categories = ['Rifles', 'Pistols', 'SMG', 'Sniper Rifles'];
   Factory.define('channel', Channels, {
     name: function() {
       return Fake.word();
+    },
+    publishedToUsers: ['Public'],
+    category: function() {
+      return Fake.fromArray(categories);
     }
   });
 
@@ -91,7 +110,9 @@ Meteor.startup(function() {
   }
 
   if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor'});
+    Channels.insert({name: 'Trading Floor', 
+                    publishedToUsers: ['Public'],
+                    category: 'Trading Floor'});
     _(5).times(function(n) {
       Factory.create('channel');
     });
