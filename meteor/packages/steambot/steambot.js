@@ -17,7 +17,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.inventoryOptions = {
     appId: 730,
     contextId: 2
-  }
+  };
 
   this.logOn();
   this.loadBotInventory();
@@ -30,10 +30,12 @@ SteamBot.prototype.logOn = function() {
   var self = this;
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
-  var Future = Npm.require('fibers/future')
+  var Future = Npm.require('fibers/future');
 
   var baseDir = process.cwd().split('.meteor')[0];
   var tokenPath = baseDir + 'private/steambot-auth/sentry';
+
+  console.log(tokenPath);
 
   if (Npm.require('fs').existsSync(tokenPath)) {
     self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
@@ -231,7 +233,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
 
   var offer = future.wait();
   return offer.tradeofferid;
-}
+};
 
 
 
