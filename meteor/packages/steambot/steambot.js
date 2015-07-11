@@ -17,7 +17,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.inventoryOptions = {
     appId: 730,
     contextId: 2
-  }
+  };
 
   this.logOn();
   this.loadBotInventory();
@@ -236,7 +236,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
 
   var offer = future.wait();
   return offer.tradeofferid;
-}
+};
 
 SteamBot.prototype.queryOffer = function(offerId) {
   var options = {

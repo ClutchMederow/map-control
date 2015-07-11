@@ -32,6 +32,8 @@ SteamAPI = (function () {
     });
   };
   //declaration of all functions, best practice due to hoisting
+  //profileID = steam public id (base 64)
+  //userId = Meteor user ID
   var getPlayerInventory = function(profileId, userId) {
       var inventoryData;
       var callString = "http://steamcommunity.com/profiles/" + profileId +
