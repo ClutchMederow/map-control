@@ -3,11 +3,11 @@ SteamAPI = (function () {
   //Private variables and functions
   var csContextId = 2; //2 = games
   var csAppId = 730; //730 = CSGO
-  var apiKey = Meteor.settings.steam.apiKey;   
+  var apiKey = Meteor.settings.steam.apiKey;
   var steamCDN = "http://steamcommunity-a.akamaihd.net/economy/image/";
-  
+
   var parseSteamAPIInventory = function(data,userId ) {
-    var rgInventory = data.rgInventory;      
+    var rgInventory = data.rgInventory;
     var rgDescriptions = data.rgDescriptions;
     _.each(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
@@ -36,7 +36,7 @@ SteamAPI = (function () {
   //userId = Meteor user ID
   var getPlayerInventory = function(profileId, userId) {
       var inventoryData;
-      var callString = "http://steamcommunity.com/profiles/" + profileId + 
+      var callString = "http://steamcommunity.com/profiles/" + profileId +
       "/inventory/json/" + csAppId + "/" + csContextId;
       try {
         inventoryData = HTTP.get(callString).data;
@@ -46,7 +46,7 @@ SteamAPI = (function () {
       }
       //clear and remove inventory,
       //do this after API call to avoid lag
-      InventoryItems.remove({}); 
+      InventoryItems.remove({});
       parseSteamAPIInventory(inventoryData, userId);
   };
 
@@ -73,12 +73,20 @@ SteamAPI = (function () {
       var receiverItemCount = parseInt(_.find(receiverInventory, function(item) {
         return itemId === item.id;
       }).amount, 10);  //amount is stored as string for some reason
-      
+
       if((senderItemCount < senderOriginalItemCount) && (receiverItemCount > receiverOriginalItemCount)) {
         return true;
       } else {
         return false;
       }
+    },
+
+    getPlayerItems: function(profileId) {
+      var callString = "http://steamcommunity.com/profiles/" + profileId +
+      "/inventory/json/" + csAppId + "/" + csContextId;
+      console.log(callString);
+      var data = HTTP.get(callString).data;
+      return data;
     }
   };
 }) (); //Immediately Invoked Function that returns object

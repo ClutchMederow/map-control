@@ -27,65 +27,68 @@ SteamBot.prototype.logOn = function() {
   // NOTES
   // May want to reference some master list of steam servers in case we don't receive a valid one
 
-  var self = this;
-  var Steam = Npm.require('steam');
-  var SteamTradeOffers = Npm.require('steam-tradeoffers');
-  var Future = Npm.require('fibers/future');
+  // TODO: Put proper error catching in this block
+  try {
+    var self = this;
+    var Steam = Npm.require('steam');
+    var SteamTradeOffers = Npm.require('steam-tradeoffers');
+    var Future = Npm.require('fibers/future')
 
-  var baseDir = process.cwd().split('.meteor')[0];
-  var tokenPath = baseDir + 'private/steambot-auth/sentry';
+    var baseDir = process.cwd().split('meteor')[0];
+    var tokenPath = baseDir + 'steambot-auth/' + self.logOnOptions.accountName;
 
-  console.log(tokenPath);
+    if (Npm.require('fs').existsSync(tokenPath)) {
+      self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
+    } else if (self.authCode != '') {
+      self.logOnOptions['authCode'] = self.authCode;
+    }
 
-  if (Npm.require('fs').existsSync(tokenPath)) {
-    self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
-  } else if (self.authCode != '') {
-    self.logOnOptions['authCode'] = self.authCode;
-  }
+    self.steam.logOn(self.logOnOptions);
+    self.steam.on('debug', console.log);
 
-  self.steam.logOn(self.logOnOptions);
-  self.steam.on('debug', console.log);
+    var logOnFuture = new Future();
+    var logOnResolver = logOnFuture.resolver();
 
-  var logOnFuture = new Future();
-  var logOnResolver = logOnFuture.resolver();
+    self.steam.on('loggedOn', function(result) {
+      console.log('Logged in!');
+      self.steam.setPersonaState(Steam.EPersonaState.Online);
 
-  self.steam.on('loggedOn', function(result) {
-    console.log('Logged in!');
-    self.steam.setPersonaState(Steam.EPersonaState.Online);
+      // We need to avoid resolving this future more than once if we get disconnected and reconnect
+      if (!logOnFuture.isResolved())
+        logOnResolver(result);
+    });
 
-    // We need to avoid resolving this future more than once if we get disconnected and reconnect
-    if (!logOnFuture.isResolved())
-      logOnResolver(result);
-  });
+    var sessionFuture = new Future();
+    var sessionResolver = sessionFuture.resolver();
 
-  var sessionFuture = new Future();
-  var sessionResolver = sessionFuture.resolver();
+    self.steam.on('webSessionID', function(sessionID) {
+      self.sessionID = sessionID;
+      self.steam.webLogOn(function(newCookie){
+        self.offers.setup({
+          sessionID: sessionID,
+          webCookie: newCookie
+        }, function(err) {
+          if (err) {
+            throw err;
+          }
+          self.cookie = newCookie;
 
-  self.steam.on('webSessionID', function(sessionID) {
-    self.sessionID = sessionID;
-    self.steam.webLogOn(function(newCookie){
-      self.offers.setup({
-        sessionID: sessionID,
-        webCookie: newCookie
-      }, function(err) {
-        if (err) {
-          throw err;
-        }
-        self.cookie = newCookie;
-
-        // We need to avoid resolving this future more than once if we get disconnected and reconnect
-        if (!sessionFuture.isResolved())
-          sessionResolver(newCookie);
+          // We need to avoid resolving this future more than once if we get disconnected and reconnect
+          if (!sessionFuture.isResolved())
+            sessionResolver(newCookie);
+        });
       });
     });
-  });
 
-  // Save the token
-  self.steam.on('sentry', function(data) {
-    Npm.require('fs').writeFileSync(tokenPath, data);
-  });
+    // Save the token
+    self.steam.on('sentry', function(data) {
+      Npm.require('fs').writeFileSync(tokenPath, data);
+    });
 
-  Future.wait([logOnFuture, sessionFuture]);
+    Future.wait([logOnFuture, sessionFuture]);
+  } catch(e) {
+    console.log(e);
+  }
 };
 
 SteamBot.prototype.getBotItems = function() {
@@ -235,7 +238,29 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   return offer.tradeofferid;
 };
 
+SteamBot.prototype.queryOffer = function(offerId) {
+  var options = {
+    get_received_offers: 1,
+    active_only: 1,
+    // time_historical_cutoff: (new Date().getTime()/1000).toFixed()
+  };
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+  this.offers.getOffers(options, function(error,result) {
+    if (error)
+      future.throw(error);
+    else
+      future.return(result);
+  });
 
+  var res = future.wait();
+  console.log(res.response.trade_offers_received);
+};
+
+SteamBot.prototype.test = function(pw, SteamAPI) {
+  bot = new SteamBot('mc_steambot_1', pw, '', SteamAPI);
+  bot.queryOffer();
+};
 
 // SteamBot.prototype.getOffers = function() {
 //   var options = {
