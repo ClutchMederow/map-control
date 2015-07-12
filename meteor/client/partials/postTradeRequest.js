@@ -21,10 +21,10 @@ Template.postTradeRequest.helpers({
   items: function() {
     var fields = ['name', 'type'];
     var selector = {marketable: 1, deleteInd: false};
-    var options = {};
+    var options = {limit: 5};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return InventoryItems.getItems(searchText.get(), fields,options );
+      return InventoryItems.getItems(searchText.get(), fields, selector, options );
     } else {
       return null;
     }
@@ -32,10 +32,10 @@ Template.postTradeRequest.helpers({
   availableItems: function() {
     var fields = ['name', 'type'];
     var selector = {marketable: 1, deleteInd: false};
-    var options = {};
+    var options = {limit: 5};
     //don't want to search until user enters something
     if(marketSearchText.get()) {
-      return InventoryItems.getItems(marketSearchText.get(), fields,options );
+      return InventoryItems.getItems(marketSearchText.get(), fields, selector, options );
     } else {
       return null;
     }

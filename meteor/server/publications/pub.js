@@ -18,3 +18,11 @@ Meteor.publish('channels', function() {
 Meteor.publish('inventoryItems', function() {
   return InventoryItems.find({userId: this.userId});
 });
+
+Meteor.publish('marketItems', function(){
+  return InventoryItems.find({}, {$fields: {userId: 0, 
+                             botId: 0, 
+                             currentTransactions: 0,
+                             deleteInd: 0
+  }});
+});
