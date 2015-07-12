@@ -4,6 +4,9 @@ Transactions = new Mongo.Collection('transactions');
 
 //create transaction with user1 and null user2
 //create a market collection as well
+//user1Id = requesting items from user2Id
+//user1Id = customer
+//user2Id = vendor
 Transactions.attachSchema({
   user1Id: {
     type: String,
@@ -35,4 +38,8 @@ Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, sta
                              user2Id: user2Id,
                              user2Items: user2Items,
                              stage: stage});
+};
+
+Transactions.changeStage = function(transactionId, stage) {
+  return Transactions.update(transactionId, {$set: {stage: stage}});
 };

@@ -5,6 +5,16 @@ InventoryItems.attachSchema({
     type: String,
     label: "user Id"
   },
+  botId: {
+    type: String,
+    label: "bot that hodls item",
+    optional: true //TODO: remove
+  },
+  currentTransactions: {
+    type: [Object],
+    label: 'Open transactions that involve this item',
+    optional: true
+  },
   name: {
     type: String,
     label: 'Item Name'

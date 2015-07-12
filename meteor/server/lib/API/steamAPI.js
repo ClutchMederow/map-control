@@ -44,10 +44,15 @@ SteamAPI = (function () {
         console.log(error.stack);
         throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve player's inventory");
       }
-      //clear and remove inventory,
-      //do this after API call to avoid lag
-      InventoryItems.remove({});
-      parseSteamAPIInventory(inventoryData, userId);
+      if(!inventoryData.success) {
+        console.log('Failed to load');
+        throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
+      } else { 
+        //clear and remove inventory,
+        //do this after API call to avoid lag
+        InventoryItems.remove({});
+        parseSteamAPIInventory(inventoryData, userId);
+      }
   };
 
 
