@@ -32,7 +32,7 @@ Meteor.startup(function() {
   
 
   //Offers
-  Factory.define('tradeRequest', TradeRequest, {
+  Factory.define('listings', Listings, {
     user: function() {
       return Fake.fromArray(users);
     },
@@ -41,9 +41,6 @@ Meteor.startup(function() {
     requests: function() {
       
     },
-    offers: function() {
-
-    }, 
     datePosted: function() {
       return new Date(); ///TODO: improve this
     },

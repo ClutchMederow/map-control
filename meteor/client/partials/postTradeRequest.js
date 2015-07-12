@@ -1,5 +1,7 @@
 var searchText = new ReactiveVar('');
-Session.set('currentTrade', []);
+Session.set('tradeItems', []);
+var marketSearchText = new ReactiveVar('');
+Session.set('marketItems', []);
 
 Template.postTradeRequest.onCreated(function() {
   searchText.set('');
@@ -27,13 +29,27 @@ Template.postTradeRequest.helpers({
       return null;
     }
   },
+  availableItems: function() {
+    var fields = ['name', 'type'];
+    var selector = {marketable: 1, deleteInd: false};
+    var options = {};
+    //don't want to search until user enters something
+    if(marketSearchText.get()) {
+      return InventoryItems.getItems(marketSearchText.get(), fields,options );
+    } else {
+      return null;
+    }
+  },
   existsValue: function(value) {
     var newValue = value.trim();
     //is it an empty string, if not don't show it
     return _.isEmpty(value) ? false : true;
   },
-  currentTrade: function() {
-    return Session.get('currentTrade');
+  tradeItems: function() {
+    return Session.get('tradeItems');
+  },
+  marketItems: function() {
+    return Session.get('marketItems');
   }
 });
 
@@ -41,11 +57,21 @@ Template.postTradeRequest.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),
+  "keyup #market_search": _.throttle(function(e) {
+    marketSearchText.set($(e.target).val().trim());
+  }, 200),
   'click .addItem': function(e) {
-    var currentTrade = Session.get('currentTrade');
-    currentTrade.push(this);
-    Session.set('currentTrade', currentTrade);
+    var tradeItems = Session.get('tradeItems');
+    tradeItems.push(this);
+    Session.set('tradeItems', tradeItems);
     searchText.set('');
     $('#search').val('');
+  },
+  'click .addMarketItem': function(e) {
+    var marketItems = Session.get('marketItems');
+    marketItems.push(this);
+    Session.set('marketItems', marketItems);
+    marketSearchText.set('');
+    $('#market_search').val('');
   }
 });

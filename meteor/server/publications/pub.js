@@ -16,5 +16,5 @@ Meteor.publish('channels', function() {
 });
 
 Meteor.publish('inventoryItems', function() {
-  return InventoryItems.find();
+  return InventoryItems.find({userId: this.userId});
 });

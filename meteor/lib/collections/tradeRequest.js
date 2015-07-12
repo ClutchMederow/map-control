@@ -1,6 +1,6 @@
-TradeRequest = new Mongo.Collection('tradeRequest');
+Listings = new Mongo.Collection('listings');
 
-TradeRequest.attachSchema({
+Listings.attachSchema({
   user: {
     type: Object,
     label: 'denormalized user for easy refernece'
@@ -15,14 +15,6 @@ TradeRequest.attachSchema({
     label: 'Desired items or cash',
     optional: true
   },
-  //Offers are completely denormalized,
-  //they don't exist outside a trade request
-  //TODO: specify details of offers 
-  offers: {
-    type: [Object],
-    label: 'Offers',
-    optional: true
-  }, 
   datePosted: {
     type: Date,
     label: 'Date trade request posted'
