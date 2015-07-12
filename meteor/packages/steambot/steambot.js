@@ -257,6 +257,11 @@ SteamBot.prototype.queryOffer = function(offerId) {
   console.log(res.response.trade_offers_received);
 };
 
+SteamBot.prototype.getSteamId = function() {
+  if (this.steam.loggedOn)
+    return this.steam.steamID;
+}
+
 SteamBot.prototype.test = function(pw, SteamAPI) {
   bot = new SteamBot('mc_steambot_1', pw, '', SteamAPI);
   bot.queryOffer();
