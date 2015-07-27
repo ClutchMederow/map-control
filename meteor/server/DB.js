@@ -6,5 +6,8 @@ DB = {
       text: attributes.text,
       datePosted: new Date()
     });
+  },
+  removeInventoryItems: function(userId) {
+    InventoryItems.remove({userId: userId});
   }
 };

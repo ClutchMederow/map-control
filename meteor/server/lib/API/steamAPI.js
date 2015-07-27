@@ -48,9 +48,9 @@ SteamAPI = (function () {
         console.log('Failed to load');
         throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
       } else { 
-        //clear and remove inventory,
+        //clear and remove inventory for a specific user,
         //do this after API call to avoid lag
-        InventoryItems.remove({});
+        DB.removeInventoryItems(userId);
         parseSteamAPIInventory(inventoryData, userId);
       }
   };

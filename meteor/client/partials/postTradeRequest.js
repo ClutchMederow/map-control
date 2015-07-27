@@ -60,6 +60,7 @@ Template.postTradeRequest.events({
   "keyup #market_search": _.throttle(function(e) {
     marketSearchText.set($(e.target).val().trim());
   }, 200),
+  //TODO: DRY out below code
   'click .addItem': function(e) {
     var tradeItems = Session.get('tradeItems');
     tradeItems.push(this);
@@ -73,5 +74,19 @@ Template.postTradeRequest.events({
     Session.set('marketItems', marketItems);
     marketSearchText.set('');
     $('#market_search').val('');
+  },
+  'click .removeMyItem': function(e) {
+    var tradeItems = Session.get("tradeItems");
+    var item = this;
+    Session.set("tradeItems", _.filter(tradeItems, function(tradeItem) {
+      return tradeItem._id !== item._id; 
+    }));
+  },
+  'click .removeMarketItem': function(e) {
+    var marketItems = Session.get("marketItems");
+    var item = this;
+    Session.set("marketItems", _.filter(marketItems, function(marketItem) {
+      return marketItem._id !== item._id; 
+    }));
   }
 });
