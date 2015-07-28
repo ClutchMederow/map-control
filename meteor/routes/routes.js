@@ -22,9 +22,16 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
-Router.route('/market', {
+Router.route('/market/:userId', {
   name: 'market', 
-  template: 'market'
+  template: 'market',
+  data: function() {
+    if(this.params.userId === 'All') {
+      return {};
+    } else {
+      return {userId: this.params.userId};
+    }
+  }
 });
 
 Router.route('/myinventory', {
@@ -40,11 +47,6 @@ Router.route('/posttraderequest', {
 Router.route('/stripepayment', {
   name: 'stripePayment',
   template: 'stripePayment'
-});
-
-Router.route('/mylistings', {
-  name: 'myListings',
-  template: 'myListings'
 });
 
 Router.route('/tradingFloor/:channel',{

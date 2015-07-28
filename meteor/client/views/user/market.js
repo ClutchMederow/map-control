@@ -15,9 +15,10 @@ Template.market.onRendered(function() {
 
 Template.market.helpers({
   listings: function() {
+    var selector = this; //either 'All' or a userId from router
     if(searchText.get()) {
       var fields = ['name', 'type'];
-      return Listings.searchItems(searchText.get(), fields);
+      return Listings.searchItems(selector, searchText.get(), fields);
     } else {
       return Listings.find();
     }
