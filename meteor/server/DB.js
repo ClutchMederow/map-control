@@ -18,5 +18,9 @@ DB = {
       request: marketItems,
       datePosted: datePosted
     });
+  },
+  removeListing: function(listingId) {
+    Listings.remove({_id: listingId});
+    //TODO: send notification to anyone watching this listing, etc.
   }
 };
