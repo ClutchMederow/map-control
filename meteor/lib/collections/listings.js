@@ -39,3 +39,24 @@ Listings.attachSchema({
     optional: true
   }
 });
+
+Listings.searchItems = function(searchText, fields) {
+  var listings = Listings.find().fetch();
+  var matchingDocuments = []; 
+  var terms = searchText.replace(/\W/g,' ').trim().split(" ");
+  var regExp = new RegExp("(?=.*" + terms.join(")(?=.*") + ")", 'i');
+  listings.forEach(function(listing) {
+    if(_.find(listing.items, function(item) {
+      var concatFields = '';
+      _.each(fields, function(field) {
+        concatFields += getFieldValue(item, field);
+      });
+      return regExp.test(concatFields);
+    })) {
+      matchingDocuments.push(listing);  
+    } else {
+      return "false";
+    }
+  });
+  return matchingDocuments;
+};
