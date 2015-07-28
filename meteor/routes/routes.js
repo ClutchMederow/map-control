@@ -42,6 +42,11 @@ Router.route('/stripepayment', {
   template: 'stripePayment'
 });
 
+Router.route('/mylistings', {
+  name: 'myListings',
+  template: 'myListings'
+});
+
 Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'

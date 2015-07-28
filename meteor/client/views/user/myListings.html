@@ -1,0 +1,37 @@
+<template name="myListings">
+<h3 class="center-align">My Listings</h3>
+{{#each listings}}
+<div class="row">
+  <div class="col s4">
+    <h5 class="center-align">My Items</h5>
+    {{#each items}}
+      <img width="30%" height="30%" src="{{iconURL}}"
+      class="tooltipped" data-position="bottom" data-delay="25"
+      data-tooltip="{{name}} - {{type}}" >
+    {{/each}} 
+  </div>
+  <div class="col s1 valign-wrapper">
+    <i class="large material-icons valign">trending_flat</i>
+  </div>
+  <div class="col s4 center-align">
+    <h5 class="center-align">Would Like</h5>
+    {{#each request}}
+      <img width="30%" height="30%" src="{{iconURL}}"
+      class="tooltipped" data-position="bottom" data-delay="25"
+      data-tooltip="{{name}} - {{type}}" >
+    {{/each}}
+  </div>
+  <div class="col s3">
+      <a class="waves-effect waves-teal btn-flat removeListing">
+        Remove Listing
+      </a>
+      <a class="waves-effect waves-teal btn-flat editListing">
+        Edit Listing
+      </a>
+      <a class="waves-effect waves-teal btn-flat viewAnalytics">
+        See Analytics
+      </a>
+  </div>
+</div>
+{{/each}}
+</template>

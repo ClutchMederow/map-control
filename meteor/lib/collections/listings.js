@@ -40,6 +40,8 @@ Listings.attachSchema({
   }
 });
 
+//TODO: make this work for either items or requests 
+//and put a radio button on the market
 Listings.searchItems = function(searchText, fields) {
   var listings = Listings.find().fetch();
   var matchingDocuments = []; 
