@@ -13,6 +13,7 @@ InventoryItems.attachSchema({
   currentTransactions: {
     type: [Object],
     label: 'Open transactions that involve this item',
+    blackbox: true,
     optional: true
   },
   name: {

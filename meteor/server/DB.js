@@ -25,11 +25,13 @@ DB = {
   },
   addOffer: function(userId, listing) {
     Transactions.insert({
-      user1Id: listing.userId,
+      user1Id: listing.user._id,
       user1Items: listing.items,
       user2Id: userId,
       user2Items: listing.request,
       stage: 'INITIAL_OFFER'
     });
+
+    //Note: transaction hook fires to update inventory items
   }
 };

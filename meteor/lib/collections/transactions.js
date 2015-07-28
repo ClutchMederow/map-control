@@ -14,7 +14,8 @@ Transactions.attachSchema({
   }, 
   user1Items: {
     type: [Object],
-    label: 'Items of User 1 in trade'
+    label: 'Items of User 1 in trade',
+    blackbox: true
   },
   user2Id: {
     type: String,
@@ -22,7 +23,8 @@ Transactions.attachSchema({
   },
   user2Items: {
     type: [Object],
-    label: 'Items of User 2 in trade'
+    label: 'Items of User 2 in trade',
+    blackbox: true
   },
   stage: {
     type: String,
@@ -43,3 +45,14 @@ Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, sta
 Transactions.changeStage = function(transactionId, stage) {
   return Transactions.update(transactionId, {$set: {stage: stage}});
 };
+
+//update the inventory items after transaction inserted
+Transactions.after.insert(function(userId, doc) {
+  _.each(doc.user1Items, function(item) {
+    InventoryItems.update({_id: item._id}, {$push: {currentTransactions: doc}});
+  }); 
+
+  _.each(doc.user2items, function(item) {
+    InventoryItems.update({_id: item._id}, {$push: {currentTransactions: doc}});
+  });
+});
