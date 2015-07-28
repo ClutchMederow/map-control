@@ -1,9 +1,10 @@
 Dispatcher = (function(SteamAPI, SteamBot) {
+
+  // Holds objects that represent all bots, using the botName as the key
   var bots = {};
 
-  // Creates a random start index between 0 and bot length - 1
-  // Should eventually add some better analysis to determine which bot to use first
-  var botIndex = Math.round(Math.random()*(bots.length - 1));
+  // Used to determine which bot the next person should get
+  var botIndex = 0;
 
   function initalizeBots(Bots) {
 
@@ -13,7 +14,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     // First run through to initialize
     _.each(botList, function(bot) {
-      out[bot.name] = getBot(bot);
+      out[bot.name] = getNewBot(bot);
     });
 
     // Loops through all bots and tries to initialize any that failed in the first loop
@@ -26,7 +27,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       _.each(out, function(bot, name) {
         if (!out[name]) {
           var botFromList = _.findWhere(botList, { name: name });
-          out[name] = getBot(botFromList);
+          out[name] = getNewBot(botFromList);
         }
 
         if (!out[name])
@@ -38,11 +39,43 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     return out;
   }
 
-  function getBot(bot) {
+  // Attempts to procure a new bot
+  function getNewBot(bot) {
     try {
       return new SteamBot(bot.name, bot.password, bot.authCode, SteamAPI);
     } catch(e) {
       console.log(e);
+    }
+  }
+
+  // Gets a user's bot if it exists, otherwise assigns one
+  function getUsersBot (userId) {
+    var user = Meteor.users.findOne(userId);
+    var botName;
+
+    if (!user || !user.profile)
+      throw new Error('UNKNOWN_USER');
+
+    if (!user.profile.botName)
+      botName = DB.users.addBot(userId, assignBot());
+    else
+      botName = user.profile.botName;
+
+    return botName;
+  }
+
+  function assignBot() {
+    botIndex = (botIndex + 1)%(_.keys(bots).length);
+    return _.keys(bots)[botIndex];
+  }
+
+  function enQueue(jobType, items) {
+    if (jobType === JobType.DEPOSIT_ITEMS) {
+      var options = {
+
+      }
+
+      var job = new QueueJob();
     }
   }
 
@@ -52,15 +85,54 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var userTwo = Meteor.users.findOne(userTwoId);
 
       if (!userOne || !userTwo)
-        return false;
+        throw new Meteor.Error('INVALID_USERID', 'Invalid user ID');
 
-      // Should we throw an error or just return and log?
+      // get users' bots
+      var botOne = getUsersBot(userOneId);
+      var botTwo = getUsersBot(userTwoId);
+
+      // Have bot1 create tradeoffer
+      var callback = function() {
+
+      };
+
+      // Tell bot2 to accept tradeoffer in success callback
+
+      // BOTS FUCK YEAH
     },
 
+
+
     init: function() {
+      var self = this;
+
+      // Grab all the bots we have
       botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
+
+      // Initialize them
       bots = initalizeBots(botsFromFile);
-      botIndex = Math.round(Math.random()*(bots.length - 1));
+
+      // Set the initial index so we aren't biased toward bot 0
+      botIndex = Math.round(Math.random()*(_.keys(bots).length - 1));
+
+      console.log('Bots initialized. Count: ' + _.keys(bots).length);
+    },
+
+    test: function() {
+      console.log(getUsersBot('kiGYGwyyuM7h3RfvT'));
+      // console.log(assignBot());
     }
   }
 })(SteamAPI, SteamBot);
+
+// Updates DB during each stage, which will be pushed to the client if appropriate
+DispatcherTask = function(jobs) {
+  if (!(jobs.length > 0))
+    throw new Error('Bad number of jobs passed to task');
+
+  this.jobs = jobs;
+
+  _.each(jobs, function(job) {
+    jobs.enQueue();
+  });
+};

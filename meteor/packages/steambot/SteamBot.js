@@ -18,6 +18,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
     appId: 730,
     contextId: 2
   };
+  this.queue = [];
 
   this.logOn();
   this.loadBotInventory();
