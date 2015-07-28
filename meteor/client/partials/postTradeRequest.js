@@ -88,5 +88,15 @@ Template.postTradeRequest.events({
     Session.set("marketItems", _.filter(marketItems, function(marketItem) {
       return marketItem._id !== item._id; 
     }));
+  },
+  'click #postTrade': function(e) {
+    Meteor.call('createListing', Session.get('tradeItems'), Session.get('marketItems'), 
+                function(error){
+                  if(error) {
+                    console.log(error.reason);
+                  } else {
+                    console.log('Listing successful!');
+                  }
+                });
   }
 });

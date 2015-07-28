@@ -3,16 +3,19 @@ Listings = new Mongo.Collection('listings');
 Listings.attachSchema({
   user: {
     type: Object,
-    label: 'denormalized user for easy refernece'
+    label: 'denormalized user for easy reference',
+    blackbox: true
   },
   items: {
     type: [Object],
     label: '1 or more items for trade OR cash',
+    blackbox: true,
     optional: true
   },
   request: {
     type: [Object],
     label: 'Desired items or cash',
+    blackbox: true,
     optional: true
   },
   datePosted: {
