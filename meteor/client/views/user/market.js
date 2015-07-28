@@ -21,6 +21,9 @@ Template.market.helpers({
     } else {
       return Listings.find();
     }
+  },
+  getListing: function() {
+    return {listingId: this._id};
   }
 });
 

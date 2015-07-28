@@ -52,3 +52,11 @@ Router.route('/tradingFloor/:channel',{
   template: 'chatWindow'
 });
 
+Router.route('/makeOffer/:listingId', {
+  name: 'makeOffer',
+  template: 'makeOffer',
+  data: function() {
+    return Listings.findOne({_id: this.params.listingId});
+  }
+});
+

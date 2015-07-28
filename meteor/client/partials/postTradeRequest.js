@@ -12,10 +12,6 @@ Template.postTradeRequest.onCreated(function() {
   });
 });
 
-Template.postTradeRequest.onRendered(function() {
-  $('ul.tabs').tabs();
-});
-
 Template.postTradeRequest.helpers({
   //Items will be stored on player's desktop
   items: function() {

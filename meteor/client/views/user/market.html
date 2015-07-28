@@ -32,8 +32,11 @@
     {{/each}}
   </div>
   <div class="col s3">
-      <a class="waves-effect waves-teal btn-flat acceptTrade">Accept Trade</a>
-      <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
+    <a class="waves-effect waves-teal btn-flat acceptTrade" 
+    href="{{pathFor route='makeOffer' data=getListing}}">
+      Make Offer
+    </a>
+    <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
   </div>
 </div>
 {{/each}}
