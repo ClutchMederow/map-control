@@ -28,8 +28,7 @@ Transactions.attachSchema({
   },
   offerDate: {
     type: Date,
-    label: 'When offer was made',
-    optional: true //TODO: remove this
+    label: 'When offer was made'
   },
   stage: {
     type: String,
@@ -64,7 +63,6 @@ Transactions.after.insert(function(userId, doc) {
 
 Transactions.after.update(function(userId, doc, fieldNames, modifier, option) {
   if(_.contains(fieldNames, "stage") && doc.stage === 'CANCELED') {
-    console.log("updating relevant items");
 
     _.each(doc.user1Items, function(item1) {
       InventoryItems.update({_id: item1._id}, {$pull: {currentTransactions: doc._id}});

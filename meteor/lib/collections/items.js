@@ -7,7 +7,7 @@ InventoryItems.attachSchema({
   },
   botId: {
     type: String,
-    label: "bot that hodls item",
+    label: "bot that holds item",
     optional: true //TODO: remove
   },
   currentTransactions: {
