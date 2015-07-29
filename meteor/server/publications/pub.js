@@ -33,3 +33,8 @@ Meteor.publish('marketItems', function(){
 Meteor.publish('listings', function() {
   return Listings.find();
 });
+
+Meteor.publish('transactions', function() {
+  //TODO: should we limit this by stage?
+  return Transactions.find();
+});

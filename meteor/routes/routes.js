@@ -39,6 +39,14 @@ Router.route('/myinventory', {
   template: 'myInventory'
 });
 
+Router.route('/myTransactions/:userId', {
+  name: 'myTransactions',
+  template: 'myTransactions',
+  data: function() {
+    return {userId: this.params.userId};
+  }
+});
+
 Router.route('/posttraderequest', {
   name: 'postTradeRequest',
   template: 'postTradeRequest'

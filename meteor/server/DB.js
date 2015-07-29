@@ -24,14 +24,19 @@ DB = {
     //TODO: send notification to anyone watching this listing, etc.
   },
   addOffer: function(userId, listing) {
+    var currentDate = new Date(); 
     Transactions.insert({
       user1Id: listing.user._id,
       user1Items: listing.items,
       user2Id: userId,
       user2Items: listing.request,
+      offerDate: currentDate,
       stage: 'INITIAL_OFFER'
     });
-
     //Note: transaction hook fires to update inventory items
+  },
+  removeTrade: function(transactionId) {
+    //TODO: make this an ENUM
+    Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
   }
 };

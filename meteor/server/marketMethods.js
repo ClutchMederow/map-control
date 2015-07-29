@@ -21,5 +21,9 @@ Meteor.methods({
       throw new Meteor.Error("missing inventory items", 
                              "You don't have one of the requested items in your stash");
     }
+  },
+  cancelTrade: function(transactionId) {
+    check(transactionId, String);
+    DB.removeTrade(transactionId);
   }
 });

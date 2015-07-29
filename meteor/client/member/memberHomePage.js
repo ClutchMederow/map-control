@@ -4,5 +4,8 @@ Template.memberHomePage.helpers({
   },
   getMyListings: function() {
     return {userId: Meteor.userId()};
+  },
+  getMyTransactions: function() {
+    return {userId: Meteor.userId()};
   }
 });

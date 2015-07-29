@@ -11,7 +11,7 @@ InventoryItems.attachSchema({
     optional: true //TODO: remove
   },
   currentTransactions: {
-    type: [Object],
+    type: [String],
     label: 'Open transactions that involve this item',
     blackbox: true,
     optional: true

@@ -1,0 +1,33 @@
+<template name="myTransactions">
+<h1 class="center-align">My Open Trades</h1>
+{{#each transactions}}
+<div class="row">
+  <div class="col s4">
+    <h5 class="center-align">You offered....</h5>
+    {{#each user2Items}}
+      <img width="30%" height="30%" src="{{iconURL}}"
+      class="tooltipped" data-position="bottom" data-delay="25"
+      data-tooltip="{{name}} - {{type}}" >
+    {{/each}} 
+  </div>
+  <div class="col s1 valign-wrapper">
+    {{formatDate offerDate}}
+    <br>
+    <i class="large material-icons valign">trending_flat</i>
+  </div>
+  <div class="col s4 center-align">
+    <h5 class="center-align">to {{user1Id}}</h5>
+    {{#each user1Items}}
+      <img width="30%" height="30%" src="{{iconURL}}"
+      class="tooltipped" data-position="bottom" data-delay="25"
+      data-tooltip="{{name}} - {{type}}" >
+    {{/each}}
+  </div>
+  <div class="col s3">
+    <a class="waves-effect waves-teal btn-flat cancelOffer">
+      Cancel Offer
+    </a>
+  </div>
+</div>
+{{/each}}
+</template>
