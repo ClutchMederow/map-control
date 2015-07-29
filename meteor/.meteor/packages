@@ -28,3 +28,4 @@ reactive-var
 http
 jquery
 mrgalaxy:stripe
+momentjs:moment

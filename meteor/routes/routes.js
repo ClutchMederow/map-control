@@ -22,14 +22,29 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
-Router.route('/market', {
+Router.route('/market/:userId', {
   name: 'market', 
-  template: 'market'
+  template: 'market',
+  data: function() {
+    if(this.params.userId === 'All') {
+      return {};
+    } else {
+      return {userId: this.params.userId};
+    }
+  }
 });
 
 Router.route('/myinventory', {
   name: 'myInventory',
   template: 'myInventory'
+});
+
+Router.route('/myTransactions/:userId', {
+  name: 'myTransactions',
+  template: 'myTransactions',
+  data: function() {
+    return {userId: this.params.userId};
+  }
 });
 
 Router.route('/posttraderequest', {
@@ -45,5 +60,13 @@ Router.route('/stripepayment', {
 Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow'
+});
+
+Router.route('/makeOffer/:listingId', {
+  name: 'makeOffer',
+  template: 'makeOffer',
+  data: function() {
+    return Listings.findOne({_id: this.params.listingId});
+  }
 });
 

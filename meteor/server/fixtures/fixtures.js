@@ -18,6 +18,11 @@ Meteor.startup(function() {
     console.log("You do not have steam service configured");
   }
 
+  //Load Generic Items
+  if(GenericItems.find().count() === 0) {
+    SteamAPI.getGenericItems();
+  }
+
   //Fixture data
 
   //Users
@@ -32,7 +37,7 @@ Meteor.startup(function() {
   
 
   //Offers
-  Factory.define('tradeRequest', TradeRequest, {
+  Factory.define('listings', Listings, {
     user: function() {
       return Fake.fromArray(users);
     },
@@ -41,9 +46,6 @@ Meteor.startup(function() {
     requests: function() {
       
     },
-    offers: function() {
-
-    }, 
     datePosted: function() {
       return new Date(); ///TODO: improve this
     },

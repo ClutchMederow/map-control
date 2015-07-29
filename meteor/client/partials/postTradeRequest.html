@@ -1,50 +1,57 @@
 <template name="postTradeRequest">
 <div class="row">
-  <div class="col s6 offset-s3">
+  <div class="col s6 grey lighten-4">
+    <h3 class="center-align">I Have..</h3>
     <form>
       <div class="input-field">
         <input placeholder="Search Inventory" id="search" type="search" required>
         <label for="search"><i class="mdi-action-search"></i></label>
       </div>
     </form>
+    <div class="col s8 offset-s2">
+      <br>
+      {{#each items}}
+      {{type}} - {{name}} 
+      <a class="waves-effect waves-teal btn-flat addItem">Add</a>
+      <br>
+      {{/each}}
+    </div>
+    <div class="col s12">
+      {{#each tradeItems}}
+      {{type}} - {{name}}
+      <a class="waves=effect waves-light btn removeMyItem">Remove</a>
+      <br>
+      {{/each}}
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col s8 offset-s2">
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <br>
-        {{#each items}}
-          {{type}} - {{name}} 
-          <a class="waves-effect waves-teal btn-flat addItem">Add</a>
-          <br>
-        {{/each}}
+  <div class="col s6 grey lighten-2">
+    <h3 class="center-align">I Want...</h3>
+    <form>
+      <div class="input-field">
+        <input placeholder="Search Inventory" id="market_search" type="search" required>
+        <label for="search"><i class="mdi-action-search"></i></label>
       </div>
+    </form>
+    <div class="col s8 offset-s2">
+      <br>
+      {{#each availableItems}}
+      {{type}} - {{name}} 
+      <a class="waves-effect waves-teal btn-flat addMarketItem">Add</a>
+      <br>
+      {{/each}}
+    </div>
+    <div class="col s12">
+      {{#each marketItems}}
+      {{type}} - {{name}} 
+      <a class="waves=effect waves-light btn removeMarketItem">Remove</a>
+      <br>
+      {{/each}}
     </div>
   </div>
 </div>
 <div class="row">
-  <div class="col s12">
-    {{#each currentTrade}}
-      {{type}} - {{name}}
-      <br>
-    {{/each}}
+  <div class="col s4 offset-s4 center-align">
+    <a class="waves=effect waves-light btn" id="postTrade">Post Trade</a>
   </div>
 </div>
-<hr>
-<div class="row">
-  <div class="col s6 offset-s3">
-    <ul class="tabs">
-      <li class="tab col s3"><a class="active" href="#cash">Cash</a></li>
-      <li class="tab col s3"><a href="#items">Items</a></li>
-    </ul>
-  </div>
-  <div id="cash" class="col s12">
-    <h5>Please enter requested amount of cash</h5>
-  </div>
-  <div id="items" class="col s12">
-    <h5>Please add items you want</h5>
-  </div>
-</div>
-    
 </template>

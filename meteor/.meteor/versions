@@ -52,6 +52,7 @@ meteor-platform@1.2.2
 minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
+momentjs:moment@2.10.6
 mongo@1.1.0
 mrgalaxy:stripe@2.1.0
 mrt:accounts-steam@0.0.1
