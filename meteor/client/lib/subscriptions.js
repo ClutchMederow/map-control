@@ -3,3 +3,4 @@ Meteor.subscribe('inventoryItems');
 Meteor.subscribe('marketItems');
 Meteor.subscribe('listings');
 Meteor.subscribe('transactions');
+Meteor.subscribe('realtimetrading');

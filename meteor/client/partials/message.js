@@ -9,6 +9,14 @@ Template.message.onRendered( function() {
   });
 });
 
+Template.message.helpers({
+  getUsers: function() {
+    return {
+      userId1: Meteor.userId(),
+      userId2: this.user.userId
+    };
+  }
+});
 Template.message.events({
   'click .privateChat': function(e) {
     e.preventDefault();

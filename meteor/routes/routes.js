@@ -22,6 +22,17 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
+Router.route('/realTimeTrading/:userId1/:userId2', {
+  name: 'realTimeTrading',
+  template: 'realTimeTrading',
+  data: function() {
+    return {
+      userId1: this.params.userId1,
+      userId2: this.params.userId2
+    };
+  }
+});
+
 Router.route('/market/:userId', {
   name: 'market', 
   template: 'market',

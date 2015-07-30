@@ -38,3 +38,13 @@ Meteor.publish('transactions', function() {
   //TODO: should we limit this by stage?
   return Transactions.find();
 });
+
+//Note: do not take in userid here, it can be spoofed
+//and is insecure
+Meteor.publish('realtimetrade', function() {
+  return RealTimeTrade.find({$or: [{user1Id: this.userId}, 
+                                   {user2Id: this.userId}
+  ]});
+});
+
+//TODO: indices on real time trading collection
