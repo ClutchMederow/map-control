@@ -125,14 +125,176 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 })(SteamAPI, SteamBot);
 
+_.extend(Dispatcher, {
+  jobType: Object.freeze({
+    DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
+    DEPOSIT_CASH: 'DEPOSIT_CASH',
+    WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
+    WITHDRAW_CASH: 'WITHDRAW_CASH',
+    TASK: 'TASK'
+  }),
+
+  jobStatus: Object.freeze({
+    COMPLETE: 'COMPLETE',
+    FAILED: 'FAILED',
+    PENDING: 'PENDING',
+    READY: 'READY'
+  }),
+});
+
 // Updates DB during each stage, which will be pushed to the client if appropriate
-DispatcherTask = function(jobs) {
+DispatcherTask = function(jobs, ordered) {
+  var self = this;
+
+  check(jobs, Array);
+  check(ordered, Boolean);
+
   if (!(jobs.length > 0))
     throw new Error('Bad number of jobs passed to task');
 
-  this.jobs = jobs;
+  // Create new collection that we can use to signal all events complete
+  this._childrenStatus = new Mongo.Collection(null);
 
-  _.each(jobs, function(job) {
-    jobs.enQueue();
+  this._jobs = jobs;
+  this._ordered = ordered;
+
+
+  // We are now ready
+  this.status = Dispatcher.jobStatus.READY;
+};
+
+DispatcherTask.prototype.execute = function(callback) {
+  this.status = Dispatcher.jobStatus.PENDING;
+
+  if (this._ordered === true) {
+    // Do each job synchronously
+    try {
+      this.executeSync();
+    } catch(e) {
+      // Revert changes in completed jobs
+      // log the failure
+
+      // execute callback when complete
+      callback(e);
+    }
+  } else {
+    this.executeAsync(callback);
+  }
+};
+
+DispatcherTask.prototype.executeAsync = function(callback) {
+  var self = this;
+
+  var timeout = 15000; // TODO: Should make config value or param
+
+
+  // This is what will ultimately use our callback
+  this._childrenStatus.find().observe({
+    changed: function(doc) {
+
+      if (self.status !== Dispatcher.jobStatus.PENDING)
+        return;
+
+      var complete = true;
+      var err = false;
+      _.each(doc, function(value, key) {
+        if (key !== '_id') {
+          if (value !== Dispatcher.jobStatus.COMPLETE)
+            complete = false;
+
+          if (value === Dispatcher.jobStatus.FAILED)
+            error = true;
+        }
+      });
+
+      if (err) {
+        self.status = Dispatcher.jobStatus.FAILED;
+        callback(seld.errMsg);
+      }
+
+      if (complete) {
+        self.status = Dispatcher.jobStatus.COMPLETE;
+        callback(null);
+      }
+    }
+  });
+
+  // Put callback here to act as a timeout
+  Meteor.setTimeout(function() {
+    if (self.status === Dispatcher.jobStatus.PENDING) {
+      self.cancel();
+      callback(new Error('TIMEOUT ' + timeout));
+    }
+  }, timeout);
+
+  // Execute each callback
+  _.each(this._jobs, function(job) {
+    job.execute(function(error, result) {
+      if (error) {
+        if (!self.errMsg)
+          self.errMsg = error.message;
+      }
+    });
   });
 };
+
+
+DispatcherTask.prototype.executeSync = function() {
+  var self = this;
+
+  var task = Meteor.wrapAsync(self.executeAsync);
+  return task();
+}
+
+// TODO: figure out how this will interact with the observe callback
+DispatcherTask.prototype.cancel = function() {
+    // cancels and rolls back each job
+  _.each(this._jobs, function(job) {
+    job.cancel();
+  });
+
+  this.status = Dispatcher.jobStatus.FAILED;
+};
+
+test = function() {
+  var self = this;
+
+  var jobs = [{
+    execute: function() {
+      console.log('2. job begin');
+      console.log(task.status)
+
+      Meteor.setTimeout(function() {
+        console.log('3. conmplete');
+        console.log(task.status);
+      });
+    }
+  }];
+
+  task = new DispatcherTask(jobs, false);
+
+  console.log('1. executing task');
+  console.log(task.status);
+
+  task.execute(function() {
+    console.log('4. task done')
+    console.log(task.status);
+  });
+
+
+  // this.taskStatus = new Mongo.Collection(null);
+
+  // this.taskStatus.find().observe({
+  //   added: function(doc) {
+  //     console.log(_.keys(doc));
+  //   }
+  // });
+};
+
+// Test.prototype.go = function() {
+//   var self = this;
+
+//   Meteor.setTimeout(function() {
+//     self.taskStatus.insert({ name: 'drew', face: 'pretty' });
+//   }, 3000);
+// }

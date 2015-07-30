@@ -1,18 +1,5 @@
-Jobs = Object.freeze({
-  JobType: {
-    DEPOSIT_ITEMS: 'Deposit items',
-    DEPOSIT_CASH: 'Deposit cash',
-    WITHDRAW_ITEMS: 'Withdraw items',
-    WITHDRAW_CASH: 'Withdraw cash'
-  },
-  JobStatus: {
-    COMPLETE: 'Complete',
-    PENDING: 'Pending',
-    READY: 'Ready'
-  }
-});
 
-QueueJob = function(jobType, options) {
+BotJob = function(jobType, options) {
   // if (jobType === Jobs.JobType.DEPOSIT_ITEMS)
 
 
@@ -34,11 +21,11 @@ QueueJob = function(jobType, options) {
   this.status = Jobs.JobStatus.READY;
 };
 
-QueueJob.prototype.enQueue = function() {
+BotJob.prototype.enQueue = function() {
 
 };
 
-QueueJob.prototype.begin = function() {
+BotJob.prototype.begin = function() {
 
 };
 
