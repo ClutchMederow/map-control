@@ -138,7 +138,8 @@ _.extend(Dispatcher, {
     COMPLETE: 'COMPLETE',
     FAILED: 'FAILED',
     PENDING: 'PENDING',
-    READY: 'READY'
+    READY: 'READY',
+    TIMEOUT: 'TIMEOUT'
   }),
 });
 
@@ -146,14 +147,32 @@ _.extend(Dispatcher, {
 DispatcherTask = function(jobs, ordered) {
   var self = this;
 
-  check(jobs, Array);
   check(ordered, Boolean);
+  check(jobs, Array);
+
+  // Since JS doesn't have interfaces, this will have to do
+  // All jobs must have the properties defined below
+  check(jobs, Match.Where(function() {
+    _.each(jobs, function(job) {
+      if (typeof job.execute !== 'function')
+        return false;
+
+      if (typeof job.status !== 'string')
+        return false;
+
+      if (typeof job.cancel !== 'function')
+        return false;
+    });
+
+    return true;
+  }))
 
   if (!(jobs.length > 0))
     throw new Error('Bad number of jobs passed to task');
 
   // Create new collection that we can use to signal all events complete
   this._childrenStatus = new Mongo.Collection(null);
+  this._mongoId = this._childrenStatus.insert({ random: Date.now() });
 
   this._jobs = jobs;
   this._ordered = ordered;
@@ -185,34 +204,35 @@ DispatcherTask.prototype.execute = function(callback) {
 DispatcherTask.prototype.executeAsync = function(callback) {
   var self = this;
 
-  var timeout = 15000; // TODO: Should make config value or param
+  var timeout = 8000; // TODO: Should make config value or param
 
 
-  // This is what will ultimately use our callback
+  // This is where we will ultimately use our callback if no timeout
   this._childrenStatus.find().observe({
     changed: function(doc) {
 
+      // Ignore all changes that occur before or after we have moved to the next state
       if (self.status !== Dispatcher.jobStatus.PENDING)
         return;
 
       var complete = true;
       var err = false;
-      _.each(doc, function(value, key) {
-        if (key !== '_id') {
-          if (value !== Dispatcher.jobStatus.COMPLETE)
-            complete = false;
 
-          if (value === Dispatcher.jobStatus.FAILED)
-            error = true;
-        }
+      // Check each job's status
+      // If ALL return complete or at least ONE returns failed, we move to the next phase
+      _.each(self._jobs, function(job) {
+        if (job.status !== Dispatcher.jobStatus.COMPLETE)
+          complete = false;
+
+        if (job.status === Dispatcher.jobStatus.FAILED)
+          err = true;
       });
 
+      // Set the status and call the callback when we have reached an endpoint
       if (err) {
         self.status = Dispatcher.jobStatus.FAILED;
-        callback(seld.errMsg);
-      }
-
-      if (complete) {
+        callback(self.errMsg);
+      } else if (complete) {
         self.status = Dispatcher.jobStatus.COMPLETE;
         callback(null);
       }
@@ -222,6 +242,7 @@ DispatcherTask.prototype.executeAsync = function(callback) {
   // Put callback here to act as a timeout
   Meteor.setTimeout(function() {
     if (self.status === Dispatcher.jobStatus.PENDING) {
+      self.status = Dispatcher.jobStatus.TIMEOUT;
       self.cancel();
       callback(new Error('TIMEOUT ' + timeout));
     }
@@ -230,9 +251,16 @@ DispatcherTask.prototype.executeAsync = function(callback) {
   // Execute each callback
   _.each(this._jobs, function(job) {
     job.execute(function(error, result) {
+
+      // If this is the first one to error, set the error message
       if (error) {
         if (!self.errMsg)
           self.errMsg = error.message;
+      } else {
+
+        // Update the collection so it triggers the 'changed' function
+        var random = Date.now() + Math.random();
+        self._childrenStatus.update(self._mongoId, { $set: { random: random  } });
       }
     });
   });
@@ -253,34 +281,103 @@ DispatcherTask.prototype.cancel = function() {
     job.cancel();
   });
 
-  this.status = Dispatcher.jobStatus.FAILED;
 };
 
 test = function() {
   var self = this;
 
-  var jobs = [{
-    execute: function() {
-      console.log('2. job begin');
+  var job = {
+    execute: function(callback) {
+      console.log('2. job begin (job1)');
       console.log(task.status)
 
-      Meteor.setTimeout(function() {
-        console.log('3. conmplete');
+      var self = this;
+      this.status = Dispatcher.jobStatus.PENDING;
+
+      self.timeoutId = Meteor.setTimeout(function() {
+        self.status = Dispatcher.jobStatus.COMPLETE;
+
+        console.log('3. complete (job1)');
         console.log(task.status);
-      });
-    }
-  }];
 
-  task = new DispatcherTask(jobs, false);
+        callback();
+      }, 3000);
+    },
 
-  console.log('1. executing task');
+    status: Dispatcher.jobStatus.READY,
+
+    cancel: function() {
+      var self = this;
+      Meteor.clearTimeout(self.timeoutId);
+      console.log('cancelled (job1)');
+    },
+
+    jobName: 'job1'
+  };
+
+  var job2 = {
+    execute: function(callback) {
+      console.log('2. job begin (job2)');
+      console.log(task.status)
+
+      var self = this;
+      this.status = Dispatcher.jobStatus.PENDING;
+
+      Meteor.setTimeout(function() {
+        self.status = Dispatcher.jobStatus.COMPLETE;
+
+        console.log('3. complete (job2)');
+        console.log(task.status);
+
+        callback();
+      }, 1000);
+    },
+
+    status: Dispatcher.jobStatus.READY,
+
+    cancel: function() {
+      console.log('cancelled (job2)');
+    },
+
+    jobName: 'job1'
+  };
+
+  var job3 = {
+    execute: function(callback) {
+      console.log('2. job begin (job2)');
+      console.log(task.status)
+
+      var self = this;
+      this.status = Dispatcher.jobStatus.PENDING;
+
+      Meteor.setTimeout(function() {
+        self.status = Dispatcher.jobStatus.FAILED;
+
+        console.log('3. complete (job2)');
+        console.log(task.status);
+
+        callback();
+      }, 1000);
+    },
+
+    status: Dispatcher.jobStatus.READY,
+
+    cancel: function() {
+      console.log('cancelled (job2)');
+    },
+
+    jobName: 'job3'
+  };
+
+  task = new DispatcherTask([job, job3], false);
+
+  console.log('1. executing task (all jobs)');
   console.log(task.status);
 
   task.execute(function() {
-    console.log('4. task done')
+    console.log('4. task done (all jobs)')
     console.log(task.status);
   });
-
 
   // this.taskStatus = new Mongo.Collection(null);
 
