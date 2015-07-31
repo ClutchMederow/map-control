@@ -226,12 +226,11 @@ DispatcherTask.prototype._executeParallel = function(callback) {
           complete = false;
 
         if (job.status === Dispatcher.jobStatus.FAILED)
-          err = true;
+          err = self.error;
       });
 
       // Set the status and call the callback when we have reached an endpoint
       if (err) {
-        self.status = Dispatcher.jobStatus.FAILED;
         self.cancel();
         callback(self.error);
       } else if (complete) {
@@ -254,7 +253,7 @@ DispatcherTask.prototype._executeParallel = function(callback) {
   _.each(this._jobs, function(job) {
     job.execute(function(error, result) {
 
-      // If this is the first one to error, set the error message
+      // If this is the first one to error, store the error
       if (error) {
         if (!self.error)
           self.error = error;
@@ -269,6 +268,7 @@ DispatcherTask.prototype._executeParallel = function(callback) {
 
 
 // TODO: Add some checks that it was successully rolled back
+// Possibly ROLLING and FAILED
 
 // Executes each job serially
 DispatcherTask.prototype._executeSerial = function(callback) {
@@ -280,7 +280,11 @@ DispatcherTask.prototype._executeSerial = function(callback) {
       var err;
 
       // Run each job in wrapAsync so they run serially
-      _.each(self._jobs, function(job) {
+      _.find(self._jobs, function(job) {
+
+        // Breaks out of the loop if the task is cancelled externally
+        if (self.status !== Dispatcher.jobStatus.PENDING)
+          return true;
 
         // Run it baby
         Meteor.wrapAsync(job.execute)();
@@ -291,10 +295,13 @@ DispatcherTask.prototype._executeSerial = function(callback) {
           throw new Error('JOB_FAILED_NO_ERROR: ' + job.jobId);
       });
 
+      // All is well, let's execute the callback as successful
       self.status = Dispatcher.jobStatus.COMPLETE;
       callback(null);
+
     } catch(e) {
-      self.status = Dispatcher.jobStatus.FAILED;
+
+      // There was a problem, let's cancel all ongoing activities
       self.cancel();
       callback(e);
     }
@@ -306,8 +313,19 @@ DispatcherTask.prototype._executeSerial = function(callback) {
 
 // TODO: figure out how this will interact with the observe callback
 DispatcherTask.prototype.cancel = function() {
-    // cancels and rolls back each job
-  _.each(this._jobs, function(job) {
-    job.cancel();
-  });
+
+  // Only cancel if completed or pending, otherise do nothing
+  if (this.status === Dispatcher.jobStatus.PENDING || this.status === Dispatcher.jobStatus.COMPLETE) {
+
+    // cancels and rolls back each parallel job
+    _.each(this._jobs, function(job) {
+
+      // Prevents this from being called further up the chain
+      if (job.status !== Dispatcher.jobType.FAILED)
+        job.cancel();
+    });
+  }
+
+  // Ensures all synchronous jobs get cancelled
+  this.status = Dispatcher.jobStatus.FAILED;
 };
