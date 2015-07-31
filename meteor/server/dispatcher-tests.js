@@ -110,6 +110,8 @@ DispatcherTest = {
   test1: function() {
     var self = this;
 
+    console.log('Test 1: Two ordered tests that both succeed');
+
     task = new DispatcherTask([job1, job2], true);
 
     console.log('1. executing task (all jobs)');
@@ -123,6 +125,7 @@ DispatcherTest = {
 
   test2: function() {
     var self = this;
+    console.log('Test 2: Two ordered tests where the second one fails');
 
     task = new DispatcherTask([job1, job3], true);
 
@@ -137,6 +140,7 @@ DispatcherTest = {
 
   test3: function() {
     var self = this;
+    console.log('Test 3: Two parallel tests where they both succeed');
 
     task = new DispatcherTask([job1, job2], false);
 
@@ -151,6 +155,7 @@ DispatcherTest = {
 
   test4: function() {
     var self = this;
+    console.log('Test 4: Two parallel tests where the first one fails');
 
     task = new DispatcherTask([job1, job3], false);
 
