@@ -162,6 +162,9 @@ DispatcherTask = function(jobs, ordered) {
 
       if (typeof job.cancel !== 'function')
         return false;
+
+      if (typeof job.jobId !== 'string')
+        return false;
     });
 
     return true;
@@ -177,6 +180,10 @@ DispatcherTask = function(jobs, ordered) {
   this._jobs = jobs;
   this._ordered = ordered;
 
+  this.jobId = '1a'; //////// ----------------------------------THIS NEEDS TO ACTUALLY COME FROM INSERTION INTO A COLLECTION
+
+  // This should only be populated if there is an error
+  this.error = null;
 
   // We are now ready
   this.status = Dispatcher.jobStatus.READY;
@@ -186,26 +193,18 @@ DispatcherTask.prototype.execute = function(callback) {
   this.status = Dispatcher.jobStatus.PENDING;
 
   if (this._ordered === true) {
-    // Do each job synchronously
-    try {
-      this.executeSync();
-    } catch(e) {
-      // Revert changes in completed jobs
-      // log the failure
-
-      // execute callback when complete
-      callback(e);
-    }
+    // Do each job in order
+    this._executeSerial(callback);
   } else {
-    this.executeAsync(callback);
+    // Do each job in parallel
+    this._executeParallel(callback);
   }
 };
 
-DispatcherTask.prototype.executeAsync = function(callback) {
+DispatcherTask.prototype._executeParallel = function(callback) {
   var self = this;
 
   var timeout = 8000; // TODO: Should make config value or param
-
 
   // This is where we will ultimately use our callback if no timeout
   this._childrenStatus.find().observe({
@@ -216,7 +215,9 @@ DispatcherTask.prototype.executeAsync = function(callback) {
         return;
 
       var complete = true;
-      var err = false;
+
+      // Should be null if no error, double check anyway
+      var err = self.error;
 
       // Check each job's status
       // If ALL return complete or at least ONE returns failed, we move to the next phase
@@ -231,7 +232,8 @@ DispatcherTask.prototype.executeAsync = function(callback) {
       // Set the status and call the callback when we have reached an endpoint
       if (err) {
         self.status = Dispatcher.jobStatus.FAILED;
-        callback(self.errMsg);
+        self.cancel();
+        callback(self.error);
       } else if (complete) {
         self.status = Dispatcher.jobStatus.COMPLETE;
         callback(null);
@@ -254,24 +256,52 @@ DispatcherTask.prototype.executeAsync = function(callback) {
 
       // If this is the first one to error, set the error message
       if (error) {
-        if (!self.errMsg)
-          self.errMsg = error.message;
-      } else {
-
-        // Update the collection so it triggers the 'changed' function
-        var random = Date.now() + Math.random();
-        self._childrenStatus.update(self._mongoId, { $set: { random: random  } });
+        if (!self.error)
+          self.error = error;
       }
+
+      // Update the collection so it triggers the 'changed' function
+      var random = Date.now() + Math.random();
+      self._childrenStatus.update(self._mongoId, { $set: { random: random  } });
     });
   });
 };
 
 
-DispatcherTask.prototype.executeSync = function() {
+// TODO: Add some checks that it was successully rolled back
+
+// Executes each job serially
+DispatcherTask.prototype._executeSerial = function(callback) {
   var self = this;
 
-  var task = Meteor.wrapAsync(self.executeAsync);
-  return task();
+  // Wait for each job to complete prior to kicking off the next one
+  function exec() {
+    try {
+      var err;
+
+      // Run each job in wrapAsync so they run serially
+      _.each(self._jobs, function(job) {
+
+        // Run it baby
+        Meteor.wrapAsync(job.execute)();
+
+        // Double check that the job is marked as complete prior to moving on
+        // It should throw an error in the warpAsync if the job passes a non-nullish error callback, though
+        if (job.status !== Dispatcher.jobStatus.COMPLETE)
+          throw new Error('JOB_FAILED_NO_ERROR: ' + job.jobId);
+      });
+
+      self.status = Dispatcher.jobStatus.COMPLETE;
+      callback(null);
+    } catch(e) {
+      self.status = Dispatcher.jobStatus.FAILED;
+      self.cancel();
+      callback(e);
+    }
+  }
+
+  // Execute in settimeout to take it off the event loop
+  Meteor.setTimeout(exec, 0);
 }
 
 // TODO: figure out how this will interact with the observe callback
@@ -280,118 +310,4 @@ DispatcherTask.prototype.cancel = function() {
   _.each(this._jobs, function(job) {
     job.cancel();
   });
-
 };
-
-test = function() {
-  var self = this;
-
-  var job = {
-    execute: function(callback) {
-      console.log('2. job begin (job1)');
-      console.log(task.status)
-
-      var self = this;
-      this.status = Dispatcher.jobStatus.PENDING;
-
-      self.timeoutId = Meteor.setTimeout(function() {
-        self.status = Dispatcher.jobStatus.COMPLETE;
-
-        console.log('3. complete (job1)');
-        console.log(task.status);
-
-        callback();
-      }, 3000);
-    },
-
-    status: Dispatcher.jobStatus.READY,
-
-    cancel: function() {
-      var self = this;
-      Meteor.clearTimeout(self.timeoutId);
-      console.log('cancelled (job1)');
-    },
-
-    jobName: 'job1'
-  };
-
-  var job2 = {
-    execute: function(callback) {
-      console.log('2. job begin (job2)');
-      console.log(task.status)
-
-      var self = this;
-      this.status = Dispatcher.jobStatus.PENDING;
-
-      Meteor.setTimeout(function() {
-        self.status = Dispatcher.jobStatus.COMPLETE;
-
-        console.log('3. complete (job2)');
-        console.log(task.status);
-
-        callback();
-      }, 1000);
-    },
-
-    status: Dispatcher.jobStatus.READY,
-
-    cancel: function() {
-      console.log('cancelled (job2)');
-    },
-
-    jobName: 'job1'
-  };
-
-  var job3 = {
-    execute: function(callback) {
-      console.log('2. job begin (job2)');
-      console.log(task.status)
-
-      var self = this;
-      this.status = Dispatcher.jobStatus.PENDING;
-
-      Meteor.setTimeout(function() {
-        self.status = Dispatcher.jobStatus.FAILED;
-
-        console.log('3. complete (job2)');
-        console.log(task.status);
-
-        callback();
-      }, 1000);
-    },
-
-    status: Dispatcher.jobStatus.READY,
-
-    cancel: function() {
-      console.log('cancelled (job2)');
-    },
-
-    jobName: 'job3'
-  };
-
-  task = new DispatcherTask([job, job3], false);
-
-  console.log('1. executing task (all jobs)');
-  console.log(task.status);
-
-  task.execute(function() {
-    console.log('4. task done (all jobs)')
-    console.log(task.status);
-  });
-
-  // this.taskStatus = new Mongo.Collection(null);
-
-  // this.taskStatus.find().observe({
-  //   added: function(doc) {
-  //     console.log(_.keys(doc));
-  //   }
-  // });
-};
-
-// Test.prototype.go = function() {
-//   var self = this;
-
-//   Meteor.setTimeout(function() {
-//     self.taskStatus.insert({ name: 'drew', face: 'pretty' });
-//   }, 3000);
-// }
