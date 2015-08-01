@@ -52,5 +52,26 @@ DB = {
   },
   rejectRealTimeTrade: function(tradeId) {
     RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
+  },
+  addItemToTrade: function(item, tradeId, field) {
+    //TODO: for some reason when I use field directly in the push
+    //statement below I get a simple schema validation error...
+    //this is a little more verbose, but cleaner I suppose
+    if(field === "user1Items") {
+      RealTimeTrade.update(tradeId, {$push: {user1Items: item}});
+    } else if (field === "user2Items") {
+      RealTimeTrade.update(tradeId, {$push: {user2Items: item}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+    }
+  },
+  removeItemFromTrade: function(item, tradeId, field) {
+    if(field === "user1Items") {
+      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}});
+    } else if (field === "user2Items") {
+      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+    }
   }
 };

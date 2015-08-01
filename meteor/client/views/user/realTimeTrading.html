@@ -1,5 +1,5 @@
 <template name="realTimeTrading">
-<h1>Real Time Trading</h1>
+<h1 class="center-align">Real Time Trading</h1>
 <!-- if userId matches userid of this block make it read only -->
 <!-- also remove any submit buttons -->
 <!-- also double check to make sure userId matches item holder -->
@@ -7,10 +7,35 @@
 <!-- if block -> if status is rejected then put up close message -->
 <div class="row">
   <div class="col s6">
-    <h3>Player 1</h3>
+    <h3 class="center-align">Me</h3>
+    <form>
+      <div class="input-field">
+        <input placeholder="Search Inventory" id="search" type="search" required>
+        <label for="search"><i class="mdi-action-search"></i></label>
+      </div>
+    </form>
+    <div class="col s12">
+      <br>
+      {{#each items}}
+      {{type}} - {{name}} 
+      <a class="waves-effect waves-teal btn-flat addMyItem">Add</a>
+      <br>
+      {{/each}}
+    </div>
+    <div class="col s12">
+      {{#each tradeItems}}
+      {{type}} - {{name}}
+      <a class="waves=effect waves-light btn removeMyItem">Remove</a>
+      <br>
+      {{/each}}
+    </div>
   </div>
-  <div class="col s6">
-    <h3>Player 2</h3>
+  <div class="col s6 grey lighten-2">
+    <h3 class="center-align">{{getOtherPlayerName}}</h3>
+    {{#each getOtherUserItems}} 
+      {{type}} - {{name}} 
+      <br>
+    {{/each}}
   </div>
 </div>
 </template>

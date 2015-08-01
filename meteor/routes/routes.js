@@ -26,7 +26,7 @@ Router.route('/realTimeTrading/:tradeId', {
   name: 'realTimeTrading',
   template: 'realTimeTrading',
   data: function() {
-    return RealTimeTrade.find(this.params.tradeId);
+    return RealTimeTrade.findOne(this.params.tradeId);
   }
 });
 
