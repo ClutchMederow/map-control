@@ -1,0 +1,15 @@
+<template name="notifications">
+<h3>Real Time Trading Requests</h3>
+{{#each realTimeRequests}}
+<div class="row">
+  <div class="col s8">
+    {{user1Id}} would like to trade
+  </div>
+  <div class="s4">
+    <a class="waves-effect waves-light btn accept">Accept</a>
+    <a class="waves-effect waves-light btn reject">Reject</a>
+  </div>
+</div>
+{{/each}}
+<hr>
+</template>

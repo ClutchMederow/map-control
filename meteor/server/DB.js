@@ -38,5 +38,19 @@ DB = {
   removeTrade: function(transactionId) {
     //TODO: make this an ENUM
     Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
+  },
+  insertRealTimeTrade: function(user1Id, user2Id) {
+    RealTimeTrade.insert({
+      user1Id: user1Id,
+      user2Id: user2Id,
+      user1Stage: "INVITED",
+      user2Stage: "INVITED"
+    });
+  },
+  acceptRealTimeTrade: function(tradeId) {
+    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING", user2Stage: "TRADING"}});
+  },
+  rejectRealTimeTrade: function(tradeId) {
+    RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
   }
 };

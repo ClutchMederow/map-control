@@ -4,7 +4,7 @@ RealTimeTrade = new Mongo.Collection('realtimetrade');
 RealTimeTrade.attachSchema({
   user1Id: {
     type: String,
-    label: 'User 1'
+    label: 'User that requests real time trade'
   }, 
   user1Items: {
     type: [Object],
@@ -14,7 +14,7 @@ RealTimeTrade.attachSchema({
   },
   user2Id: {
     type: String,
-    label: 'User B'
+    label: 'User that received real time trade invite'
   },
   user2Items: {
     type: [Object],
@@ -25,12 +25,12 @@ RealTimeTrade.attachSchema({
   user1Stage: {
     type: String,
     label: 'Current stage of user 2',
-    allowedValues: ['TRADING', 'DONE', 'CONFIRMED']
+    allowedValues: ['REJECTED','INVITED','TRADING', 'DONE', 'CONFIRMED']
   },
   user2Stage: {
     type: String,
     label: 'Current stage of user 2',
-    allowedValues: ['TRADING', 'DONE', 'CONFIRMED']
+    allowedValues: ['REJECTED', 'INVITED','TRADING', 'DONE', 'CONFIRMED']
   },
   transactionId: {
     type: String,
@@ -45,7 +45,7 @@ RealTimeTrade.attachSchema({
   closeReason: {
     type: String,
     label: 'reason real time trade was closed',
-    allowedValues: ['NOT_ACCEPTED', 'FAILED_TRADE', 'ACCEPTED'],
+    //allowedValues: ['NOT_ACCEPTED', 'FAILED_TRADE', 'ACCEPTED'],
     optional: true
   }
 });

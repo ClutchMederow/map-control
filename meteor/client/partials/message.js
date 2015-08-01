@@ -26,5 +26,17 @@ Template.message.events({
         console.log(error.reason);
       }
     });
+  },
+  'click .beginTrade': function(e) {
+    e.preventDefault();
+    console.log(this);
+    Meteor.call('createRealTimeTrade', this.user.userId,function(error) {
+      if(error) {
+        sAlert.error('Could not invite user to real time trade');
+      } else {
+        sAlert.success('Successfully sent invite. You will be notified if they accept it');
+      }
+    });
+  //{{pathFor route='realTimeTrading' data=getUsers}}  
   }
 });

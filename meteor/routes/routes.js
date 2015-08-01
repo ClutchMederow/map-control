@@ -22,15 +22,17 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
-Router.route('/realTimeTrading/:userId1/:userId2', {
+Router.route('/realTimeTrading/:tradeId', {
   name: 'realTimeTrading',
   template: 'realTimeTrading',
   data: function() {
-    return {
-      userId1: this.params.userId1,
-      userId2: this.params.userId2
-    };
+    return RealTimeTrade.find(this.params.tradeId);
   }
+});
+
+Router.route('/notifications', {
+  name: 'notifications', 
+  template: 'notifications'
 });
 
 Router.route('/market/:userId', {
