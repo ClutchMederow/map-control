@@ -4,6 +4,9 @@
     <h3 class="center-align">Welcome {{currentUser.profile.name}}</h3>
   </div>
 </div>
+<div class="row green lighten-4">
+  <h5 class="center-align">Current market stats: number of items traded, graphs?</h5>
+</div>
 <div class="row">
   <div class="col s4 grey lighten-5">
     <h5 class="center-align">Trade</h5>
@@ -14,16 +17,17 @@
   <div class="col s4 grey lighten-4">
     <h5 class="center-align">Command Center</h5>
     <h5><a href="{{pathFor route='myInventory'}}">My Inventory</a></h5>
-    <h5><a href="{{pathFor route='notifications'}}">Notifications</a></h5>
     <h5><a href="{{pathFor route='market' data=getMyListings}}">My Listings</a></h5>
     <h5><a href="{{pathFor route='myTransactions' data=getMyTransactions}}">
         My Open Trades
       </a>
     </h5>
+    <h5><a href="#">Add Items to Stash</a></h5>
   </div>
   <div class="col s4 grey lighten-3">
-    <h5 class="center-align">Profile</h5>
-    <h5><a href="#!">Add items to Stash</a></h5>
+    <h5 class="center-align">Notifications</h5>
+    <p>This will eventually streams notifications</p>
+    <h5><a href="{{pathFor route='notifications'}}">Notifications</a></h5>
   </div>
 </div>
 </template>
