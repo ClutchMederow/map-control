@@ -27,6 +27,11 @@ Router.route('/realTimeTrading/:tradeId', {
   template: 'realTimeTrading',
   data: function() {
     return RealTimeTrade.findOne(this.params.tradeId);
+  },
+  action: function() {
+    if(this.ready()) {
+      this.render();
+    }
   }
 });
 
@@ -72,7 +77,12 @@ Router.route('/stripepayment', {
 
 Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
-  template: 'chatWindow'
+  template: 'chatWindow',
+  action: function() {
+    if (this.ready()) {
+      this.render();
+    }
+  }
 });
 
 Router.route('/makeOffer/:listingId', {

@@ -8,7 +8,10 @@ Meteor.methods({
     var trade = RealTimeTrade.findOne(tradeId);
     //security check
     if(this.userId === trade.user2Id) {
-      DB.acceptRealTimeTrade(tradeId);
+      var channelId = DB.insertPrivateChannel(this.userId, trade.user1Id);
+      var channel = Channels.findOne(channelId);
+      DB.acceptRealTimeTrade(tradeId, channel);
+      //start private chat 
       return tradeId;
     } else {
       throw new Meteor.Error("SECURITY_ERROR", "You are not authorized to accept this trade");

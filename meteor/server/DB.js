@@ -7,6 +7,16 @@ DB = {
       datePosted: new Date()
     });
   },
+  insertPrivateChannel: function(user1Id, user2Id) {
+    var requestor = Users.findOne(user1Id);
+    var submittor = Users.findOne(user2Id);
+    return Channels.insert({
+      //shouldn't need name for private chats
+      name: Random.id(),
+      publishedToUsers: [user1Id, user2Id],
+      category: 'Private' 
+    });
+  },
   removeInventoryItems: function(userId) {
     InventoryItems.remove({userId: userId});
   },
@@ -47,8 +57,10 @@ DB = {
       user2Stage: "INVITED"
     });
   },
-  acceptRealTimeTrade: function(tradeId) {
-    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING", user2Stage: "TRADING"}});
+  acceptRealTimeTrade: function(tradeId, channel) {
+    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING", 
+                         user2Stage: "TRADING",
+    channel: channel}});
   },
   rejectRealTimeTrade: function(tradeId) {
     RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});

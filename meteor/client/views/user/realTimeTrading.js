@@ -1,7 +1,12 @@
 var searchText = new ReactiveVar('');
 
-Template.realTimeTrading.onCreated(function() {
+Template.realTimeTrading.onRendered(function() {
   searchText.set('');
+  Session.set('channel', this.data.channel.name);
+  var self = this;
+  self.autorun(function() {
+    self.subscribe('messages', Session.get('channel'));
+  });
 });
 
 Template.realTimeTrading.helpers({
@@ -75,7 +80,10 @@ Template.realTimeTrading.helpers({
     } else {
       return this.user2Stage === "TRADING";
     }
-  }
+  },
+  messages: function() {
+    return Messages.find({'channel.name': Session.get('channel')});
+  },
 });
 
 Template.realTimeTrading.events({

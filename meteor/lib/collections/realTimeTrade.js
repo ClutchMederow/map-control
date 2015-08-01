@@ -47,5 +47,11 @@ RealTimeTrade.attachSchema({
     label: 'reason real time trade was closed',
     //allowedValues: ['NOT_ACCEPTED', 'FAILED_TRADE', 'ACCEPTED'],
     optional: true
+  },
+  channel: {
+    type: Object,
+    blackbox: true,
+    optional: true,
+    label: 'chat channel, specific to this transaction'
   }
 });
