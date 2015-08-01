@@ -7,6 +7,16 @@ DB = {
       datePosted: new Date()
     });
   },
+  insertPrivateChannel: function(user1Id, user2Id) {
+    var requestor = Users.findOne(user1Id);
+    var submittor = Users.findOne(user2Id);
+    return Channels.insert({
+      //shouldn't need name for private chats
+      name: Random.id(),
+      publishedToUsers: [user1Id, user2Id],
+      category: 'Private' 
+    });
+  },
   removeInventoryItems: function(userId) {
     InventoryItems.remove({userId: userId});
   },
@@ -38,5 +48,59 @@ DB = {
   removeTrade: function(transactionId) {
     //TODO: make this an ENUM
     Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
+  },
+  insertRealTimeTrade: function(user1Id, user2Id) {
+    RealTimeTrade.insert({
+      user1Id: user1Id,
+      user2Id: user2Id,
+      user1Stage: "INVITED",
+      user2Stage: "INVITED"
+    });
+  },
+  acceptRealTimeTrade: function(tradeId, channel) {
+    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING", 
+                         user2Stage: "TRADING",
+    channel: channel}});
+  },
+  rejectRealTimeTrade: function(tradeId) {
+    RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
+  },
+  addItemToTrade: function(item, tradeId, field) {
+    //TODO: for some reason when I use field directly in the push
+    //statement below I get a simple schema validation error...
+    //this is a little more verbose, but cleaner I suppose
+    if(field === "user1Items") {
+      RealTimeTrade.update(tradeId, {$push: {user1Items: item}});
+    } else if (field === "user2Items") {
+      RealTimeTrade.update(tradeId, {$push: {user2Items: item}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+    }
+  },
+  removeItemFromTrade: function(item, tradeId, field) {
+    if(field === "user1Items") {
+      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}});
+    } else if (field === "user2Items") {
+      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+    }
+  },
+  setTradeStage: function(tradeId, field, stage) {
+    if(field === "user1Stage") {
+      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}});
+    } else if (field === "user2Stage") {
+      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
+    }
+  },
+  checkForTradeCompletion: function(tradeId) {
+    var trade = RealTimeTrade.findOne(tradeId);
+    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage == "CONFIRMED") {
+      //TODO: execute trade
+      //Transactions.insert...
+      //Dispatcher
+    }
   }
 };

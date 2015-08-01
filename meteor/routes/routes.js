@@ -22,6 +22,24 @@ Router.route('/memberHomePage', {
   template: 'memberHomePage'
 });
 
+Router.route('/realTimeTrading/:tradeId', {
+  name: 'realTimeTrading',
+  template: 'realTimeTrading',
+  data: function() {
+    return RealTimeTrade.findOne(this.params.tradeId);
+  },
+  action: function() {
+    if(this.ready()) {
+      this.render();
+    }
+  }
+});
+
+Router.route('/notifications', {
+  name: 'notifications', 
+  template: 'notifications'
+});
+
 Router.route('/market/:userId', {
   name: 'market', 
   template: 'market',
@@ -59,7 +77,12 @@ Router.route('/stripepayment', {
 
 Router.route('/tradingFloor/:channel',{
   name: 'chatWindow' ,
-  template: 'chatWindow'
+  template: 'chatWindow',
+  action: function() {
+    if (this.ready()) {
+      this.render();
+    }
+  }
 });
 
 Router.route('/makeOffer/:listingId', {

@@ -35,7 +35,7 @@ Transactions.attachSchema({
     label: 'Current Stage',
     //may need compound states, i.e. A accepts B rejects
     allowedValues: ['INITIAL_OFFER', 'DECLINED', 'CANCELED', 'ACCEPTED'] 
-  }
+  },
 });
 
 Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, stage) {

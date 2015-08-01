@@ -9,6 +9,14 @@ Template.message.onRendered( function() {
   });
 });
 
+Template.message.helpers({
+  getUsers: function() {
+    return {
+      userId1: Meteor.userId(),
+      userId2: this.user.userId
+    };
+  }
+});
 Template.message.events({
   'click .privateChat': function(e) {
     e.preventDefault();
@@ -18,5 +26,17 @@ Template.message.events({
         console.log(error.reason);
       }
     });
+  },
+  'click .beginTrade': function(e) {
+    e.preventDefault();
+    console.log(this);
+    Meteor.call('createRealTimeTrade', this.user.userId,function(error) {
+      if(error) {
+        sAlert.error('Could not invite user to real time trade');
+      } else {
+        sAlert.success('Successfully sent invite. You will be notified if they accept it');
+      }
+    });
+  //{{pathFor route='realTimeTrading' data=getUsers}}  
   }
 });

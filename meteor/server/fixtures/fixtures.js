@@ -54,26 +54,6 @@ Meteor.startup(function() {
     }
   });
  
-  var users = Users.find().fetch();
-  var userProfiles = _.map(users, function(user) {
-    return {
-      userId: user._id,
-      profile: user.profile
-    };
-  });
-  Factory.define('message', Messages, {
-    text: function() {
-      return Fake.sentence();
-    },
-    user: function() {
-      return Fake.fromArray(userProfiles);
-    },
-    channel: 'Trading Floor',
-    datePosted: function() {
-      return new Date(); ///TODO: improve this
-    },
-  });
-
   //Channels
   var categories = ['Rifles', 'Pistols', 'SMG', 'Sniper Rifles'];
   Factory.define('channel', Channels, {
@@ -85,6 +65,40 @@ Meteor.startup(function() {
       return Fake.fromArray(categories);
     }
   });
+
+  if (Channels.find().count() === 0) {
+    Channels.insert({name: 'Trading Floor', 
+                    publishedToUsers: ['Public'],
+                    category: 'Trading Floor'});
+    _(5).times(function(n) {
+      Factory.create('channel');
+    });
+  }
+
+  var users = Users.find().fetch();
+  var userProfiles = _.map(users, function(user) {
+    return {
+      userId: user._id,
+      profile: user.profile
+    };
+  });
+
+  var channels = Channels.find().fetch();
+  Factory.define('message', Messages, {
+    text: function() {
+      return Fake.sentence();
+    },
+    user: function() {
+      return Fake.fromArray(userProfiles);
+    },
+    channel: function() {
+      return Fake.fromArray(channels);
+    },
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
+  });
+
 
   //Inventory Items
   var itemClasses = ['Rifle', 'Pistol', 'SMG', 'Sniper Rifle'];
@@ -104,6 +118,7 @@ Meteor.startup(function() {
     deleteInd: false 
   });
 
+
   //TODO: put in dev / production flag here
   if (Messages.find().count() === 0) {
     _(10).times(function(n) {
@@ -111,14 +126,6 @@ Meteor.startup(function() {
     });
   }
 
-  if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor', 
-                    publishedToUsers: ['Public'],
-                    category: 'Trading Floor'});
-    _(5).times(function(n) {
-      Factory.create('channel');
-    });
-  }
 
   /*
   if (InventoryItems.find().count() === 0) {

@@ -1,5 +1,6 @@
 Template.chatInput.events({
   'click #post': function(e) {
+    console.log(this);
     e.preventDefault();
     var attributes = {
       channel: Session.get('channel'),
