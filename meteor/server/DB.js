@@ -73,5 +73,22 @@ DB = {
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
+  },
+  setTradeStage: function(tradeId, field, stage) {
+    if(field === "user1Stage") {
+      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}});
+    } else if (field === "user2Stage") {
+      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}});
+    } else {
+      throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
+    }
+  },
+  checkForTradeCompletion: function(tradeId) {
+    var trade = RealTimeTrade.findOne(tradeId);
+    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage == "CONFIRMED") {
+      //TODO: execute trade
+      //Transactions.insert...
+      //Dispatcher
+    }
   }
 };

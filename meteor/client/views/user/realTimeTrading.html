@@ -8,6 +8,7 @@
 <div class="row">
   <div class="col s6">
     <h3 class="center-align">Me</h3>
+    {{#if isTrading}}
     <form>
       <div class="input-field">
         <input placeholder="Search Inventory" id="search" type="search" required>
@@ -28,6 +29,11 @@
       <a class="waves=effect waves-light btn removeMyItem">Remove</a>
       <br>
       {{/each}}
+    </div>
+    {{/if}}
+    <br>
+    <div class="col s12">
+      <a class="waves=effect waves-light btn {{stage}}">{{stage}}</a>
     </div>
   </div>
   <div class="col s6 grey lighten-2">

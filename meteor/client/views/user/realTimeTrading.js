@@ -38,6 +38,44 @@ Template.realTimeTrading.helpers({
       return this.user2Items;
     }
   },
+  isDone: function() {
+    if(Meteor.userId() === this.user1Id) {
+      return this.user1Stage === 'DONE';
+    } else {
+      return this.user2Stage === 'DONE';
+    }
+  },
+  isConfirmed: function() {
+    if(Meteor.userId() === this.user1Id) {
+      return this.user1Stage === 'CONFIRMED';
+    } else {
+      return this.user2Stage === 'CONFIRMED';
+    }
+  },
+  stage: function() {
+    var userStage = ""; 
+    if(Meteor.userId() === this.user1Id) {
+      userStage = "user1Stage";
+    } else {
+      userStage = "user2Stage";
+    }
+    if(this[userStage] === "TRADING") {
+      return "done";
+    } else if(this[userStage] === "DONE") {
+      return "confirm";
+    } else if(this[userStage] === "CONFIRMED") {
+      return "confirmed";
+    } else {
+      //ERROR
+    }
+  },
+  isTrading: function() {
+    if(Meteor.userId() === this.user1Id) {
+      return this.user1Stage === "TRADING";
+    } else {
+      return this.user2Stage === "TRADING";
+    }
+  }
 });
 
 Template.realTimeTrading.events({
@@ -50,7 +88,6 @@ Template.realTimeTrading.events({
     Meteor.call('addTradeItem', this, Template.parentData()._id,function(error) {
       if(error) {
         sAlert.error("Cannot add that item");
-        //TODO: remove that item
       }
     });
   },
@@ -58,7 +95,21 @@ Template.realTimeTrading.events({
     Meteor.call('removeTradeItem', this, Template.parentData()._id,function(error) {
       if(error) {
         sAlert.error("Cannot add that item");
-        //TODO: remove that item
+      }
+    });
+  },
+  'click .done': function(e) {
+    console.log(this);
+    Meteor.call('setStatusDone', this._id, function(error) {
+      if(error) {
+        console.log(error.reason);
+      }
+    });
+  },
+  'click .confirm': function(e) {
+    Meteor.call('setStatusConfirm', this._id, function(error) {
+      if(error) {
+        console.log(error.reason);
       }
     });
   }
