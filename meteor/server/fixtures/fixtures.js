@@ -18,6 +18,7 @@ Meteor.startup(function() {
     console.log("You do not have steam service configured");
   }
 
+
   //Load Generic Items
   if(GenericItems.find().count() === 0) {
     SteamAPI.getGenericItems();

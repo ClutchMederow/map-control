@@ -1,0 +1,22 @@
+<template name="creditCard">
+  <div class="row">
+    <div class="input-field col s12">
+      <label class="text-success"><i class="fa fa-lock"></i> Card Number (Totes Secure, Like a Bank)</label>
+      <input type="text" data-stripe="cardNumber" class="form-control card-number" placeholder="Card Number">
+    </div>
+  </div> <!-- end .row -->
+  <div class="row">
+    <div class="col s4">
+      <label>Exp. Mo.</label>
+      <input type="text" data-stripe="expMo" class="form-control exp-month" placeholder="Exp. Mo.">
+    </div>
+    <div class="col s4">
+      <label>Exp. Yr.</label>
+      <input type="text" data-stripe="expYr" class="form-control exp-year" placeholder="Exp. Yr.">
+    </div>
+    <div class="col s4">
+      <label>CVC</label>
+      <input type="text" data-stripe="cvc" class="form-control cvc" placeholder="CVC">
+    </div>
+  </div> <!-- end .row -->
+</template>

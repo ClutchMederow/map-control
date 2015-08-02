@@ -12,6 +12,11 @@ Router.route('/', {
   template: 'landing'
 });
 
+Router.route('/signup', {
+  name: 'signup',
+  template: 'signup'
+});
+
 Router.route('/chats', {
   name: 'chats',
   template: 'chats'
@@ -97,4 +102,19 @@ Router.route('/makeOffer/:listingId', {
     return Listings.findOne({_id: this.params.listingId});
   }
 });
+
+//TODO: setup webhooks on stripe
+Router.route('/webhooks/stripe', function() {
+  var request = this.request.body;
+
+  switch(request.type){
+    case "invoice.payment_succeeded":
+      stripeCreateInvoice(request.data.object);
+    break;
+    //TODO: add additional ones here
+  }
+
+  this.response.statusCode = 200;
+  this.response.end('Oh hai Stripe!\n');
+}, {where: 'server'});
 

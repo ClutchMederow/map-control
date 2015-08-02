@@ -1,0 +1,13 @@
+<template name="signup">
+<div class="row">
+  <form id="application-signup" class="col s12">
+    {{> Template.dynamic template="creditCard" data="signup"}}
+    <div class="col s6 offset-s3 center-align">
+      <input type="submit" class="waves-effect waves-light btn-large"
+         data-loading-text="Setting up your trial..." 
+         style="margin-top: 40px; margin-bottom: 20px;" 
+         value="Add Payment Info">
+    </div> <!-- end .form-group -->"
+  </form>
+</div>
+</template>
