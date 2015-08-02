@@ -7,6 +7,8 @@ Meteor.publish('messages', function(channel) {
   return Messages.find({'channel.name': channel});
 });
 
+Messages._ensureIndex({"channel.name": 1});
+
 Meteor.publish('channels', function() {
   return Channels.find({$or: [
     {publishedToUsers: {$in: [this.userId]}}, 
@@ -15,12 +17,13 @@ Meteor.publish('channels', function() {
   });
 });
 
+Channels._ensureIndex({"publishedToUsers": 1});
+
 Meteor.publish('inventoryItems', function() {
   return InventoryItems.find({userId: this.userId});
 });
 
-//TODO: ensure index right below each publication. See differential blog
-//on that.
+InventoryItems._ensureIndex({"userId": 1});
 
 Meteor.publish('marketItems', function(){
   return InventoryItems.find({}, {$fields: {userId: 0, 
@@ -47,4 +50,15 @@ Meteor.publish('realtimetrade', function() {
   ]});
 });
 
-//TODO: indices on real time trading collection
+RealTimeTrade._ensureIndex({"user1Id": 1});
+RealTimeTrade._ensureIndex({"user2Id": 1});
+
+Meteor.publish('userPresence', function() {
+  //Note: this only shows status for logged in users
+  var filter = {userId: {$exists: true}};
+
+  return Presences.find(filter, {fields: {state: true, userId: true}});
+});
+
+//TODO: indices for presences?
+Presences._ensureIndex({"userId": 1});
