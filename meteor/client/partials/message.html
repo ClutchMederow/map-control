@@ -1,6 +1,6 @@
 <template name="message">
 <div>
-  <i class="medium mdi-action-account-box"></i>
+  <img class="responsive-img" src="{{getImage}}">
   <a href="#" class="dropdown-button btn" data-activates="{{user.userId}}">{{user.profile.name}}</a>
   <!-- Dropdown Structure -->
   <ul id="{{user.userId}}" class="dropdown-content">

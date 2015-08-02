@@ -15,6 +15,11 @@ Template.message.helpers({
       userId1: Meteor.userId(),
       userId2: this.user.userId
     };
+  },
+  getImage: function() {
+    if(Meteor.user().profile.avatar) {
+      return Meteor.user().profile.avatar;
+    }
   }
 });
 Template.message.events({
