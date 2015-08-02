@@ -2,6 +2,11 @@ Router.configure({
   layoutTemplate: 'layout'
 });
 
+Router.route('/faq', {
+  name: 'faq',
+  template: 'faq'
+});
+
 Router.route('/', {
   name: 'landing',
   template: 'landing'

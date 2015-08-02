@@ -33,7 +33,6 @@ Meteor.methods({
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
 
-
     if(this.userId === trade.user1Id) {
       if(trade.user1Stage !== "TRADING") {
         throw new Meteor.Error("SECURITY_ERROR", "Cannot trade item when not in trading");
