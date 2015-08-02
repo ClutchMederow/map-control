@@ -48,3 +48,12 @@ Meteor.publish('realtimetrade', function() {
 });
 
 //TODO: indices on real time trading collection
+
+Meteor.publish('userPresence', function() {
+  //Note: this only shows status for logged in users
+  var filter = {userId: {$exists: true}};
+
+  return Presences.find(filter, {fields: {state: true, userId: true}});
+});
+
+//TODO: indices for presences?
