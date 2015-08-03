@@ -20,6 +20,7 @@ var job1 = {
   status: Dispatcher.jobStatus.READY,
 
   cancel: function() {
+    this.status = Dispatcher.jobStatus.FAILED;
     var self = this;
     Meteor.clearTimeout(self.timeoutId);
     console.log('cancelled (job1)');
@@ -52,6 +53,7 @@ var job2 = {
   status: Dispatcher.jobStatus.READY,
 
   cancel: function() {
+    this.status = Dispatcher.jobStatus.FAILED;
     console.log('cancelled (job2)');
   },
 
@@ -82,6 +84,7 @@ var job3 = {
   status: Dispatcher.jobStatus.READY,
 
   cancel: function() {
+    this.status = Dispatcher.jobStatus.FAILED;
     console.log('cancelled (job3)');
   },
 
@@ -90,19 +93,19 @@ var job3 = {
   jobId: 3
 };
 
-var job4 = {
+job4 = {
   execute: function(callback) {
     console.log('2. job begin (job4)');
-    console.log(task.status)
 
     var self = this;
     this.status = Dispatcher.jobStatus.PENDING;
+    console.log(self.status)
 
     self.timeoutId = Meteor.setTimeout(function() {
       self.status = Dispatcher.jobStatus.COMPLETE;
 
       console.log('3. complete (job4)');
-      console.log(task.status);
+      console.log(self.status);
 
       callback();
     }, 3000);
@@ -111,6 +114,7 @@ var job4 = {
   status: Dispatcher.jobStatus.READY,
 
   cancel: function() {
+    this.status = Dispatcher.jobStatus.FAILED;
     var self = this;
     Meteor.clearTimeout(self.timeoutId);
     console.log('cancelled (job4)');
@@ -118,7 +122,39 @@ var job4 = {
 
   jobName: 'job4',
 
-  jobId: 1
+  jobId: 4
+};
+
+job5 = {
+  execute: function(callback) {
+    console.log('2. job begin (job5)');
+
+    var self = this;
+    this.status = Dispatcher.jobStatus.PENDING;
+    console.log(self.status)
+
+    self.timeoutId = Meteor.setTimeout(function() {
+      self.status = Dispatcher.jobStatus.COMPLETE;
+
+      console.log('3. complete (job5)');
+      console.log(self.status);
+
+      callback(new Error('uhoh'));
+    }, 3000);
+  },
+
+  status: Dispatcher.jobStatus.READY,
+
+  cancel: function() {
+    this.status = Dispatcher.jobStatus.FAILED;
+    var self = this;
+    Meteor.clearTimeout(self.timeoutId);
+    console.log('cancelled (job5)');
+  },
+
+  jobName: 'job5',
+
+  jobId: 5
 };
 
 var result = []
@@ -127,15 +163,21 @@ DispatcherTest = {
   test: function() {
     var self = this;
 
-    task = new DispatcherTask([job4], true);
+    task = new Task([job2, job5], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
+    task.execute(function(err) {
       console.log('4. task done (all jobs)')
       console.log(task.status);
+      console.log(err);
     });
+
+    // job4.execute(function(err) {
+    //   console.log(job4.status);
+    //   console.log(err);
+    // });
   },
 
   test1: function() {
@@ -143,7 +185,7 @@ DispatcherTest = {
 
     console.log('Test 1: Two ordered tasks that both succeed');
 
-    task = new DispatcherTask([job1, job2], true);
+    task = new Task([job1, job3], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -158,7 +200,7 @@ DispatcherTest = {
     var self = this;
     console.log('Test 2: Two ordered tasks where the second one fails');
 
-    task = new DispatcherTask([job1, job3], true);
+    task = new Task([job1, job3], true);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -173,7 +215,7 @@ DispatcherTest = {
     var self = this;
     console.log('Test 3: Two parallel tasks where they both succeed');
 
-    task = new DispatcherTask([job1, job2], false);
+    task = new Task([job1, job2], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -188,7 +230,7 @@ DispatcherTest = {
     var self = this;
     console.log('Test 4: Two parallel tasks where the first one fails');
 
-    task = new DispatcherTask([job1, job3], false);
+    task = new Task([job1, job3], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -203,8 +245,8 @@ DispatcherTest = {
     var self = this;
     console.log('Test 5: Two parallel tasks where the first one succeeds and the second is a task of parallel tasks that fails');
 
-    innerTask = new DispatcherTask([job1, job3], false);
-    task = new DispatcherTask([job4, innerTask], false);
+    innerTask = new Task([job1, job3], false);
+    task = new Task([job4, innerTask], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -219,8 +261,8 @@ DispatcherTest = {
     var self = this;
     console.log('Test 6: Two parallel tasks where the first one succeeds and the second is a serial task of tasks that fails');
 
-    innerTask = new DispatcherTask([job1, job3], true);
-    task = new DispatcherTask([job4, innerTask], false);
+    innerTask = new Task([job1, job3], true);
+    task = new Task([job4, innerTask], false);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -235,8 +277,11 @@ DispatcherTest = {
     var self = this;
     console.log('Test 7: Two serial tasks where the first one succeeds and the second is serial a task of tasks that fails');
 
-    innerTask = new DispatcherTask([job1, job3], true);
-    task = new DispatcherTask([job4, innerTask], true);
+    innerTask = new Task([job1, job3], true);
+    task = new Task([job4, innerTask], true);
+
+    innerTask.jobId = 'innerTask';
+    task.jobId = 'task';
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -251,8 +296,8 @@ DispatcherTest = {
     var self = this;
     console.log('Test 8: Two serial tasks where the first one succeeds and the second is parallel a task of tasks that fails');
 
-    innerTask = new DispatcherTask([job1, job3], false);
-    task = new DispatcherTask([job4, innerTask], true);
+    innerTask = new Task([job1, job3], false);
+    task = new Task([job4, innerTask], true);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
@@ -264,4 +309,3 @@ DispatcherTest = {
   },
 };
 
-TEST 8 IS FAILING
