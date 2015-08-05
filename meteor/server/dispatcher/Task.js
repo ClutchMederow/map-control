@@ -25,7 +25,7 @@ Task = function(jobs, ordered) {
     });
 
     return true;
-  }))
+  }));
 
   if (!(jobs.length > 0))
     throw new Error('Bad number of jobs passed to task');
@@ -149,10 +149,7 @@ Task.prototype._executeSerial = function() {
   // Wait for the future to be resolved
   // Will throw if the future.throw is calld
   jobFut.wait();
-
-  // If there are no errors, this will be reached
-  self.status = Dispatcher.jobStatus.COMPLETE;
-}
+};
 
 // TODO: figure out how this will interact with the observe callback
 Task.prototype.cancel = function() {
