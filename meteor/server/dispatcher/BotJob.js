@@ -65,7 +65,9 @@ BotJob.prototype.execute = function(callback) {
       }
 
     } catch(e) {
+
       err = e;
+
     }
 
     if (err)
@@ -106,29 +108,30 @@ BotJob.prototype._setStatus = function(status) {
 }
 
 BOTTEST = function(pw) {
-  bot = new SteamBot('meatsting', pw, 'KJ8RH', SteamAPI);
-  var trans = Transactions.insert({ name: 'test1' });
+  // bot = new SteamBot('meatsting', pw, 'KJ8RH', SteamAPI);
+  // var trans = Transactions.insert({ name: 'test1' });
 
   items = [{
     classId: '341291325',
     instanceId: '188530139'
   }];
 
-  var options = {
-    items: items,
-    steamId: '76561197965124635'
-  };
-  // private fields
+  // var options = {
+  //   items: items,
+  //   steamId: '76561197965124635'
+  // };
 
-  job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
+  // job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
 
-  job.execute(function(err, res) {
+  Dispatcher.init();
+  Dispatcher.depositItems('uYrKadsnCzyg9TLrC', items);
 
-    console.log(err);
-    console.log(res);
+  // job.execute(function(err, res) {
 
-    console.log('complete');
-  });
+  //   console.log(err);
+  //   console.log(res);
+
+  // });
 };
 /*
 

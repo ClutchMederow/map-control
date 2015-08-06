@@ -278,7 +278,7 @@ SteamBot.prototype.executeNext = function () {
     var nextFunc = this.queue.shift();
 
     // Wrap the function so we can be sure to set this to free when done
-    function wrappedQueuedFunction(err, res) {
+    function wrappedQueuedFunction() {
 
       // Execute the next function
       nextFunc();
@@ -289,7 +289,7 @@ SteamBot.prototype.executeNext = function () {
     }
 
     // We don't want to block here
-    Meteor.setTimeout(wrappedQueuedFunction, 0);
+    Meteor.setTimeout(wrappedQueuedFunction, 7000);
   }
 }
 

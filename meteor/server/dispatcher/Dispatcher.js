@@ -58,10 +58,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     if (!user.profile.botName)
       botName = DB.users.addBot(userId, assignBot());
+    else if (!bots[user.profile.botName])
+      botName = DB.users.addBot(userId, assignBot());
     else
       botName = user.profile.botName;
 
-    return botName;
+    return bots[botName];
   }
 
   function assignBot() {
@@ -101,7 +103,28 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       // BOTS FUCK YEAH
     },
 
+    depositItems: function(userId, items) {
+      check(userId, String);
+      check(items, Array);
 
+      var bot = getUsersBot(userId);
+      var user = Meteor.users.findOne(userId);
+
+      var options = {
+        items: items,
+        steamId: user.services.steam.id
+      };
+
+      // TODO: Put this is DB layer
+      var trans = Transactions.insert({ type: Dispatcher.jobType.DEPOSIT_ITEMS, userId: userId, items: items });
+
+      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
+      var task = new Task([job], false);
+
+      task.execute(function(err, res) {
+        console.log(err, res);
+      })
+    },
 
     init: function() {
       var self = this;
