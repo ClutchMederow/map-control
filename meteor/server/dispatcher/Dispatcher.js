@@ -137,6 +137,7 @@ _.extend(Dispatcher, {
   jobStatus: Object.freeze({
     COMPLETE: 'COMPLETE',
     FAILED: 'FAILED',
+    QUEUED: 'QUEUED',
     PENDING: 'PENDING',
     READY: 'READY',
     TIMEOUT: 'TIMEOUT'

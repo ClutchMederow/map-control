@@ -86,7 +86,7 @@ SteamAPI = (function () {
       "/inventory/json/" + csAppId + "/" + csContextId;
       console.log(callString);
       var data = HTTP.get(callString).data;
-      return data;
+      return JSON.parse(data);
     }
   };
 }) (); //Immediately Invoked Function that returns object

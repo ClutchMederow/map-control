@@ -1,23 +1,23 @@
 
-BotJob = function(bot, jobType, options) {
+BotJob = function(bot, jobType, transactionId, options) {
 
   // TODO: DISPATCHER ASSIGNS A BOT
 
   if (!(bot instanceof SteamBot))
-    throw new Error('NOT_A_BOT');
+    throw new Error('INVALID_BOT');
 
-  if (jobType === Jobs.JobType.DEPOSIT_ITEMS) {
+  if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
 
     check(options, {
       items: Array,
-      userId: String
+      steamId: String
     });
 
     // Check the array to be sure we can identify the item
     _.each(options.items, function(item) {
       check(item, {
-        classId: Number,
-        instanceId: Number
+        classId: String,
+        instanceId: String
       });
     });
 
@@ -27,36 +27,109 @@ BotJob = function(bot, jobType, options) {
     this._itemsNoAssetId = options.items;
   }
 
-  this.bot = bot;
-  this.userId = userId;
+  // private fields
+  this._transactionId = transactionId;
+  this._bot = bot;
+
+  // Fields to be stringified
+  this.steamId = options.steamId;
   this.jobType = jobType;
-  this.status = Jobs.JobStatus.READY;
-  this.jobId = Math.round(Math.random()*1000); //////// ---------------THIS NEEDS TO ACTUALLY COME FROM INSERTION INTO A COLLECTION
+  this.jobId = Random.id();
+
+  this._setStatus(Dispatcher.jobStatus.READY);
 };
 
 BotJob.prototype._executeDeposit = function() {
+  var self = this;
+  self._setStatus(Dispatcher.jobStatus.PENDING);
 
-  // Make trade request
+  // Find item assetIds
+  self.items = self._bot.getItemObjsWithIds(self.steamId, self._itemsNoAssetId);
 
-  //
-
+  // Make the tradeoffer
+  self.offerid = self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
 };
 
-BotJob.prototype._addToQueue = function (callback) {
+BotJob.prototype.execute = function(callback) {
+  var self = this;
+  self._setStatus(Dispatcher.jobStatus.QUEUED);
 
-  // Enqueues the callback
-  // Maybe this should be the same as execute ... get rid of it
+  function functionForQueue() {
+    var err, res;
 
-}
+    try {
 
-BotJob.prototype.execute = function() {
+      // Use the appropriate function
+      if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+        res = self._executeDeposit();
+      }
 
+    } catch(e) {
+      err = e;
+    }
+
+    if (err)
+      self._setStatus(Dispatcher.jobStatus.FAILED);
+    else
+      self._setStatus(Dispatcher.jobStatus.COMPLETE);
+
+    // Don't forget the callback!
+    callback(err, res);
+  }
+
+  this._bot.enqueue(functionForQueue);
 };
 
 BotJob.prototype.cancel = function() {
 
 };
 
+// Saves all non-private fields in a collection
+BotJob.prototype._save = function() {
+
+  function replacer(key, value) {
+    if (key.charAt(0) === '_')
+      return undefined;
+    else
+      return value;
+  }
+
+  // The parse + stringify combo gets ride of all functions and _ prefixed fields
+  var doc = JSON.parse(JSON.stringify(this, replacer));
+  DB.transactions.updateJobHistory(this._transactionId, doc);
+};
+
+// Set the status and push an update to the transaction
+BotJob.prototype._setStatus = function(status) {
+  this.status = status;
+  this._save();
+}
+
+BOTTEST = function(pw) {
+  bot = new SteamBot('meatsting', pw, 'KJ8RH', SteamAPI);
+  var trans = Transactions.insert({ name: 'test1' });
+
+  items = [{
+    classId: '341291325',
+    instanceId: '188530139'
+  }];
+
+  var options = {
+    items: items,
+    steamId: '76561197965124635'
+  };
+  // private fields
+
+  job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
+
+  job.execute(function(err, res) {
+
+    console.log(err);
+    console.log(res);
+
+    console.log('complete');
+  });
+};
 /*
 
 1. request to add items

@@ -29,5 +29,28 @@ DB = {
 
       return Meteor.users.findOne(userId).profile.botName;
     }
+  },
+
+  transactions: {
+    update: function(transactionId, doc) {
+      if (!doc.$set && !doc.$push)
+        throw new Error('INVALID_UPDATE: Must include $set operator');
+
+      console.log(transactionId, doc);
+
+      return Transactions.update(transactionId, doc);
+    },
+
+    updateJobHistory: function(transactionId, doc) {
+      doc.timestamp = new Date();
+
+      var updater = {
+        $push: {
+          jobHistory: doc
+        }
+      };
+
+      return DB.transactions.update(transactionId, updater);
+    }
   }
 };

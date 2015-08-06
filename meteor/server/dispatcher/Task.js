@@ -156,7 +156,7 @@ Task.prototype.cancel = function() {
   var self = this;
 
   // Only cancel if completed or pending, otherise do nothing
-  if (this.status === Dispatcher.jobStatus.PENDING || this.status === Dispatcher.jobStatus.COMPLETE) {
+  if (this.status !== Dispatcher.jobStatus.FAILED) {
 
     // cancels and rolls back each parallel job
     _.each(this._jobs, function(job) {
