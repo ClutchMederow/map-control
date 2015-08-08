@@ -38,9 +38,6 @@ Template.signup.onRendered(function() {
   });
 });
 
-Template.signup.helpers({
-
-});
 
 Template.signup.events({
 
