@@ -16,7 +16,7 @@ Template.realTimeTrading.helpers({
     var options = {limit: 5};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return InventoryItems.getItems(searchText.get(), fields, selector, options );
+      return Items.getItems(searchText.get(), fields, selector, options );
     } else {
       return null;
     }
@@ -58,7 +58,7 @@ Template.realTimeTrading.helpers({
     }
   },
   stage: function() {
-    var userStage = ""; 
+    var userStage = "";
     if(Meteor.userId() === this.user1Id) {
       userStage = "user1Stage";
     } else {

@@ -1,5 +1,5 @@
 Meteor.subscribe('channels');
-Meteor.subscribe('inventoryItems');
+Meteor.subscribe('items');
 Meteor.subscribe('marketItems');
 Meteor.subscribe('listings');
 Meteor.subscribe('transactions');

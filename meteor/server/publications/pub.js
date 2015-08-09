@@ -11,7 +11,7 @@ Messages._ensureIndex({"channel.name": 1});
 
 Meteor.publish('channels', function() {
   return Channels.find({$or: [
-    {publishedToUsers: {$in: [this.userId]}}, 
+    {publishedToUsers: {$in: [this.userId]}},
     {publishedToUsers: {$in: ['Public']}}
     ]
   });
@@ -19,15 +19,15 @@ Meteor.publish('channels', function() {
 
 Channels._ensureIndex({"publishedToUsers": 1});
 
-Meteor.publish('inventoryItems', function() {
-  return InventoryItems.find({userId: this.userId});
+Meteor.publish('items', function() {
+  return Items.find({userId: this.userId});
 });
 
-InventoryItems._ensureIndex({"userId": 1});
+Items._ensureIndex({"userId": 1});
 
 Meteor.publish('marketItems', function(){
-  return InventoryItems.find({}, {$fields: {userId: 0, 
-                             botId: 0, 
+  return Items.find({}, {$fields: {userId: 0,
+                             botId: 0,
                              currentTransactions: 0,
                              deleteInd: 0
   }});
@@ -45,7 +45,7 @@ Meteor.publish('transactions', function() {
 //Note: do not take in userid here, it can be spoofed
 //and is insecure
 Meteor.publish('realtimetrade', function() {
-  return RealTimeTrade.find({$or: [{user1Id: this.userId}, 
+  return RealTimeTrade.find({$or: [{user1Id: this.userId},
                                    {user2Id: this.userId}
   ]});
 });

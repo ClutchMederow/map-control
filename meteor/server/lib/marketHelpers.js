@@ -10,7 +10,7 @@ _.intersectionObjects = function(array) {
   return _.filter(_.uniq(array), function(item) {
     return _.every(rest, function(other) { //this goes through each of multiple arrays passed  in
       return _.any(other, function(element) {  //this then compares elements of each array to original
-        return _.isEqual(element, item);  
+        return _.isEqual(element, item);
       });
     });
   });
@@ -18,7 +18,7 @@ _.intersectionObjects = function(array) {
 
 MarketHelper = {
   checkInventoryForItems: function(userId, requestedItems) {
-    var stashItems = InventoryItems.find({userId: userId}).fetch();
+    var stashItems = Items.find({userId: userId}).fetch();
     //the requestedItems should be a subset of the player posting a trade
     //request's stash items. So we can check to see if intersection
     //of stashItems and requestedItems is equal to requestedItems

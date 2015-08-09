@@ -1,6 +1,6 @@
-InventoryItems = new Mongo.Collection('inventoryItems');
+Items = new Mongo.Collection('items');
 
-InventoryItems.attachSchema({
+Items.attachSchema({
   userId: {
     type: String,
     label: "user Id"
@@ -49,7 +49,7 @@ InventoryItems.attachSchema({
   itemId: {
     type: String,
     label: 'Steam ID of item'
-  }, 
+  },
   amount: {
     type: Number,
     label: 'Quantity of Item'
@@ -83,14 +83,14 @@ InventoryItems.attachSchema({
   }
 });
 //Attach Search to Collections
-InventoryItems.searchFor = searchFor;
-InventoryItems.searchForOne = searchForOne;
+Items.searchFor = searchFor;
+Items.searchForOne = searchForOne;
 
 //searchText is a string
 //fields is an array, e.g. ['type', 'name']
 //selector is an object, e.g. {deleteInd: false}
 //options is an optional object, e.g. {limit: 1000}
-InventoryItems.getItems = function(searchText, fields, selector, options) {
-  return InventoryItems.searchFor(selector, searchText, fields, options);
+Items.getItems = function(searchText, fields, selector, options) {
+  return Items.searchFor(selector, searchText, fields, options);
 };
 

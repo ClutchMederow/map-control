@@ -12,7 +12,7 @@ SteamAPI = (function () {
     _.each(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
       //TODO: put this through DB layer
-      InventoryItems.insert({
+      Items.insert({
         userId: userId,
         name: itemDescription.market_name,
         nameColor: itemDescription.name_color,
@@ -47,10 +47,10 @@ SteamAPI = (function () {
       if(!inventoryData.success) {
         console.log('Failed to load');
         throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
-      } else { 
+      } else {
         //clear and remove inventory for a specific user,
         //do this after API call to avoid lag
-        DB.removeInventoryItems(userId);
+        DB.removeItems(userId);
         parseSteamAPIInventory(inventoryData, userId);
       }
   };
@@ -91,7 +91,7 @@ SteamAPI = (function () {
       "/inventory/json/" + csAppId + "/" + csContextId;
       console.log(callString);
       var data = HTTP.get(callString).data;
-      return data;
+      return JSON.parse(data);
     },
     getGenericItems: function() {
       var callString = "https://api.steampowered.com/IEconItems_730/GetSchema/v0002/?key=" + apiKey;
