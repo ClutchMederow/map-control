@@ -3,7 +3,7 @@ Template.signup.onRendered(function() {
   $('#application-signup').validate({
     submitHandler: function(){
       // We'll handle our actual signup event here.
-      STRIPE.getToken( '#application-signup', {
+      STRIPE.getCardToken( '#application-signup', {
         number: $('[data-stripe="cardNumber"]').val(),
         exp_month: $('[data-stripe="expMo"]').val(),
         exp_year: $('[data-stripe="expYr"]').val(),

@@ -18,8 +18,8 @@ Meteor.methods({
           console.log(error);
         } else {
           var customerId = stripeCustomer.id;
-          var subscription = {
-            customerId: customer,
+          var customerObject = {
+            customer: customer,
             payment: {
               card: {
                 type: stripeCustomer.sources.data[0].brand,
@@ -28,7 +28,7 @@ Meteor.methods({
             }
           };
           Meteor.users.update(user._id, {
-            $set: subscription 
+            $set: customerObject 
           }, function(error, response) {
             if(error) {
               console.log(error);
@@ -40,5 +40,28 @@ Meteor.methods({
       });
 
       return newCustomer.wait();
+  },
+  addBankAccountToCustomer: function(bankAccount) {
+    check(bankAccount, {
+      name: String,
+      street1: String,
+      street2: String,
+      city: String,
+      state: String,
+      zip: String,
+      country: String,
+      last4: String,
+      token: String
+    });
+
+    var user = Meteor.users.findOne(this.userId);
+    //user has existing account
+    if(user.account) {
+      //TODO 
+    } else { //this is first account
+      
+      Meteor.call('stripeCreateAccount', true, bankAccount.country, email, 
+                  function(){});
+    }
   }
 });

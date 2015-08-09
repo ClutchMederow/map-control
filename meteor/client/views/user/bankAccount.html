@@ -1,0 +1,60 @@
+<template name="bankAccount">
+<div class="row">
+  <div class="col s12">
+    <label>Full Name</label>
+    <input type="text" name="fullName" class="form-control" placeholder="Full
+    Name">
+  </div>
+  <div class="col s12">
+    <label>Street Address</label>
+    <input type="text" name="street1" class="form-control" 
+                                            placeholder="123 Main St">
+  </div>
+  <div class="col s3">
+    <label>Street Address 2</label>
+    <input type="text" name="street2" class="form-control" 
+                                            placeholder="Apartment Number,
+                                            etc.">
+  </div>
+  <div class="col s3">
+    <label>City</label>
+    <input type="text" name="city" class="form-control"
+                                   placeholder="Boston">
+  </div>
+  <div class="col s3">
+    <label>State</label>
+    <input type="text" name="state" class="form-control"
+                                    placeholder="MA">
+  </div>
+  <div class="col s3">
+    <label>Zip Code</label>
+    <input type="text" name="zip" class="form-control"
+                                  placeholder="12345">
+  </div>
+  <div class="col s6">
+    <label>Routing Number</label>
+    <input type="number" class="form-control" 
+                         placeholder="254074170" data-stripe="routing">
+  </div>
+  <div class="col s6">
+    <label>Account Number</label>
+    <input type="number" class="form-control"
+      placeholder="0001234564" data-stripe="account">
+  </div>
+  <div class="col s3">
+    <label>Country</label>
+    <input type="text" name="country" class="form-control"
+                                      placeholder="US">
+  </div>
+  <div class="col s3">
+    <label>Currency</label>
+    <input type="text" class="form-control"
+     placeholder="USD" data-stripe="currency">
+  </div>
+  <div class="col s3">
+    <label>Last 4 of Social Security Number</label>
+    <input type="number" name="last4" class="form-control"
+                                      placeholder="1234">
+  </div>
+</div>
+</template>

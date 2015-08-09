@@ -22,5 +22,36 @@ Meteor.methods({
     });
 
     return stripeCustomer.wait();
-  } 
+  },
+  stripeCreateAccount: function(managed, country, email) {
+    check(managed, Boolean);
+    check(email, String);
+    var stripeAccount = new Future();
+
+    //check country code is 2 letters
+    var isTwoLetters = Match.Where(function(x) {
+      check(x, String);
+      return x.length === 2;
+    });
+    check(country, isTwoLetters);
+    
+    Stripe.accounts.create({
+      country: country,
+      managed: managed,
+      email: email
+    }, function(error, account) {
+      if (error){
+        stripeAccount.return(error);
+      } else {
+        stripeAccount.return(account);
+      }
+    });
+    return stripeAccount.wait();
+  },
+  stripeUpdateAccount: function() {
+    
+  },
+  stripeCreateAdditionalBankAccount: function() {
+    
+  }
 });
