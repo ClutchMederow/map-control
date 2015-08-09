@@ -48,8 +48,33 @@ Meteor.methods({
     });
     return stripeAccount.wait();
   },
-  stripeUpdateAccount: function() {
-    
+  stripeUpdateAccount: function(accountId, bankAccount) {
+    check(accountId, String);
+    check(bankAccount, Object);
+    var updateAccount = new Future(); 
+
+    Stripe.accounts.update({
+      external_acccount: token,
+      legal_entity: {
+        type: "individual",
+        personal_address: {
+          line1: bankAccount.street1,
+          line2: bankAccount.street2,
+          city: bankAccount.city,
+          state: bankAccount.state,
+          postal_code: bankAccount.zip,
+          country: bankAccount.country
+        }
+      }
+    }, function(error, account) {
+      if(error){
+        stripeAccount.return(error);
+      } else {
+        console.log(account);
+        updateAccount.return(account);
+      }
+    });
+    return updateAccount.wait();
   },
   stripeCreateAdditionalBankAccount: function() {
     

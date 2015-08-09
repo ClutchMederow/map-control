@@ -37,6 +37,15 @@ Template.signup.onRendered(function() {
   });
 });
 
+Template.signup.helpers({
+  haveFullName: function() {
+    return _.isString(Meteor.user().profile.fullName);
+  },
+  haveEmailAddress: function() {
+    return _.isString(Meteor.user().profile.emailAddress);
+  }
+});
+
 
 Template.signup.events({
 

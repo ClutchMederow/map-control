@@ -1,6 +1,4 @@
 Template.memberHomePage.onRendered(function() {
-  $('#welcome').leanModal();
-  $('#welcome').openModal();
 });
 
 Template.memberHomePage.helpers({

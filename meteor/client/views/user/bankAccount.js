@@ -1,14 +1,13 @@
 Template.bankAccount.onRendered(function() {
   $('#bankAccount').validate({
     submitHandler: function(){
-      STRIPE.getBankAccountToken( '#application-signup', {
+      STRIPE.getBankAccountToken( '#bankAccount', {
         country: $('[name="country"]').val(),
         currency: $('[data-stripe="currency"]').val(),
         routing_number: $('[data-stripe="routing"]').val(),
         account_number: $('[data-stripe="account"]').val()
       }, function() { //callback function to STRIPE in stripe helper
         var bankAccount = {
-          name: $('[name="fullName"]').val(),
           street1: $('[name="street1"]').val(),
           street2: $('[name="street2"]').val(),
           city: $('[name="city"]').val(),
@@ -20,7 +19,7 @@ Template.bankAccount.onRendered(function() {
         };
 
 
-        Meteor.call('addBankAccountToCustomer', customer, function(error, response){
+        Meteor.call('addBankAccountToCustomer', bankAccount, function(error, response){
           if (error) {
             alert(error.reason);
           } else {
@@ -35,3 +34,4 @@ Template.bankAccount.onRendered(function() {
     }
   });
 });
+
