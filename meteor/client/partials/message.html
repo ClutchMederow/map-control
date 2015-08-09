@@ -1,16 +1,22 @@
 <template name="message">
 <div>
-  <i class="medium mdi-action-account-box"></i>
-  <a href="#" class="dropdown-button btn" data-activates="{{user.userId}}">{{user.profile.name}}</a>
+  <img class="responsive-img" src="{{getImage}}">
+  <a href="#" class="dropdown-button btn {{state}}" data-activates="{{user.userId}}">
+    {{user.profile.name}}
+  </a>
   <!-- Dropdown Structure -->
   <ul id="{{user.userId}}" class="dropdown-content">
     <li><a href="#!" class="privateChat">Start Private Chat</a></li>
-    <li><a href="#!" class="beginTrade">Begin Trade</a></li>
+    <li><a href="#" class="beginTrade">
+        Invite to Real Time Trade
+      </a>
+    </li>
     <li><a href="#!">Current Market Items </a></li>
     <li class="divider"></li>
     <li><a href="#!">View Profile</a></li>
+    <li><a href="#!">Status: {{status}}</a></li>
   </ul>
-  <span>{{datePosted}}</span>
+  <span>{{formatDate datePosted}}</span>
   <span>{{text}}</span>
 </div>
 </template>

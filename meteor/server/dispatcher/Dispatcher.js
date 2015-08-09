@@ -115,12 +115,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         steamId: user.services.steam.id
       };
 
-      var trans = DB.transactions.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
+      var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
 
-      console.log(trans);
-
-      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options, DB);
-      var task = new Task([job], false, trans, DB);
+      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
+      var task = new Task([job], false, taskId, DB);
 
       task.execute(function(err, res) {
         console.log(err, res);
@@ -161,6 +159,7 @@ _.extend(Dispatcher, {
   jobStatus: Object.freeze({
     COMPLETE: 'COMPLETE',
     FAILED: 'FAILED',
+    ROLLBACK_FAILED: 'ROLLBACK_FAILED',
     QUEUED: 'QUEUED',
     PENDING: 'PENDING',
     READY: 'READY',

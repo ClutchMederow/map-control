@@ -30,7 +30,7 @@ Template.chatWindow.onRendered(function() {
 
 Template.chatWindow.helpers({
   messages: function() {
-    return Messages.find({channel: Session.get('channel')});
+    return Messages.find({'channel.name': Session.get('channel')});
   },
   channels: function() {
     return Channels.find();

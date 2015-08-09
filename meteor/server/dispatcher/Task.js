@@ -1,12 +1,12 @@
 var Future = Npm.require('fibers/future');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
-Task = function(jobs, ordered, transactionId, DBLayer) {
+Task = function(jobs, ordered, taskId, DBLayer) {
   var self = this;
 
   check(ordered, Boolean);
   check(jobs, Array);
-  check(transactionId, String);
+  check(taskId, String);
   check(DBLayer, Object);
 
   // Since JS doesn't have interfaces, this will have to do
@@ -35,7 +35,7 @@ Task = function(jobs, ordered, transactionId, DBLayer) {
   // Private fields - will not be serialized
   this._jobs = jobs;
   this._ordered = ordered;
-  this._transactionId = transactionId;
+  this._taskId = taskId;
 
   // We pass in DB here for easy mocking during tests
   this._DB = DBLayer;
@@ -58,10 +58,10 @@ Task.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  this._DB.transactions.updateJobHistory(this._transactionId, doc);
+  this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 
-// Set the status and push an update to the transaction
+// Set the status and push an update to the task
 Task.prototype._setStatus = function(status) {
   this.status = status;
   this._save();

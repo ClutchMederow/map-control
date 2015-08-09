@@ -40,6 +40,7 @@ iron:router@1.0.7
 iron:url@1.0.7
 jquery@1.11.3_2
 json@1.0.3
+juliancwirko:s-alert@2.4.1
 launch-screen@1.0.2
 less@1.0.14
 livedata@1.0.13
@@ -52,6 +53,7 @@ meteor-platform@1.2.2
 minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
+momentjs:moment@2.10.6
 mongo@1.1.0
 mrgalaxy:stripe@2.1.0
 mrt:accounts-steam@0.0.1
@@ -74,6 +76,7 @@ spacebars@1.0.6
 spacebars-compiler@1.0.6
 srp@1.0.3
 templating@1.1.1
+tmeasday:presence@1.0.6
 tracker@1.0.7
 u2622:persistent-session@0.3.5
 ui@1.0.6

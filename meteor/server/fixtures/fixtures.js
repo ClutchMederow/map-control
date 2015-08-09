@@ -18,6 +18,11 @@ Meteor.startup(function() {
     console.log("You do not have steam service configured");
   }
 
+  //Load Generic Items
+  if(GenericItems.find().count() === 0) {
+    SteamAPI.getGenericItems();
+  }
+
   //Fixture data
 
   //Users
@@ -32,7 +37,7 @@ Meteor.startup(function() {
 
 
   //Offers
-  Factory.define('tradeRequest', TradeRequest, {
+  Factory.define('listings', Listings, {
     user: function() {
       return Fake.fromArray(users);
     },
@@ -41,35 +46,12 @@ Meteor.startup(function() {
     requests: function() {
 
     },
-    offers: function() {
-
-    },
     datePosted: function() {
       return new Date(); ///TODO: improve this
     },
     notes: function() {
       return Fake.paragraph();
     }
-  });
-
-  var users = Users.find().fetch();
-  var userProfiles = _.map(users, function(user) {
-    return {
-      userId: user._id,
-      profile: user.profile
-    };
-  });
-  Factory.define('message', Messages, {
-    text: function() {
-      return Fake.sentence();
-    },
-    user: function() {
-      return Fake.fromArray(userProfiles);
-    },
-    channel: 'Trading Floor',
-    datePosted: function() {
-      return new Date(); ///TODO: improve this
-    },
   });
 
   //Channels
@@ -83,6 +65,40 @@ Meteor.startup(function() {
       return Fake.fromArray(categories);
     }
   });
+
+  if (Channels.find().count() === 0) {
+    Channels.insert({name: 'Trading Floor',
+                    publishedToUsers: ['Public'],
+                    category: 'Trading Floor'});
+    _(5).times(function(n) {
+      Factory.create('channel');
+    });
+  }
+
+  var users = Users.find().fetch();
+  var userProfiles = _.map(users, function(user) {
+    return {
+      userId: user._id,
+      profile: user.profile
+    };
+  });
+
+  var channels = Channels.find().fetch();
+  Factory.define('message', Messages, {
+    text: function() {
+      return Fake.sentence();
+    },
+    user: function() {
+      return Fake.fromArray(userProfiles);
+    },
+    channel: function() {
+      return Fake.fromArray(channels);
+    },
+    datePosted: function() {
+      return new Date(); ///TODO: improve this
+    },
+  });
+
 
   //Inventory Items
   var itemClasses = ['Rifle', 'Pistol', 'SMG', 'Sniper Rifle'];
@@ -106,15 +122,6 @@ Meteor.startup(function() {
   if (Messages.find().count() === 0) {
     _(10).times(function(n) {
       Factory.create('message');
-    });
-  }
-
-  if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor',
-                    publishedToUsers: ['Public'],
-                    category: 'Trading Floor'});
-    _(5).times(function(n) {
-      Factory.create('channel');
     });
   }
 

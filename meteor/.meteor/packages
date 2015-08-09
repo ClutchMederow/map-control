@@ -18,7 +18,6 @@ anti:fake
 underscore
 u2622:persistent-session
 accounts-base
-accounts-password
 accounts-ui
 audit-argument-checks
 mrt:steam
@@ -28,3 +27,7 @@ reactive-var
 http
 jquery
 mrgalaxy:stripe
+momentjs:moment
+juliancwirko:s-alert
+accounts-password
+tmeasday:presence

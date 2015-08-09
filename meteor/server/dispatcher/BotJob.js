@@ -1,5 +1,5 @@
 
-BotJob = function(bot, jobType, transactionId, options, DBLayer) {
+BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
@@ -7,7 +7,7 @@ BotJob = function(bot, jobType, transactionId, options, DBLayer) {
   if (items.length < 1)
     throw new Error('NO_ITEMS');
 
-  check(transactionId, String);
+  check(taskId, String);
   check(DBLayer, Object);
 
   if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
@@ -37,7 +37,7 @@ BotJob = function(bot, jobType, transactionId, options, DBLayer) {
   }
 
   // private fields
-  this._transactionId = transactionId;
+  this._taskId = taskId;
   this._bot = bot;
 
   // We pass in DB here for easy mocking during tests
@@ -120,18 +120,16 @@ BotJob.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  this._DB.transactions.updateJobHistory(this._transactionId, doc);
+  this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 
-// Set the status and push an update to the transaction
+// Set the status and push an update to the task
 BotJob.prototype._setStatus = function(status) {
   this.status = status;
   this._save();
 };
 
 BOTTEST = function(pw) {
-  // bot = new SteamBot('meatsting', pw, 'KJ8RH', SteamAPI);
-  // var trans = Transactions.insert({ name: 'test1' });
 
   items = [{
     classId: '341291325',

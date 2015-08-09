@@ -44,10 +44,15 @@ SteamAPI = (function () {
         console.log(error.stack);
         throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve player's inventory");
       }
-      //clear and remove inventory,
-      //do this after API call to avoid lag
-      Items.remove({});
-      parseSteamAPIInventory(inventoryData, userId);
+      if(!inventoryData.success) {
+        console.log('Failed to load');
+        throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
+      } else {
+        //clear and remove inventory for a specific user,
+        //do this after API call to avoid lag
+        DB.removeItems(userId);
+        parseSteamAPIInventory(inventoryData, userId);
+      }
   };
 
 
@@ -87,6 +92,20 @@ SteamAPI = (function () {
       console.log(callString);
       var data = HTTP.get(callString).data;
       return JSON.parse(data);
+    },
+    getGenericItems: function() {
+      var callString = "https://api.steampowered.com/IEconItems_730/GetSchema/v0002/?key=" + apiKey;
+      try {
+        var items = HTTP.get(callString).data.result.items;
+        _.map(items, function(item) {
+          if(item.craft_class === 'weapon') {
+            GenericItems.insert(item);
+          }
+        });
+      } catch(error) {
+        console.log(error.stack);
+        throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve generic inventory");
+      }
     }
   };
 }) (); //Immediately Invoked Function that returns object

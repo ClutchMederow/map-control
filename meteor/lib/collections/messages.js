@@ -26,7 +26,8 @@ Messages.attachSchema({
     label: "Text of Message"
   },
   channel: {
-    type: String,
+    type: Object,
+    blackbox: true,
     label: 'Channel of Message'
   }
 });

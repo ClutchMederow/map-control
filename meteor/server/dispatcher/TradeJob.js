@@ -1,4 +1,4 @@
-TradeJob = function(itemId, newUserId, DBLayer) {
+TradeJob = function(itemId, newUserId, taskId, DBLayer) {
   check(itemId, String);
   check(userId, String);
   check(DBLayer, Object);
@@ -10,6 +10,7 @@ TradeJob = function(itemId, newUserId, DBLayer) {
 
   // Private members - will not be serialized
   this._DB = DBLayer;
+  this._taskId = taskId;
 
   // Save the old owner
   this.oldUserId = this._DB.items.getItemOwner(this.itemId)._id;
@@ -56,10 +57,10 @@ TradeJob.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  this._DB.transactions.updateJobHistory(this._transactionId, doc);
+  this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 
-// Set the status and push an update to the transaction
+// Set the status and push an update to the task
 TradeJob.prototype._setStatus = function(status) {
   this.status = status;
   this._save();

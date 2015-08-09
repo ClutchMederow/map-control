@@ -1,12 +1,12 @@
 // Retrieves the values from an object from the string representation
 // Created to handle nested fields (e.g. 'profile.firstName')
-function getFieldValue(obj, fieldString) {
+getFieldValue = function(obj, fieldString) {
   try {
     return fieldString.split('.').reduce(index, obj);
   } catch(e) {
     return '';
   }
-}
+};
 
 //Reduce Function
 function index(previousValue, currentValue, i, array) {
