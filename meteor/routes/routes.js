@@ -12,6 +12,11 @@ Router.route('/', {
   template: 'landing'
 });
 
+Router.route('/initialsignup', {
+  name: 'initialSignup',
+  template: 'initialSignup'
+});
+
 Router.route('/signup', {
   name: 'signup',
   template: 'signup'
