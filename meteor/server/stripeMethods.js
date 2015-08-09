@@ -3,6 +3,7 @@ var Future = Npm.require('fibers/future');
 Meteor.methods({
   addPaymentMethodToCustomer: function(customer) {
     check(customer, {
+      name: String,
       token: String,
       emailAddress: String
       //TODO: payment methods
@@ -32,7 +33,7 @@ Meteor.methods({
             if(error) {
               console.log(error);
             } else {
-              newCustomer.return();
+              newCustomer.return(user);
             }
           });
         }

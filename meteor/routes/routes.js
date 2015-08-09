@@ -17,6 +17,11 @@ Router.route('/signup', {
   template: 'signup'
 });
 
+Router.route('/sellersignup', {
+  name: 'sellerSignup',
+  template: 'sellerSignup'
+});
+
 Router.route('/chats', {
   name: 'chats',
   template: 'chats'
