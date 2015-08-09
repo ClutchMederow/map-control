@@ -12,7 +12,7 @@ Template.itemSearch.helpers({
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return InventoryItems.getItems(searchText.get(), fields,options );
+      return Items.getItems(searchText.get(), fields,options );
     }
   }
 });

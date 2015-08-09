@@ -115,15 +115,16 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         steamId: user.services.steam.id
       };
 
-      // TODO: Put this is DB layer
-      var trans = Transactions.insert({ type: Dispatcher.jobType.DEPOSIT_ITEMS, userId: userId, items: items });
+      var trans = DB.transactions.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
 
-      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
-      var task = new Task([job], false);
+      console.log(trans);
+
+      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options, DB);
+      var task = new Task([job], false, trans, DB);
 
       task.execute(function(err, res) {
         console.log(err, res);
-      })
+      });
     },
 
     init: function() {

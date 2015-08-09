@@ -9,12 +9,12 @@ Meteor.publish('messages', function(channel) {
 
 Meteor.publish('channels', function() {
   return Channels.find({$or: [
-    {publishedToUsers: {$in: [this.userId]}}, 
+    {publishedToUsers: {$in: [this.userId]}},
     {publishedToUsers: {$in: ['Public']}}
     ]
   });
 });
 
-Meteor.publish('inventoryItems', function() {
-  return InventoryItems.find();
+Meteor.publish('items', function() {
+  return Items.find();
 });

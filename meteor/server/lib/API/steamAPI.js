@@ -12,7 +12,7 @@ SteamAPI = (function () {
     _.each(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
       //TODO: put this through DB layer
-      InventoryItems.insert({
+      Items.insert({
         userId: userId,
         name: itemDescription.market_name,
         nameColor: itemDescription.name_color,
@@ -46,7 +46,7 @@ SteamAPI = (function () {
       }
       //clear and remove inventory,
       //do this after API call to avoid lag
-      InventoryItems.remove({});
+      Items.remove({});
       parseSteamAPIInventory(inventoryData, userId);
   };
 

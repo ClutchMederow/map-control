@@ -1,10 +1,14 @@
 
-BotJob = function(bot, jobType, transactionId, options) {
-
-  // TODO: DISPATCHER ASSIGNS A BOT
+BotJob = function(bot, jobType, transactionId, options, DBLayer) {
 
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
+
+  if (items.length < 1)
+    throw new Error('NO_ITEMS');
+
+  check(transactionId, String);
+  check(DBLayer, Object);
 
   if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
 
@@ -21,15 +25,23 @@ BotJob = function(bot, jobType, transactionId, options) {
       });
     });
 
-    if (items.length < 1)
-      throw new Error('NO_ITEMS');
+    this.itemsNoAssetId = options.items;
+  } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
 
-    this._itemsNoAssetId = options.items;
+    check(options, {
+      items: [Number],
+      steamId: String
+    });
+
+    this.itemAssetIds = items;
   }
 
   // private fields
   this._transactionId = transactionId;
   this._bot = bot;
+
+  // We pass in DB here for easy mocking during tests
+  this._DB = DBLayer;
 
   // Fields to be stringified
   this.steamId = options.steamId;
@@ -44,10 +56,22 @@ BotJob.prototype._executeDeposit = function() {
   self._setStatus(Dispatcher.jobStatus.PENDING);
 
   // Find item assetIds
-  self.items = self._bot.getItemObjsWithIds(self.steamId, self._itemsNoAssetId);
+  self.items = self._bot.getItemObjsWithIds(self.steamId, self.itemsNoAssetId);
 
   // Make the tradeoffer
-  self.offerid = self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
+  self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
+};
+
+BotJob.prototype._executeWithdrawal = function() {
+
+  // var self = this;
+  // self._setStatus(Dispatcher.jobStatus.PENDING);
+
+  // // Find item assetIds
+  // self.items = self._bot.getItemObjsWithIds(self.steamId, self.itemsNoAssetId);
+
+  // // Make the tradeoffer
+  // self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
 };
 
 BotJob.prototype.execute = function(callback) {
@@ -58,22 +82,20 @@ BotJob.prototype.execute = function(callback) {
     var err, res;
 
     try {
-
       // Use the appropriate function
       if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
         res = self._executeDeposit();
       }
-
     } catch(e) {
-
       err = e;
-
     }
 
-    if (err)
+    if (err) {
+      self.error = err.message;
       self._setStatus(Dispatcher.jobStatus.FAILED);
-    else
+    } else {
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
+    }
 
     // Don't forget the callback!
     callback(err, res);
@@ -96,16 +118,16 @@ BotJob.prototype._save = function() {
       return value;
   }
 
-  // The parse + stringify combo gets ride of all functions and _ prefixed fields
+  // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  DB.transactions.updateJobHistory(this._transactionId, doc);
+  this._DB.transactions.updateJobHistory(this._transactionId, doc);
 };
 
 // Set the status and push an update to the transaction
 BotJob.prototype._setStatus = function(status) {
   this.status = status;
   this._save();
-}
+};
 
 BOTTEST = function(pw) {
   // bot = new SteamBot('meatsting', pw, 'KJ8RH', SteamAPI);

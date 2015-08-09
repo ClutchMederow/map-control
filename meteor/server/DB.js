@@ -36,9 +36,19 @@ DB = {
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator');
 
-      console.log(transactionId, doc);
+      if (!transactionId)
+        throw new Error('INVALID_UPDATE: Invalid transaction ID');
 
       return Transactions.update(transactionId, doc);
+    },
+
+    insert: function(doc) {
+      check(doc.userId, String);
+      check(doc.jobType, Match.Where(function(item) {
+        return !!Dispatcher.jobType[item];
+      }));
+
+      return Transactions.insert(doc);
     },
 
     updateJobHistory: function(transactionId, doc) {
@@ -51,6 +61,70 @@ DB = {
       };
 
       return DB.transactions.update(transactionId, updater);
+    },
+
+    createNew: function(jobType, userId, items) {
+      var doc = {
+        jobType: jobType,
+        userId: userId,
+        items: items
+      };
+
+      return DB.transactions.insert(doc);
+    }
+  },
+
+  items: {
+    insert: function(doc) {
+      return Items.insert(doc);
+    },
+
+    update: function(itemId, doc) {
+      check(itemId, String);
+      if (!doc.$set && !doc.$push)
+        throw new Error('INVALID_UPDATE: Must include $set operator');
+
+      return Items.update(itemId, doc);
+    },
+
+    addItems: function(items) {
+      check(items, Array);
+
+      _.each(items, function(item) {
+        if (!item.assetid);
+          throw new Error('NO_ASSET_ID');
+      });
+
+      _.each(items, function(item) {
+        DB.items.insert(item);
+      });
+    },
+
+    getItemOwner: function(itemId) {
+      var item = Items.findOne(itemId);
+      if (!item)
+        throw new Error('ITEM_NOT_FOUND: ' + itemId);
+
+      var user = Meteor.users.findOne(item.userId);
+      if (!user)
+        throw new Error('USER_NOT_FOUND: ' + item.userId);
+
+      return user;
+    },
+
+    reassignOwner: function(itemId, newUserId) {
+      doc = {
+        $set: {
+          userId: newUserId
+        }
+      };
+
+      var out = DB.items.update(itemId, doc);
+
+      if (out !== 1)
+        throw new Error('ITEM_NOT_UPDATED');
+
+      return out;
     }
   }
 };

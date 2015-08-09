@@ -1,2 +1,2 @@
 Meteor.subscribe('channels');
-Meteor.subscribe('inventoryItems');
+Meteor.subscribe('items');

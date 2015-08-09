@@ -1,11 +1,13 @@
 var Future = Npm.require('fibers/future');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
-Task = function(jobs, ordered) {
+Task = function(jobs, ordered, transactionId, DBLayer) {
   var self = this;
 
   check(ordered, Boolean);
   check(jobs, Array);
+  check(transactionId, String);
+  check(DBLayer, Object);
 
   // Since JS doesn't have interfaces, this will have to do
   // All jobs must have the properties defined below
@@ -30,18 +32,45 @@ Task = function(jobs, ordered) {
   if (!(jobs.length > 0))
     throw new Error('Bad number of jobs passed to task');
 
+  // Private fields - will not be serialized
   this._jobs = jobs;
   this._ordered = ordered;
+  this._transactionId = transactionId;
 
-  this.jobId = Math.round(Math.random()*1000); //////// ----------------------------------THIS NEEDS TO ACTUALLY COME FROM INSERTION INTO A COLLECTION
+  // We pass in DB here for easy mocking during tests
+  this._DB = DBLayer;
 
   // We are now ready
-  this.status = Dispatcher.jobStatus.READY;
+  this.jobType = Dispatcher.jobType.TASK;
+  this.jobId = Random.id();
+  this._setStatus(Dispatcher.jobStatus.READY);
+};
+
+// Saves all non-private fields in a collection
+Task.prototype._save = function() {
+
+  function replacer(key, value) {
+    if (key.charAt(0) === '_')
+      return undefined;
+    else
+      return value;
+  }
+
+  // The parse + stringify combo gets rid of all functions and _ prefixed fields
+  var doc = JSON.parse(JSON.stringify(this, replacer));
+  this._DB.transactions.updateJobHistory(this._transactionId, doc);
+};
+
+// Set the status and push an update to the transaction
+Task.prototype._setStatus = function(status) {
+  this.status = status;
+  this._save();
 };
 
 Task.prototype.execute = function(callback) {
-  this.status = Dispatcher.jobStatus.PENDING;
   var self = this;
+
+  this._setStatus(Dispatcher.jobStatus.PENDING);
 
   function syncFunc() {
     try {
@@ -56,7 +85,7 @@ Task.prototype.execute = function(callback) {
       if (self.status === Dispatcher.jobStatus.FAILED)
         throw new Error('CANCELLED');
 
-      self.status = Dispatcher.jobStatus.COMPLETE;
+      self._setStatus(Dispatcher.jobStatus.COMPLETE);
       callback(null);
     } catch(e) {
       self.cancel();
@@ -168,5 +197,5 @@ Task.prototype.cancel = function() {
   }
 
   // Ensures all synchronous jobs get cancelled
-  this.status = Dispatcher.jobStatus.FAILED;
+  self._setStatus(Dispatcher.jobStatus.FAILED);
 };
