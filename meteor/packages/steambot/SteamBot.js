@@ -21,6 +21,10 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.queue = [];
   this.busy = false;
 
+  this.steam.on('error', function(err) {
+    console.log(err);
+  });
+
   this.logOn();
   this.loadBotInventory();
 };
@@ -73,7 +77,7 @@ SteamBot.prototype.logOn = function() {
         webCookie: newCookie
       }, function(err) {
         if (err) {
-          throw err;
+          console.log(err);
         }
         self.cookie = newCookie;
 
@@ -179,7 +183,8 @@ SteamBot.prototype.getOwnedItemObjsWithIds = function(items) {
       appid: 730,
       contextid: 2,
       amount: 1,
-      assetid: foundItem.id
+      assetid: foundItem.id,
+      _id: itemToFind._id
     };
   });
 
@@ -199,7 +204,7 @@ SteamBot.prototype.giveItems = function(userSteamId, itemsToGive) {
 };
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
-SteamBot.prototype._makeOffer = function(userSteamId, itemObjsToSend, itemObjsToReceive) {
+SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive) {
 
   // if (typeof itemsToSend === 'object')
   //   itemsToSend = [itemsToSend];
@@ -214,6 +219,9 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemObjsToSend, itemObjsTo
   //   itemsToSend: Match.Optional([Object]),
   //   itemsToReceive: Match.Optional([Object]),
   // });
+
+  var itemObjsToReceive = wrapItemForBot(itemsToReceive);
+  var itemObjsToSend = wrapItemForBot(itemsToSend);
 
   var Future = require('fibers/future');
   var future = new Future();
@@ -312,3 +320,14 @@ SteamBot.prototype.test = function(pw, SteamAPI) {
 //     console.log(result.response.trade_offers_received);
 //   });
 // };
+
+function wrapItemForBot(itemIds) {
+  return _.map(itemIds, function(item) {
+    return {
+      appid: 730,
+      contextid: 2,
+      amount: 1,
+      assetid: item
+    };
+  });
+}
