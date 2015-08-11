@@ -2,18 +2,13 @@ var searchText = new ReactiveVar('');
 
 Template.myInventory.onCreated(function() {
   searchText.set('');
-  Meteor.call('getPlayerInventory', Meteor.userId(), function(error) {
-    if(error) {
-      console.log(error.reason);
-    }
-  });
 });
 
 Template.myInventory.helpers({
   //Items will be stored on player's desktop
   items: function() {
     var fields = ['name', 'type'];
-    var selector = {userId: Meteor.userId(), marketable: 1, deleteInd: false};
+    var selector = { userId: Meteor.userId(), marketable: 1, deleteInd: false, status: Enums.ItemStatus.STASH };
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {

@@ -113,8 +113,6 @@ Task.prototype._executeParallel = function() {
         if (!firstError)
           firstError = error;
 
-        // Just to be sure it doesn't block
-        Meteor.setTimeout(self.cancel, 0);
         thisFut.throw(error);
 
       } else {
@@ -137,6 +135,7 @@ Task.prototype._executeParallel = function() {
       fut.get();
     });
   } catch(e) {
+    self.cancel();
     throw firstError;
   }
 };
@@ -197,5 +196,5 @@ Task.prototype.cancel = function() {
   }
 
   // Ensures all synchronous jobs get cancelled
-  self._setStatus(Dispatcher.jobStatus.FAILED);
+  this._setStatus(Dispatcher.jobStatus.FAILED);
 };

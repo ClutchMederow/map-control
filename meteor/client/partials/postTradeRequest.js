@@ -5,12 +5,6 @@ Session.set('marketItems', []);
 
 Template.postTradeRequest.onCreated(function() {
   searchText.set('');
-  //TODO: remove, a player's inventory should now always be up to date
-  Meteor.call('getPlayerInventory', Meteor.userId(), function(error) {
-    if(error) {
-      console.log(error.reason);
-    }
-  });
 });
 
 Template.postTradeRequest.helpers({

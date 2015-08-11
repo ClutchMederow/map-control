@@ -103,16 +103,17 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       // BOTS FUCK YEAH
     },
 
+    getUsersBot: getUsersBot,
+
     depositItems: function(userId, items) {
       check(userId, String);
-      check(items, Array);
+      check(items, [Number]);
 
       var bot = getUsersBot(userId);
-      var user = Meteor.users.findOne(userId);
 
       var options = {
         items: items,
-        steamId: user.services.steam.id
+        userId: userId
       };
 
       var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);

@@ -4,37 +4,11 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
 
-  if (items.length < 1)
+  if (options.items.length < 1)
     throw new Error('NO_ITEMS');
 
   check(taskId, String);
   check(DBLayer, Object);
-
-  if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
-
-    check(options, {
-      items: Array,
-      steamId: String
-    });
-
-    // Check the array to be sure we can identify the item
-    _.each(options.items, function(item) {
-      check(item, {
-        classId: String,
-        instanceId: String
-      });
-    });
-
-    this.itemsNoAssetId = options.items;
-  } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
-
-    check(options, {
-      items: [Number],
-      steamId: String
-    });
-
-    this.itemAssetIds = items;
-  }
 
   // private fields
   this._taskId = taskId;
@@ -44,9 +18,30 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   this._DB = DBLayer;
 
   // Fields to be stringified
-  this.steamId = options.steamId;
   this.jobType = jobType;
   this.jobId = Random.id();
+
+  // Set up the object depending on job type
+  if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+
+    check(options, {
+      items: [Number],
+      userId: String
+    });
+
+    this.userId = options.userId;
+    this.items = options.items;
+
+  } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+
+    check(options, {
+      items: [Number],
+      userId: String
+    });
+
+    this.userId = options.userId;
+    this.items = options.items;
+  }
 
   this._setStatus(Dispatcher.jobStatus.READY);
 };
@@ -56,10 +51,14 @@ BotJob.prototype._executeDeposit = function() {
   self._setStatus(Dispatcher.jobStatus.PENDING);
 
   // Find item assetIds
-  self.items = self._bot.getItemObjsWithIds(self.steamId, self.itemsNoAssetId);
+  // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
+  var steamId = Meteor.users.findOne(this.userId).services.steam.id;
 
   // Make the tradeoffer
-  self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
+  self.tradeofferId = self._bot.takeItems(steamId, self.items);
+
+  // Add the items
+  self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items);
 };
 
 BotJob.prototype._executeWithdrawal = function() {
@@ -91,7 +90,8 @@ BotJob.prototype.execute = function(callback) {
     }
 
     if (err) {
-      self.error = err.message;
+      self.error = err;
+      // self.error.stack = err.stack;
       self._setStatus(Dispatcher.jobStatus.FAILED);
     } else {
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
@@ -105,6 +105,10 @@ BotJob.prototype.execute = function(callback) {
 };
 
 BotJob.prototype.cancel = function() {
+
+  if (this.tradeofferId) {
+    // bot cancel tradeoffer
+  }
 
 };
 
@@ -129,29 +133,38 @@ BotJob.prototype._setStatus = function(status) {
   this._save();
 };
 
-BOTTEST = function(pw) {
+BOTTEST = function() {
 
-  items = [{
-    classId: '341291325',
-    instanceId: '188530139'
-  }];
+  // items = [{
+  //   classId: '341291325',
+  //   instanceId: '188530139'
+  // }];
+
+  var items = [ 387788608 ];
 
   // var options = {
   //   items: items,
   //   steamId: '76561197965124635'
   // };
 
-  // job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, trans, options);
-
   Dispatcher.init();
+
+  // var options = {
+  //   partnerSteamId: '76561197965124635',
+  //   appId: 730,
+  //   contextId: 2
+  // };
+
+  // var bot = Dispatcher.getUsersBot('uYrKadsnCzyg9TLrC');
+  // bot.offers.loadPartnerInventory(options, function(err, res) {
+  //   if (err)
+  //     console.log(err);
+
+  //   itemObj = res;
+  // });
+
   Dispatcher.depositItems('uYrKadsnCzyg9TLrC', items);
 
-  // job.execute(function(err, res) {
-
-  //   console.log(err);
-  //   console.log(res);
-
-  // });
 };
 /*
 

@@ -87,17 +87,41 @@ DB = {
       return Items.update(itemId, doc);
     },
 
-    addItems: function(items) {
-      check(items, Array);
+    insertNewItems: function(userId, tradeofferId, items) {
+      check(userId, String);
+      check(items, [Number]);
 
-      _.each(items, function(item) {
-        if (!item.assetid);
-          throw new Error('NO_ASSET_ID');
+      var existingOwnedItem = Items.findOne({ itemId: { $in: items } });
+
+      if (existingOwnedItem)
+        throw new Error('ITEM_ALREADY_OWNED');
+
+      var itemDocs = SteamAPI.getAllItemsForPlayer(userId);
+      var filteredItems = _.filter(itemDocs, function(item) {
+        return (items.indexOf(item.itemId) !== -1);
       });
 
-      _.each(items, function(item) {
-        DB.items.insert(item);
+      _.each(filteredItems, function(doc) {
+        doc.status = Enums.ItemStatus.PENDING_DEPOSIT;
+        doc.tradeofferId = tradeofferId;
+        DB.items.insert(doc);
       });
+    },
+
+    // Gets an array of item documents from the ids
+    getItemsFromIds: function(items) {
+      check(items, [String]);
+
+      var out = Items.find({ _id: { $in: items } }).fetch();
+
+      if (out.length !== items.length)
+        throw new Error('MISSING_ITEMS', items);
+
+      return out;
+
+      // return _.map(items, function(itemId) {
+      //   return Items.findOne(itemId);
+      // });
     },
 
     getItemOwner: function(itemId) {
@@ -138,9 +162,11 @@ DB = {
       category: 'Private'
     });
   },
+
   removeItems: function(userId) {
     Items.remove({userId: userId});
   },
+
   addListing: function(user,tradeItems, marketItems) {
     var datePosted = new Date();
     Listings.insert({
@@ -150,10 +176,12 @@ DB = {
       datePosted: datePosted
     });
   },
+
   removeListing: function(listingId) {
     Listings.remove({_id: listingId});
     //TODO: send notification to anyone watching this listing, etc.
   },
+
   addOffer: function(userId, listing) {
     var currentDate = new Date();
     Transactions.insert({
@@ -166,10 +194,12 @@ DB = {
     });
     //Note: transaction hook fires to update inventory items
   },
+
   removeTrade: function(transactionId) {
     //TODO: make this an ENUM
     Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
   },
+
   insertRealTimeTrade: function(user1Id, user2Id) {
     RealTimeTrade.insert({
       user1Id: user1Id,
@@ -178,14 +208,17 @@ DB = {
       user2Stage: "INVITED"
     });
   },
+
   acceptRealTimeTrade: function(tradeId, channel) {
     RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING",
                          user2Stage: "TRADING",
     channel: channel}});
   },
+
   rejectRealTimeTrade: function(tradeId) {
     RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
   },
+
   addItemToTrade: function(item, tradeId, field) {
     //TODO: for some reason when I use field directly in the push
     //statement below I get a simple schema validation error...
@@ -198,6 +231,7 @@ DB = {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
   },
+
   removeItemFromTrade: function(item, tradeId, field) {
     if(field === "user1Items") {
       RealTimeTrade.update(tradeId, {$pull: {user1Items: item}});
@@ -207,6 +241,7 @@ DB = {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
   },
+
   setTradeStage: function(tradeId, field, stage) {
     if(field === "user1Stage") {
       RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}});
@@ -216,6 +251,7 @@ DB = {
       throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
     }
   },
+
   checkForTradeCompletion: function(tradeId) {
     var trade = RealTimeTrade.findOne(tradeId);
     if(trade.user1Stage === "CONFIRMED" && trade.user2Stage == "CONFIRMED") {

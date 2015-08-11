@@ -3,11 +3,6 @@ Session.set('mySelectedItems', []);
 
 Template.postTradeRequest.onCreated(function() {
   searchText.set('');
-  Meteor.call('getPlayerInventory', Meteor.userId(), function(error) {
-    if(error) {
-      console.log(error.reason);
-    }
-  });
 });
 
 Template.makeOffer.helpers({
