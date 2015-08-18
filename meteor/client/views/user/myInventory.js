@@ -12,7 +12,7 @@ Template.myInventory.helpers({
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return Items.getItems(searchText.get(), fields,options );
+      return Items.getItems(searchText.get(), fields, options);
     } else {
       return Items.find(selector);
     }
@@ -20,7 +20,7 @@ Template.myInventory.helpers({
   existsValue: function(value) {
     var newValue = value.trim();
     //is it an empty string, if not don't show it
-    return _.isEmpty(value) ? false : true;
+    return !_.isEmpty(value);
   }
 });
 

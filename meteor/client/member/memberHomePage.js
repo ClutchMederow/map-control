@@ -1,4 +1,4 @@
-Template.memberHomePage.helpers({
+Template.home.helpers({
   getMarket: function() {
     return {userId: 'All'};
   },

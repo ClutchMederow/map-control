@@ -1,8 +1,71 @@
 <template name="landing">
-<div class="row center-align">
-  <div class="s12">
-    <h5>Landing Page</h5>
-    <img src="http://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
+  <div class="row who-we-are">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <div class="row landing-info-card">
+            <div class="col s12 m9">
+              <p><i class="tiny material-icons">info</i> IronFoil is a place to trade items in Counter-Strike for cash or other items. Use the real-time trading floor to chat with people who want to trade now, or post an item on the marketplace.</p>
+            </div>
+            <div class="col s12 m3 center-align">
+              <img src="http://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+<!--   <div class="row center-align">
+    <div class="col s6">
+      <div class="row">
+        <div class="col s11">
+        </div>
+      </div>
+    </div>
+    <div class="col s6">
+      <div class="row">
+        <div class="col s11 offset-s1">
+        </div>
+      </div>
+    </div>
+  </div>
+ -->
+  <div class="row">
+    <div class="col s6">
+      <div class="row">
+        <div class="col s11">
+          <div class="card">
+            <a href="{{ pathFor route='chatWindow' channel='tradingFloor' }}">
+              <div class="card-content landing-panel">
+                <div class="lg-preview-content">
+                  <div class="lg-preview-title">Trade</div>
+                  items<br/>real<br/>time
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col s6">
+      <div class="row">
+        <div class="col s11 offset-s1">
+          <div class="card">
+            <a href="{{ pathFor route='market' }}">
+              <div class="card-content landing-panel right-landing-panel">
+                <div class="lg-preview-content">
+                  <div class="lg-preview-title">Browse</div>
+                  standing<br/>offers
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row center-align">
+    <div class="s12">
+    </div>
+  </div>
 </template>
