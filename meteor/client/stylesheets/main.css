@@ -1,1 +1,52 @@
 .material-tooltip { white-space: normal; }
+
+.brand-logo {
+  margin-left: 1em;
+}
+
+#steamLogin {
+  cursor: pointer;
+}
+
+.landing-panel {
+  height: 300px;
+  /*background-color: #24091F;*/
+}
+
+.who-we-are {
+  margin-top: 1.5em;
+}
+
+.lg-preview-title {
+  font-size: 160%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.lg-preview-content {
+  font-size: 200%;
+  height: 8em;
+/*  border-width: 1px;
+  -moz-border-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  -webkit-border-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(33.33333%, #000000), color-stop(66.66667%, #000000), color-stop(100%, rgba(0, 0, 0, 0))) 1 100%;
+  -webkit-border-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  -o-border-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  border-image: linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;}
+*/
+}
+
+.valign-text {
+  height: 100%;
+  display: flex;
+  justify-content:center;
+  align-content:center;
+  flex-direction:column; /* column | row */
+}
+
+.right-landing-panel {
+  text-align: right;
+}
+
+.landing-info-card {
+  margin-bottom: 0;
+}

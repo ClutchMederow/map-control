@@ -22,9 +22,9 @@ Router.route('/steam', {
   template: "configureLoginServiceDialogForSteam"
 });
 
-Router.route('/memberHomePage', {
-  name: 'memberHomePage',
-  template: 'memberHomePage'
+Router.route('/home', {
+  name: 'home',
+  template: 'home'
 });
 
 Router.route('/realTimeTrading/:tradeId', {
@@ -41,12 +41,12 @@ Router.route('/realTimeTrading/:tradeId', {
 });
 
 Router.route('/notifications', {
-  name: 'notifications', 
+  name: 'notifications',
   template: 'notifications'
 });
 
 Router.route('/market/:userId', {
-  name: 'market', 
+  name: 'market',
   template: 'market',
   data: function() {
     if(this.params.userId === 'All') {
