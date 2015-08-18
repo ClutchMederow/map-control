@@ -10,6 +10,8 @@
 
 .landing-panel {
   height: 300px;
+  text-decoration: none;
+  color: black;
   /*background-color: #24091F;*/
 }
 
