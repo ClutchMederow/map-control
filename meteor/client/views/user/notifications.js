@@ -13,7 +13,7 @@ Template.notifications.events({
       } else {
         console.log(realTimeTradeId);
         sAlert.success("Would you like to go to trading room?" +
-        "<a href='/realTimeTrading/" + realTimeTradeId + "' id='realTimeTradeId'>click here</a>", {html: true, timeout:10000});
+        "<a href='/realtime/" + realTimeTradeId + "' id='realTimeTradeId'>click here</a>", {html: true, timeout:10000});
       }
     });
   },

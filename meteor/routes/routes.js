@@ -27,8 +27,8 @@ Router.route('/home', {
   template: 'home'
 });
 
-Router.route('/realTimeTrading/:tradeId', {
-  name: 'realTimeTrading',
+Router.route('/realtime/:tradeId', {
+  name: 'realtime',
   template: 'realTimeTrading',
   data: function() {
     return RealTimeTrade.findOne(this.params.tradeId);
@@ -57,21 +57,21 @@ Router.route('/market/:userId', {
   }
 });
 
-Router.route('/myinventory', {
-  name: 'myInventory',
+Router.route('/inventory', {
+  name: 'inventory',
   template: 'myInventory'
 });
 
-Router.route('/myTransactions/:userId', {
-  name: 'myTransactions',
+Router.route('/transactions/:userId', {
+  name: 'transactions',
   template: 'myTransactions',
   data: function() {
     return {userId: this.params.userId};
   }
 });
 
-Router.route('/posttraderequest', {
-  name: 'postTradeRequest',
+Router.route('/list', {
+  name: 'list',
   template: 'postTradeRequest'
 });
 
@@ -80,7 +80,7 @@ Router.route('/stripepayment', {
   template: 'stripePayment'
 });
 
-Router.route('/tradingFloor/:channel',{
+Router.route('/tradingfloor/:channel',{
   name: 'chatWindow' ,
   template: 'chatWindow',
   action: function() {
@@ -90,7 +90,7 @@ Router.route('/tradingFloor/:channel',{
   }
 });
 
-Router.route('/makeOffer/:listingId', {
+Router.route('/offer/:listingId', {
   name: 'makeOffer',
   template: 'makeOffer',
   data: function() {
