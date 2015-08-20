@@ -23,9 +23,9 @@
         </div>
       </div>
     </div>
-    <div class="col s9">
+    <div class="col s6">
       <div class="chatWindow">
-        <div class="chatTitle">
+        <div class="colored-title">
           {{ currentChannel }}
         </div>
         <!-- TODO: move style to sass file -->
@@ -46,6 +46,9 @@
           {{> chatInput}}
         </div>
       </div>
+    </div>
+    <div class="col s3">
+      {{> portableStash }}
     </div>
   </div>
 </template>

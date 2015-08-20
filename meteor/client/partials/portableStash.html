@@ -1,0 +1,19 @@
+<template name="portableStash">
+  <div class="card-panel portable-stash">
+    <div class="colored-title">
+      Stash
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="search" type="text" placeholder="search">
+      </div>
+    </div>
+    <div class="row">
+      {{#each items }}
+        <div class="col s3">
+          <img src="{{iconURL}}" class="responsive-img">
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

@@ -47,7 +47,7 @@ Items.attachSchema({
     optional: true
   },
   itemId: {
-    type: Number,
+    type: String,
     label: 'Steam ID of item'
   },
   amount: {
@@ -65,11 +65,11 @@ Items.attachSchema({
     allowedValues: [0,1]
   },
   classId: {
-    type: Number,
+    type: String,
     label: 'Steam class ID of item'
   },
   instanceId: {
-    type: Number,
+    type: String,
     label: 'Steam instance id of item'
   },
   iconURL: {
@@ -78,7 +78,7 @@ Items.attachSchema({
     optional: true
   },
   tradeofferId: {
-    type: Number,
+    type: String,
     label: 'Tradeoffer ID'
   },
   status: {

@@ -23,12 +23,12 @@ SteamAPI = (function () {
         type: itemDescription.type,
         descriptions: itemDescription.descriptions,
         tags: itemDescription.tags,
-        itemId: Number(item.id),
+        itemId: item.id,
         amount: Number(item.amount),
         marketable: itemDescription.marketable,
         tradable: itemDescription.commodity,
-        classId: Number(item.classid),
-        instanceId: Number(item.instanceid),
+        classId: item.classid,
+        instanceId: item.instanceid,
         iconURL: steamCDN + itemDescription.icon_url,
         status: Enums.ItemStatus.EXTERNAL,
         deleteInd: false
@@ -94,7 +94,7 @@ SteamAPI = (function () {
       "/inventory/json/" + csAppId + "/" + csContextId;
       console.log(callString);
       var data = HTTP.get(callString).data;
-      return JSON.parse(data);
+      return data;
     },
     getGenericItems: function() {
       var callString = "https://api.steampowered.com/IEconItems_730/GetSchema/v0002/?key=" + apiKey;

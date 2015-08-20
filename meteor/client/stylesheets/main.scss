@@ -92,7 +92,14 @@
   background-color: #fff;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 
-  .chatTitle {
+
+  .chatTextWindow {
+    overflow: auto;
+    height:300px;
+  }
+}
+
+.colored-title {
     margin-top: -20px;
     margin-left: -20px;
     margin-right: -20px;
@@ -105,9 +112,3 @@
     background-color: #009688;
     color: white;
   }
-
-  .chatTextWindow {
-    overflow: auto;
-    height:300px;
-  }
-}
