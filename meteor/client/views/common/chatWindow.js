@@ -22,7 +22,7 @@ Template.chatWindow.onRendered(function() {
       //sure tracker reruns
       console.log(channelsCount);
       this.$('.collapsible').collapsible({
-        accordion : false 
+        accordion : false
       });
     }.bind(this));
   }.bind(this));
@@ -38,7 +38,7 @@ Template.chatWindow.helpers({
   channelsByCategory: function() {
     var channels = channelsCursor().fetch();
     return _.groupBy(channels, function(channel) {
-      return channel.category;    
+      return channel.category;
     });
   }
 });
