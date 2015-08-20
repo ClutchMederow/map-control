@@ -40,6 +40,10 @@ Template.chatWindow.helpers({
     return _.groupBy(channels, function(channel) {
       return channel.category;
     });
+  },
+
+  currentChannel: function() {
+    return Session.get('channel');
   }
 });
 

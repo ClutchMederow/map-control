@@ -71,3 +71,43 @@
 .loginDropIcon {
   margin-left: 0 !important;
 }
+
+.channelList {
+  ul {
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .active-channel {
+    background-color: rgba(175, 143, 143, 0.87);
+  }
+}
+
+.chatWindow {
+  transition: box-shadow 0.25s;
+  padding: 20px 20px 0 20px ;
+  margin: 0.5rem 0 1rem 0;
+  border-radius: 2px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+  .chatTitle {
+    margin-top: -20px;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+
+    text-align: center;
+    background-color: #009688;
+    color: white;
+  }
+
+  .chatTextWindow {
+    overflow: auto;
+    height:300px;
+  }
+}
