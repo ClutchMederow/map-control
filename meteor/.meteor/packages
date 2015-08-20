@@ -12,7 +12,6 @@ aldeed:collection2
 dburles:collection-helpers
 alanning:roles
 matb33:collection-hooks
-materialize:materialize
 dburles:factory
 anti:fake
 underscore
@@ -31,3 +30,5 @@ momentjs:moment
 juliancwirko:s-alert
 accounts-password
 tmeasday:presence
+fourseven:scss
+poetic:materialize-scss

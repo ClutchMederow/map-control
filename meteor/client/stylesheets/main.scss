@@ -1,3 +1,14 @@
+// You can override colors BEFORE materialize.scss:
+// $primary-color: blue;
+
+// You can NOT use materialize color mixins since they are not imported yet.
+// WRONG! $primary-color: color("materialize-red", "lighten-2");
+
+@import "colors.import.scss";
+@import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
+
+
+
 .material-tooltip { white-space: normal; }
 
 .brand-logo {
@@ -51,4 +62,12 @@
 
 .landing-info-card {
   margin-bottom: 0;
+}
+
+.loginDropdown {
+  text-decoration: underline;
+}
+
+.loginDropIcon {
+  margin-left: 0 !important;
 }
