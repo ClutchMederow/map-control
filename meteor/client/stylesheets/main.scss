@@ -99,6 +99,15 @@
   }
 }
 
+.draggable-stash-item:hover {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.stash-hover {
+  box-shadow: 0 2px 5px 0 red, 0 2px 10px 0 red;
+}
+
 .colored-title {
     margin-top: -20px;
     margin-left: -20px;
@@ -112,3 +121,11 @@
     background-color: #009688;
     color: white;
   }
+
+.chat-input-items {
+  padding-bottom: 1em;
+
+  .draggable-stash-item:hover {
+    cursor: pointer;
+  }
+}

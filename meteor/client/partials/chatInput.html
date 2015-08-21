@@ -7,5 +7,14 @@
       </div>
       <button class="btn waves-effect waves-light valign" id="post">Post</button>
     </div>
+    {{ #if this.length }}
+      <div class="row chat-input-items">
+        {{ #each this }}
+          <div class="col s2">
+            <img src="{{ iconURL }}" class="responsive-img draggable-stash-item" id="{{ _id }}">
+          </div>
+        {{ /each }}
+      </div>
+    {{ /if }}
   </form>
 </template>

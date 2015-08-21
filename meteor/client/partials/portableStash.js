@@ -4,6 +4,13 @@ Template.portableStash.onCreated(function() {
   searchText.set('');
 });
 
+Template.portableStash.rendered = function() {
+  $('.draggable-stash-item').draggable({
+    revert: true,
+    revertDuration: 0
+  });
+};
+
 Template.portableStash.helpers({
   items: function() {
     var fields = ['name', 'type'];
