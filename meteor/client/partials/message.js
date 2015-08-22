@@ -42,19 +42,22 @@ Template.message.helpers({
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
   }
 });
+
 Template.message.events({
   'click .privateChat': function(e) {
     e.preventDefault();
-    console.log(this);
-    Meteor.call('startPrivateChat',this.user.userId,function(error) {
+
+    Meteor.call('startPrivateChat',this.user.userId, function(error) {
       if(error) {
         console.log(error.reason);
       }
     });
   },
+
   'click .beginTrade': function(e) {
     e.preventDefault();
-    Meteor.call('createRealTimeTrade', this.user.userId,function(error) {
+
+    Meteor.call('createRealTimeTrade', this.user.userId, function(error) {
       if(error) {
         sAlert.error('Could not invite user to real time trade');
       } else {
