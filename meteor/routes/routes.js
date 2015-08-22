@@ -80,9 +80,16 @@ Router.route('/stripepayment', {
   template: 'stripePayment'
 });
 
-Router.route('/tradingfloor/:channel',{
-  name: 'chatWindow' ,
-  template: 'chatWindow',
+Router.route('/tradingfloor/:channel?',{
+  name: 'tradingFloor' ,
+  template: 'tradingFloor',
+  onBeforeAction: function() {
+    if (!this.params.channel) {
+      this.redirect('tradingFloor', { channel: Config.tradingFloor.defaultChannel });
+    } else {
+      this.next();
+    }
+  },
   action: function() {
     if (this.ready()) {
       this.render();

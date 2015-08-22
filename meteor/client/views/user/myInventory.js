@@ -17,6 +17,7 @@ Template.myInventory.helpers({
       return Items.find(selector);
     }
   },
+
   existsValue: function(value) {
     var newValue = value.trim();
     //is it an empty string, if not don't show it

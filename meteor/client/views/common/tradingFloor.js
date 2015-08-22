@@ -7,9 +7,8 @@ var changesHandle;
 // Collections to store items added to the chat window
 // var selectedChatItems = new Mongo.Collection(null);
 
-Template.chatWindow.onCreated(function() {
-  //TODO: add this to config object
-  Session.set('channel', 'Trading Floor');
+Template.tradingFloor.onCreated(function() {
+  Session.set('channel', Config.tradingFloor.defaultChannel);
 
   var self = this;
   self.autorun(function() {
@@ -17,7 +16,7 @@ Template.chatWindow.onCreated(function() {
   });
 });
 
-Template.chatWindow.onRendered(function() {
+Template.tradingFloor.onRendered(function() {
   //this is necessary to get materialize collapsible to work
   //with meteor. Basically need to ensure DOM renders
   this.autorun(function() {
@@ -32,7 +31,7 @@ Template.chatWindow.onRendered(function() {
   }.bind(this));
 
   // Define the area where we can drop stash items to be inserted into the chat
-  $('.chatWindow').droppable({
+  $('.tradingFloor').droppable({
     accept: '.draggable-stash-item',
     hoverClass: 'stash-hover',
     drop: function(e, ui) {
@@ -52,7 +51,7 @@ Template.chatWindow.onRendered(function() {
   });
 });
 
-Template.chatWindow.destroyed = function() {
+Template.tradingFloor.destroyed = function() {
 
   // Need to destroy the handle - it will run infinitely if not explicitly released
   if (changesHandle) {
@@ -61,7 +60,7 @@ Template.chatWindow.destroyed = function() {
 }
 
 
-Template.chatWindow.helpers({
+Template.tradingFloor.helpers({
 
   messages: function() {
     return Messages.find({'channel.name': Session.get('channel')});
@@ -83,7 +82,7 @@ Template.chatWindow.helpers({
   },
 });
 
-Template.chatWindow.events({
+Template.tradingFloor.events({
   'click .channel': function(e) {
     Session.set('channel', this.name);
   },
