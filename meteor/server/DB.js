@@ -4,6 +4,7 @@ DB = {
       user: attributes.user,
       channel: attributes.channel,
       text: attributes.text,
+      items: attributes.items,
       datePosted: new Date()
     });
   },
@@ -21,8 +22,11 @@ DB = {
       if (!userId || !botName)
         throw new Error('BAD_ARGUMENTS');
 
-      if (Meteor.users.findOne(userId).profile.botName)
-        throw new Error('User already has bot assigned: ' + userId);
+      // Removing this for now. I don't think the default here should be an error since
+      // there is no harm in someone's items being spread out across bots
+
+      // if (Meteor.users.findOne(userId).profile.botName)
+      //   throw new Error('User already has bot assigned: ' + userId);
 
       var doc = { $set: { 'profile.botName': botName } };
       DB.users.update(userId, doc);
@@ -89,7 +93,7 @@ DB = {
 
     insertNewItems: function(userId, tradeofferId, items) {
       check(userId, String);
-      check(items, [Number]);
+      check(items, [String]);
 
       var existingOwnedItem = Items.findOne({ itemId: { $in: items } });
 
@@ -100,6 +104,9 @@ DB = {
       var filteredItems = _.filter(itemDocs, function(item) {
         return (items.indexOf(item.itemId) !== -1);
       });
+
+      if (!filteredItems || filteredItems.length !== items.length)
+        throw new Error('ITEM_COUNT_MISMATCH');
 
       _.each(filteredItems, function(doc) {
         doc.status = Enums.ItemStatus.PENDING_DEPOSIT;

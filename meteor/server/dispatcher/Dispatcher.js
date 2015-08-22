@@ -71,16 +71,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     return _.keys(bots)[botIndex];
   }
 
-  function enQueue(jobType, items) {
-    if (jobType === JobType.DEPOSIT_ITEMS) {
-      var options = {
-
-      }
-
-      var job = new QueueJob();
-    }
-  }
-
   return {
     makeTrade: function(userOneId, userOneItems, userTwoId, userTwoItems) {
       var userOne = Meteor.users.findOne(userOneId);
@@ -107,7 +97,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     depositItems: function(userId, items) {
       check(userId, String);
-      check(items, [Number]);
+      check(items, [String]);
 
       var bot = getUsersBot(userId);
 

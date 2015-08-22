@@ -25,7 +25,7 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
 
     check(options, {
-      items: [Number],
+      items: [String],
       userId: String
     });
 
@@ -35,7 +35,7 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
 
     check(options, {
-      items: [Number],
+      items: [String],
       userId: String
     });
 
@@ -53,6 +53,8 @@ BotJob.prototype._executeDeposit = function() {
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
+
+  console.log(self.items);
 
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items);
@@ -140,7 +142,7 @@ BOTTEST = function() {
   //   instanceId: '188530139'
   // }];
 
-  var items = [ 387788608 ];
+  var items = [ '3079813020', '3080132388', '2812184353' ];
 
   // var options = {
   //   items: items,
@@ -148,6 +150,16 @@ BOTTEST = function() {
   // };
 
   Dispatcher.init();
+
+  var bot = Dispatcher.getUsersBot('uYrKadsnCzyg9TLrC');
+
+  bot.loadBotInventory();
+
+  fff = _.pluck(bot.items.find().fetch(), 'id');
+  DB.items.insertNewItems('uYrKadsnCzyg9TLrC','dsf',fff);
+
+
+  // bot.takeItems('76561197965124635', items);
 
   // var options = {
   //   partnerSteamId: '76561197965124635',
@@ -163,7 +175,7 @@ BOTTEST = function() {
   //   itemObj = res;
   // });
 
-  Dispatcher.depositItems('uYrKadsnCzyg9TLrC', items);
+  // Dispatcher.depositItems('uYrKadsnCzyg9TLrC', items);
 
 };
 /*

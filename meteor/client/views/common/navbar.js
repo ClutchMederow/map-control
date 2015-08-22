@@ -19,12 +19,7 @@ var userNavOptions = {
       thisClass: 'navLogout'
     }
   ],
-  loggingIn: [
-    {
-      text: 'logging in...',
-      thisClass: 'navLoggingIn'
-    }
-  ]
+  loggingIn: []
 };
 
 Template.navbar.rendered = function() {
@@ -51,6 +46,10 @@ Template.navbar.helpers({
     } else {
       return 'sign in';
     }
+  },
+
+  loggedIn: function() {
+    return !!Meteor.user();
   }
 });
 
@@ -66,8 +65,6 @@ Template.navbar.events({
   },
 
   'click .navLogout': function() {
-    console.log('going');
-
     Meteor.logout(function(error, data) {
       if(error) {
         console.log(error.reason);
