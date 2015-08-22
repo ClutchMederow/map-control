@@ -2,6 +2,8 @@ function channelsCursor() {
     return Channels.find();
 }
 
+var changesHandle;
+
 // Collections to store items added to the chat window
 // var selectedChatItems = new Mongo.Collection(null);
 
@@ -39,14 +41,25 @@ Template.chatWindow.onRendered(function() {
     }
   });
 
-  Messages.find({'channel.name': Session.get('channel')}).observeChanges({
-    added: scrollToBottom
+  // Adds a scroll handle to run when a new message arrives
+  var self = this;
+  this.autorun(function() {
+    if(self.subscriptionsReady()) {
+      changesHandle = Messages.find({'channel.name': Session.get('channel')}).observeChanges({
+        added: scrollToBottom
+      });
+    }
   });
-
-  scrollToBottom();
-
-  // selectedChatItems.remove({});
 });
+
+Template.chatWindow.destroyed = function() {
+
+  // Need to destroy the handle - it will run infinitely if not explicitly released
+  if (changesHandle) {
+    changesHandle.stop();
+  }
+}
+
 
 Template.chatWindow.helpers({
 
@@ -68,20 +81,12 @@ Template.chatWindow.helpers({
   currentChannel: function() {
     return Session.get('channel');
   },
-
-  // selectedChatItems: function() {
-  //   return selectedChatItems.find().fetch();
-  // }
 });
 
 Template.chatWindow.events({
   'click .channel': function(e) {
     Session.set('channel', this.name);
   },
-
-  // 'click .chat-input-items img': function(e) {
-  //   selectedChatItems.remove(e.target.id);
-  // }
 });
 
 // Drops an item into the chat window
@@ -105,11 +110,6 @@ function dropItem(id) {
   $('#chat_message').focus();
   var lastElem = $('.chatItem-' + item._id).last()[0];
   placeCaretAfterNode(lastElem);
-
-  // if (!selectedChatItems.findOne(id)) {
-    // $('#chat_message').append($('#stash_' + id).clone());
-    // selectedChatItems.insert(item);
-  // }
 }
 
 // Moves the text cursor to the end
@@ -127,5 +127,5 @@ function placeCaretAfterNode(node) {
 var scrollToBottom = _.throttle(function() {
   $('.chatTextWindow').animate({
     scrollTop: $('.chatTextWindow').get(0).scrollHeight
-  }, 2000);
+  }, 500);
 }, 500);
