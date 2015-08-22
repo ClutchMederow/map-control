@@ -99,6 +99,44 @@
   }
 }
 
+.chat-box {
+  height: 3rem;
+  margin-left: 3rem;
+  width: calc(100% - 3rem);
+  margin-bottom: 1.25rem;
+  line-height: 3rem;
+  margin-top: 0;
+  -webkit-appearance: textfield;
+  appearance: textfield;
+
+  font-size: 1rem;
+  padding: 0;
+  box-shadow: none;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: border-box;
+  transition: all 0.3s;
+
+  &:hover {
+    border-bottom: 1px solid #26a69a;
+    box-shadow: 0 1px 0 0 #26a69a;
+  }
+
+  &:focus {
+    outline: 0;
+    border-bottom: 1px solid #26a69a;
+    box-shadow: 0 1px 0 0 #26a69a;
+  }
+
+  .mdi-editor-mode-edit .prefix {
+    font-size: 1.3rem;
+  }
+}
+
+.chat-box-placeholder {
+
+}
+
 .draggable-stash-item:hover {
   cursor: -webkit-grab;
   cursor: -moz-grab;

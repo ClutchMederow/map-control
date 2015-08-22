@@ -4,17 +4,16 @@ Template.chatInput.events({
 
     var attributes = {
       channel: Session.get('channel'),
-      text: $("#chat_message").val()
+      text: $("#chat_message").text().trim()
     };
-
-    if (!attributes.text) return;
 
     Meteor.call('insertChat',attributes, function(error){
       if(error) {
-        console.log('Error');
+        console.log(error);
       } else {
-        $('#chat_message').val("");
+        $('#chat_message').text("");
       }
+      $('#chat_message').focus();
     });
   }
 });

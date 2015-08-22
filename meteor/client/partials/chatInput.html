@@ -3,8 +3,11 @@
     <div class="row valign-wrapper">
       <div class="input-field col s10 valign">
         <i class="mdi-editor-mode-edit prefix"></i>
-        <input placeholder="Enter Chat Message here..." id="chat_message" type="text" class="validate">
-      </div>
+        <div contenteditable="true" class="chat-box validate" id="chat_message">
+          Hello i am typing
+        </div>
+<!--         <input placeholder="Enter Chat Message here..." type="text" class="validate">
+ -->      </div>
       <button class="btn waves-effect waves-light valign" id="post">Post</button>
     </div>
     {{ #if this.length }}
@@ -18,3 +21,6 @@
     {{ /if }}
   </form>
 </template>
+
+<!--         <input placeholder="Enter Chat Message here..." id="chat_message" type="text" class="validate">
+ -->
