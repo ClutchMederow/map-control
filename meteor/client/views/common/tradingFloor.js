@@ -39,15 +39,15 @@ Template.tradingFloor.onRendered(function() {
   });
 
   // Adds a scroll handle to run when a new message arrives
-  var self = this;
-  this.autorun(function() {
-    console.log(changesHandle);
-    console.log(self.subscriptionsReady());
-    if(self.subscriptionsReady()) {
-      changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
-        added: scrollToBottom
-      });
-    }
+  // var self = this;
+  // this.autorun(function() {
+  //   if(self.subscriptionsReady()) {
+  //     scrollToBottom();
+  //   }
+  // });
+
+  changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
+    added: scrollToBottom
   });
 });
 

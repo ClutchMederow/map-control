@@ -1,6 +1,6 @@
 Template.channel.helpers({
   active: function() {
-    if (Session.get('channel') === this.name) {
+    if (Iron.controller().getParams().channel === this.name) {
       return 'active-channel';
     } else {
       return "";
