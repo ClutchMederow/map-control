@@ -8,11 +8,9 @@ var changesHandle;
 // var selectedChatItems = new Mongo.Collection(null);
 
 Template.tradingFloor.onCreated(function() {
-  Session.set('channel', Config.tradingFloor.defaultChannel);
-
   var self = this;
   self.autorun(function() {
-    self.subscribe('messages', Session.get('channel'));
+    self.subscribe('messages', Iron.controller().getParams().channel);
   });
 });
 
@@ -43,8 +41,10 @@ Template.tradingFloor.onRendered(function() {
   // Adds a scroll handle to run when a new message arrives
   var self = this;
   this.autorun(function() {
+    console.log(changesHandle);
+    console.log(self.subscriptionsReady());
     if(self.subscriptionsReady()) {
-      changesHandle = Messages.find({'channel.name': Session.get('channel')}).observeChanges({
+      changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
         added: scrollToBottom
       });
     }
@@ -63,7 +63,7 @@ Template.tradingFloor.destroyed = function() {
 Template.tradingFloor.helpers({
 
   messages: function() {
-    return Messages.find({'channel.name': Session.get('channel')});
+    return Messages.find({'channel.name': Iron.controller().getParams().channel });
   },
 
   channels: function() {
@@ -78,14 +78,11 @@ Template.tradingFloor.helpers({
   },
 
   currentChannel: function() {
-    return Session.get('channel');
+    return Iron.controller().getParams().channel;
   },
 });
 
 Template.tradingFloor.events({
-  'click .channel': function(e) {
-    Session.set('channel', this.name);
-  },
 });
 
 // Drops an item into the chat window
@@ -95,6 +92,8 @@ function dropItem(id) {
 
   if (!item) return;
 
+  // Creates a span with two children - one for the image and one for some hidden text
+  // We do this so the image can be represented in the DB when this comment is posted
   var $outerSpan = $('<span class="img-placeholder"></span>');
   var $innerSpan = $('<span>' + Chat.imgDelimiter + id + Chat.imgDelimiter + '</span>');
   var $img = $('<img src="' + item.iconURL + '" class="responsive-img chat-item chatItem-' + item._id + '" data-itemid="' + item._id + '">');
