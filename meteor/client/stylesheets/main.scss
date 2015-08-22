@@ -197,12 +197,19 @@
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
-  padding-top: 20px;
+  padding-top: 0;
   padding-left: 20px;
   padding-right: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 0;
 
   text-align: center;
-  background-color: #009688;
-  color: white;
+  /*background-color: #009688;*/
+  /*color: white;*/
+
+  color: #b71c1c;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .5em;
+  background-color: #EAF1F0;
+  font-size: 2rem;
 }
