@@ -100,7 +100,7 @@
 }
 
 .chat-box {
-  height: 3rem;
+  min-height: 3rem;
   margin-left: 3rem;
   width: calc(100% - 3rem);
   margin-bottom: 1.25rem;
@@ -109,12 +109,14 @@
   -webkit-appearance: textfield;
   appearance: textfield;
 
-  font-size: 1rem;
+  font-size: 1.25rem;
   padding: 0;
   box-shadow: none;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: border-box;
+  border-bottom: 1px solid rgba(160,160,160, .3);
+  box-shadow: 0 1px 0 0 rgba(160,160,160, .3);
   transition: all 0.3s;
 
   &:hover {
@@ -131,6 +133,20 @@
   .mdi-editor-mode-edit .prefix {
     font-size: 1.3rem;
   }
+}
+
+.img-placeholder {
+  span {
+    display: none;
+  }
+}
+
+.chat-item {
+  height: 2.5rem !important;
+  margin-bottom: -.75rem;
+  cursor: normal;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .chat-box-placeholder {
@@ -159,11 +175,3 @@
     background-color: #009688;
     color: white;
   }
-
-.chat-input-items {
-  padding-bottom: 1em;
-
-  .draggable-stash-item:hover {
-    cursor: pointer;
-  }
-}

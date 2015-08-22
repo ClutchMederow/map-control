@@ -4,6 +4,7 @@ DB = {
       user: attributes.user,
       channel: attributes.channel,
       text: attributes.text,
+      imageUrls: attributes.imageUrls,
       datePosted: new Date()
     });
   },
