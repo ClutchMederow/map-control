@@ -4,7 +4,7 @@ DB = {
       user: attributes.user,
       channel: attributes.channel,
       text: attributes.text,
-      imageUrls: attributes.imageUrls,
+      items: attributes.items,
       datePosted: new Date()
     });
   },

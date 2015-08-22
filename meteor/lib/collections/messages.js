@@ -30,9 +30,10 @@ Messages.attachSchema({
     blackbox: true,
     label: 'Channel of Message'
   },
-  imageUrls: {
-    type: [String],
-    label: 'Image URLs',
-    optional: true
+  items: {
+    type: [Object],
+    label: 'Items in message',
+    optional: true,
+    blackbox: true
   }
 });

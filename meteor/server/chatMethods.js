@@ -9,10 +9,9 @@ Meteor.methods({
 
     //TODO: make this cleaner, risky to rely on names
     var channel = Channels.findOne({name: attributes.channel});
-    var parsedChatData = Chat.parseChatText(attributes.text);
+    var items = Chat.parseChatText(attributes.text);
 
-    attributes.text = parsedChatData.text;
-    attributes.imageUrls = parsedChatData.imageUrls;
+    attributes.items = items;
     attributes.channel = channel;
     attributes.user = {userId: this.userId, profile: user.profile};
 
