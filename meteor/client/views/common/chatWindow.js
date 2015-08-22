@@ -39,6 +39,10 @@ Template.chatWindow.onRendered(function() {
     }
   });
 
+  Messages.find({'channel.name': Session.get('channel')}).observeChanges({
+    added: scrollToBottom
+  })
+
   // selectedChatItems.remove({});
 });
 
@@ -117,3 +121,9 @@ function placeCaretAfterNode(node) {
     selection.addRange(range);
   }
 }
+
+var scrollToBottom = _.throttle(function() {
+  $('.chatTextWindow').animate({
+    scrollTop: $('.chatTextWindow').get(0).scrollHeight
+  }, 2000);
+}, 500);
