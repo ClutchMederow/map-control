@@ -41,7 +41,9 @@ Template.chatWindow.onRendered(function() {
 
   Messages.find({'channel.name': Session.get('channel')}).observeChanges({
     added: scrollToBottom
-  })
+  });
+
+  scrollToBottom();
 
   // selectedChatItems.remove({});
 });
