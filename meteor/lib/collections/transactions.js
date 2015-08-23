@@ -11,7 +11,7 @@ Transactions.attachSchema({
   user1Id: {
     type: String,
     label: 'User 1'
-  }, 
+  },
   user1Items: {
     type: [Object],
     label: 'Items of User 1 in trade',
@@ -34,12 +34,12 @@ Transactions.attachSchema({
     type: String,
     label: 'Current Stage',
     //may need compound states, i.e. A accepts B rejects
-    allowedValues: ['INITIAL_OFFER', 'DECLINED', 'CANCELED', 'ACCEPTED'] 
+    allowedValues: ['INITIAL_OFFER', 'DECLINED', 'CANCELED', 'ACCEPTED']
   },
 });
 
 Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, stage) {
-  return Transactions.insert({user1Id: user1Id, 
+  return Transactions.insert({user1Id: user1Id,
                              user1Items: user1Items,
                              user2Id: user2Id,
                              user2Items: user2Items,
@@ -53,11 +53,11 @@ Transactions.changeStage = function(transactionId, stage) {
 //update the inventory items after transaction inserted
 Transactions.after.insert(function(userId, doc) {
   _.each(doc.user1Items, function(item1) {
-    InventoryItems.update({_id: item1._id}, {$push: {currentTransactions: doc._id}});
-  }); 
+    Items.update({_id: item1._id}, {$push: {currentTransactions: doc._id}});
+  });
 
   _.each(doc.user2Items, function(item2) {
-    InventoryItems.update({_id: item2._id}, {$push: {currentTransactions: doc._id}});
+    Items.update({_id: item2._id}, {$push: {currentTransactions: doc._id}});
   });
 });
 
@@ -65,11 +65,11 @@ Transactions.after.update(function(userId, doc, fieldNames, modifier, option) {
   if(_.contains(fieldNames, "stage") && doc.stage === 'CANCELED') {
 
     _.each(doc.user1Items, function(item1) {
-      InventoryItems.update({_id: item1._id}, {$pull: {currentTransactions: doc._id}});
-    }); 
+      Items.update({_id: item1._id}, {$pull: {currentTransactions: doc._id}});
+    });
 
     _.each(doc.user2Items, function(item2) {
-      InventoryItems.update({_id: item2._id}, {$pull: {currentTransactions: doc._id}});
+      Items.update({_id: item2._id}, {$pull: {currentTransactions: doc._id}});
     });
   }
 });

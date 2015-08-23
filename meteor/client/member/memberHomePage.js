@@ -1,7 +1,7 @@
-Template.memberHomePage.onRendered(function() {
+Template.home.onRendered(function() {
 });
 
-Template.memberHomePage.helpers({
+Template.home.helpers({
   getMarket: function() {
     return {userId: 'All'};
   },

@@ -1,4 +1,4 @@
-<template name="memberHomePage">
+<template name="home">
 {{#if firstTimeLoggingIn}}
   <!-- TODO: modals not working, see welcomeModal.html -->
 {{/if}}
@@ -14,14 +14,14 @@
   <div class="col s4 grey lighten-5">
     <h5 class="center-align">Trade</h5>
     <h5><a href="{{pathFor route='market' data=getMarket}}">Market</a></h5>
-    <h5><a href="{{pathFor route='postTradeRequest'}}">Post Item to Market</a></h5>
-    <h5><a href="tradingFloor/TradingFloor">Trading Floor</a></h5>
+    <h5><a href="{{pathFor route='list'}}">Post Item to Market</a></h5>
+    <h5><a href="tradingfloor/TradingFloor">Trading Floor</a></h5>
   </div>
   <div class="col s4 grey lighten-4">
     <h5 class="center-align">Command Center</h5>
-    <h5><a href="{{pathFor route='myInventory'}}">My Inventory</a></h5>
+    <h5><a href="{{pathFor route='inventory'}}">My Inventory</a></h5>
     <h5><a href="{{pathFor route='market' data=getMyListings}}">My Listings</a></h5>
-    <h5><a href="{{pathFor route='myTransactions' data=getMyTransactions}}">
+    <h5><a href="{{pathFor route='transactions' data=getMyTransactions}}">
         My Open Trades
       </a>
     </h5>

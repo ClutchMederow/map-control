@@ -5,12 +5,6 @@ Session.set('marketItems', []);
 
 Template.postTradeRequest.onCreated(function() {
   searchText.set('');
-  //TODO: remove, a player's inventory should now always be up to date
-  Meteor.call('getPlayerInventory', Meteor.userId(), function(error) {
-    if(error) {
-      console.log(error.reason);
-    }
-  });
 });
 
 Template.postTradeRequest.helpers({
@@ -21,7 +15,7 @@ Template.postTradeRequest.helpers({
     var options = {limit: 5};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return InventoryItems.getItems(searchText.get(), fields, selector, options );
+      return Items.getItems(searchText.get(), fields, selector, options );
     } else {
       return null;
     }
@@ -32,7 +26,7 @@ Template.postTradeRequest.helpers({
     var options = {limit: 5};
     //don't want to search until user enters something
     if(marketSearchText.get()) {
-      return InventoryItems.getItems(marketSearchText.get(), fields, selector, options );
+      return Items.getItems(marketSearchText.get(), fields, selector, options );
     } else {
       return null;
     }
@@ -76,18 +70,18 @@ Template.postTradeRequest.events({
     var tradeItems = Session.get("tradeItems");
     var item = this;
     Session.set("tradeItems", _.filter(tradeItems, function(tradeItem) {
-      return tradeItem._id !== item._id; 
+      return tradeItem._id !== item._id;
     }));
   },
   'click .removeMarketItem': function(e) {
     var marketItems = Session.get("marketItems");
     var item = this;
     Session.set("marketItems", _.filter(marketItems, function(marketItem) {
-      return marketItem._id !== item._id; 
+      return marketItem._id !== item._id;
     }));
   },
   'click #postTrade': function(e) {
-    Meteor.call('createListing', Session.get('tradeItems'), Session.get('marketItems'), 
+    Meteor.call('createListing', Session.get('tradeItems'), Session.get('marketItems'),
                 function(error){
                   if(error) {
                     console.log(error.reason);

@@ -4,7 +4,7 @@ Template.landing.events({
       if(error) {
         console.log(error.reason);
       } else {
-        Router.go('memberHomePage');
+        Router.go('home');
       }
     });
   }

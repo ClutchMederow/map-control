@@ -1,0 +1,235 @@
+// You can override colors BEFORE materialize.scss:
+// $primary-color: blue;
+
+// You can NOT use materialize color mixins since they are not imported yet.
+// WRONG! $primary-color: color("materialize-red", "lighten-2");
+
+@import "colors.import.scss";
+@import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
+
+
+
+.material-tooltip { white-space: normal; }
+
+.brand-logo {
+  margin-left: 1em;
+}
+
+#steamLogin {
+  cursor: pointer;
+}
+
+.landing-panel {
+  height: 300px;
+  text-decoration: none;
+  color: black;
+  /*background-color: #24091F;*/
+}
+
+.who-we-are {
+  margin-top: 1.5em;
+}
+
+.lg-preview-title {
+  font-size: 160%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.lg-preview-content {
+  font-size: 200%;
+  height: 8em;
+/*  border-width: 1px;
+  -moz-border-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  -webkit-border-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(33.33333%, #000000), color-stop(66.66667%, #000000), color-stop(100%, rgba(0, 0, 0, 0))) 1 100%;
+  -webkit-border-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  -o-border-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;
+  border-image: linear-gradient(top, rgba(0, 0, 0, 0), #000000, #000000, rgba(0, 0, 0, 0)) 1 100%;}
+*/
+}
+
+.valign-text {
+  height: 100%;
+  display: flex;
+  justify-content:center;
+  align-content:center;
+  flex-direction:column; /* column | row */
+}
+
+.right-landing-panel {
+  text-align: right;
+}
+
+.landing-info-card {
+  margin-bottom: 0;
+}
+
+.loginDropdown {
+  text-decoration: underline;
+}
+
+.loginDropIcon {
+  margin-left: 0 !important;
+}
+
+.channelList {
+  ul {
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  i {
+    display: none;
+  }
+
+  .channel {
+    padding-left: 2rem;
+
+    a {
+      color: rgba(191, 184, 184, 1);
+      display: block;
+    }
+  }
+
+  li.active .collapsible-body {
+    padding-bottom: 1rem;
+  }
+
+  .collapsible-header.active {
+    border-bottom: none;
+  }
+
+  .active-channel {
+    /*background-color: rgba(245, 245, 245, 0.87);*/
+
+    i {
+      font-size: 1.5em;
+      color: #2AE503;
+      display: inline-block;
+    }
+
+    a {
+      color: #C52D2D;
+    }
+  }
+}
+
+.tradingFloor {
+  transition: box-shadow 0.25s;
+  padding: 20px 20px 0 20px ;
+  margin: 0.5rem 0 1rem 0;
+  border-radius: 2px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+
+  .chatTextWindow {
+    overflow: auto;
+    height:300px;
+  }
+}
+
+.chat-box {
+  min-height: 3rem;
+  margin-left: 3rem;
+  width: calc(100% - 3rem);
+  margin-bottom: 1.25rem;
+  line-height: 3rem;
+  margin-top: 0;
+  -webkit-appearance: textfield;
+  appearance: textfield;
+
+  font-size: 1.25rem;
+  padding: 0;
+  box-shadow: none;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(160,160,160, .3);
+  box-shadow: 0 1px 0 0 rgba(160,160,160, .3);
+  transition: all 0.3s;
+
+  &:hover {
+    border-bottom: 1px solid #26a69a;
+    box-shadow: 0 1px 0 0 #26a69a;
+  }
+
+  &:focus {
+    outline: 0;
+    border-bottom: 1px solid #26a69a;
+    box-shadow: 0 1px 0 0 #26a69a;
+  }
+
+  .mdi-editor-mode-edit .prefix {
+    font-size: 1.3rem;
+  }
+}
+
+.img-placeholder {
+  span {
+    display: none;
+  }
+}
+
+.chat-item {
+  height: 2.5rem !important;
+  margin-bottom: -.75rem;
+  cursor: normal;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.chat-username {
+  display: inline-block;
+  color: white;
+  padding: 0 .5rem;
+  border-radius: 3px;
+
+  /* keeps the rows the correct distance apart since the images fuck with things */
+  margin: .75rem 0;
+}
+
+.chat-box-placeholder {
+
+}
+
+.message-time {
+  color: #ACB3B9;
+  font-size: .8rem;
+  margin-right: 1rem;
+}
+
+.message-text {
+  color: black;
+}
+
+.draggable-stash-item:hover {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.stash-hover {
+  box-shadow: 0 2px 5px 0 red, 0 2px 10px 0 red;
+}
+
+.colored-title {
+  margin-top: -20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-top: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 0;
+
+  text-align: center;
+  /*background-color: #009688;*/
+  /*color: white;*/
+
+  color: #b71c1c;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .5em;
+  background-color: #EAF1F0;
+  font-size: 2rem;
+}

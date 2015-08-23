@@ -29,5 +29,11 @@ Messages.attachSchema({
     type: Object,
     blackbox: true,
     label: 'Channel of Message'
+  },
+  items: {
+    type: [Object],
+    label: 'Items in message',
+    optional: true,
+    blackbox: true
   }
 });

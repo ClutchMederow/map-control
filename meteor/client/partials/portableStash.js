@@ -1,11 +1,21 @@
 var searchText = new ReactiveVar('');
 
-Template.myInventory.onCreated(function() {
+Template.portableStash.onCreated(function() {
   searchText.set('');
 });
 
-Template.myInventory.helpers({
-  //Items will be stored on player's desktop
+Template.portableStash.rendered = function() {
+
+  // All stash items should be draggable
+  // When you add some kind of item limit here, make sure to apply the following:
+  // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
+  $('.draggable-stash-item').draggable({
+    revert: true,
+    revertDuration: 0
+  });
+};
+
+Template.portableStash.helpers({
   items: function() {
     var fields = ['name', 'type'];
     var selector = { userId: Meteor.userId(), marketable: 1, deleteInd: false, status: Enums.ItemStatus.STASH };
@@ -25,7 +35,7 @@ Template.myInventory.helpers({
   }
 });
 
-Template.myInventory.events({
+Template.portableStash.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),

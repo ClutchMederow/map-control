@@ -5,14 +5,14 @@ Meteor.startup(function() {
       {service: "steam"},
       {
         $set: {
-          loginStyle: config.loginStyle, //NOTE: changing to redirect causes bug right now 
+          loginStyle: config.loginStyle, //NOTE: changing to redirect causes bug right now
           apiKey: config.apiKey
         }
     });
   };
 
   var steamConfig = Meteor.settings.steam;
-  if(steamConfig) { 
+  if(steamConfig) {
     configureSteam(steamConfig);
   } else {
     console.log("You do not have steam service configured");
@@ -35,7 +35,7 @@ Meteor.startup(function() {
       Users.insert(user);
     });
   }
-  
+
 
   //Offers
   Factory.define('listings', Listings, {
@@ -45,7 +45,7 @@ Meteor.startup(function() {
     items: function() {
     },
     requests: function() {
-      
+
     },
     datePosted: function() {
       return new Date(); ///TODO: improve this
@@ -54,7 +54,7 @@ Meteor.startup(function() {
       return Fake.paragraph();
     }
   });
- 
+
   //Channels
   var categories = ['Rifles', 'Pistols', 'SMG', 'Sniper Rifles'];
   Factory.define('channel', Channels, {
@@ -68,7 +68,7 @@ Meteor.startup(function() {
   });
 
   if (Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor', 
+    Channels.insert({name: 'Trading Floor',
                     publishedToUsers: ['Public'],
                     category: 'Trading Floor'});
     _(5).times(function(n) {
@@ -103,10 +103,10 @@ Meteor.startup(function() {
 
   //Inventory Items
   var itemClasses = ['Rifle', 'Pistol', 'SMG', 'Sniper Rifle'];
-  Factory.define('item', InventoryItems, {
+  Factory.define('item', Items, {
     name: function() {
       return Fake.word();
-    }, 
+    },
     itemId: function() {
       return Fake.word();
     },
@@ -116,9 +116,8 @@ Meteor.startup(function() {
     type: function() {
       return Fake.fromArray(itemClasses);
     },
-    deleteInd: false 
+    deleteInd: false
   });
-
 
   //TODO: put in dev / production flag here
   if (Messages.find().count() === 0) {
@@ -127,9 +126,8 @@ Meteor.startup(function() {
     });
   }
 
-
   /*
-  if (InventoryItems.find().count() === 0) {
+  if (Items.find().count() === 0) {
     _(100).times(function(n) {
       Factory.create('item');
     });

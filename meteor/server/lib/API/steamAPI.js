@@ -6,13 +6,16 @@ SteamAPI = (function () {
   var apiKey = Meteor.settings.steam.apiKey;
   var steamCDN = "http://steamcommunity-a.akamaihd.net/economy/image/";
 
-  var parseSteamAPIInventory = function(data,userId ) {
-    var rgInventory = data.rgInventory;
-    var rgDescriptions = data.rgDescriptions;
-    _.each(rgInventory, function(item) {
+  var parseSteamAPIInventory = function(data, userId) {
+    var parsed = data;
+
+    var rgInventory = parsed.rgInventory;
+    var rgDescriptions = parsed.rgDescriptions;
+
+    return _.map(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
       //TODO: put this through DB layer
-      InventoryItems.insert({
+      return {
         userId: userId,
         name: itemDescription.market_name,
         nameColor: itemDescription.name_color,
@@ -21,46 +24,46 @@ SteamAPI = (function () {
         descriptions: itemDescription.descriptions,
         tags: itemDescription.tags,
         itemId: item.id,
-        amount: item.amount,
+        amount: Number(item.amount),
         marketable: itemDescription.marketable,
         tradable: itemDescription.commodity,
         classId: item.classid,
         instanceId: item.instanceid,
         iconURL: steamCDN + itemDescription.icon_url,
+        status: Enums.ItemStatus.EXTERNAL,
         deleteInd: false
-       });
+       };
     });
   };
   //declaration of all functions, best practice due to hoisting
   //profileID = steam public id (base 64)
   //userId = Meteor user ID
-  var getPlayerInventory = function(profileId, userId) {
-      var inventoryData;
-      var callString = "http://steamcommunity.com/profiles/" + profileId +
-      "/inventory/json/" + csAppId + "/" + csContextId;
-      try {
-        inventoryData = HTTP.get(callString).data;
-      } catch(error) {
-        console.log(error.stack);
-        throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve player's inventory");
-      }
-      if(!inventoryData.success) {
-        console.log('Failed to load');
-        throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
-      } else { 
-        //clear and remove inventory for a specific user,
-        //do this after API call to avoid lag
-        DB.removeInventoryItems(userId);
-        parseSteamAPIInventory(inventoryData, userId);
-      }
+  var getPlayerInventory = function(userId) {
+
+    var profileId = Meteor.users.findOne(userId).services.steam.id;
+
+    var inventoryData;
+    var callString = "http://steamcommunity.com/profiles/" + profileId +
+    "/inventory/json/" + csAppId + "/" + csContextId;
+
+    inventoryData = HTTP.get(callString).data;
+
+    if(!inventoryData.success) {
+      console.log('Failed to load');
+      throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
+    } else {
+      //clear and remove inventory for a specific user,
+      //do this after API call to avoid lag
+      return parseSteamAPIInventory(inventoryData, userId);
+    }
   };
 
 
 
   //Public variables
   return {
-    getAllItemsForPlayer: function(profileId, userId) {
-      return getPlayerInventory(profileId, userId);
+    getAllItemsForPlayer: function(userId) {
+      return getPlayerInventory(userId);
     },
       //check that item exists OR the amount of that item has incremented 1
       //check that item doesn't exist OR that amount of item has decremented 1
