@@ -90,11 +90,6 @@ Router.route('/list', {
   template: 'postTradeRequest'
 });
 
-Router.route('/stripepayment', {
-  name: 'stripePayment',
-  template: 'stripePayment'
-});
-
 Router.route('/tradingfloor/:channel?',{
   name: 'tradingFloor' ,
   template: 'tradingFloor',
