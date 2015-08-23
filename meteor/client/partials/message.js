@@ -1,10 +1,10 @@
 Template.message.onRendered( function() {
-  $('.dropdown-button').dropdown({
+  $('.user-dropdown').dropdown({
     inDuration: 300,
     outDuration: 225,
     constrain_width: false, // Does not change width of dropdown to that of the activator
     hover: true, // Activate on hover
-    gutter: 0, // Spacing from edge
+    gutter: 50, // Spacing from edge
     belowOrigin: true // Displays dropdown below the button
   });
 });
@@ -42,19 +42,22 @@ Template.message.helpers({
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
   }
 });
+
 Template.message.events({
   'click .privateChat': function(e) {
     e.preventDefault();
-    console.log(this);
-    Meteor.call('startPrivateChat',this.user.userId,function(error) {
+
+    Meteor.call('startPrivateChat',this.user.userId, function(error) {
       if(error) {
         console.log(error.reason);
       }
     });
   },
+
   'click .beginTrade': function(e) {
     e.preventDefault();
-    Meteor.call('createRealTimeTrade', this.user.userId,function(error) {
+
+    Meteor.call('createRealTimeTrade', this.user.userId, function(error) {
       if(error) {
         sAlert.error('Could not invite user to real time trade');
       } else {

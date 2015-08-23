@@ -2,20 +2,14 @@ function channelsCursor() {
     return Channels.find();
 }
 
-// Collections to store items added to the chat window
-// var selectedChatItems = new Mongo.Collection(null);
-
-Template.chatWindow.onCreated(function() {
-  //TODO: add this to config object
-  Session.set('channel', 'Trading Floor');
-
+Template.tradingFloor.onCreated(function() {
   var self = this;
   self.autorun(function() {
-    self.subscribe('messages', Session.get('channel'));
+    self.subscribe('messages', Iron.controller().getParams().channel);
   });
 });
 
-Template.chatWindow.onRendered(function() {
+Template.tradingFloor.onRendered(function() {
   //this is necessary to get materialize collapsible to work
   //with meteor. Basically need to ensure DOM renders
   this.autorun(function() {
@@ -30,7 +24,7 @@ Template.chatWindow.onRendered(function() {
   }.bind(this));
 
   // Define the area where we can drop stash items to be inserted into the chat
-  $('.chatWindow').droppable({
+  $('.tradingFloor').droppable({
     accept: '.draggable-stash-item',
     hoverClass: 'stash-hover',
     drop: function(e, ui) {
@@ -39,19 +33,24 @@ Template.chatWindow.onRendered(function() {
     }
   });
 
-  Messages.find({'channel.name': Session.get('channel')}).observeChanges({
+  // Adds a scroll handle to run when a new message arrives
+  changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
     added: scrollToBottom
   });
-
-  scrollToBottom();
-
-  // selectedChatItems.remove({});
 });
 
-Template.chatWindow.helpers({
+Template.tradingFloor.destroyed = function() {
+
+  // Need to destroy the handle - it will run infinitely if not explicitly released
+  if (changesHandle) {
+    changesHandle.stop();
+  }
+};
+
+Template.tradingFloor.helpers({
 
   messages: function() {
-    return Messages.find({'channel.name': Session.get('channel')});
+    return Messages.find({'channel.name': Iron.controller().getParams().channel }, { sort: { datePosted: 1 } });
   },
 
   channels: function() {
@@ -66,22 +65,11 @@ Template.chatWindow.helpers({
   },
 
   currentChannel: function() {
-    return Session.get('channel');
+    return Iron.controller().getParams().channel;
   },
-
-  // selectedChatItems: function() {
-  //   return selectedChatItems.find().fetch();
-  // }
 });
 
-Template.chatWindow.events({
-  'click .channel': function(e) {
-    Session.set('channel', this.name);
-  },
-
-  // 'click .chat-input-items img': function(e) {
-  //   selectedChatItems.remove(e.target.id);
-  // }
+Template.tradingFloor.events({
 });
 
 // Drops an item into the chat window
@@ -91,6 +79,8 @@ function dropItem(id) {
 
   if (!item) return;
 
+  // Creates a span with two children - one for the image and one for some hidden text
+  // We do this so the image can be represented in the DB when this comment is posted
   var $outerSpan = $('<span class="img-placeholder"></span>');
   var $innerSpan = $('<span>' + Chat.imgDelimiter + id + Chat.imgDelimiter + '</span>');
   var $img = $('<img src="' + item.iconURL + '" class="responsive-img chat-item chatItem-' + item._id + '" data-itemid="' + item._id + '">');
@@ -105,11 +95,6 @@ function dropItem(id) {
   $('#chat_message').focus();
   var lastElem = $('.chatItem-' + item._id).last()[0];
   placeCaretAfterNode(lastElem);
-
-  // if (!selectedChatItems.findOne(id)) {
-    // $('#chat_message').append($('#stash_' + id).clone());
-    // selectedChatItems.insert(item);
-  // }
 }
 
 // Moves the text cursor to the end
@@ -127,5 +112,5 @@ function placeCaretAfterNode(node) {
 var scrollToBottom = _.throttle(function() {
   $('.chatTextWindow').animate({
     scrollTop: $('.chatTextWindow').get(0).scrollHeight
-  }, 2000);
+  }, 500);
 }, 500);

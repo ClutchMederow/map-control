@@ -3,7 +3,7 @@ Template.chatInput.events({
     e.preventDefault();
 
     var attributes = {
-      channel: Session.get('channel'),
+      channel: Iron.controller().getParams().channel,
       text: $("#chat_message").text().trim()
     };
 

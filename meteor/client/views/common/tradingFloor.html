@@ -1,9 +1,9 @@
-<template name="chatWindow">
+<template name="tradingFloor">
   <div class="row">
     <div class="col s3">
       <div class="card-panel">
-        <div class="section">
-          <h5>Channels</h5>
+        <div class="colored-title">
+          Channels
         </div>
         <div class="section channelList">
           <ul class="collapsible" data-collapsible="accordion">
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="col s6">
-      <div class="chatWindow">
+      <div class="tradingFloor">
         <div class="colored-title">
           {{ currentChannel }}
         </div>
@@ -33,7 +33,6 @@
           {{#if Template.subscriptionsReady}}
             {{#each messages}}
               {{> message}}
-              <br>
             {{else}}
               <h5>This channel is currently empty</h5>
             {{/each}}

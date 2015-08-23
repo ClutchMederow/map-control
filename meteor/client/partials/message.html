@@ -1,22 +1,22 @@
 <template name="message">
-<div>
-  <img class="responsive-img" src="{{getImage}}">
-  <a href="#" class="dropdown-button btn {{state}}" data-activates="{{user.userId}}">
-    {{user.profile.name}}
-  </a>
-  <!-- Dropdown Structure -->
-  <ul id="{{user.userId}}" class="dropdown-content">
-    <li><a href="#!" class="privateChat">Start Private Chat</a></li>
-    <li><a href="#" class="beginTrade">
-        Invite to Real Time Trade
-      </a>
-    </li>
-    <li><a href="#!">Current Market Items </a></li>
-    <li class="divider"></li>
-    <li><a href="#!">View Profile</a></li>
-    <li><a href="#!">Status: {{status}}</a></li>
-  </ul>
-  <span>{{formatDate datePosted}}</span>
-  <span>{{ textWithImages }}</span>
-</div>
+  <div>
+    <img class="responsive-img" src="{{getImage}}">
+    <a href="#" class="user-dropdown {{state}} chat-username" data-activates="{{ _id }}">
+      {{user.profile.name}}
+    </a>
+    <!-- Dropdown Structure -->
+    <ul id="{{ _id }}" class="dropdown-content">
+      <li><a href="#!" class="privateChat">Start Private Chat</a></li>
+      <li><a href="#" class="beginTrade">
+          Invite to Real Time Trade
+        </a>
+      </li>
+      <li><a href="#!">Current Market Items </a></li>
+      <li class="divider"></li>
+      <li><a href="#!">View Profile</a></li>
+      <li><a href="#!">Status: {{status}}</a></li>
+    </ul>
+    <span class="message-time">({{ justTime datePosted }})</span>
+    <span class="message-text">{{ textWithImages }}</span>
+  </div>
 </template>

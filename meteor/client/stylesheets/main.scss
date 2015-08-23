@@ -79,12 +79,43 @@
     border-right: none;
   }
 
+  i {
+    display: none;
+  }
+
+  .channel {
+    padding-left: 2rem;
+
+    a {
+      color: rgba(191, 184, 184, 1);
+      display: block;
+    }
+  }
+
+  li.active .collapsible-body {
+    padding-bottom: 1rem;
+  }
+
+  .collapsible-header.active {
+    border-bottom: none;
+  }
+
   .active-channel {
-    background-color: rgba(175, 143, 143, 0.87);
+    /*background-color: rgba(245, 245, 245, 0.87);*/
+
+    i {
+      font-size: 1.5em;
+      color: #2AE503;
+      display: inline-block;
+    }
+
+    a {
+      color: #C52D2D;
+    }
   }
 }
 
-.chatWindow {
+.tradingFloor {
   transition: box-shadow 0.25s;
   padding: 20px 20px 0 20px ;
   margin: 0.5rem 0 1rem 0;
@@ -149,8 +180,28 @@
   margin-right: 5px;
 }
 
+.chat-username {
+  display: inline-block;
+  color: white;
+  padding: 0 .5rem;
+  border-radius: 3px;
+
+  /* keeps the rows the correct distance apart since the images fuck with things */
+  margin: .75rem 0;
+}
+
 .chat-box-placeholder {
 
+}
+
+.message-time {
+  color: #ACB3B9;
+  font-size: .8rem;
+  margin-right: 1rem;
+}
+
+.message-text {
+  color: black;
 }
 
 .draggable-stash-item:hover {
@@ -163,15 +214,22 @@
 }
 
 .colored-title {
-    margin-top: -20px;
-    margin-left: -20px;
-    margin-right: -20px;
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
+  margin-top: -20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-top: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 0;
 
-    text-align: center;
-    background-color: #009688;
-    color: white;
-  }
+  text-align: center;
+  /*background-color: #009688;*/
+  /*color: white;*/
+
+  color: #b71c1c;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .5em;
+  background-color: #EAF1F0;
+  font-size: 2rem;
+}
