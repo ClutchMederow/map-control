@@ -180,8 +180,28 @@
   margin-right: 5px;
 }
 
+.chat-username {
+  display: inline-block;
+  color: white;
+  padding: 0 .5rem;
+  border-radius: 3px;
+
+  /* keeps the rows the correct distance apart since the images fuck with things */
+  margin: .75rem 0;
+}
+
 .chat-box-placeholder {
 
+}
+
+.message-time {
+  color: #ACB3B9;
+  font-size: .8rem;
+  margin-right: 1rem;
+}
+
+.message-text {
+  color: black;
 }
 
 .draggable-stash-item:hover {

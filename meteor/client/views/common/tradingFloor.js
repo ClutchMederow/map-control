@@ -2,11 +2,6 @@ function channelsCursor() {
     return Channels.find();
 }
 
-var changesHandle;
-
-// Collections to store items added to the chat window
-// var selectedChatItems = new Mongo.Collection(null);
-
 Template.tradingFloor.onCreated(function() {
   var self = this;
   self.autorun(function() {
@@ -39,13 +34,6 @@ Template.tradingFloor.onRendered(function() {
   });
 
   // Adds a scroll handle to run when a new message arrives
-  // var self = this;
-  // this.autorun(function() {
-  //   if(self.subscriptionsReady()) {
-  //     scrollToBottom();
-  //   }
-  // });
-
   changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
     added: scrollToBottom
   });
@@ -57,13 +45,12 @@ Template.tradingFloor.destroyed = function() {
   if (changesHandle) {
     changesHandle.stop();
   }
-}
-
+};
 
 Template.tradingFloor.helpers({
 
   messages: function() {
-    return Messages.find({'channel.name': Iron.controller().getParams().channel });
+    return Messages.find({'channel.name': Iron.controller().getParams().channel }, { sort: { datePosted: 1 } });
   },
 
   channels: function() {
