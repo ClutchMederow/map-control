@@ -162,9 +162,14 @@ DB = {
   insertPrivateChannel: function(user1Id, user2Id) {
     var requestor = Users.findOne(user1Id);
     var submittor = Users.findOne(user2Id);
+
+    if (!requestor || !submittor) {
+      throw new Error('NO_USER_FOUND');
+    }
+
     return Channels.insert({
       //shouldn't need name for private chats
-      name: Random.id(),
+      name: requestor.profile.name + '_' + submittor.profile.name + Math.round(Math.random()*100),
       publishedToUsers: [user1Id, user2Id],
       category: 'Private'
     });

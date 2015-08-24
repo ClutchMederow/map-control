@@ -7,11 +7,15 @@ Template.portableStash.onCreated(function() {
 Template.portableStash.rendered = function() {
 
   // All stash items should be draggable
-  // When you add some kind of item limit here, make sure to apply the following:
   // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
-  $('.draggable-stash-item').draggable({
-    revert: true,
-    revertDuration: 0
+
+  // We need to have the mouseover event bound to accound for items being destroyed and recreated in the
+  // DOM when people use the search function. This ensures that each item is always draggable
+  $('.portable-stash').on('mouseover', '.draggable-stash-item', function() {
+    $(this).draggable({
+      revert: true,
+      revertDuration: 0
+    });
   });
 };
 
