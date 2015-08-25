@@ -18,7 +18,6 @@ STRIPE = {
     callback();
   },
   getBankAccountToken: function(domElement, bankAccount, callback) {
-    console.log(bankAccount);
     check(bankAccount, {
       country: String,
       currency: String,

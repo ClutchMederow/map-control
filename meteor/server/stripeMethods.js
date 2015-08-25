@@ -58,9 +58,12 @@ Meteor.methods({
     var user = Meteor.users.findOne(this.userId);
     var newAccount = new Future(); 
     //user has existing account
+    /*
     if(user.account) {
       //TODO 
     } else { //this is first account
+   */
+      console.log("Creating account");
       Meteor.call('stripeCreateAccount', true, bankAccount.country, 
                   user.profile.emailAddress, function(error, stripeAccount){
                     //update account, then update user object in meteor
@@ -80,12 +83,12 @@ Meteor.methods({
                                     if(error) {
                                       console.log(error);
                                     } else {
-
+                                      console.log(stripeAccountDetails);
                                     }
                                   });
                     }
                   });
       return newAccount.wait();
     }
-  }
+  //}
 });

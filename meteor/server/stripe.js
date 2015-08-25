@@ -25,6 +25,7 @@ Meteor.methods({
   },
   stripeCreateAccount: function(managed, country, email) {
     check(managed, Boolean);
+    check(country, String);
     check(email, String);
     var stripeAccount = new Future();
 
@@ -43,6 +44,7 @@ Meteor.methods({
       if (error){
         stripeAccount.return(error);
       } else {
+        console.log("checking account");
         stripeAccount.return(account);
       }
     });
@@ -51,10 +53,12 @@ Meteor.methods({
   stripeUpdateAccount: function(accountId, bankAccount) {
     check(accountId, String);
     check(bankAccount, Object);
+    console.log("updating account");
+    console.log(bankAccount);
     var updateAccount = new Future(); 
 
     Stripe.accounts.update({
-      external_acccount: token,
+      external_acccount: bankAccount.token,
       legal_entity: {
         type: "individual",
         personal_address: {
@@ -68,7 +72,7 @@ Meteor.methods({
       }
     }, function(error, account) {
       if(error){
-        stripeAccount.return(error);
+        updateAccount.return(error);
       } else {
         console.log(account);
         updateAccount.return(account);

@@ -23,11 +23,8 @@ Template.bankAccount.onRendered(function() {
           if (error) {
             alert(error.reason);
           } else {
-            if ( response.error ) {
-              alert(response.message);
-            } else {
-              sAlert.success("Added payment option");
-            }
+            console.log(response);
+            sAlert.success("Added payment option");
           }
         });
       }); //END callback function
