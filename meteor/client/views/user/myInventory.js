@@ -1,4 +1,5 @@
 var searchText = new ReactiveVar('');
+var selectedItem = new ReactiveVar(null);
 
 Template.myInventory.onCreated(function() {
   searchText.set('');
@@ -18,10 +19,8 @@ Template.myInventory.helpers({
     }
   },
 
-  existsValue: function(value) {
-    var newValue = value.trim();
-    //is it an empty string, if not don't show it
-    return !_.isEmpty(value);
+  selectedItem: function() {
+    return selectedItem.get();
   }
 });
 
@@ -29,4 +28,9 @@ Template.myInventory.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),
+
+  'click .item-modal-trigger': function() {
+    selectedItem.set(this);
+    $('#itemModal').openModal();
+  }
 });
