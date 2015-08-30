@@ -11,6 +11,7 @@ Session.set('searchItems', []);
 Template.market.onRendered(function() {
   searchText.set('');
   $('.tooltipped').tooltip({delay: 50}); 
+  $('.button-collapse').sideNav();
 });
 
 Template.market.helpers({
