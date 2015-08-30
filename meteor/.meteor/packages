@@ -30,7 +30,7 @@ momentjs:moment
 juliancwirko:s-alert
 accounts-password
 tmeasday:presence
-fourseven:scss
 poetic:materialize-scss
 dbernhard:jquery-ui-draggable
 drewproud:jquery-ui-droppable
+fourseven:scss@=2.1.1
