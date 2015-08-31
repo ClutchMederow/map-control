@@ -6,3 +6,4 @@ Meteor.subscribe('transactions');
 Meteor.subscribe('realtimetrade');
 Meteor.subscribe('userPresence');
 Meteor.subscribe('genericItems');
+Meteor.subscribe('notifications');

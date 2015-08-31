@@ -66,3 +66,9 @@ Presences._ensureIndex({"userId": 1});
 Meteor.publish('genericItems', function() {
   return GenericItems.find();
 });
+
+Meteor.publish('notifications', function() {
+  return Notifications.find({userId: this.userId});
+});
+
+Notifications._ensureIndex({"userId": 1});
