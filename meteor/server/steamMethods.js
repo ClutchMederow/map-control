@@ -1,9 +1,11 @@
 Meteor.methods({
-  // getPlayerInventory: function(userId) {
-  //   check(userId, String);
-  //   var user = Users.findOne(userId);
-  //   //TODO: remove Drew's user id before committing
-  //   //user.services.steam.id
-  //   SteamAPI.getAllItemsForPlayer(user.services.steam.id,userId);
-  // }
+  getPlayerInventory: function() {
+    var user = Users.findOne(this.userId);
+
+    if (this.userId && user) {
+      return SteamAPI.getPlayerItems(user.services.steam.id, this.userId);
+    } else {
+      throw new Meteor.Error('NO_USER', 'User not found');
+    }
+  }
 });
