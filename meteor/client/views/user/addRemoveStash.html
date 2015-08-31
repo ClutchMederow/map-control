@@ -1,0 +1,17 @@
+<template name="addRemoveStash">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <p>Select any item from your stash that you would like to widthdraw into your steam account. Add items to your stash to be able to trade them on the market or trading floor</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        {{> itemContainer title='Stash' items=stashItems columns='3' class='add-remove-items' }}
+      </div>
+      <div class="col s6">
+        {{> itemContainer title='Inventory' items=stashItems columns='3' class='add-remove-items' }}
+      </div>
+    </div>
+  </div>
+</template>
