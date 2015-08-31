@@ -14,15 +14,16 @@ Template.addRemoveStash.helpers({
 Template.addRemoveStash.onCreated(function() {
   userInventoryItems.remove({});
 
-  // var user  = Meteor.user();
-  // if (user && user.services && user.services.steam && user.services.steam.id) {
-  //   var steamId = user.services.steam.id;
+  Meteor.call('getPlayerInventory', function(err, res) {
+    if (err) {
+      console.log(err);
+    } else {
+      _.each(res, function(item) {
+        userInventoryItems.insert(item);
+      });
+    }
 
-  //   ClientSteamAPI.getPlayerInventory(steamId, function(data) {
-  //     // console.log(data);
-  //     console.log('yup');
-  //   });
-  // } else {
-  //   console.log('no steam ID');
-  // }
+    console.log(userInventoryItems.find().count());
+  });
+
 });

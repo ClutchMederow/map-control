@@ -1,0 +1,19 @@
+<template name="itemContainer">
+  <div class="card-panel portable-stash">
+    <div class="colored-title">
+      {{ title }}
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="{{ searchBoxId }}" type="text" placeholder="search">
+      </div>
+    </div>
+    <div class="row {{ class }}">
+      {{ #each filteredItems }}
+        <div class="col {{ colWidth ../columns }}">
+          <img src="{{ iconURL }}" class="responsive-img draggable-stash-item" data-itemid="{{ _id }}">
+        </div>
+      {{ /each}}
+    </div>
+  </div>
+</template>
