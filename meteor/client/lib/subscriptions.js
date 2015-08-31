@@ -5,3 +5,4 @@ Meteor.subscribe('listings');
 Meteor.subscribe('transactions');
 Meteor.subscribe('realtimetrade');
 Meteor.subscribe('userPresence');
+Meteor.subscribe('genericItems');

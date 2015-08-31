@@ -101,6 +101,7 @@ SteamAPI = (function () {
       try {
         var items = HTTP.get(callString).data.result.items;
         _.map(items, function(item) {
+          //TODO: remove this and include crates and keys
           if(item.craft_class === 'weapon') {
             GenericItems.insert(item);
           }
