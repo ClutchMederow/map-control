@@ -62,3 +62,7 @@ Meteor.publish('userPresence', function() {
 
 //TODO: indices for presences?
 Presences._ensureIndex({"userId": 1});
+
+Meteor.publish('genericItems', function() {
+  return GenericItems.find();
+});
