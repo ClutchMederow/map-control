@@ -1,45 +1,52 @@
 <template name="market">
-<div class="row">
-  <div class="col s6 offset-s3 center-align">
-    <h1>Market</h1>
-  </div>
-  <div class="col s6 offset-s3 center-align">
-    <div class="input-field">
-      <input id="search" type="search" required>
-      <label for="search"><i class="mdi-action-search"></i></label>
+<!-- Side nav bar -->
+<ul id="slide-out" class="side-nav fixed">
+  {{> genericItems}}
+</ul>
+<!-- end side nav bar -->
+<div class="market">
+  <div class="row">
+    <div class="col s6 offset-s3 center-align">
+      <h1>Market</h1>
+    </div>
+    <div class="col s6 offset-s3 center-align">
+      <div class="input-field">
+        <input id="search" type="search" required>
+        <label for="search"><i class="mdi-action-search"></i></label>
+      </div>
     </div>
   </div>
-</div>
-{{#each listings}}
-<div class="row">
-  <div class="col s4">
-    <h5 class="center-align">{{user.profile.name}}</h5>
-    {{#each items}}
+  {{#each listings}}
+  <div class="row">
+    <div class="col s4">
+      <h5 class="center-align">{{user.profile.name}}</h5>
+      {{#each items}}
       <img width="30%" height="30%" src="{{iconURL}}"
-      class="tooltipped" data-position="bottom" data-delay="25"
-      data-tooltip="{{name}} - {{type}}" >
-    {{/each}}
+                                    class="tooltipped" data-position="bottom" data-delay="25"
+                                                                              data-tooltip="{{name}} - {{type}}" >
+                                                                              {{/each}}
+    </div>
+      <div class="col s1 valign-wrapper">
+        {{formatDate datePosted}}
+        <br>
+        <i class="large material-icons valign">trending_flat</i>
+      </div>
+      <div class="col s4 center-align">
+        <h5 class="center-align">Would Like</h5>
+        {{#each request}}
+        <img width="30%" height="30%" src="{{iconURL}}"
+                                      class="tooltipped" data-position="bottom" data-delay="25"
+                                                                                data-tooltip="{{name}} - {{type}}" >
+                                                                                {{/each}}
+      </div>
+        <div class="col s3">
+          <a class="waves-effect waves-teal btn-flat acceptTrade"
+             href="{{pathFor route='makeOffer' data=getListing}}">
+            Make Offer
+          </a>
+          <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
+        </div>
   </div>
-  <div class="col s1 valign-wrapper">
-    {{formatDate datePosted}}
-    <br>
-    <i class="large material-icons valign">trending_flat</i>
-  </div>
-  <div class="col s4 center-align">
-    <h5 class="center-align">Would Like</h5>
-    {{#each request}}
-      <img width="30%" height="30%" src="{{iconURL}}"
-      class="tooltipped" data-position="bottom" data-delay="25"
-      data-tooltip="{{name}} - {{type}}" >
-    {{/each}}
-  </div>
-  <div class="col s3">
-    <a class="waves-effect waves-teal btn-flat acceptTrade"
-    href="{{pathFor route='makeOffer' data=getListing}}">
-      Make Offer
-    </a>
-    <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
-  </div>
+  {{/each}}
 </div>
-{{/each}}
 </template>

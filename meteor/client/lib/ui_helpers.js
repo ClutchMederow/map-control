@@ -29,3 +29,35 @@ UI.registerHelper('formatPrettyDate', function(unformattedDate) {
 UI.registerHelper('justTime', function(unformattedDate) {
     return moment(unformattedDate).format('h:mm A');
 });
+
+UI.registerHelper('pistols', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_Pistol"});
+});
+
+UI.registerHelper('rifles', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_Rifle"});
+});
+
+UI.registerHelper('smgs', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_SMG"});
+});
+
+UI.registerHelper('sniperRifles', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_SniperRifle"});
+});
+
+UI.registerHelper('machineGuns', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_Machinegun"});
+});
+
+UI.registerHelper('shotguns', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_Shotgun"});
+});
+
+UI.registerHelper('knives', function() {
+  return GenericItems.find({item_type_name:"#CSGO_Type_Knife"});
+});
+
+UI.registerHelper('parseItemName', function(itemName) {
+  return itemName.split('_WPNHUD_').pop();
+});

@@ -70,3 +70,7 @@ Meteor.publish('userData', function () {
     this.ready();
   }
 });
+
+Meteor.publish('genericItems', function() {
+  return GenericItems.find();
+});

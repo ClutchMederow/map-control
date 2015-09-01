@@ -17,7 +17,7 @@ Template.market.helpers({
   listings: function() {
     var selector = this; //either 'All' or a userId from router
     if(searchText.get()) {
-      var fields = ['name', 'type'];
+      var fields = ['name', 'internal_name'];
       return Listings.searchItems(selector, searchText.get(), fields);
     } else {
       return Listings.find();
@@ -31,5 +31,11 @@ Template.market.helpers({
 Template.market.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
-  }, 200)
+  }, 200),
+  "click .singleItem": function(e) {
+    e.preventDefault();
+    console.log(this.item_name);
+    searchText.set(this.item_name);
+    $('#search').val(this.item_name);
+  }
 });
