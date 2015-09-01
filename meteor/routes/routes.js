@@ -80,6 +80,11 @@ Router.route('/stripepayment', {
   template: 'stripePayment'
 });
 
+Router.route('/managestash', {
+  name: 'manageStash',
+  template: 'manageStash'
+});
+
 Router.route('/tradingfloor/:channel?',{
   name: 'tradingFloor' ,
   template: 'tradingFloor',

@@ -58,8 +58,6 @@ SteamAPI = (function () {
     }
   };
 
-
-
   //Public variables
   return {
     getAllItemsForPlayer: function(userId) {
@@ -96,6 +94,7 @@ SteamAPI = (function () {
       var data = HTTP.get(callString).data;
       return data;
     },
+
     getGenericItems: function() {
       var callString = "https://api.steampowered.com/IEconItems_730/GetSchema/v0002/?key=" + apiKey;
       try {

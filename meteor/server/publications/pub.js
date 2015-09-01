@@ -63,6 +63,14 @@ Meteor.publish('userPresence', function() {
 //TODO: indices for presences?
 Presences._ensureIndex({"userId": 1});
 
+Meteor.publish('userData', function () {
+  if (this.userId) {
+    return Meteor.users.find({ _id: this.userId}, { fields: { 'services.steam': 1 }});
+  } else {
+    this.ready();
+  }
+});
+
 Meteor.publish('genericItems', function() {
   return GenericItems.find();
 });

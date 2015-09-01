@@ -91,8 +91,8 @@ Items.attachSchema({
   }
 });
 //Attach Search to Collections
-Items.searchFor = searchFor;
-Items.searchForOne = searchForOne;
+Items.searchFor = SearchFunctions.searchFor;
+Items.searchForOne = SearchFunctions.searchForOne;
 
 //searchText is a string
 //fields is an array, e.g. ['type', 'name']

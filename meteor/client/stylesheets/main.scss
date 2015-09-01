@@ -7,7 +7,9 @@
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
 
-
+main {
+  padding-top: 1em;
+}
 
 .material-tooltip { white-space: normal; }
 
@@ -214,6 +216,8 @@
 }
 
 .colored-title {
+  overflow: hidden;
+
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
@@ -234,7 +238,47 @@
   font-size: 2rem;
 }
 
+#itemModal .row {
+  margin-bottom: 0;
+}
+
+.add-remove-items {
+  height: 50vh;
+  min-height: 300px;
+  overflow: scroll;
+}
+
+.contained-item {
+  cursor: pointer;
+  position: relative;
+
+  &.selected {
+    img {
+      /*background-color: #ECEAE7;*/
+      border-radius: 10px;
+      -moz-box-shadow:    inset 0 0 10px #B2DED3;
+      -webkit-box-shadow: inset 0 0 10px #B2DED3;
+      box-shadow:         inset 0 0 10px #B2DED3;
+    }
+
+    .selected-checkmark {
+      display: block;
+    }
+  }
+
+  .selected-checkmark {
+    display: none;
+    position: absolute;
+    color: red;
+    top: 0;
+  }
+}
+
+.confirm-manage-items {
+  margin-bottom: 0;
+}
+
 //styling for market sidebar
 header, footer, .market {
-   padding-left: 240px;
+  padding-left: 240px;
 }

@@ -2,6 +2,8 @@ function channelsCursor() {
     return Channels.find();
 }
 
+var changesHandle;
+
 Template.tradingFloor.onCreated(function() {
   var self = this;
   self.autorun(function() {
@@ -24,14 +26,7 @@ Template.tradingFloor.onRendered(function() {
   }.bind(this));
 
   // Define the area where we can drop stash items to be inserted into the chat
-  $('.tradingFloor').droppable({
-    accept: '.draggable-stash-item',
-    hoverClass: 'stash-hover',
-    drop: function(e, ui) {
-      var itemId = $(ui.draggable[0]).data('itemid');
-      dropItem(itemId);
-    }
-  });
+  DraggableItems.droppable('.tradingFloor', '.draggable-stash-item', dropItem)
 
   // Adds a scroll handle to run when a new message arrives
   changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
@@ -76,7 +71,6 @@ Template.tradingFloor.events({
 // Should probably move this into its own object somewhere
 function dropItem(id) {
   var item = Items.findOne(id);
-
   if (!item) return;
 
   // Creates a span with two children - one for the image and one for some hidden text

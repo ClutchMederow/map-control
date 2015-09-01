@@ -7,12 +7,8 @@ Template.portableStash.onCreated(function() {
 Template.portableStash.rendered = function() {
 
   // All stash items should be draggable
-  // When you add some kind of item limit here, make sure to apply the following:
   // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
-  $('.draggable-stash-item').draggable({
-    revert: true,
-    revertDuration: 0
-  });
+  DraggableItems.draggable('.portable-stash', '.draggable-stash-item');
 };
 
 Template.portableStash.helpers({
