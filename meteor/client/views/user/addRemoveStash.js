@@ -1,18 +1,33 @@
 var userInventoryItems = new Mongo.Collection(null);
+var selectedItems = new Mongo.Collection(null);
 
 Template.addRemoveStash.helpers({
-  stashItems: function() {
-    var userId = Meteor.userId();
-    return Items.find({ userId: userId, status: Enums.ItemStatus.STASH }).fetch();
+  inventoryOptions: function() {
+    return {
+      title: 'Inventory',
+      items: userInventoryItems.find({ tradable: 1 }).fetch(),
+      columns: '3',
+      class: 'add-remove-items',
+      selectedItems: selectedItems
+    };
   },
 
-  inventoryItems: function() {
-    return userInventoryItems.find().fetch();
+  stashOptions: function() {
+    var userId = Meteor.userId();
+
+    return {
+      title: 'Stash',
+      items: Items.find({ userId: userId, status: Enums.ItemStatus.STASH }).fetch(),
+      columns: '3',
+      class: 'add-remove-items',
+      selectedItems: selectedItems
+    };
   }
 });
 
 Template.addRemoveStash.onCreated(function() {
   userInventoryItems.remove({});
+  selectedItems.remove({});
 
   Meteor.call('getPlayerInventory', function(err, res) {
     if (err) {
@@ -22,8 +37,15 @@ Template.addRemoveStash.onCreated(function() {
         userInventoryItems.insert(item);
       });
     }
-
-    console.log(userInventoryItems.find().count());
   });
+});
 
+Template.addRemoveStash.events({
+  'click #add-remove-row .contained-item': function() {
+    if (selectedItems.findOne(this._id)) {
+      selectedItems.remove(this._id);
+    } else {
+      selectedItems.insert({ _id: this._id });
+    }
+  }
 });

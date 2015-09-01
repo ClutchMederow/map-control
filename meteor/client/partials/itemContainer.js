@@ -33,6 +33,16 @@ Template.itemContainer.helpers({
 
   searchBoxId: function() {
     return searchBoxId;
+  },
+
+  selected: function() {
+    if (Template.instance().data) {
+      if (Template.instance().data.selectedItems.findOne(this._id)) {
+        return 'selected';
+      } else {
+        return '';
+      }
+    }
   }
 });
 

@@ -245,3 +245,26 @@
   min-height: 300px;
   overflow: scroll;
 }
+
+.contained-item {
+  cursor: pointer;
+  position: relative;
+
+  &.selected {
+    img {
+      background-color: #ECEAE7;
+      border-radius: 10px;
+    }
+
+    .selected-checkmark {
+      display: block;
+    }
+  }
+
+  .selected-checkmark {
+    display: none;
+    position: absolute;
+    color: white;
+    top: 0;
+  }
+}
