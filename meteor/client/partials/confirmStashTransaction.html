@@ -1,0 +1,30 @@
+<template name="confirmStashTransaction">
+  <div class="container">
+    <div class="row">
+      <div class="col s8 offset-s2">
+        {{ #if withdrawExists }}
+          <div class="row">
+            <div class="col s12">
+              {{> itemContainer withdrawOptions }}
+            </div>
+          </div>
+        {{ /if }}
+        {{ #if depositExists }}
+          <div class="row">
+            <div class="col s12">
+              {{> itemContainer depositOptions }}
+            </div>
+          </div>
+        {{ /if }}
+        <div class="row">
+          <div class="col s6">
+            <a class="waves-effect waves-light btn left" id="backToAddRemove"><i class="material-icons left">list</i>back</a>
+          </div>
+          <div class="col s6">
+            <a class="waves-effect waves-light btn right" id="next"><i class="material-icons right">done</i>confirm</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

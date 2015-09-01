@@ -3,11 +3,16 @@
     <div class="colored-title">
       {{ title }}
     </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <input id="{{ searchBoxId }}" type="text" placeholder="search">
+    {{ #if noSearch }}
+      <div class="row">
       </div>
-    </div>
+    {{ else }}
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="{{ searchBoxId }}" type="text" placeholder="search">
+        </div>
+      </div>
+    {{ /if }}
     <div class="row {{ class }}">
       {{ #each filteredItems }}
         <div class="col {{ colWidth ../columns }} contained-item {{ selected }}">

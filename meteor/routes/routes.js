@@ -81,8 +81,8 @@ Router.route('/stripepayment', {
 });
 
 Router.route('/managestash', {
-  name: 'managestash',
-  template: 'addRemoveStash'
+  name: 'manageStash',
+  template: 'manageStash'
 });
 
 Router.route('/tradingfloor/:channel?',{

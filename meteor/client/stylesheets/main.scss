@@ -7,7 +7,9 @@
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
 
-
+main {
+  padding-top: 1em;
+}
 
 .material-tooltip { white-space: normal; }
 
@@ -252,8 +254,11 @@
 
   &.selected {
     img {
-      background-color: #ECEAE7;
+      /*background-color: #ECEAE7;*/
       border-radius: 10px;
+      -moz-box-shadow:    inset 0 0 10px #B2DED3;
+      -webkit-box-shadow: inset 0 0 10px #B2DED3;
+      box-shadow:         inset 0 0 10px #B2DED3;
     }
 
     .selected-checkmark {
@@ -264,7 +269,11 @@
   .selected-checkmark {
     display: none;
     position: absolute;
-    color: white;
+    color: red;
     top: 0;
   }
+}
+
+.confirm-manage-items {
+  margin-bottom: 0;
 }

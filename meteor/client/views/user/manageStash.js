@@ -1,0 +1,29 @@
+var stashTemplate = new ReactiveVar(null);
+var selectedItems = new Mongo.Collection(null);
+
+Template.manageStash.helpers({
+  stashTemplate: function() {
+    return stashTemplate.get();
+  },
+
+  data: function() {
+    return {
+      selectedItems: selectedItems
+    };
+  }
+});
+
+Template.manageStash.onCreated(function() {
+  selectedItems.remove({});
+  stashTemplate.set('addRemoveStash');
+});
+
+Template.manageStash.events({
+  'click #next': function() {
+    if (selectedItems.find().count()) {
+      stashTemplate.set('confirmStashTransaction');
+    } else {
+      alert('Please choose at least one item');
+    }
+  }
+});

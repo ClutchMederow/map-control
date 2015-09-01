@@ -1,5 +1,5 @@
 var userInventoryItems = new Mongo.Collection(null);
-var selectedItems = new Mongo.Collection(null);
+var selectedItems;
 
 Template.addRemoveStash.helpers({
   inventoryOptions: function() {
@@ -27,7 +27,7 @@ Template.addRemoveStash.helpers({
 
 Template.addRemoveStash.onCreated(function() {
   userInventoryItems.remove({});
-  selectedItems.remove({});
+  selectedItems = this.data.selectedItems;
 
   Meteor.call('getPlayerInventory', function(err, res) {
     if (err) {
@@ -41,11 +41,23 @@ Template.addRemoveStash.onCreated(function() {
 });
 
 Template.addRemoveStash.events({
-  'click #add-remove-row .contained-item': function() {
-    if (selectedItems.findOne(this._id)) {
-      selectedItems.remove(this._id);
-    } else {
-      selectedItems.insert({ _id: this._id });
-    }
+  'click #withdraw-div .contained-item': function() {
+    toggleItem(this, Enums.TransType.WITHDRAW);
+  },
+
+  'click #deposit-div .contained-item': function() {
+    toggleItem(this, Enums.TransType.DEPOSIT);
   }
 });
+
+function toggleItem(item, transType) {
+  if (!transType || !item) return;
+
+  item.transType = transType;
+
+  if (selectedItems.findOne(item._id)) {
+    selectedItems.remove(item._id);
+  } else {
+    selectedItems.insert(item);
+  }
+}

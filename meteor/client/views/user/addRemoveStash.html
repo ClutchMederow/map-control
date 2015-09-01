@@ -5,11 +5,16 @@
         <p>Select any item from your stash that you would like to widthdraw into your steam account. Add items to your stash to be able to trade them on the market or trading floor</p>
       </div>
     </div>
+    <div class="row">
+      <div class="col s12">
+        <a class="waves-effect waves-light btn right" id="next"><i class="material-icons right">play_arrow</i>next</a>
+      </div>
+    </div>
     <div class="row" id="add-remove-row">
-      <div class="col s6" id="js-inv-items">
+      <div class="col s6" id="deposit-div">
         {{> itemContainer inventoryOptions }}
       </div>
-      <div class="col s6" id="js-stash-items">
+      <div class="col s6" id="withdraw-div">
         {{> itemContainer stashOptions }}
       </div>
     </div>

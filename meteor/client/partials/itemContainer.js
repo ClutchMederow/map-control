@@ -36,7 +36,7 @@ Template.itemContainer.helpers({
   },
 
   selected: function() {
-    if (Template.instance().data) {
+    if (Template.instance().data && Template.instance().data.selectedItems) {
       if (Template.instance().data.selectedItems.findOne(this._id)) {
         return 'selected';
       } else {
