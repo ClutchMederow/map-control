@@ -34,5 +34,7 @@ Template.manageStash.events({
   'click #submitStashTrans': function() {
     alert('submitting trans');
     stashTemplate.set('');
+
+    // TODO: Add further instructions template
   }
 });
