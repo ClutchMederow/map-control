@@ -8,11 +8,7 @@ Template.portableStash.rendered = function() {
 
   // All stash items should be draggable
   // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
-
-  DraggableItems.draggable('.portable-stash', '.draggable-stash-item')
-
-  //'.portable-stash'
-  //
+  DraggableItems.draggable('.portable-stash', '.draggable-stash-item');
 };
 
 Template.portableStash.helpers({

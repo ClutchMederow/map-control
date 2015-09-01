@@ -29,6 +29,9 @@ Template.addRemoveStash.onCreated(function() {
   userInventoryItems.remove({});
   selectedItems = this.data.selectedItems;
 
+  // Remove in case the go back from confirm page - the API items will have new ids
+  selectedItems.remove({});
+
   Meteor.call('getPlayerInventory', function(err, res) {
     if (err) {
       console.log(err);

@@ -25,5 +25,14 @@ Template.manageStash.events({
     } else {
       alert('Please choose at least one item');
     }
+  },
+
+  'click #backToAddRemove': function() {
+    stashTemplate.set('addRemoveStash');
+  },
+
+  'click #submitStashTrans': function() {
+    alert('submitting trans');
+    stashTemplate.set('');
   }
 });
