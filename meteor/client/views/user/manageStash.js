@@ -33,8 +33,12 @@ Template.manageStash.events({
 
   'click #submitStashTrans': function() {
     alert('submitting trans');
-    stashTemplate.set('');
+    stashTemplate.set('stashTransNextSteps');
 
     // TODO: Add further instructions template
+  },
+
+  'click #nextStepsHome': function() {
+    Router.go('home');
   }
 });

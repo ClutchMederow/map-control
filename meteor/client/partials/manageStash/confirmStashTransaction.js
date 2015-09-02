@@ -10,7 +10,6 @@ Template.confirmStashTransaction.helpers({
   },
 
   depositOptions: function() {
-    console.log(this.selectedItems.find());
     return {
       title: 'Items to be deposited',
       items: this.selectedItems.find({ transType: Enums.TransType.DEPOSIT }).fetch(),
