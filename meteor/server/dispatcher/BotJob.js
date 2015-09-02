@@ -54,8 +54,6 @@ BotJob.prototype._executeDeposit = function() {
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
 
-  console.log(self.items);
-
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items);
 
@@ -79,7 +77,7 @@ BotJob.prototype.execute = function(callback) {
   var self = this;
   self._setStatus(Dispatcher.jobStatus.QUEUED);
 
-  function functionForQueue() {
+  functionForQueue = Meteor.bindEnvironment(function() {
     var err, res;
 
     try {
@@ -99,9 +97,12 @@ BotJob.prototype.execute = function(callback) {
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
     }
 
+    var tradeofferId = self.tradeofferId
+    console.log(tradeofferId);
+
     // Don't forget the callback!
-    callback(err, res);
-  }
+    callback(err, tradeofferId);
+  });
 
   this._bot.enqueue(functionForQueue);
 };

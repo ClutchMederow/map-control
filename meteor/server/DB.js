@@ -95,10 +95,15 @@ DB = {
       check(userId, String);
       check(items, [String]);
 
-      var existingOwnedItem = Items.findOne({ itemId: { $in: items } });
+      var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH });
 
-      if (existingOwnedItem)
-        throw new Error('ITEM_ALREADY_OWNED');
+      if (existingOwnedItem) {
+        if (existingOwnedItem.status === Enums.ItemStatus.PENDING_DEPOSIT) {
+          throw new Meteor.Error('Item pending deposit');
+        } else if (existingOwnedItem.status === Enums.ItemStatus.STASH) {
+          throw new Meteor.Error('Item already in stash');
+        }
+      }
 
       var itemDocs = SteamAPI.getAllItemsForPlayer(userId);
       var filteredItems = _.filter(itemDocs, function(item) {

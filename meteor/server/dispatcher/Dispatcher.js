@@ -1,3 +1,5 @@
+var Future = Npm.require('fibers/future');
+
 Dispatcher = (function(SteamAPI, SteamBot) {
 
   // Holds objects that represent all bots, using the botName as the key
@@ -111,10 +113,49 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
       var task = new Task([job], false, taskId, DB);
 
+      var future = new Future();
+
       task.execute(function(err, res) {
-        console.log(err, res);
+        if (err) {
+          future.throw(err);
+        } else {
+          future.return(res);
+        }
       });
+
+      var offerId = future.wait();
+      console.log('offerID', offerId);
+      return offerId;
     },
+
+    withdrawItems: function(userId, items, callback) {
+      check(userId, String);
+      check(items, [String]);
+
+      var bot = getUsersBot(userId);
+
+      var options = {
+        items: items,
+        userId: userId
+      };
+
+      var taskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+
+      var job = new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
+      var task = new Task([job], false, taskId, DB);
+
+      var boundCallback = Meteor.bindEnvironment(callback);
+      task.execute(boundCallback);
+    },
+
+    // depositWithdrawItems: function(userId, itemsToDeposit, itemsToWithdraw, callback) {
+    //   check(userId, String);
+
+    //   if (itemsToDeposit) {
+    //     this.depositItems(userId, itemsToDeposit, callback)
+    //   }
+
+    // },
 
     init: function() {
       var self = this;
