@@ -37,7 +37,6 @@ SteamBot.prototype.logOn = function() {
   var self = this;
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
-  var Future = Npm.require('fibers/future')
 
   if (self.steam.connected)
     return;
@@ -54,6 +53,7 @@ SteamBot.prototype.logOn = function() {
   self.steam.logOn(self.logOnOptions);
   self.steam.on('debug', console.log);
 
+  var Future = Npm.require('fibers/future');
   var logOnFuture = new Future();
   var logOnResolver = logOnFuture.resolver();
 
@@ -102,8 +102,8 @@ SteamBot.prototype.getBotItems = function() {
 
 SteamBot.prototype.loadBotInventory = function() {
   var self = this;
-  var Future = Npm.require('fibers/future');
 
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
@@ -130,7 +130,7 @@ SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
     contextId: 2
   };
 
-  var Future = require('fibers/future');
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.loadPartnerInventory(options, function(err, res) {
@@ -223,7 +223,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   var itemObjsToReceive = wrapItemForBot(itemsToReceive);
   var itemObjsToSend = wrapItemForBot(itemsToSend);
 
-  var Future = require('fibers/future');
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   // TODO: Add some transaction id in message
@@ -245,12 +245,16 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   return offer.tradeofferid;
 };
 
-SteamBot.prototype.queryOffer = function(offerId) {
+SteamBot.prototype.queryOffers = function() {
+
+  // By not passing a cutoff time, it only returns offers that have been updated since last check
   var options = {
-    get_received_offers: 1,
+    get_sent_offers: 1,
+    get_received_offers: 0,
     active_only: 1,
-    // time_historical_cutoff: (new Date().getTime()/1000).toFixed()
+    // time_historical_cutoff: 0
   };
+
   var Future = Npm.require('fibers/future');
   var future = new Future();
   this.offers.getOffers(options, function(error,result) {
@@ -261,12 +265,17 @@ SteamBot.prototype.queryOffer = function(offerId) {
   });
 
   var res = future.wait();
-  console.log(res.response.trade_offers_received);
+  return res.response.trade_offers_sent;
+};
+
+SteamBot.prototype.getSingleOffer = function(offerId) {
+
 };
 
 SteamBot.prototype.getSteamId = function() {
-  if (this.steam.loggedOn)
+  if (this.steam.loggedOn) {
     return this.steam.steamID;
+  }
 };
 
 SteamBot.prototype.enqueue = function(queuedFunction) {

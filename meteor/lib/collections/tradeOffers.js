@@ -1,25 +1,11 @@
-TradeOffers = new Mongo.Collection('tradeOffers');
+Tradeoffers = new Mongo.Collection('tradeoffers');
 
-TradeOffers.attachSchema({
-  botSteamId64: {
-    type: String,
-    label: 'Steam bot id64'
-  },
-
-  userProfile: {
-    type: Object,
-    label: 'denormalized user profile for easy refernece'
-  },
-
-  offerDate: {
-    type: Date,
-    label: 'Date that the user made the offer'
-  },
-
+Tradeoffers.attachSchema({
   direction: {
     type: String,
     allowedValues: ['received','sent'],
-    label: 'Direction of the trade offer'
+    label: 'Direction of the trade offer',
+    optional: true
   },
 
   tradeofferid: {
@@ -28,52 +14,69 @@ TradeOffers.attachSchema({
   },
 
   accountid_other: {
-    type: Number,
-    label: 'your partner in the trade offer'
+    type: String,
+    label: 'your partner in the trade offer',
+    optional: true
   },
 
   message: {
-    type: Number,
-    label: 'a message included by the creator of the trade offer'
+    type: String,
+    label: 'a message included by the creator of the trade offer',
+    optional: true
   },
 
   expiration_time: {
-    type: Number,
-    label: 'unix time when the offer will expire (or expired, if it is in the past)'
+    type: String,
+    label: 'unix time when the offer will expire (or expired, if it is in the past)',
+    optional: true
   },
 
   trade_offer_state: {
     type: String,
-    label: 'see ETradeOfferState above'
+    label: 'see ETradeOfferState above',
+    optional: true
   },
 
   items_to_give: {
-    type: [Number],
-    label: 'array of CEcon_Asset, items you will give up in the trade (regardless of who created the offer)'
+    type: [Object],
+    label: 'array of CEcon_Asset, items you will give up in the trade (regardless of who created the offer)',
+    blackbox: true,
+    optional: true
   },
 
   items_to_receive: {
-    type: [Number],
-    label: 'array of CEcon_Asset, items you will receive in the trade (regardless of who created the offer)'
+    type: [Object],
+    label: 'array of CEcon_Asset, items you will receive in the trade (regardless of who created the offer)',
+    blackbox: true,
+    optional: true
   },
 
   is_our_offer: {
     type: Boolean,
-    label: 'boolean to indicate this is an offer you created.'
+    label: 'boolean to indicate this is an offer you created.',
+    optional: true
   },
 
   time_created: {
     type: Number,
-    label: 'unix timestamp of the time the offer was sent'
+    label: 'unix timestamp of the time the offer was sent',
+    optional: true
   },
 
   time_updated: {
-    type: Number,
-    label: 'unix timestamp of the time the trade_offer_state last changed.'
+    type: String,
+    label: 'unix timestamp of the time the trade_offer_state last changed.',
+    optional: true
   },
 
   from_real_time_trade: {
     type: Boolean,
-    label: 'boolean to indicate this is an offer automatically created from a realtime trade'
+    label: 'boolean to indicate this is an offer automatically created from a realtime trade',
+    optional: true
+  },
+
+  deleteInd: {
+    type: Boolean,
+    label: 'delete ind'
   }
 });

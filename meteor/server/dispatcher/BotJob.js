@@ -1,3 +1,4 @@
+var Future = Npm.require('fibers/future');
 
 BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
@@ -54,10 +55,11 @@ BotJob.prototype._executeDeposit = function() {
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
 
-  console.log(self.items);
-
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items);
+
+  // Save the tradeoffer
+  self._DB.tradeoffers.insert({ tradeofferid: self.tradeofferId, trade_offer_state: 2, userId: self.userId, deleteInd: false });
 
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items);
@@ -79,6 +81,8 @@ BotJob.prototype.execute = function(callback) {
   var self = this;
   self._setStatus(Dispatcher.jobStatus.QUEUED);
 
+  var future = new Future();
+
   function functionForQueue() {
     var err, res;
 
@@ -86,24 +90,21 @@ BotJob.prototype.execute = function(callback) {
       // Use the appropriate function
       if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
         res = self._executeDeposit();
+      } else {
+        throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }
-    } catch(e) {
-      err = e;
-    }
 
-    if (err) {
-      self.error = err;
-      // self.error.stack = err.stack;
-      self._setStatus(Dispatcher.jobStatus.FAILED);
-    } else {
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
+      future.return(self.tradeofferId);
+    } catch(e) {
+      self.error = e;
+      self._setStatus(Dispatcher.jobStatus.FAILED);
+      future.throw(err);
     }
-
-    // Don't forget the callback!
-    callback(err, res);
   }
 
   this._bot.enqueue(functionForQueue);
+  return future.wait();
 };
 
 BotJob.prototype.cancel = function() {

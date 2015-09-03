@@ -56,12 +56,13 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     if (!user || !user.profile)
       throw new Error('UNKNOWN_USER');
 
-    if (!user.profile.botName)
+    if (!user.profile.botName) {
       botName = DB.users.addBot(userId, assignBot());
-    else if (!bots[user.profile.botName])
+    } else if (!bots[user.profile.botName]) {
       botName = DB.users.addBot(userId, assignBot());
-    else
+    } else {
       botName = user.profile.botName;
+    }
 
     return bots[botName];
   }
@@ -69,6 +70,16 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   function assignBot() {
     botIndex = (botIndex + 1)%(_.keys(bots).length);
     return _.keys(bots)[botIndex];
+  }
+
+  function updateTradeofferStatus(offers) {
+    _.each(offers, function(offer) {
+      try {
+        DB.tradeoffers.updateStatus(offer);
+      } catch(e) {
+        console.warn(e);
+      }
+    });
   }
 
   return {
@@ -111,9 +122,29 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
       var task = new Task([job], false, taskId, DB);
 
-      task.execute(function(err, res) {
-        console.log(err, res);
-      });
+      task.execute();
+
+      return job.tradeofferId;
+    },
+
+    withdrawItems: function(userId, items, callback) {
+      check(userId, String);
+      check(items, [String]);
+
+      var bot = getUsersBot(userId);
+
+      var options = {
+        items: items,
+        userId: userId
+      };
+
+      var taskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+
+      var job = new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
+      var task = new Task([job], false, taskId, DB);
+
+      var boundCallback = Meteor.bindEnvironment(callback);
+      task.execute(boundCallback);
     },
 
     init: function() {
@@ -129,6 +160,13 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       botIndex = Math.round(Math.random()*(_.keys(bots).length - 1));
 
       console.log('Bots initialized. Count: ' + _.keys(bots).length);
+    },
+
+    checkOutstandingTradeoffers: function() {
+      _.each(bots, function(bot) {
+        var offers = bot.queryOffers();
+        updateTradeofferStatus(offers);
+      });
     },
 
     test: function() {

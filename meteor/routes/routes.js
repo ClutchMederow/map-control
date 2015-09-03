@@ -59,7 +59,16 @@ Router.route('/market/:userId', {
 
 Router.route('/inventory', {
   name: 'inventory',
-  template: 'myInventory'
+  template: 'myInventory',
+  onBeforeAction: function() {
+    var userId = Meteor.userId();
+
+    if (Items.find({ userId: userId }).count()) {
+      this.next();
+    } else {
+      this.redirect('manageStash');
+    }
+  }
 });
 
 Router.route('/transactions/:userId', {

@@ -1,3 +1,33 @@
+// Hooks
+
+// Updates every item after a tradeoffer is updated
+Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
+
+  if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
+    var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
+    if (state === 'k_ETradeOfferStateAccepted') {
+
+      // We know what to change to status to by which are being received and given
+      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+      var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
+
+      if (deposited.length) {
+        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
+      }
+
+      if (withdrawn.length) {
+        DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
+      }
+    } else if (state === 'k_ETradeOfferStateDeclined') {
+      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+
+      if (deposited.length) {
+        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
+      }
+    }
+  }
+});
+
 DB = {
   insertChat: function(attributes) {
     Messages.insert({
@@ -78,27 +108,69 @@ DB = {
     }
   },
 
+  tradeoffers: {
+    insert: function(doc) {
+      check(doc, Object);
+      doc.deleteInd = false;
+
+      return Tradeoffers.insert(doc);
+    },
+
+    update: function(selector, doc) {
+      check(selector, Object);
+      check(selector, Object);
+
+      var setDoc = {
+        $set: doc
+      };
+
+      var out = Tradeoffers.update(selector, setDoc);
+    },
+
+    updateStatus: function(doc) {
+      check(doc, Object);
+
+      var selector = {
+        tradeofferid: doc.tradeofferid,
+        deleteInd: false
+      };
+
+      if (!SteamConstants.offerStatus[doc.trade_offer_state]) {
+        throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
+      }
+
+      return DB.tradeoffers.update(selector, doc);
+    }
+  },
+
   items: {
     insert: function(doc) {
       return Items.insert(doc);
     },
 
-    update: function(itemId, doc) {
-      check(itemId, String);
-      if (!doc.$set && !doc.$push)
-        throw new Error('INVALID_UPDATE: Must include $set operator');
+    update: function(selector, doc) {
+      check(selector, Object);
+      check(selector, Object);
 
-      return Items.update(itemId, doc);
+      if (!doc.$set && !doc.$push)
+        throw new Error('INVALID_UPDATE: Must include $set operator: Items');
+
+      return Items.update(selector, doc, { multi: true });
     },
 
     insertNewItems: function(userId, tradeofferId, items) {
       check(userId, String);
       check(items, [String]);
 
-      var existingOwnedItem = Items.findOne({ itemId: { $in: items } });
+      var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH, deleteInd: false });
 
-      if (existingOwnedItem)
-        throw new Error('ITEM_ALREADY_OWNED');
+      if (existingOwnedItem) {
+        if (existingOwnedItem.status === Enums.ItemStatus.PENDING_DEPOSIT) {
+          throw new Meteor.Error('Item pending deposit');
+        } else if (existingOwnedItem.status === Enums.ItemStatus.STASH) {
+          throw new Meteor.Error('Item already in stash');
+        }
+      }
 
       var itemDocs = SteamAPI.getAllItemsForPlayer(userId);
       var filteredItems = _.filter(itemDocs, function(item) {
@@ -119,7 +191,7 @@ DB = {
     getItemsFromIds: function(items) {
       check(items, [String]);
 
-      var out = Items.find({ _id: { $in: items } }).fetch();
+      var out = Items.find({ _id: { $in: items, deleteInd: false } }).fetch();
 
       if (out.length !== items.length)
         throw new Error('MISSING_ITEMS', items);
@@ -132,7 +204,7 @@ DB = {
     },
 
     getItemOwner: function(itemId) {
-      var item = Items.findOne(itemId);
+      var item = Items.findOne({ _id: itemId, deleteInd: false });
       if (!item)
         throw new Error('ITEM_NOT_FOUND: ' + itemId);
 
@@ -144,18 +216,53 @@ DB = {
     },
 
     reassignOwner: function(itemId, newUserId) {
-      doc = {
+      check(itemId, String);
+      check(newUserId, String);
+
+      var doc = {
         $set: {
           userId: newUserId
         }
       };
 
-      var out = DB.items.update(itemId, doc);
+      var selector = {
+        _id: itemId,
+        deleteInd: false
+      };
+
+      var out = DB.items.update(selector, doc);
 
       if (out !== 1)
         throw new Error('ITEM_NOT_UPDATED');
 
       return out;
+    },
+
+    changeStatus: function(tradeofferId, assetIds, status) {
+      check(tradeofferId, String);
+      check(assetIds, [String]);
+      check(status, Match.Where(function() {
+        return !!Enums.ItemStatus[status];
+      }));
+
+      var selector = {
+        tradeofferId: tradeofferId,
+        itemId: { $in: assetIds },
+        deleteInd: false
+      };
+
+      var doc = {
+        $set: {
+          status: status
+        }
+      };
+
+      // Logically delete the item if it is not a part of our ecosystem
+      if (status === Enums.ItemStatus.EXTERNAL) {
+        doc.$set.deleteInd = true;
+      }
+
+      return DB.items.update(selector, doc);
     }
   },
 

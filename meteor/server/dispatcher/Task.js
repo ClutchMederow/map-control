@@ -67,34 +67,32 @@ Task.prototype._setStatus = function(status) {
   this._save();
 };
 
-Task.prototype.execute = function(callback) {
+Task.prototype.execute = function() {
   var self = this;
+  var result;
 
   this._setStatus(Dispatcher.jobStatus.PENDING);
 
-  function syncFunc() {
-    try {
-      if (self._ordered === true) {
-        // Do each job in order
-        self._executeSerial();
-      } else {
-        // Do each job in parallel
-        self._executeParallel();
-      }
-
-      if (self.status === Dispatcher.jobStatus.FAILED)
-        throw new Error('CANCELLED');
-
-      self._setStatus(Dispatcher.jobStatus.COMPLETE);
-      callback(null);
-    } catch(e) {
-      self.cancel();
-      callback(e);
+  try {
+    if (self._ordered === true) {
+      // Do each job in order
+      result = self._executeSerial();
+    } else {
+      // Do each job in parallel
+      result = self._executeParallel();
     }
+
+    if (self.status === Dispatcher.jobStatus.FAILED) {
+      throw new Error('CANCELLED');
+    }
+
+    self._setStatus(Dispatcher.jobStatus.COMPLETE);
+  } catch(e) {
+    self.cancel();
+    throw e;
   }
 
-  Meteor.setTimeout(syncFunc, 0);
-  return;
+  return result;
 };
 
 Task.prototype._executeParallel = function() {
@@ -107,22 +105,41 @@ Task.prototype._executeParallel = function() {
     var thisFut = new Future();
     allFutures.push(thisFut);
 
-    job.execute(function(error, result) {
-      if (error) {
+    var closedFunc = (function(closedFuture, closedJob) {
+      return function() {
+        try {
 
-        if (!firstError)
-          firstError = error;
+          var res = closedJob.execute()
+          closedFuture.return(res);
 
-        thisFut.throw(error);
+        } catch(error) {
 
-      } else {
+          if (!firstError) {
+            firstError = error;
+          }
 
-        thisFut.return();
+          closedFuture.throw(error);
+        }
       }
+    })(thisFut, job);
+    console.log(closedFunc);
 
-      return;
-    });
+  //   Meteor.bindEnvironment(Meteor.setTimeout(function() {
+  //     if (error) {
+
+
+  //     } else {
+
+  //       thisFut.return();
+  //     }
+
+  //     return;
+  //   }, 0))(thisFut);
+
+  //   job.execute();
+    Meteor.setTimeout(closedFunc, 0);
   });
+
 
   // Wait here until all futures have thrown or resovled
   // Will NOT throw if any futures called throw()
@@ -147,36 +164,41 @@ Task.prototype._executeParallel = function() {
 Task.prototype._executeSerial = function() {
   var self = this;
 
-  var jobFut = new Future();
-  var index = 0;
+  // var jobFut = new Future();
+  // var index = 0;
 
-  // Runs the next job in the sequence
-  function getNextOrResolve(error, result) {
-    if (error) {
+  // // Runs the next job in the sequence
+  // function getNextOrResolve(error, result) {
+  //   if (error) {
 
-      // Resolve the future with an error and do not execute any more jobs in the chain
-      jobFut.throw(error);
-      return;
+  //     // Resolve the future with an error and do not execute any more jobs in the chain
+  //     jobFut.throw(error);
+  //     return;
 
-    } else if (index < self._jobs.length && self.status !== Dispatcher.jobStatus.FAILED) {
+  //   } else if (index < self._jobs.length && self.status !== Dispatcher.jobStatus.FAILED) {
 
-      // Executes the next job, passing this same function as a callback
-      self._jobs[index++].execute(getNextOrResolve);
+  //     // Executes the next job, passing this same function as a callback
+  //     self._jobs[index++].execute(getNextOrResolve);
 
-    } else {
+  //   } else {
 
-      // If there are no more jobs, resolve the future and exit the loop
-      jobFut.return();
-      return;
-    }
-  }
+  //     // If there are no more jobs, resolve the future and exit the loop
+  //     jobFut.return();
+  //     return;
+  //   }
+  // }
 
-  // Call this to kick off the sequence
-  getNextOrResolve();
 
-  // Wait for the future to be resolved
-  // Will throw if the future.throw is calld
-  jobFut.wait();
+  _.each(this._jobs, function(job) {
+    job.execute();
+  });
+
+  // // Call this to kick off the sequence
+  // getNextOrResolve();
+
+  // // Wait for the future to be resolved
+  // // Will throw if the future.throw is calld
+  // jobFut.wait();
 };
 
 // TODO: figure out how this will interact with the observe callback

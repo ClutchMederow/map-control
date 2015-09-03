@@ -5,5 +5,9 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('NO_USER', 'User not found');
     }
+  },
+
+  depositItems: function(items) {
+    return Dispatcher.depositItems(this.userId, items);
   }
 });
