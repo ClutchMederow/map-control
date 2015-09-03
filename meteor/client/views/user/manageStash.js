@@ -38,7 +38,6 @@ Template.manageStash.events({
   },
 
   'click #submitStashTrans': function() {
-    alert('submitting trans');
 
     var deposits = _.pluck(selectedItems.find({ transType: Enums.TransType.DEPOSIT }, { fields: { itemId: 1, _id: 0 } }).fetch(), 'itemId');
     var withdrawals = _.pluck(selectedItems.find({ transType: Enums.TransType.WITHDRAW }, { fields: { itemId: 1, _id: 0 } }).fetch(), 'itemId');
@@ -47,7 +46,6 @@ Template.manageStash.events({
       if (err) {
         sAlert.error(err);
       } else {
-        console.log(res);
         var message = '<a href="' + Constants.tradeOfferURL + res + '/" target="_blank">Click here to accept your trade request</a>'
         sAlert.success(message, stashConfigAlert);
       }

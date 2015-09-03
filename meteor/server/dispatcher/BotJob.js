@@ -58,6 +58,9 @@ BotJob.prototype._executeDeposit = function() {
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items);
 
+  // Save the tradeoffer
+  self._DB.tradeoffers.insert({ tradeofferid: self.tradeofferId, trade_offer_state: 2, userId: self.userId, deleteInd: false });
+
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items);
 };

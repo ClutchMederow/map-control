@@ -1,5 +1,3 @@
-var Future = Npm.require('fibers/future');
-
 SteamBot = function(accountName, password, authCode, SteamAPI) {
   // TODO: verify inputs
   var Steam = Npm.require('steam');
@@ -55,6 +53,7 @@ SteamBot.prototype.logOn = function() {
   self.steam.logOn(self.logOnOptions);
   self.steam.on('debug', console.log);
 
+  var Future = Npm.require('fibers/future');
   var logOnFuture = new Future();
   var logOnResolver = logOnFuture.resolver();
 
@@ -104,6 +103,7 @@ SteamBot.prototype.getBotItems = function() {
 SteamBot.prototype.loadBotInventory = function() {
   var self = this;
 
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
@@ -130,6 +130,7 @@ SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
     contextId: 2
   };
 
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.loadPartnerInventory(options, function(err, res) {
@@ -222,6 +223,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   var itemObjsToReceive = wrapItemForBot(itemsToReceive);
   var itemObjsToSend = wrapItemForBot(itemsToSend);
 
+  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   // TODO: Add some transaction id in message
@@ -253,6 +255,7 @@ SteamBot.prototype.queryOffers = function() {
     // time_historical_cutoff: 0
   };
 
+  var Future = Npm.require('fibers/future');
   var future = new Future();
   this.offers.getOffers(options, function(error,result) {
     if (error)
@@ -262,8 +265,7 @@ SteamBot.prototype.queryOffers = function() {
   });
 
   var res = future.wait();
-  console.log(res.response);
-  return res;
+  return res.response.trade_offers_sent;
 };
 
 SteamBot.prototype.getSingleOffer = function(offerId) {

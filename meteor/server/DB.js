@@ -1,3 +1,33 @@
+// Hooks
+
+// Updates every item after a tradeoffer is updated
+Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
+
+  if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
+    var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
+    if (state === 'k_ETradeOfferStateAccepted') {
+
+      // We know what to change to status to by which are being received and given
+      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+      var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
+
+      if (deposited.length) {
+        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
+      }
+
+      if (withdrawn.length) {
+        DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
+      }
+    } else if (state === 'k_ETradeOfferStateDeclined') {
+      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+
+      if (deposited.length) {
+        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
+      }
+    }
+  }
+});
+
 DB = {
   insertChat: function(attributes) {
     Messages.insert({
@@ -78,6 +108,41 @@ DB = {
     }
   },
 
+  tradeoffers: {
+    insert: function(doc) {
+      check(doc, Object);
+      doc.deleteInd = false;
+
+      return Tradeoffers.insert(doc);
+    },
+
+    update: function(selector, doc) {
+      check(selector, Object);
+      check(selector, Object);
+
+      var setDoc = {
+        $set: doc
+      };
+
+      var out = Tradeoffers.update(selector, setDoc);
+    },
+
+    updateStatus: function(doc) {
+      check(doc, Object);
+
+      var selector = {
+        tradeofferid: doc.tradeofferid,
+        deleteInd: false
+      };
+
+      if (!SteamConstants.offerStatus[doc.trade_offer_state]) {
+        throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
+      }
+
+      return DB.tradeoffers.update(selector, doc);
+    }
+  },
+
   items: {
     insert: function(doc) {
       return Items.insert(doc);
@@ -88,16 +153,16 @@ DB = {
       check(selector, Object);
 
       if (!doc.$set && !doc.$push)
-        throw new Error('INVALID_UPDATE: Must include $set operator');
+        throw new Error('INVALID_UPDATE: Must include $set operator: Items');
 
-      return Items.update(selector, doc);
+      return Items.update(selector, doc, { multi: true });
     },
 
     insertNewItems: function(userId, tradeofferId, items) {
       check(userId, String);
       check(items, [String]);
 
-      var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH });
+      var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH, deleteInd: false });
 
       if (existingOwnedItem) {
         if (existingOwnedItem.status === Enums.ItemStatus.PENDING_DEPOSIT) {
@@ -126,7 +191,7 @@ DB = {
     getItemsFromIds: function(items) {
       check(items, [String]);
 
-      var out = Items.find({ _id: { $in: items } }).fetch();
+      var out = Items.find({ _id: { $in: items, deleteInd: false } }).fetch();
 
       if (out.length !== items.length)
         throw new Error('MISSING_ITEMS', items);
@@ -139,7 +204,7 @@ DB = {
     },
 
     getItemOwner: function(itemId) {
-      var item = Items.findOne(itemId);
+      var item = Items.findOne({ _id: itemId, deleteInd: false });
       if (!item)
         throw new Error('ITEM_NOT_FOUND: ' + itemId);
 
@@ -161,7 +226,8 @@ DB = {
       };
 
       var selector = {
-        _id: itemId
+        _id: itemId,
+        deleteInd: false
       };
 
       var out = DB.items.update(selector, doc);
@@ -172,16 +238,17 @@ DB = {
       return out;
     },
 
-    changeStatus: function(userId, tradeofferId, status) {
-      check(userId, String);
-      check(itemIds, String);
+    changeStatus: function(tradeofferId, assetIds, status) {
+      check(tradeofferId, String);
+      check(assetIds, [String]);
       check(status, Match.Where(function() {
         return !!Enums.ItemStatus[status];
       }));
 
       var selector = {
-        userId: userId,
-        tradeofferId: tradeofferId
+        tradeofferId: tradeofferId,
+        itemId: { $in: assetIds },
+        deleteInd: false
       };
 
       var doc = {
@@ -190,7 +257,12 @@ DB = {
         }
       };
 
-      return DB.items.update(selector, tradeofferId);
+      // Logically delete the item if it is not a part of our ecosystem
+      if (status === Enums.ItemStatus.EXTERNAL) {
+        doc.$set.deleteInd = true;
+      }
+
+      return DB.items.update(selector, doc);
     }
   },
 

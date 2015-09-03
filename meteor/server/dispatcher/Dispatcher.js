@@ -72,6 +72,16 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     return _.keys(bots)[botIndex];
   }
 
+  function updateTradeofferStatus(offers) {
+    _.each(offers, function(offer) {
+      try {
+        DB.tradeoffers.updateStatus(offer);
+      } catch(e) {
+        console.warn(e);
+      }
+    });
+  }
+
   return {
     makeTrade: function(userOneId, userOneItems, userTwoId, userTwoItems) {
       var userOne = Meteor.users.findOne(userOneId);
@@ -137,15 +147,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       task.execute(boundCallback);
     },
 
-    // depositWithdrawItems: function(userId, itemsToDeposit, itemsToWithdraw, callback) {
-    //   check(userId, String);
-
-    //   if (itemsToDeposit) {
-    //     this.depositItems(userId, itemsToDeposit, callback)
-    //   }
-
-    // },
-
     init: function() {
       var self = this;
 
@@ -163,7 +164,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     checkOutstandingTradeoffers: function() {
       _.each(bots, function(bot) {
-        bot.queryOffers();
+        var offers = bot.queryOffers();
+        updateTradeofferStatus(offers);
       });
     },
 
