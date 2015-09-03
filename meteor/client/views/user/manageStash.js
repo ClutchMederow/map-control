@@ -48,7 +48,7 @@ Template.manageStash.events({
         sAlert.error(err);
       } else {
         console.log(res);
-        var message = '<a href="' + Constants.tradeOfferURL + res + '/">Click here to accept your trade request</a>'
+        var message = '<a href="' + Constants.tradeOfferURL + res + '/" target="_blank">Click here to accept your trade request</a>'
         sAlert.success(message, stashConfigAlert);
       }
     });

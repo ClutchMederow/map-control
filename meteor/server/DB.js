@@ -83,12 +83,14 @@ DB = {
       return Items.insert(doc);
     },
 
-    update: function(itemId, doc) {
-      check(itemId, String);
+    update: function(selector, doc) {
+      check(selector, Object);
+      check(selector, Object);
+
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator');
 
-      return Items.update(itemId, doc);
+      return Items.update(selector, doc);
     },
 
     insertNewItems: function(userId, tradeofferId, items) {
@@ -149,18 +151,46 @@ DB = {
     },
 
     reassignOwner: function(itemId, newUserId) {
-      doc = {
+      check(itemId, String);
+      check(newUserId, String);
+
+      var doc = {
         $set: {
           userId: newUserId
         }
       };
 
-      var out = DB.items.update(itemId, doc);
+      var selector = {
+        _id: itemId
+      };
+
+      var out = DB.items.update(selector, doc);
 
       if (out !== 1)
         throw new Error('ITEM_NOT_UPDATED');
 
       return out;
+    },
+
+    changeStatus: function(userId, tradeofferId, status) {
+      check(userId, String);
+      check(itemIds, String);
+      check(status, Match.Where(function() {
+        return !!Enums.ItemStatus[status];
+      }));
+
+      var selector = {
+        userId: userId,
+        tradeofferId: tradeofferId
+      };
+
+      var doc = {
+        $set: {
+          status: status
+        }
+      };
+
+      return DB.items.update(selector, tradeofferId);
     }
   },
 

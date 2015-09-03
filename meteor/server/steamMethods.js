@@ -8,9 +8,6 @@ Meteor.methods({
   },
 
   depositItems: function(items) {
-    var transId = Dispatcher.depositItems(this.userId, items);
-    console.log(transId);
-
-    return transId;
+    return Dispatcher.depositItems(this.userId, items);
   }
 });

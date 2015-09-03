@@ -1,3 +1,4 @@
+var Future = Npm.require('fibers/future');
 
 BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
@@ -77,34 +78,30 @@ BotJob.prototype.execute = function(callback) {
   var self = this;
   self._setStatus(Dispatcher.jobStatus.QUEUED);
 
-  functionForQueue = Meteor.bindEnvironment(function() {
+  var future = new Future();
+
+  function functionForQueue() {
     var err, res;
 
     try {
       // Use the appropriate function
       if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
         res = self._executeDeposit();
+      } else {
+        throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }
-    } catch(e) {
-      err = e;
-    }
 
-    if (err) {
-      self.error = err;
-      // self.error.stack = err.stack;
-      self._setStatus(Dispatcher.jobStatus.FAILED);
-    } else {
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
+      future.return(self.tradeofferId);
+    } catch(e) {
+      self.error = e;
+      self._setStatus(Dispatcher.jobStatus.FAILED);
+      future.throw(err);
     }
-
-    var tradeofferId = self.tradeofferId
-    console.log(tradeofferId);
-
-    // Don't forget the callback!
-    callback(err, tradeofferId);
-  });
+  }
 
   this._bot.enqueue(functionForQueue);
+  return future.wait();
 };
 
 BotJob.prototype.cancel = function() {

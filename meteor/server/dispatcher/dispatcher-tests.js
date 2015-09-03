@@ -1,6 +1,10 @@
+var Future = Npm.require('fibers/future');
+
 // Completes after 3 seconds
 var job1 = {
-  execute: function(callback) {
+  execute: function() {
+    var future = new Future();
+
     console.log('2. job begin (job1)');
     console.log(task.status)
 
@@ -13,8 +17,10 @@ var job1 = {
       console.log('3. complete (job1)');
       console.log(task.status);
 
-      callback();
+      future.return();
     }, 3000);
+
+    return future.wait();
   },
 
   status: Dispatcher.jobStatus.READY,
@@ -33,7 +39,9 @@ var job1 = {
 
 // Completes after 1 second
 var job2 = {
-  execute: function(callback) {
+  execute: function() {
+    var future = new Future();
+
     console.log('2. job begin (job2)');
     console.log(task.status)
 
@@ -46,8 +54,10 @@ var job2 = {
       console.log('3. complete (job2)');
       console.log(task.status);
 
-      callback();
+      future.return();
     }, 1000);
+
+    return future.wait();
   },
 
   status: Dispatcher.jobStatus.READY,
@@ -64,7 +74,9 @@ var job2 = {
 
 // Fails after 1 second
 var job3 = {
-  execute: function(callback) {
+  execute: function() {
+    var future = new Future();
+
     console.log('2. job begin (job3)');
     console.log(task.status)
 
@@ -77,8 +89,10 @@ var job3 = {
       console.log('3. failed (job3)');
       console.log(self.status);
 
-      callback(new Error('fuck'));
+      future.throw(new Error('fuck'));
     }, 1000);
+
+    return future.wait();
   },
 
   status: Dispatcher.jobStatus.READY,
@@ -93,8 +107,10 @@ var job3 = {
   jobId: 3
 };
 
-job4 = {
-  execute: function(callback) {
+var job4 = {
+  execute: function() {
+    var future = new Future();
+
     console.log('2. job begin (job4)');
 
     var self = this;
@@ -107,8 +123,10 @@ job4 = {
       console.log('3. complete (job4)');
       console.log(self.status);
 
-      callback();
+      future.return();
     }, 3000);
+
+    return future.wait();
   },
 
   status: Dispatcher.jobStatus.READY,
@@ -125,8 +143,10 @@ job4 = {
   jobId: 4
 };
 
-job5 = {
-  execute: function(callback) {
+var job5 = {
+  execute: function() {
+    var future = new Future();
+
     console.log('2. job begin (job5)');
 
     var self = this;
@@ -139,8 +159,10 @@ job5 = {
       console.log('3. complete (job5)');
       console.log(self.status);
 
-      callback(new Error('uhoh'));
+      future.throw(new Error('uhoh'));
     }, 3000);
+
+    return future.wait();
   },
 
   status: Dispatcher.jobStatus.READY,
@@ -185,100 +207,97 @@ DispatcherTest = {
 
     console.log('Test 1: Two ordered tasks that both succeed');
 
-    task = new Task([job1, job3], false);
+    task = new Task([job1, job2], false, '1', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test2: function() {
     var self = this;
     console.log('Test 2: Two ordered tasks where the second one fails');
 
-    task = new Task([job1, job3], true);
+    task = new Task([job1, job3], true, '2', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test3: function() {
     var self = this;
     console.log('Test 3: Two parallel tasks where they both succeed');
 
-    task = new Task([job1, job2], false);
+    task = new Task([job1, job2], false, '3', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test4: function() {
     var self = this;
     console.log('Test 4: Two parallel tasks where the first one fails');
 
-    task = new Task([job1, job3], false);
+    task = new Task([job1, job3], false, '4', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test5: function() {
     var self = this;
     console.log('Test 5: Two parallel tasks where the first one succeeds and the second is a task of parallel tasks that fails');
 
-    innerTask = new Task([job1, job3], false);
-    task = new Task([job4, innerTask], false);
+    innerTask = new Task([job1, job3], false, '5', DB);
+    task = new Task([job4, innerTask], false, '5.5', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test6: function() {
     var self = this;
     console.log('Test 6: Two parallel tasks where the first one succeeds and the second is a serial task of tasks that fails');
 
-    innerTask = new Task([job1, job3], true);
-    task = new Task([job4, innerTask], false);
+    innerTask = new Task([job1, job3], true, '6', DB);
+    task = new Task([job4, innerTask], false, '6.5', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test7: function() {
     var self = this;
     console.log('Test 7: Two serial tasks where the first one succeeds and the second is serial a task of tasks that fails');
 
-    innerTask = new Task([job1, job3], true);
-    task = new Task([job4, innerTask], true);
+    innerTask = new Task([job1, job3], true, '7', DB);
+    task = new Task([job4, innerTask], true, '7.5', DB);
 
     innerTask.jobId = 'innerTask';
     task.jobId = 'task';
@@ -286,26 +305,26 @@ DispatcherTest = {
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 
   test8: function() {
     var self = this;
     console.log('Test 8: Two serial tasks where the first one succeeds and the second is parallel a task of tasks that fails');
 
-    innerTask = new Task([job1, job3], false);
-    task = new Task([job4, innerTask], true);
+    innerTask = new Task([job1, job3], false, '8', DB);
+    task = new Task([job4, innerTask], true, '8.5', DB);
 
     console.log('1. executing task (all jobs)');
     console.log(task.status);
 
-    task.execute(function() {
-      console.log('4. task done (all jobs)');
-      console.log(task.status);
-    });
+    task.execute();
+
+    console.log('4. task done (all jobs)');
+    console.log(task.status);
   },
 };
 

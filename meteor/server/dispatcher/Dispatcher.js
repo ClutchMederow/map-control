@@ -1,5 +1,3 @@
-var Future = Npm.require('fibers/future');
-
 Dispatcher = (function(SteamAPI, SteamBot) {
 
   // Holds objects that represent all bots, using the botName as the key
@@ -58,12 +56,13 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     if (!user || !user.profile)
       throw new Error('UNKNOWN_USER');
 
-    if (!user.profile.botName)
+    if (!user.profile.botName) {
       botName = DB.users.addBot(userId, assignBot());
-    else if (!bots[user.profile.botName])
+    } else if (!bots[user.profile.botName]) {
       botName = DB.users.addBot(userId, assignBot());
-    else
+    } else {
       botName = user.profile.botName;
+    }
 
     return bots[botName];
   }
@@ -113,19 +112,9 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
       var task = new Task([job], false, taskId, DB);
 
-      var future = new Future();
+      task.execute();
 
-      task.execute(function(err, res) {
-        if (err) {
-          future.throw(err);
-        } else {
-          future.return(res);
-        }
-      });
-
-      var offerId = future.wait();
-      console.log('offerID', offerId);
-      return offerId;
+      return job.tradeofferId;
     },
 
     withdrawItems: function(userId, items, callback) {
@@ -170,6 +159,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       botIndex = Math.round(Math.random()*(_.keys(bots).length - 1));
 
       console.log('Bots initialized. Count: ' + _.keys(bots).length);
+    },
+
+    checkOutstandingTradeoffers: function() {
+      _.each(bots, function(bot) {
+        bot.queryOffers();
+      });
     },
 
     test: function() {
