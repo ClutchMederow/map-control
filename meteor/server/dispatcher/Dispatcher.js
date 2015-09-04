@@ -131,6 +131,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       check(userId, String);
       check(items, [String]);
 
+      if (!items.length) {
+        throw new Meteor.Error('BAD_ARGUMENTS', 'No items in transaction');
+      }
+
       var bot = getUsersBot(userId);
 
       var options = {
@@ -139,6 +143,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       };
 
       var taskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+
+
 
       var job = new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
       var task = new Task([job], false, taskId, DB);

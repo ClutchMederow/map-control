@@ -5,7 +5,7 @@ Items.attachSchema({
     type: String,
     label: "user Id"
   },
-  botId: {
+  botName: {
     type: String,
     label: "bot that holds item",
     optional: true //TODO: remove

@@ -191,34 +191,16 @@ SteamBot.prototype.getOwnedItemObjsWithIds = function(items) {
   return out;
 };
 
-SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive) {
-  // if (typeof itemsToReceive === 'string')
-  //   itemsToReceive = [itemsToReceive];
-  return this._makeOffer(userSteamId, [], itemsToReceive);
+SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive, message) {
+  return this._makeOffer(userSteamId, [], itemsToReceive, message);
 };
 
-SteamBot.prototype.giveItems = function(userSteamId, itemsToGive) {
-  // if (typeof itemsToReceive === 'string')
-  //   itemsToReceive = [itemsToReceive];
-  return this._makeOffer(userSteamId, itemsToGive, []);
+SteamBot.prototype.giveItems = function(userSteamId, itemsToGive, message) {
+  return this._makeOffer(userSteamId, itemsToGive, [], message);
 };
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
-SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive) {
-
-  // if (typeof itemsToSend === 'object')
-  //   itemsToSend = [itemsToSend];
-
-  // if (typeof itemsToReceive === 'object')
-  //   itemsToReceive = [itemsToReceive];
-
-  // var args = Array.prototype.slice.call(arguments);
-
-  // check(args, {
-  //   userSteamId: String,
-  //   itemsToSend: Match.Optional([Object]),
-  //   itemsToReceive: Match.Optional([Object]),
-  // });
+SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, message) {
 
   var itemObjsToReceive = wrapItemForBot(itemsToReceive);
   var itemObjsToSend = wrapItemForBot(itemsToSend);
@@ -231,7 +213,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
     partnerSteamId: userSteamId,
     itemsFromMe: itemObjsToSend,
     itemsFromThem: itemObjsToReceive,
-    message: 'This is test'
+    message: message
   }, function(err, res){
     if (err)
       future.throw(err);

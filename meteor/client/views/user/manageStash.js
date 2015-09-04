@@ -1,11 +1,5 @@
 var stashTemplate = new ReactiveVar(null);
-var selectedItems = new Mongo.Collection(null);
-
-var stashConfigAlert = {
-  timeout: 0,
-  html: true,
-  onRouteClose: false
-};
+var stashManager = new StashManager();
 
 Template.manageStash.helpers({
   stashTemplate: function() {
@@ -14,22 +8,21 @@ Template.manageStash.helpers({
 
   data: function() {
     return {
-      selectedItems: selectedItems
+      selectedItems: stashManager.selectedItems
     };
   }
 });
 
 Template.manageStash.onCreated(function() {
-  selectedItems.remove({});
   stashTemplate.set('addRemoveStash');
 });
 
 Template.manageStash.events({
   'click #next': function() {
-    if (selectedItems.find().count()) {
+    if (stashManager.hasItems()) {
       stashTemplate.set('confirmStashTransaction');
     } else {
-      alert('Please choose at least one item');
+      sAlert.warning('Please select at least one item');
     }
   },
 
@@ -38,21 +31,12 @@ Template.manageStash.events({
   },
 
   'click #submitStashTrans': function() {
-
-    var deposits = _.pluck(selectedItems.find({ transType: Enums.TransType.DEPOSIT }, { fields: { itemId: 1, _id: 0 } }).fetch(), 'itemId');
-    var withdrawals = _.pluck(selectedItems.find({ transType: Enums.TransType.WITHDRAW }, { fields: { itemId: 1, _id: 0 } }).fetch(), 'itemId');
-
-    Meteor.call('depositItems', deposits, function(err, res) {
-      if (err) {
-        sAlert.error(err);
-      } else {
-        var message = '<a href="' + Constants.tradeOfferURL + res + '/" target="_blank">Click here to accept your trade request</a>'
-        sAlert.success(message, stashConfigAlert);
-      }
-    });
-
-
-    stashTemplate.set('stashTransNextSteps');
+    if (stashManager.hasItems()) {
+      stashManager.execute();
+      stashTemplate.set('stashTransNextSteps');
+    } else {
+      sAlert.warning('Please select at least one item');
+    }
   },
 
   'click #nextStepsHome': function() {

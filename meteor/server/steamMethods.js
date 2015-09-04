@@ -9,5 +9,9 @@ Meteor.methods({
 
   depositItems: function(items) {
     return Dispatcher.depositItems(this.userId, items);
+  },
+
+  withdrawItems: function(items) {
+    // return Dispatcher.
   }
 });

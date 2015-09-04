@@ -158,7 +158,7 @@ DB = {
       return Items.update(selector, doc, { multi: true });
     },
 
-    insertNewItems: function(userId, tradeofferId, items) {
+    insertNewItems: function(userId, tradeofferId, items, botName) {
       check(userId, String);
       check(items, [String]);
 
@@ -182,6 +182,7 @@ DB = {
 
       _.each(filteredItems, function(doc) {
         doc.status = Enums.ItemStatus.PENDING_DEPOSIT;
+        doc.botName = botName;
         doc.tradeofferId = tradeofferId;
         DB.items.insert(doc);
       });
@@ -263,6 +264,18 @@ DB = {
       }
 
       return DB.items.update(selector, doc);
+    },
+
+    getItemBot: function(itemId, userId) {
+      check(itemId, String);
+      check(userId, String);
+
+      var item =  Items.findOne({ userId: userId, itemId: itemId, status: Enums.ItemStatus.STASH });
+      if (!item) {
+        throw new Error('Item not found: ' + itemId)
+      }
+
+      return item.botName;
     }
   },
 
