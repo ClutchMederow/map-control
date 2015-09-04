@@ -1,14 +1,13 @@
 
 Template.itemContainer.onCreated(function() {
   // searchText.set('');
-  searchBoxId = Random.id();
+  this.searchBoxId = Random.id();
 
   this.searchText = new ReactiveVar('');
-  this.searchBoxId;
   var eventMap = {};
   var self = this;
 
-  eventMap['keyup #' + searchBoxId] = _.throttle(function(e) {
+  eventMap['keyup #' + self.searchBoxId] = _.throttle(function(e) {
     self.searchText.set($(e.target).val().trim());
   }, 200);
 
@@ -32,7 +31,7 @@ Template.itemContainer.helpers({
   },
 
   searchBoxId: function() {
-    return searchBoxId;
+    return Template.instance().searchBoxId;
   },
 
   selected: function() {
