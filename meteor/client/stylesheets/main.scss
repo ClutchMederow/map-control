@@ -6,6 +6,7 @@
 
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
+@import "itemInfo.import.scss";
 
 main {
   padding-top: 1em;
@@ -289,3 +290,16 @@ main {
 .trade-alert {
   color: red;
 }
+
+.item-tooltip-contents {
+  text-align: left;
+  padding: 1rem;
+  color: #B71C1C;
+
+  .item-info-title {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+}
+

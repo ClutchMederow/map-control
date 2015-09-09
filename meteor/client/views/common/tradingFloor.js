@@ -26,7 +26,7 @@ Template.tradingFloor.onRendered(function() {
   }.bind(this));
 
   // Define the area where we can drop stash items to be inserted into the chat
-  DraggableItems.droppable('.tradingFloor', '.draggable-stash-item', dropItem)
+  DraggableItems.droppable('.tradingFloor', '.draggable-stash-item', dropItem);
 
   // Adds a scroll handle to run when a new message arrives
   changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({

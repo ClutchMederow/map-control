@@ -1,12 +1,15 @@
 
 Template.itemContainer.onCreated(function() {
-  // searchText.set('');
   this.searchBoxId = Random.id();
 
+  // We have to append searchText to the template instance in order to avoid closure conflicts
+  // when there are multiple instances of the template
+  // To do this, we create a unique id for the search box and bind the event to this id
   this.searchText = new ReactiveVar('');
   var eventMap = {};
   var self = this;
 
+  // We bind the event here to let the random id be generated first
   eventMap['keyup #' + self.searchBoxId] = _.throttle(function(e) {
     self.searchText.set($(e.target).val().trim());
   }, 200);
