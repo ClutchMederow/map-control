@@ -6,6 +6,7 @@
 
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
+@import "itemInfo.import.scss";
 
 main {
   padding-top: 1em;
@@ -285,3 +286,28 @@ main {
   margin-bottom: 2rem;
   text-align: center;
 }
+
+.trade-alert {
+  color: red;
+}
+
+.item-tooltip-contents {
+  font-size: .8rem;
+  text-align: left;
+  padding: .8rem;
+
+  .item-info-title {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: .8rem;
+  }
+
+  .item-info-type {
+    color: #756D55;
+  }
+
+  .container-items {
+    margin: .2rem;
+  }
+}
+

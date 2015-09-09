@@ -19,5 +19,270 @@ DraggableItems = {
         callback(itemId);
       }
     });
+  },
+
+  itemInfo: {
+    inProgress: null,
+
+    intervalId: null,
+
+    mousein: function(e, data) {
+
+      var origin = $(e.currentTarget);
+
+      if (origin.data('active')) {
+        return false;
+      } else {
+        origin.data('active', true);
+      }
+
+      // Get or create the elements
+      var tooltip = getTooltipElement(origin, data);
+      var backdrop = getAndAppendBackdropElement(tooltip);
+
+      var next = getAnimateFunction(origin, tooltip, backdrop);
+
+
+      if (DraggableItems.itemInfo.intervalId) {
+        clearInterval(DraggableItems.itemInfo.intervalId);
+      }
+
+      DraggableItems.itemInfo.intervalId = setInterval(function() {
+        if (!DraggableItems.itemInfo.inProgress) {
+          DraggableItems.itemInfo.inProgress = true;
+          clearInterval(DraggableItems.itemInfo.intervalId);
+          next();
+        }
+      }, 50);
+
+      return false;
+    },
+
+    mouseout: function(e) {
+
+      // Reset State
+      clearInterval(DraggableItems.itemInfo.intervalId);
+      DraggableItems.itemInfo.intervalId = null;
+
+      var origin = $(e.currentTarget);
+
+      var tooltip = origin.children('.material-tooltip').first();
+      var backdrop = origin.find('.backdrop').first();
+
+      // Reset the active attribute so it opens again next time
+      origin.data('active', false);
+
+      // tooltip.velocity('finish');
+      // backdrop.velocity('finish');
+
+      // Animate back
+      tooltip.velocity({
+        opacity: 0, marginTop: 0, marginLeft: 0}, { duration: 0, queue: false, delay: 0 }
+      );
+
+      backdrop.velocity({opacity: 0, scale: 1}, {
+        duration:0,
+        delay: 0, queue: false,
+        complete: function(){
+          backdrop.css('display', 'none');
+          tooltip.css('display', 'none');
+        }
+      });
+
+      return false;
+    }
   }
 };
+
+function findIndex(list, str, start) {
+  var start = start || 0;
+  for (var i = start; i < list.length; i++) {
+    if (list[i].value === str) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function createTooltipHtml(data) {
+  var tooltipElement = $('<div></div>');
+  tooltipElement.addClass('item-tooltip-contents');
+
+  if (data.name) {
+    var title = $('<div>' + data.name + '</div>');
+    title.addClass('item-info-title');
+    tooltipElement.append(title);
+  }
+
+  if (data.type) {
+    var typeElem = $('<div>' + data.type + '</div>');
+    typeElem.addClass('item-info-type');
+    tooltipElement.append(typeElem);
+  }
+
+  if (data.descriptions && data.descriptions.length) {
+
+    //  if it is a weapon case, get the constituents
+    if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
+
+      // We have to parse this a bit to make it presentable
+      var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
+      var end = findIndex(data.descriptions, ' ', start);
+
+      if (start !== -1 && end !== -1) {
+        var containerItems = data.descriptions.slice(start, end);
+
+        _.each(containerItems, function(item) {
+          var $newDiv = $('<div></div>');
+          $newDiv.css('color', '#' + item.color);
+          $newDiv.addClass('container-items');
+          $newDiv.text(item.value);
+          tooltipElement.append($newDiv);
+        });
+      }
+    }
+  }
+
+  return tooltipElement;
+}
+
+function getTooltipElement(origin, data) {
+
+  // Create tooltip
+  var tooltip = origin.children('.material-tooltip').first();
+
+  if (!tooltip.length) {
+    // Create HTML
+    var tooltipElement = createTooltipHtml(data);
+
+    tooltip = $('<div></div>');
+    tooltip.addClass('material-tooltip').append(tooltipElement)
+      .attr('id', Random.id())
+      .appendTo(origin)
+  }
+
+  return tooltip;
+}
+
+function getAndAppendBackdropElement(tooltip) {
+  var backdrop = tooltip.children('.backdrop').first();
+  if (!backdrop.length) {
+    backdrop = $('<div></div>').addClass('backdrop');
+    backdrop.appendTo(tooltip);
+    backdrop.css({ top: 0, left:0 });
+  }
+
+  return backdrop;
+}
+
+function getAnimateFunction(origin, tooltip, backdrop) {
+
+  return function() {
+    var options = {
+      delay: 50,
+      position: 'left'
+    };
+    var margin = 5;
+
+    // Log that we are using it so we don't call it again on ourselves
+    origin.data('active', true);
+
+    tooltip.css({ display: 'block', left: '0px', top: '0px' });
+
+    // Tooltip positioning
+    var originWidth = origin.outerWidth();
+    var originHeight = origin.outerHeight();
+    var tooltipPosition =  options.position;
+    var tooltipHeight = tooltip.outerHeight();
+    var tooltipWidth = tooltip.outerWidth();
+    var tooltipVerticalMovement = '0px';
+    var tooltipHorizontalMovement = '0px';
+    var scale_factor = 8;
+
+    if (tooltipPosition === "top") {
+      // Top Position
+      tooltip.css({
+        top: origin.offset().top - tooltipHeight - margin,
+        left: origin.offset().left + originWidth/2 - tooltipWidth/2
+      });
+      tooltipVerticalMovement = '-10px';
+      backdrop.css({
+        borderRadius: '14px 14px 0 0',
+        transformOrigin: '50% 90%',
+        marginTop: tooltipHeight,
+        marginLeft: (tooltipWidth/2) - (backdrop.width()/2)
+
+      });
+    }
+    // Left Position
+    else if (tooltipPosition === "left") {
+      tooltip.css({
+        top: origin.offset().top + originHeight/2 - tooltipHeight/2,
+        left: origin.offset().left - tooltipWidth - margin
+      });
+      tooltipHorizontalMovement = '-10px';
+      backdrop.css({
+        width: '14px',
+        height: '14px',
+        borderRadius: '14px 0 0 14px',
+        transformOrigin: '95% 50%',
+        marginTop: tooltipHeight/2,
+        marginLeft: tooltipWidth
+      });
+    }
+    // Right Position
+    else if (tooltipPosition === "right") {
+      tooltip.css({
+        top: origin.offset().top + originHeight/2 - tooltipHeight/2,
+        left: origin.offset().left + originWidth + margin
+      });
+      tooltipHorizontalMovement = '+10px';
+      backdrop.css({
+        width: '14px',
+        height: '14px',
+        borderRadius: '0 14px 14px 0',
+        transformOrigin: '5% 50%',
+        marginTop: tooltipHeight/2,
+        marginLeft: '0px'
+      });
+    }
+    else {
+      // Bottom Position
+      tooltip.css({
+        top: origin.offset().top + origin.outerHeight() + margin,
+        left: origin.offset().left + originWidth/2 - tooltipWidth/2
+      });
+      tooltipVerticalMovement = '+10px';
+      backdrop.css({
+        marginLeft: (tooltipWidth/2) - (backdrop.width()/2)
+      });
+    }
+
+    // Calculate Scale to fill
+    scale_factor = Math.max(tooltipHeight, tooltipWidth) / 4;
+
+    if (scale_factor < 8) {
+      scale_factor = 8;
+    }
+    if (tooltipPosition === "right" || tooltipPosition === "left") {
+      // scale_factor = tooltipWidth / 10;
+      if (scale_factor < 10)
+        scale_factor = 10;
+    }
+
+    tooltip.velocity({ marginTop: tooltipVerticalMovement, marginLeft: tooltipHorizontalMovement}, { duration: 350, queue: false })
+      .velocity({opacity: 1}, {duration: 300, delay: 50, queue: false });
+
+    backdrop.css({ display: 'block' })
+      .velocity({opacity:1},{duration: 85, delay: 0, queue: false})
+      .velocity({scale: scale_factor},{
+        duration: 300,
+        delay: 50,
+        queue: false,
+        easing: 'easeInOutQuad',
+        complete: function() {
+          DraggableItems.itemInfo.inProgress = false;
+        }
+      });
+  };
+}

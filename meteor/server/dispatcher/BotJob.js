@@ -49,32 +49,51 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
 BotJob.prototype._executeDeposit = function() {
   var self = this;
-  self._setStatus(Dispatcher.jobStatus.PENDING);
 
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
 
+  var id = Random.id();
+  var message = 'Deposit ID: ' + id;
+
   // Make the tradeoffer
-  self.tradeofferId = self._bot.takeItems(steamId, self.items);
+  self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insert({ tradeofferid: self.tradeofferId, trade_offer_state: 2, userId: self.userId, deleteInd: false });
+  self._DB.tradeoffers.insert({
+    _id: id,
+    tradeofferid: self.tradeofferId,
+    trade_offer_state: 2,
+    userId: self.userId,
+    deleteInd: false
+  });
 
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items);
 };
 
 BotJob.prototype._executeWithdrawal = function() {
+  var self = this;
 
-  // var self = this;
-  // self._setStatus(Dispatcher.jobStatus.PENDING);
+  // Find item assetIds
+  // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
+  var steamId = Meteor.users.findOne(this.userId).services.steam.id;
 
-  // // Find item assetIds
-  // self.items = self._bot.getItemObjsWithIds(self.steamId, self.itemsNoAssetId);
+  var id = Random.id();
+  var message = 'Withdrawl ID: ' + id;
 
-  // // Make the tradeoffer
-  // self.tradeofferId = self._bot.takeItems(self.steamId, self.items);
+  // Make the tradeoffer
+  self.tradeofferId = self._bot.giveItems(steamId, self.items, message);
+
+  // Save the tradeoffer
+  self._DB.tradeoffers.insert({
+    _id: id,
+    tradeofferid: self.tradeofferId,
+    trade_offer_state: 2,
+    userId: self.userId,
+    deleteInd: false
+  });
 };
 
 BotJob.prototype.execute = function(callback) {
@@ -85,11 +104,14 @@ BotJob.prototype.execute = function(callback) {
 
   function functionForQueue() {
     var err, res;
+    self._setStatus(Dispatcher.jobStatus.PENDING);
 
     try {
       // Use the appropriate function
       if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
         res = self._executeDeposit();
+      } else if (self.jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+        res = self._executeWithdrawal();
       } else {
         throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }
@@ -99,7 +121,7 @@ BotJob.prototype.execute = function(callback) {
     } catch(e) {
       self.error = e;
       self._setStatus(Dispatcher.jobStatus.FAILED);
-      future.throw(err);
+      future.throw(e);
     }
   }
 

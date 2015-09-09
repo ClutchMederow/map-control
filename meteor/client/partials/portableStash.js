@@ -9,6 +9,8 @@ Template.portableStash.rendered = function() {
   // All stash items should be draggable
   // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
   DraggableItems.draggable('.portable-stash', '.draggable-stash-item');
+
+  // DraggableItems.hoverable('.portable-stash', '.item-infoed');
 };
 
 Template.portableStash.helpers({
@@ -35,4 +37,12 @@ Template.portableStash.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),
+
+  'mouseenter.item-info-tooltip .portable-stash .item-infoed': function(e) {
+    DraggableItems.itemInfo.mousein(e, this);
+  },
+
+  'mouseleave.item-info-tooltip .portable-stash .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
+  }
 });
