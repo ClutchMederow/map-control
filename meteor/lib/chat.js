@@ -33,13 +33,14 @@ Chat = {
       var regexp = new RegExp('(' + Chat.imgDelimiter + '[\\s\\S]*?' + Chat.imgDelimiter + ')', 'ig');
 
       // Replace all instances with the actual image tag
+      var ind = 0;
       return doc.text.replace(regexp, function(foundIt) {
         var itemId = foundIt.replace(new RegExp(Chat.imgDelimiter, 'ig'), '');
         var item = _.findWhere(doc.items, { _id: itemId });
 
         // if the parsing is bad, just return a blank string instead of image
         if (item && item.iconURL) {
-          return '<img src="' + item.iconURL + '" class="responsive-img chat-item">';
+          return '<span class="item-infoed" data-ind="' + ind++ + '"><img src="' + item.iconURL + '" class="responsive-img chat-item"></span>';
         } else {
           return '';
         }

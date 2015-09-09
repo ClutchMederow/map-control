@@ -65,6 +65,18 @@ Template.tradingFloor.helpers({
 });
 
 Template.tradingFloor.events({
+  'mouseenter.item-info-tooltip .chatTextWindow .item-infoed': function(e) {
+    var itemIndex = $(e.target).data('ind');
+    var thisItem = this.items[itemIndex];
+
+    if (thisItem) {
+      DraggableItems.itemInfo.mousein(e, thisItem);
+    }
+  },
+
+  'mouseleave.item-info-tooltip .chatTextWindow .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
+  }
 });
 
 // Drops an item into the chat window

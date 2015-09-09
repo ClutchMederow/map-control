@@ -274,10 +274,10 @@ function getAnimateFunction(origin, tooltip, backdrop) {
       .velocity({opacity: 1}, {duration: 300, delay: 50, queue: false });
 
     backdrop.css({ display: 'block' })
-      .velocity({opacity:1},{duration: 55, delay: 0, queue: false})
+      .velocity({opacity:1},{duration: 85, delay: 0, queue: false})
       .velocity({scale: scale_factor},{
         duration: 300,
-        delay: 0,
+        delay: 50,
         queue: false,
         easing: 'easeInOutQuad',
         complete: function() {
