@@ -292,14 +292,22 @@ main {
 }
 
 .item-tooltip-contents {
+  font-size: .8rem;
   text-align: left;
-  padding: 1rem;
-  color: #B71C1C;
+  padding: .8rem;
 
   .item-info-title {
     color: white;
     font-size: 1.2rem;
-    margin-bottom: 1rem;
+    margin-bottom: .8rem;
+  }
+
+  .item-info-type {
+    color: #756D55;
+  }
+
+  .container-items {
+    margin: .2rem;
   }
 }
 

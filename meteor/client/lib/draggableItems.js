@@ -94,6 +94,16 @@ DraggableItems = {
   }
 };
 
+function findIndex(list, str, start) {
+  var start = start || 0;
+  for (var i = start; i < list.length; i++) {
+    if (list[i].value === str) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 function createTooltipHtml(data) {
   var tooltipElement = $('<div></div>');
   tooltipElement.addClass('item-tooltip-contents');
@@ -105,16 +115,33 @@ function createTooltipHtml(data) {
   }
 
   if (data.type) {
-    tooltipElement.append('<div>' + data.type + '</div>');
+    var typeElem = $('<div>' + data.type + '</div>');
+    typeElem.addClass('item-info-type');
+    tooltipElement.append(typeElem);
   }
 
-  // if (data.descriptions && data.descriptions.length) {
-  //   _.each(data.descriptions, function(desc) {
-  //     if (desc.value && desc.value.trim()) {
-  //       tooltipElement.append('<div>' + desc.value.trim() + '</div>');
-  //     }
-  //   });
-  // }
+  if (data.descriptions && data.descriptions.length) {
+
+    //  if it is a weapon case, get the constituents
+    if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
+
+      // We have to parse this a bit to make it presentable
+      var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
+      var end = findIndex(data.descriptions, ' ', start);
+
+      if (start !== -1 && end !== -1) {
+        var containerItems = data.descriptions.slice(start, end);
+
+        _.each(containerItems, function(item) {
+          var $newDiv = $('<div></div>');
+          $newDiv.css('color', '#' + item.color);
+          $newDiv.addClass('container-items');
+          $newDiv.text(item.value);
+          tooltipElement.append($newDiv);
+        });
+      }
+    }
+  }
 
   return tooltipElement;
 }
@@ -153,7 +180,7 @@ function getAnimateFunction(origin, tooltip, backdrop) {
   return function() {
     var options = {
       delay: 50,
-      position: 'bottom'
+      position: 'left'
     };
     var margin = 5;
 
@@ -232,15 +259,15 @@ function getAnimateFunction(origin, tooltip, backdrop) {
     }
 
     // Calculate Scale to fill
-    scale_factor = tooltipWidth / 8;
+    scale_factor = Math.max(tooltipHeight, tooltipWidth) / 4;
 
     if (scale_factor < 8) {
       scale_factor = 8;
     }
     if (tooltipPosition === "right" || tooltipPosition === "left") {
-      scale_factor = tooltipWidth / 10;
-      if (scale_factor < 6)
-        scale_factor = 6;
+      // scale_factor = tooltipWidth / 10;
+      if (scale_factor < 10)
+        scale_factor = 10;
     }
 
     tooltip.velocity({ marginTop: tooltipVerticalMovement, marginLeft: tooltipHorizontalMovement}, { duration: 350, queue: false })
