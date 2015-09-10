@@ -1,5 +1,6 @@
 var userInventoryItems = new Mongo.Collection(null);
 var selectedItems;
+var invReady = new ReactiveVar(false);
 
 Template.addRemoveStash.helpers({
   inventoryOptions: function() {
@@ -8,7 +9,8 @@ Template.addRemoveStash.helpers({
       items: userInventoryItems.find({ tradable: 1 }).fetch(),
       columns: '3',
       class: 'add-remove-items',
-      selectedItems: selectedItems
+      selectedItems: selectedItems,
+      ready: invReady.get()
     };
   },
 
@@ -20,7 +22,8 @@ Template.addRemoveStash.helpers({
       items: Items.find({ userId: userId, status: Enums.ItemStatus.STASH, deleteInd: false }).fetch(),
       columns: '3',
       class: 'add-remove-items',
-      selectedItems: selectedItems
+      selectedItems: selectedItems,
+      ready: true
     };
   }
 });
@@ -40,6 +43,8 @@ Template.addRemoveStash.onCreated(function() {
         userInventoryItems.insert(item);
       });
     }
+
+    invReady.set(true);
   });
 });
 

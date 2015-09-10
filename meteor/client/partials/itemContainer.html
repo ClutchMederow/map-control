@@ -20,12 +20,17 @@
           <i class="material-icons selected-checkmark">done</i>
         </div>
       {{ else }}
-        <div class="col s12 loading">
-          <div class="spinner">
-            <div class="dot1"></div>
-            <div class="dot2"></div>
+        {{ #if ready }}
+          <div class="col s12">
           </div>
-        </div>
+        {{ else }}
+          <div class="col s12 loading">
+            <div class="spinner">
+              <div class="dot1"></div>
+              <div class="dot2"></div>
+            </div>
+          </div>
+        {{ /if }}
       {{ /each}}
     </div>
   </div>
