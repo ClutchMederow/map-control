@@ -9,8 +9,6 @@ Template.portableStash.rendered = function() {
   // All stash items should be draggable
   // http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
   DraggableItems.draggable('.portable-stash', '.draggable-stash-item');
-
-  // DraggableItems.hoverable('.portable-stash', '.item-infoed');
 };
 
 Template.portableStash.helpers({
@@ -20,7 +18,7 @@ Template.portableStash.helpers({
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return Items.getItems(searchText.get(), fields, options);
+      return Items.getItems(searchText.get(), fields, selector, options);
     } else {
       return Items.find(selector);
     }

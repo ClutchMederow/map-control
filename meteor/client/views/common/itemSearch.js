@@ -8,11 +8,11 @@ Template.itemSearch.rendered = function() {
 Template.itemSearch.helpers({
   getItems: function() {
     var fields = ['name', 'type'];
-    var selector = {deleteInd: false};
+    var selector = { userId: Meteor.userId(), marketable: 1, deleteInd: false, status: Enums.ItemStatus.STASH };
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return Items.getItems(searchText.get(), fields,options );
+      return Items.getItems(searchText.get(), fields, selector, options);
     }
   }
 });
