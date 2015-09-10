@@ -118,6 +118,11 @@ function createTooltipHtml(data) {
   if (data.name) {
     var title = $('<div>' + data.name + '</div>');
     title.addClass('item-info-title');
+
+    if (data.nameColor) {
+      title.css('color', '#' + data.nameColor);
+    }
+
     tooltipElement.append(title);
   }
 
@@ -301,7 +306,7 @@ function getAnimateFunction(origin, tooltip, backdrop) {
       .velocity({opacity: 1}, {duration: 300, delay: 50, queue: false });
 
     backdrop.css({ display: 'block' })
-      .velocity({opacity:1},{duration: 85, delay: 0, queue: false})
+      .velocity({opacity: 0.95},{duration: 85, delay: 0, queue: false})
       .velocity({scale: scale_factor},{
         duration: 300,
         delay: 50,

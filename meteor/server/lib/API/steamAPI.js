@@ -14,7 +14,7 @@ SteamAPI = (function () {
 
     return _.map(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
-      //TODO: put this through DB layer
+
       return {
         userId: userId,
         name: itemDescription.market_name,
@@ -35,6 +35,7 @@ SteamAPI = (function () {
        };
     });
   };
+
   //declaration of all functions, best practice due to hoisting
   //profileID = steam public id (base 64)
   //userId = Meteor user ID
