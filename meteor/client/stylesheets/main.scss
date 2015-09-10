@@ -252,7 +252,7 @@ main {
 
 .contained-item {
   cursor: pointer;
-  position: relative;
+  /*position: relative;*/
 
   &.selected {
     img {
@@ -289,6 +289,10 @@ main {
 
 .trade-alert {
   color: red;
+}
+
+.item-infoed .material-tooltip {
+  border-radius: 5px;
 }
 
 .item-tooltip-contents {
