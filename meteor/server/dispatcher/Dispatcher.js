@@ -64,12 +64,36 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       botName = user.profile.botName;
     }
 
-    return bots[botName];
+    var usersBot = bots[botName];
+
+    // Verify that the bot assigned to the player has enough space
+    if (usersBot.getItemCount() > Config.bots.maxBotInventory * Config.bots.maxFullPercentage) {
+      botName = DB.users.addBot(userId, assignBot());
+    }
+
+    return usersBot;
   }
 
   function assignBot() {
-    botIndex = (botIndex + 1)%(_.keys(bots).length);
-    return _.keys(bots)[botIndex];
+    var botWithMinInv;
+    var currentBest = Config.bots.maxBotInventory * Config.bots.maxFullPercentage;
+
+    _.each(bots, function(thisBot, botName) {
+      var itemCount = thisBot.getItemCount()
+
+      if (itemCount < currentBest) {
+        botWithMinInv = botName;
+        currentBest = itemCount;
+      }
+    });
+
+    if (!botWithMinInv) {
+      throw new Meteor.Error('OUT_OF_BOTS');
+    }
+
+    return botWithMinInv;
+    // botIndex = (botIndex + 1)%(_.keys(bots).length);
+    // return _.keys(bots)[botIndex];
   }
 
   function updateTradeofferStatus(offers) {
@@ -176,8 +200,21 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     test: function() {
-      console.log(getUsersBot('kiGYGwyyuM7h3RfvT'));
-      // console.log(assignBot());
+      // console.log(getUsersBot('kiGYGwyyuM7h3RfvT'));
+
+
+      // var botWithMinInv = _.reduce(bots, function(currentBest, thisBot, botName) {
+      //     var count = thisBot.getItemCount();
+
+      //     if (count < currentBest.itemCount) {
+      //       return { botName: botName, itemCount: count };
+      //     } else {
+      //       return currentBest;
+      //     }
+      //   }, { botName: null, itemCount: maxItemCount });
+
+      return assignBot();
+
     }
   }
 })(SteamAPI, SteamBot);

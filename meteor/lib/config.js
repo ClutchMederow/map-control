@@ -1,6 +1,10 @@
 Config = {
   bots: {
-    newBotRetries: 5
+    newBotRetries: 5,
+    maxBotInventory: 1000,
+    maxFullPercentage: 0.75,
+    // in seconds
+    maxInventoryCacheTime: 60
   },
 
   tradingFloor: {

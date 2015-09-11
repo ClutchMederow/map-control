@@ -20,6 +20,8 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   };
   this.queue = [];
   this.busy = false;
+  // Random date in the past
+  this.itemsUpdatedTimestamp = new Date(1995, 11, 17);
 
   this.steam.on('error', function(err) {
     console.log(err);
@@ -98,6 +100,14 @@ SteamBot.prototype.logOn = function() {
 
 SteamBot.prototype.getBotItems = function() {
   return this.items.find();
+};
+
+// Reload the bot's inventory if if the cache is expired
+SteamBot.prototype.getItemCount = function() {
+  if (moment().diff(this.itemsUpdatedTimestamp, 'seconds') > Config.bots.maxInventoryCacheTime) {
+    this.loadBotInventory();
+  }
+  return this.items.find().count();
 };
 
 SteamBot.prototype.loadBotInventory = function() {
