@@ -155,6 +155,12 @@ function createTooltipHtml(data) {
     }
   }
 
+  if (!data.tradable) {
+    var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
+    $notTradable.addClass('not-tradable');
+    tooltipElement.append($notTradable);
+  }
+
   return tooltipElement;
 }
 

@@ -306,6 +306,17 @@ main {
     margin-bottom: .8rem;
   }
 
+  .not-tradable {
+    margin-top: .8rem;
+    text-align: right;
+
+    span {
+      padding: .5rem;
+      border-radius: 2px;
+      background-color: #940202;
+    }
+  }
+
   .item-info-type {
     color: #756D55;
   }

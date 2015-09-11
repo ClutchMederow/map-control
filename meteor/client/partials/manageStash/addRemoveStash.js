@@ -6,7 +6,7 @@ Template.addRemoveStash.helpers({
 
     return {
       title: 'Inventory',
-      items: stashManager.userInventoryItems.find({ tradable: 1 }).fetch(),
+      items: stashManager.userInventoryItems.find({ marketable: 1 }).fetch(),
       columns: '3',
       class: 'add-remove-items',
       selectedItems: stashManager.selectedItems,

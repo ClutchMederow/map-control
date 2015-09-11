@@ -91,7 +91,6 @@ SteamAPI = (function () {
     getPlayerItems: function(profileId) {
       var callString = "http://steamcommunity.com/profiles/" + profileId +
       "/inventory/json/" + csAppId + "/" + csContextId;
-      console.log(callString);
       var data = HTTP.get(callString).data;
       return data;
     },

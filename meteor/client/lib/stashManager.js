@@ -61,7 +61,12 @@ StashManager.prototype.toggleItem = function(item, transType) {
   if (this.selectedItems.findOne(item._id)) {
     this.selectedItems.remove(item._id);
   } else {
-    this.selectedItems.insert(item);
+
+    if (item.tradable) {
+      this.selectedItems.insert(item);
+    } else {
+      sAlert.warning('That item is not tradable');
+    }
   }
 };
 
