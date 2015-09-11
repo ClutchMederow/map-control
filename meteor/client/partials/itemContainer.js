@@ -48,5 +48,14 @@ Template.itemContainer.helpers({
   }
 });
 
+Template.itemContainer.events({
+  'mouseenter.item-info-tooltip .portable-stash .item-infoed': function(e) {
+    DraggableItems.itemInfo.mousein(e, this);
+  },
+
+  'mouseleave.item-info-tooltip .portable-stash .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
+  }
+});
 
 

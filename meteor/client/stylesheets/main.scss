@@ -252,7 +252,7 @@ main {
 
 .contained-item {
   cursor: pointer;
-  position: relative;
+  /*position: relative;*/
 
   &.selected {
     img {
@@ -291,6 +291,10 @@ main {
   color: red;
 }
 
+.item-infoed .material-tooltip {
+  border-radius: 5px;
+}
+
 .item-tooltip-contents {
   font-size: .8rem;
   text-align: left;
@@ -300,6 +304,17 @@ main {
     color: white;
     font-size: 1.2rem;
     margin-bottom: .8rem;
+  }
+
+  .not-tradable {
+    margin-top: .8rem;
+    text-align: right;
+
+    span {
+      padding: .5rem;
+      border-radius: 2px;
+      background-color: #940202;
+    }
   }
 
   .item-info-type {

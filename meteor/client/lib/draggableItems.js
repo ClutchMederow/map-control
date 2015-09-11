@@ -47,13 +47,20 @@ DraggableItems = {
         clearInterval(DraggableItems.itemInfo.intervalId);
       }
 
+      // I put this setInterval here to handle cases where the mouse is moved
+      // on top of the disappearing tooltip to another item, causing multiple occurances of mouseenter
+      // It keeps trying to animate as long as the other one is closing
       DraggableItems.itemInfo.intervalId = setInterval(function() {
         if (!DraggableItems.itemInfo.inProgress) {
           DraggableItems.itemInfo.inProgress = true;
+
+          // Clear our own interval
           clearInterval(DraggableItems.itemInfo.intervalId);
+
+          // execute the animate
           next();
         }
-      }, 50);
+      }, 500);
 
       return false;
     },
@@ -111,6 +118,11 @@ function createTooltipHtml(data) {
   if (data.name) {
     var title = $('<div>' + data.name + '</div>');
     title.addClass('item-info-title');
+
+    if (data.nameColor) {
+      title.css('color', '#' + data.nameColor);
+    }
+
     tooltipElement.append(title);
   }
 
@@ -141,6 +153,12 @@ function createTooltipHtml(data) {
         });
       }
     }
+  }
+
+  if (!data.tradable) {
+    var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
+    $notTradable.addClass('not-tradable');
+    tooltipElement.append($notTradable);
   }
 
   return tooltipElement;
@@ -175,6 +193,7 @@ function getAndAppendBackdropElement(tooltip) {
   return backdrop;
 }
 
+// TODO: Remove the function return and just have it execute
 function getAnimateFunction(origin, tooltip, backdrop) {
 
   return function() {
@@ -199,8 +218,27 @@ function getAnimateFunction(origin, tooltip, backdrop) {
     var tooltipHorizontalMovement = '0px';
     var scale_factor = 8;
 
+    // Makes a halfway decent attempt to deal with tooltips moving out of view
     if (tooltipPosition === "top") {
-      // Top Position
+      if (origin.offset().top < tooltipHeight) {
+        tooltipPosition = 'bottom';
+      }
+    } else if (tooltipPosition === "left") {
+      if (origin.offset().left < tooltipWidth) {
+        tooltipPosition = 'right';
+      }
+    } else if (tooltipPosition === "right") {
+      if (window.innerWidth - origin.offset().left + originWidth < tooltipWidth) {
+        tooltipPosition = 'left';
+      }
+    } else {
+      if (window.innerHeight - origin.offset().top + originHeight < tooltipHeight) {
+        tooltipPosition = 'top';
+      }
+    }
+
+    // Top Position
+    if (tooltipPosition === "top") {
       tooltip.css({
         top: origin.offset().top - tooltipHeight - margin,
         left: origin.offset().left + originWidth/2 - tooltipWidth/2
@@ -246,8 +284,8 @@ function getAnimateFunction(origin, tooltip, backdrop) {
         marginLeft: '0px'
       });
     }
+    // Bottom Position
     else {
-      // Bottom Position
       tooltip.css({
         top: origin.offset().top + origin.outerHeight() + margin,
         left: origin.offset().left + originWidth/2 - tooltipWidth/2
@@ -274,7 +312,7 @@ function getAnimateFunction(origin, tooltip, backdrop) {
       .velocity({opacity: 1}, {duration: 300, delay: 50, queue: false });
 
     backdrop.css({ display: 'block' })
-      .velocity({opacity:1},{duration: 85, delay: 0, queue: false})
+      .velocity({opacity: 0.95},{duration: 85, delay: 0, queue: false})
       .velocity({scale: scale_factor},{
         duration: 300,
         delay: 50,

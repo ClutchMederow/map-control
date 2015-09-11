@@ -1,5 +1,4 @@
 var stashTemplate = new ReactiveVar(null);
-var stashManager = new StashManager();
 
 Template.manageStash.helpers({
   stashTemplate: function() {
@@ -8,18 +7,21 @@ Template.manageStash.helpers({
 
   data: function() {
     return {
-      selectedItems: stashManager.selectedItems
+      stashManager: Template.instance().stashManager
     };
   }
 });
 
 Template.manageStash.onCreated(function() {
   stashTemplate.set('addRemoveStash');
+  this.stashManager = new StashManager();
 });
 
 Template.manageStash.events({
-  'click #next': function() {
-    if (stashManager.hasItems()) {
+  'click #next': function(e, thisInstance) {
+    e.preventDefault();
+
+    if (thisInstance.stashManager.hasItems()) {
       stashTemplate.set('confirmStashTransaction');
     } else {
       sAlert.warning('Please select at least one item');
@@ -30,9 +32,11 @@ Template.manageStash.events({
     stashTemplate.set('addRemoveStash');
   },
 
-  'click #submitStashTrans': function() {
-    if (stashManager.hasItems()) {
-      stashManager.execute();
+  'click #submitStashTrans': function(e, thisInstance) {
+    e.preventDefault();
+
+    if (thisInstance.stashManager.hasItems()) {
+      thisInstance.stashManager.execute();
       stashTemplate.set('stashTransNextSteps');
     } else {
       sAlert.warning('Please select at least one item');
@@ -41,5 +45,17 @@ Template.manageStash.events({
 
   'click #nextStepsHome': function() {
     Router.go('home');
+  },
+
+  'click #withdraw-div .contained-item': function(e, thisInstance) {
+    e.preventDefault();
+
+    thisInstance.stashManager.toggleItem(this, Enums.TransType.WITHDRAW);
+  },
+
+  'click #deposit-div .contained-item': function(e, thisInstance) {
+    e.preventDefault();
+
+    thisInstance.stashManager.toggleItem(this, Enums.TransType.DEPOSIT);
   }
 });

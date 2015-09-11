@@ -6,6 +6,10 @@ var stashConfigAlert = {
 
 StashManager = function() {
   this.selectedItems = new Mongo.Collection(null);
+  this.userInventoryItems = new Mongo.Collection(null);
+  this.invReady = new ReactiveVar(false);
+
+  this.refresh();
 };
 
 StashManager.prototype.execute = function() {
@@ -25,6 +29,47 @@ StashManager.prototype.hasItems = function() {
   return !!this.selectedItems.find().count();
 };
 
+StashManager.prototype.clearSelected = function() {
+  this.selectedItems.remove({});
+};
+
+StashManager.prototype.refresh = function() {
+  var self = this;
+
+  // Remove in case the go back from confirm page - the API items will have new ids
+  this.selectedItems.remove({});
+  this.userInventoryItems.remove({});
+
+  Meteor.call('getPlayerInventory', function(err, res) {
+    if (err) {
+      console.log(err);
+    } else {
+      _.each(res, function(item) {
+        self.userInventoryItems.insert(item);
+      });
+    }
+
+    self.invReady.set(true);
+  });
+};
+
+StashManager.prototype.toggleItem = function(item, transType) {
+  if (!transType || !item) return;
+
+  item.transType = transType;
+
+  if (this.selectedItems.findOne(item._id)) {
+    this.selectedItems.remove(item._id);
+  } else {
+
+    if (item.tradable) {
+      this.selectedItems.insert(item);
+    } else {
+      sAlert.warning('That item is not tradable');
+    }
+  }
+};
+
 function depositItems(deposits) {
   Meteor.call('depositItems', deposits, function(err, res) {
     if (err) {
@@ -37,7 +82,7 @@ function depositItems(deposits) {
 }
 
 function withdrawItems(withdrawals) {
-  Meteor.call('withdrawItems', deposits, function(err, res) {
+  Meteor.call('withdrawItems', withdrawals, function(err, res) {
     if (err) {
       sAlert.error(err);
     } else {
