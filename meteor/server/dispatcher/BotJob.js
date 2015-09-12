@@ -42,6 +42,18 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
     this.userId = options.userId;
     this.items = options.items;
+
+  } else if (jobType === Dispatcher.jobType.INTERNAL_TRANSFER) {
+
+    check(options, {
+      items: [String],
+      otherBot: SteamBot,
+      userId: String
+    });
+
+    this.items = options.items;
+    this._otherBot = options.otherBot;
+    this.otherBotName = options.otherBot.botName;
   }
 
   this._setStatus(Dispatcher.jobStatus.READY);
@@ -70,7 +82,7 @@ BotJob.prototype._executeDeposit = function() {
   });
 
   // Add the items
-  self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items);
+  self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items, self._bot.botName);
 };
 
 BotJob.prototype._executeWithdrawal = function() {
@@ -94,6 +106,31 @@ BotJob.prototype._executeWithdrawal = function() {
     userId: self.userId,
     deleteInd: false
   });
+};
+
+BotJob.prototype._executeInternalTransfer = function() {
+  var self = this;
+
+  var steamId = this._otherBot.getSteamId();
+  var id = Random.id();
+  var message = 'Transfer ID: ' + id;
+
+  // Make the tradeoffer
+  self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
+
+  // Save the tradeoffer
+  self._DB.tradeoffers.insert({
+    _id: id,
+    tradeofferid: self.tradeofferId,
+    trade_offer_state: 2,
+    userId: self.userId,
+    deleteInd: false
+  });
+};
+
+BotJob.prototype._executeAcceptOffer = function() {
+  this._bot.acceptOffer(this.tradeofferId);
+  this._DB.items.assignItemsToBot(this.items);
 };
 
 BotJob.prototype.execute = function(callback) {

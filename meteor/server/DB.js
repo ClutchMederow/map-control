@@ -148,19 +148,24 @@ DB = {
       return Items.insert(doc);
     },
 
-    update: function(selector, doc) {
+    update: function(selector, doc, options) {
+      var options = options || {};
+
       check(selector, Object);
-      check(selector, Object);
+      check(doc, Object);
+      check(options, Object);
 
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator: Items');
 
-      return Items.update(selector, doc, { multi: true });
+      return Items.update(selector, doc, options);
     },
 
     insertNewItems: function(userId, tradeofferId, items, botName) {
       check(userId, String);
+      check(tradeofferId, String);
       check(items, [String]);
+      check(botName, String);
 
       var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH, deleteInd: false });
 
@@ -225,13 +230,13 @@ DB = {
           userId: newUserId
         }
       };
-
       var selector = {
         _id: itemId,
         deleteInd: false
       };
+      var options = { multi: true };
 
-      var out = DB.items.update(selector, doc);
+      var out = DB.items.update(selector, doc, options);
 
       if (out !== 1)
         throw new Error('ITEM_NOT_UPDATED');
@@ -276,6 +281,19 @@ DB = {
       }
 
       return item.botName;
+    },
+
+    assignItemsToBot: function(items, newBotName) {
+      check(items, [String]);
+      check(newBotName, String);
+
+      _.each(items, function(itemId) {
+        var doc = { $set: { botName: botName } };
+        var result = DB.items.update({ itemId: item, deleteInd: false }, doc);
+        if (!result) {
+          throw new Error('Item not found, bot reassingment failed: ' + item + ' ' + newBotName);
+        }
+      });
     }
   },
 

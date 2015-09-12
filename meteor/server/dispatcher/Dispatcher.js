@@ -128,7 +128,23 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       // BOTS FUCK YEAH
     },
 
+    getBot: function(botName) {
+      check(botName, String);
+
+      return bots[botName];
+    },
+
     getUsersBot: getUsersBot,
+
+    getBotSteamId: function(botName) {
+      check(botName, String);
+
+      if (!bots[botName]) {
+        throw new Error('Bot does not exist for botName: ' + botName);
+      }
+
+      return bots[botName].steam
+    },
 
     depositItems: function(userId, items) {
       check(userId, String);
@@ -151,7 +167,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       return job.tradeofferId;
     },
 
-    withdrawItems: function(userId, items, callback) {
+    withdrawItems: function(userId, items) {
       check(userId, String);
       check(items, [String]);
 
@@ -159,7 +175,19 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         throw new Meteor.Error('BAD_ARGUMENTS', 'No items in transaction');
       }
 
-      var bot = getUsersBot(userId);
+      // Let this error propagate back to the client if item is not found
+      _.chain(items)
+        .groupBy(function(itemId) {
+          return Items.findStashItem(itemId).botName;
+        })
+        .map(function(itemArray, botName) {
+          var bot = bots[botName];
+          return new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
+        })
+
+      var transferBot = getUsersBot(userId);
+
+      // _.each(groupedItems, function() {})
 
       var options = {
         items: items,
@@ -168,13 +196,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
       var taskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
 
-
-
-      var job = new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
       var task = new Task([job], false, taskId, DB);
 
       var boundCallback = Meteor.bindEnvironment(callback);
-      task.execute(boundCallback);
+      task.execute();
     },
 
     init: function() {
@@ -222,9 +247,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 _.extend(Dispatcher, {
   jobType: Object.freeze({
     DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
-    DEPOSIT_CASH: 'DEPOSIT_CASH',
     WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
-    WITHDRAW_CASH: 'WITHDRAW_CASH',
+    INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
     TASK: 'TASK'
   }),
 

@@ -9,6 +9,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   };
   this.authCode = authCode;
   this.SteamAPI = SteamAPI;
+  this.botName = accountName;
 
   this.steam = new Steam.SteamClient();
   this.offers = new SteamTradeOffers();
@@ -28,7 +29,6 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   });
 
   this.logOn();
-  this.loadBotInventory();
 };
 
 SteamBot.prototype.logOn = function() {
@@ -110,23 +110,35 @@ SteamBot.prototype.getItemCount = function() {
   return this.items.find().count();
 };
 
+SteamBot.prototype.getSteamId = function() {
+  return this.steam.steamID;
+};
+
 SteamBot.prototype.loadBotInventory = function() {
-  var self = this;
+  try {
+    var self = this;
 
-  var Future = Npm.require('fibers/future');
-  var future = new Future();
+    var Future = Npm.require('fibers/future');
+    var future = new Future();
 
-  self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
-    if (err)
-      future.throw(err);
-    else
-      future.return(items);
-  });
-  var items = future.wait();
+    console.log('Loading bot inventory...');
 
-  self.items.remove({});
-  for (var i = 0; i < items.length; i++) {
-    self.items.insert(items[i]);
+    self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
+      if (err)
+        future.throw(err);
+      else
+        future.return(items);
+    });
+    var items = future.wait();
+
+    self.items.remove({});
+    for (var i = 0; i < items.length; i++) {
+      self.items.insert(items[i]);
+    }
+
+    console.log('Bot inventory loaded!');
+  } catch (e) {
+    console.log('Could not load bot inventory');
   }
 };
 
@@ -262,6 +274,23 @@ SteamBot.prototype.queryOffers = function() {
 
 SteamBot.prototype.getSingleOffer = function(offerId) {
 
+};
+
+SteamBot.prototype.acceptOffer = function(tradeofferId) {
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+
+  this.offers.acceptOffer({
+    tradeofferid: tradeofferId
+  }, function(err, res) {
+    if (err) {
+      future.throw(err);
+    } else {
+      future.return(res);
+    }
+  });
+
+  return future.wait();
 };
 
 SteamBot.prototype.getSteamId = function() {

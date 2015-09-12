@@ -90,6 +90,9 @@ Items.attachSchema({
     label: 'logical deletion'
   }
 });
+
+Items._ensureIndex({ itemId: 1, unique: true });
+
 //Attach Search to Collections
 Items.searchFor = SearchFunctions.searchFor;
 Items.searchForOne = SearchFunctions.searchForOne;
@@ -102,3 +105,6 @@ Items.getItems = function(searchText, fields, selector, options) {
   return Items.searchFor(selector, searchText, fields, options);
 };
 
+Items.findStashItem = function(itemId) {
+  return Items.findOne({ itemId: itemId, status: Enums.ItemStatus.STASH, deleteInd: false });
+};
