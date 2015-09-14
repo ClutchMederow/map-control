@@ -47,13 +47,20 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
     check(options, {
       items: [String],
-      otherBot: SteamBot,
-      userId: String
+      otherBot: SteamBot
     });
 
     this.items = options.items;
     this._otherBot = options.otherBot;
     this.otherBotName = options.otherBot.botName;
+
+  } else if (jobType === Dispatcher.jobType.ACCEPT_OFFER) {
+
+    check(options, {
+      tradeofferId: String,
+    });
+
+    this.tradeofferId = options.tradeofferId;
   }
 
   this._setStatus(Dispatcher.jobStatus.READY);
@@ -78,11 +85,14 @@ BotJob.prototype._executeDeposit = function() {
     tradeofferid: self.tradeofferId,
     trade_offer_state: 2,
     userId: self.userId,
-    deleteInd: false
+    deleteInd: false,
+    internal: false
   });
 
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items, self._bot.botName);
+
+  return this.tradeofferId;
 };
 
 BotJob.prototype._executeWithdrawal = function() {
@@ -104,8 +114,11 @@ BotJob.prototype._executeWithdrawal = function() {
     tradeofferid: self.tradeofferId,
     trade_offer_state: 2,
     userId: self.userId,
-    deleteInd: false
+    deleteInd: false,
+    internal: false
   });
+
+  return this.tradeofferId;
 };
 
 BotJob.prototype._executeInternalTransfer = function() {
@@ -124,13 +137,20 @@ BotJob.prototype._executeInternalTransfer = function() {
     tradeofferid: self.tradeofferId,
     trade_offer_state: 2,
     userId: self.userId,
-    deleteInd: false
+    deleteInd: false,
+    internal: true
   });
+
+  return this.tradeofferId;
 };
 
 BotJob.prototype._executeAcceptOffer = function() {
-  this._bot.acceptOffer(this.tradeofferId);
-  this._DB.items.assignItemsToBot(this.items);
+  var result = this._bot.acceptOffer(this.tradeofferId);
+
+  // Get all items
+  // if (result && result.)
+
+  // this._DB.items.assignItemsToBot(this.items);
 };
 
 BotJob.prototype.execute = function(callback) {
@@ -149,6 +169,10 @@ BotJob.prototype.execute = function(callback) {
         res = self._executeDeposit();
       } else if (self.jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
         res = self._executeWithdrawal();
+      } else if (self.jobType === Dispatcher.jobType.INTERNAL_TRANSFER) {
+        res = self._executeInternalTransfer();
+      } else if (self.jobType === Dispatcher.jobType.ACCEPT_OFFER) {
+        res = self._executeAcceptOffer();
       } else {
         throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }

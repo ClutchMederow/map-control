@@ -136,6 +136,8 @@ SteamBot.prototype.loadBotInventory = function() {
       self.items.insert(items[i]);
     }
 
+    self.itemsUpdatedTimestamp = new Date();
+
     console.log('Bot inventory loaded!');
   } catch (e) {
     console.log('Could not load bot inventory');

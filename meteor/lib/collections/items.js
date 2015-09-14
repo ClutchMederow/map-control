@@ -91,7 +91,9 @@ Items.attachSchema({
   }
 });
 
-Items._ensureIndex({ itemId: 1, unique: true });
+if (Meteor.isServer) {
+  Items._ensureIndex({ itemId: 1, unique: true });
+}
 
 //Attach Search to Collections
 Items.searchFor = SearchFunctions.searchFor;
@@ -107,4 +109,15 @@ Items.getItems = function(searchText, fields, selector, options) {
 
 Items.findStashItem = function(itemId) {
   return Items.findOne({ itemId: itemId, status: Enums.ItemStatus.STASH, deleteInd: false });
+};
+
+// Returns true if all items are in the stash and thus able to be withdrawn
+Items.ensureItemsInStash = function(itemIds) {
+  _.find(Items.find({ itemId: { $in: itemIds } }).fetch(), function(thisItem) {
+    if (thisItem.status !== Enums.ItemStatus.STASH) {
+      return false;
+    }
+  });
+
+  return true;
 };

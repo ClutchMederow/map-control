@@ -106,6 +106,35 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     });
   }
 
+  function getJobsToSendOffers(transferBot, groupedItems, taskId) {
+    var sendOffersJobs = _.chain(groupedItems)
+      .filter(function(thisBot, botName) {
+        return botName !== transferBot.botName;
+      })
+      .map(function(itemArray, botName) {
+        var bot = bots[botName];
+        var options = {
+          items: itemArray,
+          userId: userId
+        };
+
+        return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+      })
+      .value();
+
+    return sendOffersJobs;
+  }
+
+  function getJobsToAcceptOffers(transferBot, offerIdsToAccept, acceptTaskId) {
+
+    var acceptanceJobs = _.map(offerIdsToAccept, function(tradeofferId) {
+      var options = { tradeofferId: tradeofferId };
+      return new BotJob(transferBot, Dispatcher.jobType.ACCEPT_OFFER, acceptTaskId, options, DB);
+    });
+
+    return acceptanceJobs;
+  }
+
   return {
     makeTrade: function(userOneId, userOneItems, userTwoId, userTwoItems) {
       var userOne = Meteor.users.findOne(userOneId);
@@ -175,31 +204,66 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         throw new Meteor.Error('BAD_ARGUMENTS', 'No items in transaction');
       }
 
-      // Let this error propagate back to the client if item is not found
-      _.chain(items)
-        .groupBy(function(itemId) {
+      if (!Items.ensureItemsInStash(items)) {
+        throw new Meteor.Error('INVALID_ITEMS', 'Not all requested items are in the stash and cannot be withdrawn');
+      }
+
+      try {
+
+        var transferBot = getUsersBot(userId);
+
+        // Group all items by the bot they are on
+        // Let this error propagate back to the client if item is not found
+        var groupedItems = _.groupBy(items, function(itemId) {
           return Items.findStashItem(itemId).botName;
-        })
-        .map(function(itemArray, botName) {
-          var bot = bots[botName];
-          return new BotJob(bot, Dispatcher.jobType.WITHDRAW_ITEMS, taskId, options, DB);
-        })
+        });
 
-      var transferBot = getUsersBot(userId);
+        // Change the status so they can't be involved in any other transactions
+        var test = DB.items.changeStatus(Dispatcher.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
+        console.log(Items.findOne({ itemId: '3174946693' }).status);
 
-      // _.each(groupedItems, function() {})
+        // Create the task to send out all trade offers to internal bots
+        var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, userId, items);
+        var sendOffersJobs = getJobsToSendOffers(transferBot, groupedItems, taskId);
+        console.log(Items.findOne({ itemId: '3174946693' }).status);
 
-      var options = {
-        items: items,
-        userId: userId
-      };
+        // Only execute if items are not already on the bot
+        if (sendOffersJobs.length) {
+          var sendRequestsTask = new Task(sendOffersJobs, false, taskId, DB);
 
-      var taskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+          // Returns an array of all tradeofferids that need to be accepted
+          var offerIdsToAccept = sendRequestsTask.execute();
 
-      var task = new Task([job], false, taskId, DB);
+          // Create the task to accept all internal outstanding tradeoffers
+          var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, userId, null);
+          var acceptanceJobs = getJobsToAcceptOffers(transferBot, offerIdsToAccept, acceptTaskId);
+          var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
 
-      var boundCallback = Meteor.bindEnvironment(callback);
-      task.execute();
+          // Accept all offers
+          acceptOffersTask.execute();
+        }
+
+
+        // Check if any items are on this bot already
+        // var itemsOnThisBot = groupedItems[transferBot.botName];
+
+        // Create final job to send all offers to the user
+        var options = {
+          items: items,
+          userId: userId
+        };
+        var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+        var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
+        var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
+
+        console.log(Items.findOne({ itemId: '3174946693' }).status);
+        withdrawTask.execute();
+        console.log(Items.findOne({ itemId: '3174946693' }).status);
+
+      } catch (e) {
+        DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
+        throw e;
+      }
     },
 
     init: function() {
@@ -237,6 +301,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       //       return currentBest;
       //     }
       //   }, { botName: null, itemCount: maxItemCount });
+
+
 
       return assignBot();
 

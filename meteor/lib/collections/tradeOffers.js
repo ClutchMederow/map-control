@@ -78,5 +78,10 @@ Tradeoffers.attachSchema({
   deleteInd: {
     type: Boolean,
     label: 'delete ind'
+  },
+
+  internal: {
+    type: Boolean,
+    label: 'Interal Trade'
   }
 });

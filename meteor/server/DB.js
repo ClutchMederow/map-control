@@ -3,6 +3,11 @@
 // Updates every item after a tradeoffer is updated
 Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
 
+  // Dont execute this logic for internal transfers
+  if (doc.internal) {
+    return;
+  }
+
   if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
     var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
     if (state === 'k_ETradeOfferStateAccepted') {
@@ -252,7 +257,6 @@ DB = {
       }));
 
       var selector = {
-        tradeofferId: tradeofferId,
         itemId: { $in: assetIds },
         deleteInd: false
       };

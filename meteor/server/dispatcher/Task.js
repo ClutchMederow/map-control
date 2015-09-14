@@ -43,6 +43,7 @@ Task = function(jobs, ordered, taskId, DBLayer) {
   // We are now ready
   this.jobType = Dispatcher.jobType.TASK;
   this.jobId = Random.id();
+  this.returnValues = [];
   this._setStatus(Dispatcher.jobStatus.READY);
 };
 
@@ -69,17 +70,16 @@ Task.prototype._setStatus = function(status) {
 
 Task.prototype.execute = function() {
   var self = this;
-  var result;
 
   this._setStatus(Dispatcher.jobStatus.PENDING);
 
   try {
     if (self._ordered === true) {
       // Do each job in order
-      result = self._executeSerial();
+      self._executeSerial();
     } else {
       // Do each job in parallel
-      result = self._executeParallel();
+      self._executeParallel();
     }
 
     if (self.status === Dispatcher.jobStatus.FAILED) {
@@ -92,7 +92,7 @@ Task.prototype.execute = function() {
     throw e;
   }
 
-  return result;
+  return this.returnValues;
 };
 
 Task.prototype._executeParallel = function() {
@@ -122,21 +122,6 @@ Task.prototype._executeParallel = function() {
         }
       }
     })(thisFut, job);
-    console.log(closedFunc);
-
-  //   Meteor.bindEnvironment(Meteor.setTimeout(function() {
-  //     if (error) {
-
-
-  //     } else {
-
-  //       thisFut.return();
-  //     }
-
-  //     return;
-  //   }, 0))(thisFut);
-
-  //   job.execute();
     Meteor.setTimeout(closedFunc, 0);
   });
 
@@ -147,9 +132,10 @@ Task.prototype._executeParallel = function() {
 
   // Throws an error if any of the futures errored
   // We want to throw the first error that occured (which may not be the first error in the each block)
+  // Saves the return values in an array
   try {
     _.each(allFutures, function(fut) {
-      fut.get();
+      this.returnValues.push(fut.get());
     });
   } catch(e) {
     self.cancel();
@@ -162,7 +148,6 @@ Task.prototype._executeParallel = function() {
 
 // Executes each job serially
 Task.prototype._executeSerial = function() {
-  var self = this;
 
   // var jobFut = new Future();
   // var index = 0;
@@ -190,7 +175,10 @@ Task.prototype._executeSerial = function() {
 
 
   _.each(this._jobs, function(job) {
-    job.execute();
+    var res = job.execute();
+
+    // Save the return values
+    this.returnValues.push(res);
   });
 
   // // Call this to kick off the sequence
