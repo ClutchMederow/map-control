@@ -213,19 +213,21 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         var transferBot = getUsersBot(userId);
 
         // Group all items by the bot they are on
-        // Let this error propagate back to the client if item is not found
-        var groupedItems = _.groupBy(items, function(itemId) {
-          return Items.findStashItem(itemId).botName;
-        });
+        try {
+          var groupedItems = _.groupBy(items, function(itemId) {
+            return Items.findStashItem(itemId).botName;
+          });
+        } catch(err) {
+          err.reason = 'Item not found in stash';
+          throw err;
+        }
 
         // Change the status so they can't be involved in any other transactions
         var test = DB.items.changeStatus(Dispatcher.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
-        console.log(Items.findOne({ itemId: '3174946693' }).status);
 
         // Create the task to send out all trade offers to internal bots
         var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, userId, items);
         var sendOffersJobs = getJobsToSendOffers(transferBot, groupedItems, taskId);
-        console.log(Items.findOne({ itemId: '3174946693' }).status);
 
         // Only execute if items are not already on the bot
         if (sendOffersJobs.length) {
@@ -262,6 +264,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
       } catch (e) {
         DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
+        console.log(e);
         throw e;
       }
     },

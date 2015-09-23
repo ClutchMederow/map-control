@@ -96,6 +96,9 @@ SteamBot.prototype.logOn = function() {
   });
 
   Future.wait([logOnFuture, sessionFuture]);
+
+  // logOnFuture.get();
+  // sessionFuture.get();
 };
 
 SteamBot.prototype.getBotItems = function() {

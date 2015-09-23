@@ -1,37 +1,14 @@
 // Hooks
 
-// Updates every item after a tradeoffer is updated
-Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
+// // Updates every item after a tradeoffer is updated
+// Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
 
-  // Dont execute this logic for internal transfers
-  if (doc.internal) {
-    return;
-  }
+//   // Dont execute this logic for internal transfers
+//   if (doc.internal) {
+//     return;
+//   }
 
-  if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
-    var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
-    if (state === 'k_ETradeOfferStateAccepted') {
-
-      // We know what to change to status to by which are being received and given
-      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
-      var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
-
-      if (deposited.length) {
-        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
-      }
-
-      if (withdrawn.length) {
-        DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
-      }
-    } else if (state === 'k_ETradeOfferStateDeclined') {
-      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
-
-      if (deposited.length) {
-        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
-      }
-    }
-  }
-});
+// });
 
 DB = {
   insertChat: function(attributes) {
@@ -129,9 +106,21 @@ DB = {
         $set: doc
       };
 
-      var out = Tradeoffers.update(selector, setDoc);
+      return Tradeoffers.update(selector, setDoc);
     },
 
+    insertNew: function(id, tradeofferId, userId) {
+      var doc = {
+        _id: id,
+        tradeofferid: tradeofferId,
+        trade_offer_state: 2,
+        userId: userId,
+        deleteInd: false,
+        internal: true
+      };
+    },
+
+    // Doc should be exact object returned from API call
     updateStatus: function(doc) {
       check(doc, Object);
 
@@ -145,6 +134,40 @@ DB = {
       }
 
       return DB.tradeoffers.update(selector, doc);
+    },
+
+    // Doc should be exact object returned from API call
+    updateStatusExternal: function(doc) {
+
+      // Update the status
+      var out = DB.tradeoffers.updateStatus(doc);
+
+      // Update all items involved in the tradeoffer
+      if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
+        var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
+        if (state === 'k_ETradeOfferStateAccepted') {
+
+          // We know what to change to status to by which are being received and given
+          var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+          var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
+
+          if (deposited.length) {
+            DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
+          }
+
+          if (withdrawn.length) {
+            DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
+          }
+        } else if (state === 'k_ETradeOfferStateDeclined') {
+          var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+
+          if (deposited.length) {
+            DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
+          }
+        }
+      }
+
+      return out;
     }
   },
 

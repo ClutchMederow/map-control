@@ -131,6 +131,9 @@ BotJob.prototype._executeInternalTransfer = function() {
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
+
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId);
+
   // Save the tradeoffer
   self._DB.tradeoffers.insert({
     _id: id,
@@ -150,7 +153,9 @@ BotJob.prototype._executeAcceptOffer = function() {
   // Get all items
   // if (result && result.)
 
-  // this._DB.items.assignItemsToBot(this.items);
+  // CHECK THAT A BOT MADE THE OFFER
+
+  this._DB.items.assignItemsToBot(this.items);
 };
 
 BotJob.prototype.execute = function(callback) {
@@ -177,9 +182,12 @@ BotJob.prototype.execute = function(callback) {
         throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }
 
+      console.log(res);
+
       self._setStatus(Dispatcher.jobStatus.COMPLETE);
       future.return(self.tradeofferId);
     } catch(e) {
+      console.log(e);
       self.error = e;
       self._setStatus(Dispatcher.jobStatus.FAILED);
       future.throw(e);
@@ -240,7 +248,7 @@ BOTTEST = function() {
   bot.loadBotInventory();
 
   fff = _.pluck(bot.items.find().fetch(), 'id');
-  DB.items.insertNewItems('uYrKadsnCzyg9TLrC','dsf',fff);
+  // DB.items.insertNewItems('uYrKadsnCzyg9TLrC','dsf',fff);
 
 
   // bot.takeItems('76561197965124635', items);

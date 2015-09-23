@@ -135,11 +135,11 @@ Task.prototype._executeParallel = function() {
   // Saves the return values in an array
   try {
     _.each(allFutures, function(fut) {
-      this.returnValues.push(fut.get());
+      self.returnValues.push(fut.get());
     });
   } catch(e) {
     self.cancel();
-    throw firstError;
+    throw firstError || e;
   }
 };
 
