@@ -80,14 +80,7 @@ BotJob.prototype._executeDeposit = function() {
   self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insert({
-    _id: id,
-    tradeofferid: self.tradeofferId,
-    trade_offer_state: 2,
-    userId: self.userId,
-    deleteInd: false,
-    internal: false
-  });
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
 
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items, self._bot.botName);
@@ -109,14 +102,7 @@ BotJob.prototype._executeWithdrawal = function() {
   self.tradeofferId = self._bot.giveItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insert({
-    _id: id,
-    tradeofferid: self.tradeofferId,
-    trade_offer_state: 2,
-    userId: self.userId,
-    deleteInd: false,
-    internal: false
-  });
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
 
   return this.tradeofferId;
 };
@@ -131,18 +117,8 @@ BotJob.prototype._executeInternalTransfer = function() {
   // Make the tradeoffer
   self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
-
-  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId);
-
   // Save the tradeoffer
-  self._DB.tradeoffers.insert({
-    _id: id,
-    tradeofferid: self.tradeofferId,
-    trade_offer_state: 2,
-    userId: self.userId,
-    deleteInd: false,
-    internal: true
-  });
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
 
   return this.tradeofferId;
 };

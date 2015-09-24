@@ -83,5 +83,10 @@ Tradeoffers.attachSchema({
   internal: {
     type: Boolean,
     label: 'Interal Trade'
+  },
+
+  botName: {
+    type: String,
+    label: 'Bot name'
   }
 });

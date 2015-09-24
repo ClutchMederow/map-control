@@ -93,7 +93,6 @@ DB = {
   tradeoffers: {
     insert: function(doc) {
       check(doc, Object);
-      doc.deleteInd = false;
 
       return Tradeoffers.insert(doc);
     },
@@ -109,16 +108,36 @@ DB = {
       return Tradeoffers.update(selector, setDoc);
     },
 
-    insertNew: function(id, tradeofferId, userId) {
+    insertNew: function(id, tradeofferId, userId, jobType, botName) {
       var doc = {
         _id: id,
         tradeofferid: tradeofferId,
         trade_offer_state: 2,
         userId: userId,
+        jobType: jobType,
+        botName: botName,
         deleteInd: false,
         internal: true
       };
+
+      return DB.tradeoffers.insert(doc);
     },
+
+    // // Doc should be exact object returned from API call
+    // updateStatus: function(doc) {
+      // check(doc, Object);
+
+      // var selector = {
+      //   tradeofferid: doc.tradeofferid,
+      //   deleteInd: false
+      // };
+
+      // if (!SteamConstants.offerStatus[doc.trade_offer_state]) {
+      //   throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
+      // }
+
+      // return DB.tradeoffers.update(selector, doc);
+    // },
 
     // Doc should be exact object returned from API call
     updateStatus: function(doc) {
@@ -133,36 +152,40 @@ DB = {
         throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
       }
 
-      return DB.tradeoffers.update(selector, doc);
-    },
-
-    // Doc should be exact object returned from API call
-    updateStatusExternal: function(doc) {
-
       // Update the status
-      var out = DB.tradeoffers.updateStatus(doc);
+      var out = DB.tradeoffers.update(selector, doc);
 
-      // Update all items involved in the tradeoffer
-      if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
-        var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
-        if (state === 'k_ETradeOfferStateAccepted') {
+      var updatedOffer = Tradeoffers.findOne({ tradeofferid: doc.tradeofferid });
 
-          // We know what to change to status to by which are being received and given
-          var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
-          var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
 
-          if (deposited.length) {
-            DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
-          }
+      //////// TODO
+      // Add logic here to change the state of the item based on offerStatus and jobType
+      // May need to manually update DB jobType to get this to work
+      ////////////
 
-          if (withdrawn.length) {
-            DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
-          }
-        } else if (state === 'k_ETradeOfferStateDeclined') {
-          var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
+      // Update all items involved in the tradeoffer if external
+      if (!updatedOffer.internal) {
+        if (updatedOffer.tradeofferid && SteamConstants.offerStatus[updatedOffer.trade_offer_state]) {
+          var state = SteamConstants.offerStatus[updatedOffer.trade_offer_state];
+          if (state === 'k_ETradeOfferStateAccepted') {
 
-          if (deposited.length) {
-            DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
+            // We know what to change to status to by which are being received and given
+            var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
+            var given = _.pluck(updatedOffer.items_to_give, 'assetid');
+
+            if (received.length) {
+              DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.STASH);
+            }
+
+            if (given.length) {
+              DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
+            }
+          } else if (state === 'k_ETradeOfferStateDeclined') {
+            var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
+
+            if (received.length) {
+              DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.EXTERNAL);
+            }
           }
         }
       }
