@@ -80,7 +80,7 @@ BotJob.prototype._executeDeposit = function() {
   self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
 
   // Add the items
   self._DB.items.insertNewItems(self.userId, self.tradeofferId, self.items, self._bot.botName);
@@ -102,7 +102,7 @@ BotJob.prototype._executeWithdrawal = function() {
   self.tradeofferId = self._bot.giveItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
 
   return this.tradeofferId;
 };
@@ -118,20 +118,21 @@ BotJob.prototype._executeInternalTransfer = function() {
   self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName);
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
+
+  ///// MAKE SURE TO UPDATE THE ITEM ID - IT MAY HAVE CHANGED
 
   return this.tradeofferId;
 };
 
 BotJob.prototype._executeAcceptOffer = function() {
+
+  // TODO: CHECK THAT A BOT MADE THE OFFER
   var result = this._bot.acceptOffer(this.tradeofferId);
 
-  // Get all items
-  // if (result && result.)
+  this._DB.tradeoffers.updateStatus(result);
 
-  // CHECK THAT A BOT MADE THE OFFER
-
-  this._DB.items.assignItemsToBot(this.items);
+  this._DB.items.assignItemsToBot(this.items, this._bot.botName);
 };
 
 BotJob.prototype.execute = function(callback) {

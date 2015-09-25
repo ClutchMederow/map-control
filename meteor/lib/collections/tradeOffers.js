@@ -80,13 +80,28 @@ Tradeoffers.attachSchema({
     label: 'delete ind'
   },
 
-  internal: {
-    type: Boolean,
-    label: 'Interal Trade'
-  },
-
   botName: {
     type: String,
     label: 'Bot name'
+  },
+
+  jobType: {
+    type: String,
+    label: 'Type of job'
+  },
+
+  taskId: {
+    type: String,
+    label: 'Task ID'
+  },
+
+  createdTimestamp: {
+    type: Date,
+    label: 'Internal created timestamp'
+  },
+
+  modifiedTimestamp: {
+    type: Date,
+    label: 'Internal modified timestamp'
   }
 });

@@ -26,6 +26,8 @@ DB = {
       if (!doc.$set)
         throw new Error('INVALID_UPDATE: Must include $set operator');
 
+      doc.$set.modifiedTimestamp = new Date();
+
       return Meteor.users.update(userId, doc);
     },
 
@@ -33,12 +35,6 @@ DB = {
     addBot: function(userId, botName) {
       if (!userId || !botName)
         throw new Error('BAD_ARGUMENTS');
-
-      // Removing this for now. I don't think the default here should be an error since
-      // there is no harm in someone's items being spread out across bots
-
-      // if (Meteor.users.findOne(userId).profile.botName)
-      //   throw new Error('User already has bot assigned: ' + userId);
 
       var doc = { $set: { 'profile.botName': botName } };
       DB.users.update(userId, doc);
@@ -55,6 +51,11 @@ DB = {
       if (!taskId)
         throw new Error('INVALID_UPDATE: Invalid task ID');
 
+      if (!doc.$set) {
+        doc.$set = {};
+      }
+      doc.$set.modifiedTimestamp = new Date();
+
       return Tasks.update(taskId, doc);
     },
 
@@ -63,6 +64,9 @@ DB = {
       check(doc.jobType, Match.Where(function(item) {
         return !!Dispatcher.jobType[item];
       }));
+
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
 
       return Tasks.insert(doc);
     },
@@ -94,52 +98,47 @@ DB = {
     insert: function(doc) {
       check(doc, Object);
 
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
+
       return Tradeoffers.insert(doc);
     },
 
     update: function(selector, doc) {
       check(selector, Object);
-      check(selector, Object);
+      check(doc, Object);
 
       var setDoc = {
         $set: doc
       };
 
+      setDoc.$set.modifiedTimestamp = new Date();
+
       return Tradeoffers.update(selector, setDoc);
     },
 
-    insertNew: function(id, tradeofferId, userId, jobType, botName) {
+    insertNew: function(id, tradeofferId, userId, jobType, botName, taskId) {
+      check(id, String);
+      check(tradeofferId, String);
+      check(userId, String);
+      check(jobType, String);
+      check(botName, String);
+      check(taskId, String);
+
       var doc = {
         _id: id,
         tradeofferid: tradeofferId,
         trade_offer_state: 2,
         userId: userId,
         jobType: jobType,
+        taskId: taskId,
         botName: botName,
-        deleteInd: false,
-        internal: true
+        deleteInd: false
       };
 
       return DB.tradeoffers.insert(doc);
     },
 
-    // // Doc should be exact object returned from API call
-    // updateStatus: function(doc) {
-      // check(doc, Object);
-
-      // var selector = {
-      //   tradeofferid: doc.tradeofferid,
-      //   deleteInd: false
-      // };
-
-      // if (!SteamConstants.offerStatus[doc.trade_offer_state]) {
-      //   throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
-      // }
-
-      // return DB.tradeoffers.update(selector, doc);
-    // },
-
-    // Doc should be exact object returned from API call
     updateStatus: function(doc) {
       check(doc, Object);
 
@@ -152,43 +151,18 @@ DB = {
         throw new Error('Invalid state - trade_offer_state:' + doc.trade_offer_state);
       }
 
-      // Update the status
-      var out = DB.tradeoffers.update(selector, doc);
+      return DB.tradeoffers.update(selector, doc);
+    },
 
-      var updatedOffer = Tradeoffers.findOne({ tradeofferid: doc.tradeofferid });
+    // Updated the status from verified API calls
+    // Doc should be exact object returned from API call
+    updateStatusFromAPI: function(doc) {
+      check(doc, Object);
 
-
-      //////// TODO
-      // Add logic here to change the state of the item based on offerStatus and jobType
-      // May need to manually update DB jobType to get this to work
-      ////////////
+      var out = DB.tradeoffers.updateStatus(doc);
 
       // Update all items involved in the tradeoffer if external
-      if (!updatedOffer.internal) {
-        if (updatedOffer.tradeofferid && SteamConstants.offerStatus[updatedOffer.trade_offer_state]) {
-          var state = SteamConstants.offerStatus[updatedOffer.trade_offer_state];
-          if (state === 'k_ETradeOfferStateAccepted') {
-
-            // We know what to change to status to by which are being received and given
-            var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
-            var given = _.pluck(updatedOffer.items_to_give, 'assetid');
-
-            if (received.length) {
-              DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.STASH);
-            }
-
-            if (given.length) {
-              DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
-            }
-          } else if (state === 'k_ETradeOfferStateDeclined') {
-            var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
-
-            if (received.length) {
-              DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.EXTERNAL);
-            }
-          }
-        }
-      }
+      DB.items.updateStatusFromOffer(doc.tradeofferid);
 
       return out;
     }
@@ -196,6 +170,11 @@ DB = {
 
   items: {
     insert: function(doc) {
+      check(doc, Object);
+
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
+
       return Items.insert(doc);
     },
 
@@ -208,6 +187,8 @@ DB = {
 
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator: Items');
+
+      doc.$set.modifiedTimestamp = new Date();
 
       return Items.update(selector, doc, options);
     },
@@ -344,6 +325,40 @@ DB = {
           throw new Error('Item not found, bot reassingment failed: ' + item + ' ' + newBotName);
         }
       });
+    },
+
+    updateStatusFromOffer: function(offerId) {
+      check(offerId, String);
+
+      var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
+
+      if (updatedOffer.tradeofferid && SteamConstants.offerStatus[updatedOffer.trade_offer_state]) {
+
+        var state = SteamConstants.offerStatus[updatedOffer.trade_offer_state];
+        var jobType = updatedOffer.jobType;
+        var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
+        var given = _.pluck(updatedOffer.items_to_give, 'assetid');
+
+        if (state === 'k_ETradeOfferStateAccepted') {
+          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.STASH);
+
+          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
+          }
+        } else if (state === 'k_ETradeOfferStateDeclined') {
+          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.EXTERNAL);
+
+          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
+          }
+        }
+      }
     }
   },
 
@@ -390,14 +405,23 @@ DB = {
       user2Id: userId,
       user2Items: listing.request,
       offerDate: currentDate,
-      stage: 'INITIAL_OFFER'
+      stage: 'INITIAL_OFFER',
+      createdTimestamp: new Date(),
+      modifiedTimestamp: new Date()
     });
     //Note: transaction hook fires to update inventory items
   },
 
   removeTrade: function(transactionId) {
     //TODO: make this an ENUM
-    Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
+    var doc = {
+      $set: {
+        stage: "CANCELED",
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    Transactions.update({_id: transactionId}, doc);
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
@@ -405,18 +429,35 @@ DB = {
       user1Id: user1Id,
       user2Id: user2Id,
       user1Stage: "INVITED",
-      user2Stage: "INVITED"
+      user2Stage: "INVITED",
+      createdTimestamp: new Date(),
+      modifiedTimestamp: new Date()
     });
   },
 
   acceptRealTimeTrade: function(tradeId, channel) {
-    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING",
-                         user2Stage: "TRADING",
-    channel: channel}});
+    var doc = {
+      $set: {
+        user1Stage: "TRADING",
+        user2Stage: "TRADING",
+        channel: channel,
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    RealTimeTrade.update(tradeId, doc);
   },
 
   rejectRealTimeTrade: function(tradeId) {
-    RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
+    var doc = {
+      $set: {
+        user2Stage: "REJECTED",
+        closeDate: new Date(),
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    RealTimeTrade.update(tradeId, doc);
   },
 
   addItemToTrade: function(item, tradeId, field) {
@@ -424,9 +465,9 @@ DB = {
     //statement below I get a simple schema validation error...
     //this is a little more verbose, but cleaner I suppose
     if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$push: {user1Items: item}});
+      RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$push: {user2Items: item}});
+      RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
@@ -434,9 +475,9 @@ DB = {
 
   removeItemFromTrade: function(item, tradeId, field) {
     if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}});
+      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}});
+      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
@@ -444,9 +485,9 @@ DB = {
 
   setTradeStage: function(tradeId, field, stage) {
     if(field === "user1Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}});
+      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}});
+      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
     }

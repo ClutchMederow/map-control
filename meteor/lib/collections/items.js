@@ -88,6 +88,14 @@ Items.attachSchema({
   deleteInd: {
     type: Boolean,
     label: 'logical deletion'
+  },
+  createdTimestamp: {
+    type: Date,
+    label: 'Internal created timestamp'
+  },
+  modifiedTimestamp: {
+    type: Date,
+    label: 'Internal modified timestamp'
   }
 });
 

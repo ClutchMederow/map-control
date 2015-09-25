@@ -5,7 +5,7 @@ RealTimeTrade.attachSchema({
   user1Id: {
     type: String,
     label: 'User that requests real time trade'
-  }, 
+  },
   user1Items: {
     type: [Object],
     label: 'Items of User 1 in trade',
@@ -53,5 +53,13 @@ RealTimeTrade.attachSchema({
     blackbox: true,
     optional: true,
     label: 'chat channel, specific to this transaction'
+  },
+  createdTimestamp: {
+    type: Date,
+    label: 'Internal created timestamp'
+  },
+  modifiedTimestamp: {
+    type: Date,
+    label: 'Internal modified timestamp'
   }
 });

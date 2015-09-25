@@ -99,9 +99,17 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   function updateTradeofferStatus(offers) {
     _.each(offers, function(offer) {
       try {
-        DB.tradeoffers.updateStatus(offer);
+
+        console.log(offer.tradeofferid);
+        var oldOffer = Tradeoffers.findOne({ tradeofferid: offer.tradeofferid });
+        if (oldOffer) {
+          if (!oldOffer.time_updated || offer.time_updated > oldOffer.time_updated) {
+            DB.tradeoffers.updateStatusFromAPI(offer);
+          }
+        }
       } catch(e) {
-        console.warn(e);
+        throw e;
+        // console.warn(e);
       }
     });
   }
@@ -258,12 +266,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
 
-        console.log(Items.findOne({ itemId: '3174946693' }).status);
         withdrawTask.execute();
-        console.log(Items.findOne({ itemId: '3174946693' }).status);
 
       } catch (e) {
-        DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
+        // DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
         console.log(e);
         throw e;
       }
