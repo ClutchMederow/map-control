@@ -96,15 +96,14 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     // return _.keys(bots)[botIndex];
   }
 
-  function updateTradeofferStatus(offers) {
+  function updateTradeofferStatus(offers, bot) {
     _.each(offers, function(offer) {
       try {
-
-        console.log(offer.tradeofferid);
         var oldOffer = Tradeoffers.findOne({ tradeofferid: offer.tradeofferid });
         if (oldOffer) {
           if (!oldOffer.time_updated || offer.time_updated > oldOffer.time_updated) {
-            DB.tradeoffers.updateStatusFromAPI(offer);
+            console.log(bot.botName);
+            DB.tradeoffers.updateStatusFromAPI(offer, bot);
           }
         }
       } catch(e) {
@@ -293,7 +292,9 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     checkOutstandingTradeoffers: function() {
       _.each(bots, function(bot) {
         var offers = bot.queryOffers();
-        updateTradeofferStatus(offers);
+
+        // Reload the inventory so we can match items
+        updateTradeofferStatus(offers, bot);
       });
     },
 

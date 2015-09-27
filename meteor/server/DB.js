@@ -156,13 +156,13 @@ DB = {
 
     // Updated the status from verified API calls
     // Doc should be exact object returned from API call
-    updateStatusFromAPI: function(doc) {
+    updateStatusFromAPI: function(doc, bot) {
       check(doc, Object);
 
       var out = DB.tradeoffers.updateStatus(doc);
 
       // Update all items involved in the tradeoffer if external
-      DB.items.updateStatusFromOffer(doc.tradeofferid);
+      DB.items.updateStatusFromOffer(doc.tradeofferid, bot);
 
       return out;
     }
@@ -327,8 +327,69 @@ DB = {
       });
     },
 
-    updateStatusFromOffer: function(offerId) {
+    // assetids can change with every trade, and there is no good way to map them
+    // To handle this, we update the assetids grouped by tradeoffer
+    // If the fields in mapping all match, then we can assume with some certainty that it is the
+    // same item. If a user trades two items with the same name etc., then they may get switched in
+    // our system. This shouldn't matter since each tradeoffer should only involve a single user,
+    // so there shouldn't be an issue if the assetids are mixed up
+    updateAssetIds: function(offerId, bot) {
+
+            console.log(bot.botName);
+
+      var offer = Tradeoffers.findOne({ tradeofferid: offerId });
+
+      // Only the receiver is responsible to updating asset ids
+      if (offer.items_to_receive) {
+        var mongoOffer = Tradeoffers.findOne({ tradeofferid: offer.tradeofferid });
+        var itemIds = _.pluck(offer.items_to_receive, 'assetid');
+
+        bot.loadBotInventory();
+        var oldItems = Items.find({ itemId: { $in: itemIds } }).fetch();
+        var newItems = bot.items.find({ assetid: { $in: itemIds } }).fetch();
+
+        ////////////////
+
+        // Get the newItems from the mongooffer
+        // we need to map new items to old - Items should still be out of date, but the offer
+        // should be updated
+        // as usual, find a better way to do this
+
+        //////////////
+
+        // if each field specified matches the old items, update the assetid
+        _.each(oldItems, function(item) {
+          for (var i = 0; i < newItems.length; i++) {
+            var thisNewItem = newItems[i];
+
+            var mapping = ['userId', 'nameColor', 'type', 'amount', 'name'];
+
+            var match = true;
+            for (field in mapping) {
+              if (thisNewItem[field] !== item[field]) {
+                match = false;
+              }
+            }
+
+            if (match) {
+
+              // Update all fields
+              Items.update(item._id, { $set: thisNewItem });
+
+              // Remove the item so it doesn't get matched again
+              newItems.splice(i, 1);
+
+              break;
+            }
+          }
+        });
+      }
+    },
+
+    updateStatusFromOffer: function(offerId, bot) {
       check(offerId, String);
+
+          console.log(bot.botName);
 
       var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
 
@@ -338,6 +399,13 @@ DB = {
         var jobType = updatedOffer.jobType;
         var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
         var given = _.pluck(updatedOffer.items_to_give, 'assetid');
+
+
+        ///////////////// TODO ///////////////
+        // Verify that the item in in the bots inventory first
+        // see https://www.reddit.com/r/SteamBot/comments/3edynt/psa_reminder_dont_run_your_web_application_and/
+        // note 1
+        ///////////////////
 
         if (state === 'k_ETradeOfferStateAccepted') {
           if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
@@ -358,6 +426,8 @@ DB = {
             DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
           }
         }
+
+        DB.items.updateAssetIds(offerId, bot);
       }
     }
   },
