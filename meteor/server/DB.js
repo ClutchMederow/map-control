@@ -156,13 +156,13 @@ DB = {
 
     // Updated the status from verified API calls
     // Doc should be exact object returned from API call
-    updateStatusFromAPI: function(doc, bot) {
+    updateStatusFromAPI: function(doc) {
       check(doc, Object);
 
       var out = DB.tradeoffers.updateStatus(doc);
 
       // Update all items involved in the tradeoffer if external
-      DB.items.updateStatusFromOffer(doc.tradeofferid, bot);
+      DB.items.updateStatusFromOffer(doc.tradeofferid);
 
       return out;
     }
@@ -386,7 +386,7 @@ DB = {
       }
     },
 
-    updateStatusFromOffer: function(offerId, bot) {
+    updateStatusFromOffer: function(offerId) {
       check(offerId, String);
 
           console.log(bot.botName);
@@ -426,8 +426,6 @@ DB = {
             DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
           }
         }
-
-        DB.items.updateAssetIds(offerId, bot);
       }
     }
   },

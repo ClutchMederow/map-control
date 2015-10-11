@@ -8,6 +8,27 @@
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
 @import "itemInfo.import.scss";
 
+$bg-color: #F9F9F9;
+$border-color: #D4D4D4;
+$nav-text-color: #ECECEC;
+
+body {
+  background-color: $bg-color;
+}
+
+nav {
+  background-color: #5BA4C7;
+  box-shadow: none;
+
+  .brand-logo {
+    color: $nav-text-color;
+  }
+
+  ul a {
+    color: $nav-text-color;
+  }
+}
+
 main {
   padding-top: 1em;
   min-height: 400px;
@@ -79,8 +100,8 @@ main {
 .channelList {
   ul {
     box-shadow: none;
-    border-left: none;
-    border-right: none;
+    border: none;
+    // border-right: none;
   }
 
   i {
@@ -97,11 +118,16 @@ main {
   }
 
   li.active .collapsible-body {
+    border: none;
     padding-bottom: 1rem;
   }
 
+  .collapsible-header {
+    border: none;
+  }
+
   .collapsible-header.active {
-    border-bottom: none;
+    // border-bottom: none;
   }
 
   .active-channel {
@@ -220,24 +246,23 @@ main {
 .colored-title {
   overflow: hidden;
 
+  // border-bottom: 1px solid $border-color;
+
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
   padding-top: 0;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 0;
+  padding: 5px 20px 5px 20px;
+  // padding-left: 20px;
+  // padding-right: 20px;
+  // padding-bottom: 0;
 
-  text-align: center;
-  /*background-color: #009688;*/
-  /*color: white;*/
-
-  color: #b71c1c;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: .5em;
-  background-color: #EAF1F0;
-  font-size: 2rem;
+  background-color: #EAEAEA;
+  color: #B93F3F;
+  letter-spacing: 2px;
+  font-weight: 300;
+  // background-color: #EAF1F0;
+  font-size: 1.5rem;
 }
 
 #itemModal .row {
@@ -326,3 +351,7 @@ main {
   }
 }
 
+.pan {
+  box-shadow: none;
+  // border: 1px solid $border-color;
+}
