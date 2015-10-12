@@ -391,5 +391,12 @@ DB = {
       //Transactions.insert...
       //Dispatcher
     }
+  },
+  addNotification: function(userId, message) {
+    Notifications.insert({
+      userId: userId,
+      message: message,
+      viewed: false
+    });
   }
 };
