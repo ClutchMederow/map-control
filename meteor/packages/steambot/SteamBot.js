@@ -254,6 +254,29 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   return offer.tradeofferid;
 };
 
+SteamBot.prototype.queryOffersReceived = function() {
+
+  // By not passing a cutoff time, it only returns offers that have been updated since last check
+  var options = {
+    get_sent_offers: 0,
+    get_received_offers: 1,
+    active_only: 1,
+    // time_historical_cutoff: 0
+  };
+
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+  this.offers.getOffers(options, function(error,result) {
+    if (error)
+      future.throw(error);
+    else
+      future.return(result);
+  });
+
+  var res = future.wait();
+  return res.response.trade_offers_sent;
+};
+
 SteamBot.prototype.queryOffers = function() {
 
   // By not passing a cutoff time, it only returns offers that have been updated since last check
@@ -277,12 +300,21 @@ SteamBot.prototype.queryOffers = function() {
   return res.response.trade_offers_sent;
 };
 
-SteamBot.prototype.getNewItemIds = function(offerId) {
+SteamBot.prototype.getNewItemIds = function(tradeId) {
+  check(tradeId, String);
+
   var Future = Npm.require('fibers/future');
   var future = new Future();
 
-  // this.offers.query
+  this.offers.getItems({ tradeId: tradeId }, function(err, res) {
+    if (err) {
+      future.throw(err);
+    } else {
+      future.return(res);
+    }
+  });
 
+  return future.wait();
 };
 
 SteamBot.prototype.getSingleOffer = function(offerId) {

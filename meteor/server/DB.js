@@ -152,19 +152,6 @@ DB = {
       }
 
       return DB.tradeoffers.update(selector, doc);
-    },
-
-    // Updated the status from verified API calls
-    // Doc should be exact object returned from API call
-    updateStatusFromAPI: function(doc) {
-      check(doc, Object);
-
-      var out = DB.tradeoffers.updateStatus(doc);
-
-      // Update all items involved in the tradeoffer if external
-      DB.items.updateStatusFromOffer(doc.tradeofferid);
-
-      return out;
     }
   },
 
@@ -335,18 +322,23 @@ DB = {
     // so there shouldn't be an issue if the assetids are mixed up
     updateAssetIds: function(offerId, bot) {
 
-            console.log(bot.botName);
-
       var offer = Tradeoffers.findOne({ tradeofferid: offerId });
 
-      // Only the receiver is responsible to updating asset ids
+      // Only the receiver is responsible for updating asset ids
+      // Case 1: We receive items in a deposit, thus we update the assetids
+      // Case 2: We make an internal trade, thus the receiving bot updates assetids
+      // Case 3: We give items in a withdrawal, thus we don't care about assetids
+
       if (offer.items_to_receive) {
-        var mongoOffer = Tradeoffers.findOne({ tradeofferid: offer.tradeofferid });
         var itemIds = _.pluck(offer.items_to_receive, 'assetid');
 
-        bot.loadBotInventory();
+
+        // get the new items using the tradeid (essentially the receipt id)
+        var newItems = bot.getNewItemIds(offer.tradeid);
         var oldItems = Items.find({ itemId: { $in: itemIds } }).fetch();
-        var newItems = bot.items.find({ assetid: { $in: itemIds } }).fetch();
+
+        // bot.loadBotInventory();
+        // var newItems = bot.items.find({ assetid: { $in: itemIds } }).fetch();
 
         ////////////////
 
@@ -362,19 +354,38 @@ DB = {
           for (var i = 0; i < newItems.length; i++) {
             var thisNewItem = newItems[i];
 
-            var mapping = ['userId', 'nameColor', 'type', 'amount', 'name'];
+            var mapping = [
+              ['name_color', 'nameColor'],
+              ['type', 'type'],
+              ['amount', 'amount'],
+              ['market_name', 'name']
+            ];
 
             var match = true;
             for (field in mapping) {
-              if (thisNewItem[field] !== item[field]) {
+
+              // Single equals here to handle number/string comparisons
+              if (thisNewItem[field[0]] != item[field[1]]) {
                 match = false;
               }
             }
 
             if (match) {
 
+              var doc = {
+                $set: {
+                  itemId: thisNewItem.id,
+                  classId: thisNewItem.classid,
+                  instanceId: thisNewItem.instanceid,
+                  iconURL: Constants.steamCDN + thisNewItem.icon_url,
+                },
+                $push: {
+                  oldAssetIds: item.itemId
+                }
+              };
+
               // Update all fields
-              Items.update(item._id, { $set: thisNewItem });
+              DB.items.update({ _id: item._id }, doc, {});
 
               // Remove the item so it doesn't get matched again
               newItems.splice(i, 1);
@@ -386,10 +397,9 @@ DB = {
       }
     },
 
+    // This must be called BEFORE updating the assetIds since the tradeoffer references the old IDs
     updateStatusFromOffer: function(offerId) {
       check(offerId, String);
-
-          console.log(bot.botName);
 
       var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
 

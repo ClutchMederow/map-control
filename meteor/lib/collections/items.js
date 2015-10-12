@@ -85,6 +85,11 @@ Items.attachSchema({
     type: String,
     label: 'Item status'
   },
+  oldAssetIds: {
+    type: [String],
+    label: 'Old Asset IDs',
+    optional: true
+  },
   deleteInd: {
     type: Boolean,
     label: 'logical deletion'

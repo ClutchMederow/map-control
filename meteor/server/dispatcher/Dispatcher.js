@@ -96,14 +96,18 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     // return _.keys(bots)[botIndex];
   }
 
+  // Only updates the status on offers sent externally
+  // Internal transfers will be handled by the receiving bot
   function updateTradeofferStatus(offers, bot) {
     _.each(offers, function(offer) {
       try {
         var oldOffer = Tradeoffers.findOne({ tradeofferid: offer.tradeofferid });
+
+        // Remove this after testing - there should never not be an old offer
         if (oldOffer) {
-          if (!oldOffer.time_updated || offer.time_updated > oldOffer.time_updated) {
-            console.log(bot.botName);
-            DB.tradeoffers.updateStatusFromAPI(offer, bot);
+          if (oldOffer.jobType === Dispatcher.jobType.DEPOSIT_ITEMS ||
+              oldOffer.jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+            updateOffer(offer, oldOffer, bot);
           }
         }
       } catch(e) {
@@ -111,6 +115,20 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         // console.warn(e);
       }
     });
+  }
+
+  function updateOffer(offer, oldOffer, bot) {
+    if (!oldOffer.time_updated || offer.time_updated > oldOffer.time_updated) {
+
+      // Update the tradeoffer
+      DB.tradeoffers.updateStatus(offer);
+
+      // Update all items involved in the tradeoffer if external
+      DB.items.updateStatusFromOffer(offer.tradeofferid);
+
+      // Update the assetids
+      DB.items.updateAssetIds(offer.tradeofferid, bot);
+    }
   }
 
   function getJobsToSendOffers(transferBot, groupedItems, taskId) {

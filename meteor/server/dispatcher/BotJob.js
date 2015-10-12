@@ -120,8 +120,6 @@ BotJob.prototype._executeInternalTransfer = function() {
   // Save the tradeoffer
   self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
 
-  ///// MAKE SURE TO UPDATE THE ITEM ID - IT MAY HAVE CHANGED
-
   return this.tradeofferId;
 };
 
@@ -131,8 +129,10 @@ BotJob.prototype._executeAcceptOffer = function() {
   var result = this._bot.acceptOffer(this.tradeofferId);
 
   this._DB.tradeoffers.updateStatus(result);
-
   this._DB.items.assignItemsToBot(this.items, this._bot.botName);
+
+  // Update all asset after changing everything else since the tradeoffer references the old ids
+  this._DB.items.updateAssetIds(this.tradeofferId, this);
 };
 
 BotJob.prototype.execute = function(callback) {
