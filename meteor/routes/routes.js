@@ -17,6 +17,11 @@ Router.route('/chats', {
   template: 'chats'
 });
 
+Router.route('/help', {
+  name: 'help',
+  template: 'help'
+});
+
 Router.route('/steam', {
   name: "configureLoginServiceDialogForSteam",
   template: "configureLoginServiceDialogForSteam"
