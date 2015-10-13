@@ -102,7 +102,7 @@ SteamBot.prototype.logOn = function() {
 };
 
 SteamBot.prototype.getBotItems = function() {
-  return this.items.find();
+  return this.items.find().fetch();
 };
 
 // Reload the bot's inventory if if the cache is expired

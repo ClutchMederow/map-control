@@ -237,6 +237,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
         var transferBot = getUsersBot(userId);
 
+        var persistentIds = _.pluck(Items.find({ itemId: { $in: items } }).fetch(), '_id');
+
         // Group all items by the bot they are on
         try {
           var groupedItems = _.groupBy(items, function(itemId) {
@@ -270,20 +272,22 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           acceptOffersTask.execute();
         }
 
-
-        // Check if any items are on this bot already
-        // var itemsOnThisBot = groupedItems[transferBot.botName];
+        // Grab any updated itemIds since assetIds can change during transfers
+        items = _.pluck(Items.find({ _id: { $in: persistentIds } }).fetch(), 'itemId');
 
         // Create final job to send all offers to the user
         var options = {
           items: items,
           userId: userId
         };
+
         var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
         var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
 
         withdrawTask.execute();
+
+        return withdrawJob.tradeofferId;
 
       } catch (e) {
         // DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
@@ -317,22 +321,26 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     test: function() {
-      // console.log(getUsersBot('kiGYGwyyuM7h3RfvT'));
+      Dispatcher.init();
 
+      var meat = Dispatcher.getBot('meatsting');
 
-      // var botWithMinInv = _.reduce(bots, function(currentBest, thisBot, botName) {
-      //     var count = thisBot.getItemCount();
+      meat.loadBotInventory();
+      var items = _.pluck(meat.getBotItems(), 'id');
 
-      //     if (count < currentBest.itemCount) {
-      //       return { botName: botName, itemCount: count };
-      //     } else {
-      //       return currentBest;
-      //     }
-      //   }, { botName: null, itemCount: maxItemCount });
+      var userId = 'uYrKadsnCzyg9TLrC';
 
+      // Create final job to send all offers to the user
+      var options = {
+        items: items,
+        userId: userId
+      };
 
+      var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
+      var withdrawJob = new BotJob(meat, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
+      var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
 
-      return assignBot();
+      withdrawTask.execute();
 
     }
   }
