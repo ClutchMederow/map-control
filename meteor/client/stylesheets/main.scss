@@ -239,7 +239,7 @@ main {
 }
 
 .stash-hover {
-  box-shadow: 0 2px 5px 0 red, 0 2px 10px 0 red;
+  box-shadow: 2px 2px 5px 0 rgba(245, 131, 131, 0.5), 0 2px 10px 0 rgba(253, 98, 98, 0.5) !important;
 }
 
 .colored-title {
@@ -360,7 +360,7 @@ main {
 .pan {
   box-shadow: none;
   border-radius: 4px;
-  overflow: hidden;
+  // overflow: hidden;
 
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
 
