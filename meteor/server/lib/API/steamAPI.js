@@ -4,7 +4,6 @@ SteamAPI = (function () {
   var csContextId = 2; //2 = games
   var csAppId = 730; //730 = CSGO
   var apiKey = Meteor.settings.steam.apiKey;
-  var steamCDN = "http://steamcommunity-a.akamaihd.net/economy/image/";
 
   var parseSteamAPIInventory = function(data, userId) {
     var parsed = data;
@@ -29,7 +28,7 @@ SteamAPI = (function () {
         tradable: itemDescription.commodity,
         classId: item.classid,
         instanceId: item.instanceid,
-        iconURL: steamCDN + itemDescription.icon_url,
+        iconURL: Constants.steamCDN + itemDescription.icon_url,
         status: Enums.ItemStatus.EXTERNAL,
         deleteInd: false
        };
@@ -109,6 +108,8 @@ SteamAPI = (function () {
         console.log(error.stack);
         throw new Meteor.Error("HTTP_REQUEST_FAILURE", "Could not retrieve generic inventory");
       }
-    }
+    },
+
+    parseSteamAPIInventory: parseSteamAPIInventory
   };
 }) (); //Immediately Invoked Function that returns object

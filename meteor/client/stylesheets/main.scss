@@ -7,6 +7,27 @@
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
 
+$bg-color: #F9F9F9;
+$border-color: #D4D4D4;
+$nav-text-color: #ECECEC;
+
+body {
+  background-color: $bg-color;
+}
+
+nav {
+  background-color: #5BA4C7;
+  box-shadow: none;
+
+  .brand-logo {
+    color: $nav-text-color;
+  }
+
+  ul a {
+    color: $nav-text-color;
+  }
+}
+
 main {
   padding-top: 1em;
   min-height: 400px;
@@ -78,8 +99,8 @@ main {
 .channelList {
   ul {
     box-shadow: none;
-    border-left: none;
-    border-right: none;
+    border: none;
+    // border-right: none;
   }
 
   i {
@@ -96,11 +117,16 @@ main {
   }
 
   li.active .collapsible-body {
+    border: none;
     padding-bottom: 1rem;
   }
 
+  .collapsible-header {
+    border: none;
+  }
+
   .collapsible-header.active {
-    border-bottom: none;
+    // border-bottom: none;
   }
 
   .active-channel {
@@ -219,24 +245,23 @@ main {
 .colored-title {
   overflow: hidden;
 
+  // border-bottom: 1px solid $border-color;
+
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
   padding-top: 0;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 0;
+  padding: 5px 20px 5px 20px;
+  // padding-left: 20px;
+  // padding-right: 20px;
+  // padding-bottom: 0;
 
-  text-align: center;
-  /*background-color: #009688;*/
-  /*color: white;*/
-
-  color: #b71c1c;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: .5em;
-  background-color: #EAF1F0;
-  font-size: 2rem;
+  background-color: #EAEAEA;
+  color: #B93F3F;
+  letter-spacing: 2px;
+  font-weight: 300;
+  // background-color: #EAF1F0;
+  font-size: 1.5rem;
 }
 
 #itemModal .row {
@@ -247,6 +272,10 @@ main {
   height: 50vh;
   min-height: 300px;
   overflow: scroll;
+}
+
+.add-remove-row {
+  margin-bottom: 0;
 }
 
 .contained-item {
@@ -325,3 +354,67 @@ main {
   }
 }
 
+.pan {
+  box-shadow: none;
+  border-radius: 4px;
+  overflow: hidden;
+
+  box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
+
+  animation-name: fadeInUp;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  -webkit-animation-name: fadeInUp;
+  -webkit-animation-duration: 0.5s;
+  -webkit-animation-iteration-count: 1;
+
+  &:hover {
+    transition: box-shadow 0.25s;
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  }
+  // border: 1px solid $border-color;
+}
+
+@-webkit-keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@-ms-keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@-o-keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -22,6 +22,12 @@ Template.tradingFloor.onRendered(function() {
       this.$('.collapsible').collapsible({
         accordion : false
       });
+
+      // gives an initial state to the accordion
+      if ($('.active .active-channel').length === 0) {
+        this.$('.active-channel').parent().parent().find('.collapsible-header').click()
+      }
+
     }.bind(this));
   }.bind(this));
 

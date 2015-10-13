@@ -1,32 +1,14 @@
 // Hooks
 
-// Updates every item after a tradeoffer is updated
-Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
+// // Updates every item after a tradeoffer is updated
+// Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
 
-  if (doc.tradeofferid && SteamConstants.offerStatus[modifier.$set.trade_offer_state]) {
-    var state = SteamConstants.offerStatus[modifier.$set.trade_offer_state];
-    if (state === 'k_ETradeOfferStateAccepted') {
+//   // Dont execute this logic for internal transfers
+//   if (doc.internal) {
+//     return;
+//   }
 
-      // We know what to change to status to by which are being received and given
-      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
-      var withdrawn = _.pluck(modifier.$set.items_to_give, 'assetid');
-
-      if (deposited.length) {
-        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.STASH);
-      }
-
-      if (withdrawn.length) {
-        DB.items.changeStatus(doc.tradeofferid, withdrawn, Enums.ItemStatus.EXTERNAL);
-      }
-    } else if (state === 'k_ETradeOfferStateDeclined') {
-      var deposited = _.pluck(modifier.$set.items_to_receive, 'assetid');
-
-      if (deposited.length) {
-        DB.items.changeStatus(doc.tradeofferid, deposited, Enums.ItemStatus.EXTERNAL);
-      }
-    }
-  }
-});
+// });
 
 DB = {
   insertChat: function(attributes) {
@@ -44,6 +26,8 @@ DB = {
       if (!doc.$set)
         throw new Error('INVALID_UPDATE: Must include $set operator');
 
+      doc.$set.modifiedTimestamp = new Date();
+
       return Meteor.users.update(userId, doc);
     },
 
@@ -51,12 +35,6 @@ DB = {
     addBot: function(userId, botName) {
       if (!userId || !botName)
         throw new Error('BAD_ARGUMENTS');
-
-      // Removing this for now. I don't think the default here should be an error since
-      // there is no harm in someone's items being spread out across bots
-
-      // if (Meteor.users.findOne(userId).profile.botName)
-      //   throw new Error('User already has bot assigned: ' + userId);
 
       var doc = { $set: { 'profile.botName': botName } };
       DB.users.update(userId, doc);
@@ -73,6 +51,11 @@ DB = {
       if (!taskId)
         throw new Error('INVALID_UPDATE: Invalid task ID');
 
+      if (!doc.$set) {
+        doc.$set = {};
+      }
+      doc.$set.modifiedTimestamp = new Date();
+
       return Tasks.update(taskId, doc);
     },
 
@@ -81,6 +64,9 @@ DB = {
       check(doc.jobType, Match.Where(function(item) {
         return !!Dispatcher.jobType[item];
       }));
+
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
 
       return Tasks.insert(doc);
     },
@@ -111,20 +97,46 @@ DB = {
   tradeoffers: {
     insert: function(doc) {
       check(doc, Object);
-      doc.deleteInd = false;
+
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
 
       return Tradeoffers.insert(doc);
     },
 
     update: function(selector, doc) {
       check(selector, Object);
-      check(selector, Object);
+      check(doc, Object);
 
       var setDoc = {
         $set: doc
       };
 
-      var out = Tradeoffers.update(selector, setDoc);
+      setDoc.$set.modifiedTimestamp = new Date();
+
+      return Tradeoffers.update(selector, setDoc);
+    },
+
+    insertNew: function(id, tradeofferId, userId, jobType, botName, taskId) {
+      check(id, String);
+      check(tradeofferId, String);
+      check(userId, String);
+      check(jobType, String);
+      check(botName, String);
+      check(taskId, String);
+
+      var doc = {
+        _id: id,
+        tradeofferid: tradeofferId,
+        trade_offer_state: 2,
+        userId: userId,
+        jobType: jobType,
+        taskId: taskId,
+        botName: botName,
+        deleteInd: false
+      };
+
+      return DB.tradeoffers.insert(doc);
     },
 
     updateStatus: function(doc) {
@@ -145,22 +157,34 @@ DB = {
 
   items: {
     insert: function(doc) {
+      check(doc, Object);
+
+      doc.createdTimestamp = new Date();
+      doc.modifiedTimestamp = new Date();
+
       return Items.insert(doc);
     },
 
-    update: function(selector, doc) {
+    update: function(selector, doc, options) {
+      var options = options || {};
+
       check(selector, Object);
-      check(selector, Object);
+      check(doc, Object);
+      check(options, Object);
 
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator: Items');
 
-      return Items.update(selector, doc, { multi: true });
+      doc.$set.modifiedTimestamp = new Date();
+
+      return Items.update(selector, doc, options);
     },
 
     insertNewItems: function(userId, tradeofferId, items, botName) {
       check(userId, String);
+      check(tradeofferId, String);
       check(items, [String]);
+      check(botName, String);
 
       var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH, deleteInd: false });
 
@@ -225,13 +249,13 @@ DB = {
           userId: newUserId
         }
       };
-
       var selector = {
         _id: itemId,
         deleteInd: false
       };
+      var options = { multi: true };
 
-      var out = DB.items.update(selector, doc);
+      var out = DB.items.update(selector, doc, options);
 
       if (out !== 1)
         throw new Error('ITEM_NOT_UPDATED');
@@ -247,7 +271,6 @@ DB = {
       }));
 
       var selector = {
-        tradeofferId: tradeofferId,
         itemId: { $in: assetIds },
         deleteInd: false
       };
@@ -276,6 +299,144 @@ DB = {
       }
 
       return item.botName;
+    },
+
+    assignItemsToBot: function(items, newBotName) {
+      check(items, [String]);
+      check(newBotName, String);
+
+      _.each(items, function(itemId) {
+        var doc = { $set: { botName: botName } };
+        var result = DB.items.update({ itemId: item, deleteInd: false }, doc);
+        if (!result) {
+          throw new Error('Item not found, bot reassingment failed: ' + item + ' ' + newBotName);
+        }
+      });
+    },
+
+    // assetids can change with every trade, and there is no good way to map them
+    // To handle this, we update the assetids grouped by tradeoffer
+    // If the fields in mapping all match, then we can assume with some certainty that it is the
+    // same item. If a user trades two items with the same name etc., then they may get switched in
+    // our system. This shouldn't matter since each tradeoffer should only involve a single user,
+    // so there shouldn't be an issue if the assetids are mixed up
+    updateAssetIds: function(offerId, bot) {
+
+      var offer = Tradeoffers.findOne({ tradeofferid: offerId });
+
+      // Only the receiver is responsible for updating asset ids
+      // Case 1: We receive items in a deposit, thus we update the assetids
+      // Case 2: We make an internal trade, thus the receiving bot updates assetids
+      // Case 3: We give items in a withdrawal, thus we don't care about assetids
+
+      if (offer.items_to_receive) {
+        var itemIds = _.pluck(offer.items_to_receive, 'assetid');
+
+
+        // get the new items using the tradeid (essentially the receipt id)
+        var newItems = bot.getNewItemIds(offer.tradeid);
+        var oldItems = Items.find({ itemId: { $in: itemIds } }).fetch();
+
+        // bot.loadBotInventory();
+        // var newItems = bot.items.find({ assetid: { $in: itemIds } }).fetch();
+
+        ////////////////
+
+        // Get the newItems from the mongooffer
+        // we need to map new items to old - Items should still be out of date, but the offer
+        // should be updated
+        // as usual, find a better way to do this
+
+        //////////////
+
+        // if each field specified matches the old items, update the assetid
+        _.each(oldItems, function(item) {
+          for (var i = 0; i < newItems.length; i++) {
+            var thisNewItem = newItems[i];
+
+            var mapping = [
+              ['name_color', 'nameColor'],
+              ['type', 'type'],
+              ['amount', 'amount'],
+              ['market_name', 'name']
+            ];
+
+            var match = true;
+            for (field in mapping) {
+
+              // Single equals here to handle number/string comparisons
+              if (thisNewItem[field[0]] != item[field[1]]) {
+                match = false;
+              }
+            }
+
+            if (match) {
+
+              var doc = {
+                $set: {
+                  itemId: thisNewItem.id,
+                  classId: thisNewItem.classid,
+                  instanceId: thisNewItem.instanceid,
+                  iconURL: Constants.steamCDN + thisNewItem.icon_url,
+                },
+                $push: {
+                  oldAssetIds: item.itemId
+                }
+              };
+
+              // Update all fields
+              DB.items.update({ _id: item._id }, doc, {});
+
+              // Remove the item so it doesn't get matched again
+              newItems.splice(i, 1);
+
+              break;
+            }
+          }
+        });
+      }
+    },
+
+    // This must be called BEFORE updating the assetIds since the tradeoffer references the old IDs
+    updateStatusFromOffer: function(offerId) {
+      check(offerId, String);
+
+      var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
+
+      if (updatedOffer.tradeofferid && SteamConstants.offerStatus[updatedOffer.trade_offer_state]) {
+
+        var state = SteamConstants.offerStatus[updatedOffer.trade_offer_state];
+        var jobType = updatedOffer.jobType;
+        var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
+        var given = _.pluck(updatedOffer.items_to_give, 'assetid');
+
+
+        ///////////////// TODO ///////////////
+        // Verify that the item in in the bots inventory first
+        // see https://www.reddit.com/r/SteamBot/comments/3edynt/psa_reminder_dont_run_your_web_application_and/
+        // note 1
+        ///////////////////
+
+        if (state === 'k_ETradeOfferStateAccepted') {
+          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.STASH);
+
+          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
+          }
+        } else if (state === 'k_ETradeOfferStateDeclined') {
+          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.EXTERNAL);
+
+          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+
+            DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
+          }
+        }
+      }
     }
   },
 
@@ -322,14 +483,23 @@ DB = {
       user2Id: userId,
       user2Items: listing.request,
       offerDate: currentDate,
-      stage: 'INITIAL_OFFER'
+      stage: 'INITIAL_OFFER',
+      createdTimestamp: new Date(),
+      modifiedTimestamp: new Date()
     });
     //Note: transaction hook fires to update inventory items
   },
 
   removeTrade: function(transactionId) {
     //TODO: make this an ENUM
-    Transactions.update({_id: transactionId}, {$set: {stage: "CANCELED"}});
+    var doc = {
+      $set: {
+        stage: "CANCELED",
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    Transactions.update({_id: transactionId}, doc);
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
@@ -337,18 +507,35 @@ DB = {
       user1Id: user1Id,
       user2Id: user2Id,
       user1Stage: "INVITED",
-      user2Stage: "INVITED"
+      user2Stage: "INVITED",
+      createdTimestamp: new Date(),
+      modifiedTimestamp: new Date()
     });
   },
 
   acceptRealTimeTrade: function(tradeId, channel) {
-    RealTimeTrade.update(tradeId, {$set: {user1Stage: "TRADING",
-                         user2Stage: "TRADING",
-    channel: channel}});
+    var doc = {
+      $set: {
+        user1Stage: "TRADING",
+        user2Stage: "TRADING",
+        channel: channel,
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    RealTimeTrade.update(tradeId, doc);
   },
 
   rejectRealTimeTrade: function(tradeId) {
-    RealTimeTrade.update(tradeId, {$set: {user2Stage: "REJECTED", closeDate: new Date()}});
+    var doc = {
+      $set: {
+        user2Stage: "REJECTED",
+        closeDate: new Date(),
+        modifiedTimestamp: new Date()
+      }
+    };
+
+    RealTimeTrade.update(tradeId, doc);
   },
 
   addItemToTrade: function(item, tradeId, field) {
@@ -356,9 +543,9 @@ DB = {
     //statement below I get a simple schema validation error...
     //this is a little more verbose, but cleaner I suppose
     if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$push: {user1Items: item}});
+      RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$push: {user2Items: item}});
+      RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
@@ -366,9 +553,9 @@ DB = {
 
   removeItemFromTrade: function(item, tradeId, field) {
     if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}});
+      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}});
+      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
     }
@@ -376,9 +563,9 @@ DB = {
 
   setTradeStage: function(tradeId, field, stage) {
     if(field === "user1Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}});
+      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}, $set: { modifiedTimestamp: new Date() } });
     } else if (field === "user2Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}});
+      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}, $set: { modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
     }

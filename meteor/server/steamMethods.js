@@ -12,6 +12,6 @@ Meteor.methods({
   },
 
   withdrawItems: function(items) {
-    // return Dispatcher.
+    return Dispatcher.withdrawItems(this.userId, items);
   }
 });
