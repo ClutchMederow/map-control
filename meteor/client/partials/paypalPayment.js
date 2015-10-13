@@ -31,7 +31,7 @@ Template.paypalPayment.events({
         console.log(error);
       } else {
         Session.set('paymentId', data.paymentId);
-        var message = "<a href='" + data.redirectUrl + "' target='_blank'>Click here to login to paypal and pay</a>";
+        var message = "<a href='" + data.redirectUrl + "'>Click here to login to paypal and pay</a>";
         sAlert.success(message, paypalConfigAlert);
       }
     });

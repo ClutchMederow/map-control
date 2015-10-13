@@ -1,8 +1,8 @@
 Paypal = Meteor.npmRequire('paypal-rest-sdk');
 Paypal.configure({
   "mode": "live",
-  'client_id': Meteor.settings.private.paypal.liveClientId,
-  'client_secret': Meteor.settings.private.paypal.liveSecret
+  'client_id': Meteor.settings.private.paypal.sandboxClientId,
+  'client_secret': Meteor.settings.private.paypal.sandboxSecret
 });
 
 Meteor.methods({
@@ -42,5 +42,34 @@ Meteor.methods({
       });
     });
     return execute.result;
+  },
+  'sendPayment': function() {
+    var endpoint = "https://svcs.paypal.com/AdaptivePayments/Pay";
+    var result = HTTP.get(endpoint, {
+      data: {
+        "actionType": "PAY",
+        "senderEmail": "deltaveelabs@gmail.com",
+        "cancelUrl": "http://google.com",
+        "currencyCode": "USD",
+        "receiverList.receiver(0).email": "duncanrenfrow@gmail.com",
+        "receiverList.receiver(0).amount": "1.00",
+        "requestEnvelope.errorLanguage": "en_US",
+        "returnUrl": "http://google.com"
+      },
+      headers: {
+        "X-PAYPAL-SECURITY-USERID": Meteor.settings.private.paypal.liveApiUserName,
+        "X-PAYPAL-SECURITY-PASSWORD": Meteor.settings.private.paypal.liveApiPassword,
+        "X-PAYPAL-SECURITY-SIGNATURE": Meteor.settings.private.paypal.liveSignature,
+        "X-PAYPAL-REQUEST-DATA-FORMAT": "NV",
+        "X-PAYPAL-RESPONSE-DATA-FORMAT": "NV",
+        "X-PAYPAL-APPLICATION-ID": Meteor.settings.private.paypal.liveAppId
+      }
+    }, function(error, response) {
+      if(error) {
+        console.log(error);
+      } else {
+        console.log(response);
+      }
+    });
   }
 });
