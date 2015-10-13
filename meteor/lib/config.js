@@ -11,3 +11,4 @@ Config = {
 Constants = {
   tradeOfferURL: 'https://steamcommunity.com/tradeoffer/'
 };
+
