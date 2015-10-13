@@ -1,6 +1,6 @@
 DraggableItems = {
   draggable: function(containerSelector, targetSelector) {
-    // We need to have the mouseover event bound to accound for items being destroyed and recreated in the
+    // We need to have the mouseover event bound to account for items being destroyed and recreated in the
     // DOM when people use the search function. This ensures that each item is always draggable
     $(containerSelector).on('mouseover', targetSelector, function() {
       $(this).draggable({
@@ -33,6 +33,12 @@ DraggableItems = {
     mousein: function(e, data) {
 
       var origin = $(e.currentTarget);
+
+      // Sometimes a mouseout/mousein registers because the draggable item lags
+      // behind the mouse a bit, so we need to cancel the mousein if dragging
+      if ($(origin).find('img').hasClass('ui-draggable-dragging')) {
+        return false;
+      }
 
       if (origin.data('active')) {
         return false;
