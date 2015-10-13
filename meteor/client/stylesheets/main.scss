@@ -421,3 +421,12 @@ main {
     transform: translateY(0);
   }
 }
+
+.search-field {
+  margin-top: 0;
+  margin-bottom: 0;
+
+  input {
+    margin-bottom: 0;
+  }
+}
