@@ -118,7 +118,7 @@ SteamBot.prototype.getSteamId = function() {
 };
 
 SteamBot.prototype.loadBotInventory = function() {
-  // try {
+  try {
     var self = this;
 
     var Future = Npm.require('fibers/future');
@@ -142,9 +142,9 @@ SteamBot.prototype.loadBotInventory = function() {
     self.itemsUpdatedTimestamp = new Date();
 
     console.log('Bot inventory loaded!');
-  // } catch (e) {
-  //   console.log('Could not load bot inventory');
-  // }
+  } catch (e) {
+    console.log('Could not load bot inventory');
+  }
 };
 
 SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
