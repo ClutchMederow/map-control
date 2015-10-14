@@ -7,6 +7,25 @@ Router.route('/faq', {
   template: 'faq'
 });
 
+Router.route('/paypalPayment', {
+  name: 'paypalPayment',
+  template: 'paypalPayment'
+});
+
+Router.route('/paypalRedirect', {
+  action: function() {
+    var query = this.params.query;
+    var payerId = query.PayerID;
+    var paymentId = query.paymentId;
+    Meteor.call('executePayment', payerId, paymentId, function(error) {
+      if(error) {
+        console.log(error);
+      }
+    });
+  }
+});
+
+
 Router.route('/', {
   name: 'landing',
   template: 'landing'
@@ -15,6 +34,11 @@ Router.route('/', {
 Router.route('/chats', {
   name: 'chats',
   template: 'chats'
+});
+
+Router.route('/help', {
+  name: 'help',
+  template: 'help'
 });
 
 Router.route('/steam', {
