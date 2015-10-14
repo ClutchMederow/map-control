@@ -579,6 +579,12 @@ DB = {
       //Dispatcher
     }
   },
+  //pass in positive number for adding ironBucks
+  //pass in negative number of removing ironBucks
+  //Note: $inc will create field if it doesn't exist
+  updateIronBucks: function(userId, amount) {
+    Meteor.users.update(userId, {$inc: {ironBucks: amount}});
+  },
   addNotification: function(userId, message) {
     Notifications.insert({
       userId: userId,
