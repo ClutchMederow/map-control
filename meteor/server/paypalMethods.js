@@ -1,6 +1,6 @@
 Paypal = Meteor.npmRequire('paypal-rest-sdk');
 Paypal.configure({
-  "mode": "live",
+  "mode": "sandbox",
   'client_id': Meteor.settings.private.paypal.sandboxClientId,
   'client_secret': Meteor.settings.private.paypal.sandboxSecret
 });
@@ -48,13 +48,13 @@ Meteor.methods({
     var result = HTTP.get(endpoint, {
       data: {
         "actionType": "PAY",
-        "senderEmail": "deltaveelabs@gmail.com",
         "cancelUrl": "http://google.com",
         "currencyCode": "USD",
-        "receiverList.receiver(0).email": "duncanrenfrow@gmail.com",
+        "receiverList.receiver(0).email": "deltaveelabs@gmail.com",
         "receiverList.receiver(0).amount": "1.00",
         "requestEnvelope.errorLanguage": "en_US",
-        "returnUrl": "http://google.com"
+        "returnUrl": "http://google.com",
+        "senderEmail": "duncanrenfrow@gmail.com"
       },
       headers: {
         "X-PAYPAL-SECURITY-USERID": Meteor.settings.private.paypal.liveApiUserName,
