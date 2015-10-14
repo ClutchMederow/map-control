@@ -1,11 +1,15 @@
 DraggableItems = {
   draggable: function(containerSelector, targetSelector) {
-    // We need to have the mouseover event bound to accound for items being destroyed and recreated in the
+    // We need to have the mouseover event bound to account for items being destroyed and recreated in the
     // DOM when people use the search function. This ensures that each item is always draggable
     $(containerSelector).on('mouseover', targetSelector, function() {
       $(this).draggable({
         revert: true,
-        revertDuration: 0
+        revertDuration: 0,
+        start: function(e) {
+          var origin = $(e.currentTarget).parent();
+          closeTooltip(origin);
+        }
       });
     });
   },
@@ -29,6 +33,12 @@ DraggableItems = {
     mousein: function(e, data) {
 
       var origin = $(e.currentTarget);
+
+      // Sometimes a mouseout/mousein registers because the draggable item lags
+      // behind the mouse a bit, so we need to cancel the mousein if dragging
+      if ($(origin).find('img').hasClass('ui-draggable-dragging')) {
+        return false;
+      }
 
       if (origin.data('active')) {
         return false;
@@ -66,40 +76,41 @@ DraggableItems = {
     },
 
     mouseout: function(e) {
-
-      // Reset State
-      clearInterval(DraggableItems.itemInfo.intervalId);
-      DraggableItems.itemInfo.intervalId = null;
-
       var origin = $(e.currentTarget);
 
-      var tooltip = origin.children('.material-tooltip').first();
-      var backdrop = origin.find('.backdrop').first();
-
-      // Reset the active attribute so it opens again next time
-      origin.data('active', false);
-
-      // tooltip.velocity('finish');
-      // backdrop.velocity('finish');
-
-      // Animate back
-      tooltip.velocity({
-        opacity: 0, marginTop: 0, marginLeft: 0}, { duration: 0, queue: false, delay: 0 }
-      );
-
-      backdrop.velocity({opacity: 0, scale: 1}, {
-        duration:0,
-        delay: 0, queue: false,
-        complete: function(){
-          backdrop.css('display', 'none');
-          tooltip.css('display', 'none');
-        }
-      });
-
-      return false;
+      return closeTooltip(origin);
     }
   }
 };
+
+function closeTooltip(origin) {
+
+  // Reset State
+  clearInterval(DraggableItems.itemInfo.intervalId);
+  DraggableItems.itemInfo.intervalId = null;
+
+  var tooltip = origin.children('.material-tooltip').first();
+  var backdrop = origin.find('.backdrop').first();
+
+  // Reset the active attribute so it opens again next time
+  origin.data('active', false);
+
+  // Animate back
+  tooltip.velocity({
+    opacity: 0, marginTop: 0, marginLeft: 0}, { duration: 0, queue: false, delay: 0 }
+  );
+
+  backdrop.velocity({opacity: 0, scale: 1}, {
+    duration:0,
+    delay: 0, queue: false,
+    complete: function(){
+      backdrop.css('display', 'none');
+      tooltip.css('display', 'none');
+    }
+  });
+
+  return false;
+}
 
 function findIndex(list, str, start) {
   var start = start || 0;

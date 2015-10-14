@@ -19,13 +19,13 @@ Template.manageStash.onCreated(function() {
 
 Template.manageStash.events({
   'click #next': function(e, thisInstance) {
-    e.preventDefault();
-
     if (thisInstance.stashManager.hasItems()) {
       stashTemplate.set('confirmStashTransaction');
     } else {
       sAlert.warning('Please select at least one item');
     }
+
+    return true;
   },
 
   'click #backToAddRemove': function() {
@@ -33,7 +33,6 @@ Template.manageStash.events({
   },
 
   'click #submitStashTrans': function(e, thisInstance) {
-    e.preventDefault();
 
     if (thisInstance.stashManager.hasItems()) {
       thisInstance.stashManager.execute();
@@ -58,4 +57,8 @@ Template.manageStash.events({
 
     thisInstance.stashManager.toggleItem(this, Enums.TransType.DEPOSIT);
   }
+
+  // 'click .trade-alert a': function(e) {
+
+  // }
 });
