@@ -36,6 +36,14 @@ Transactions.attachSchema({
     //may need compound states, i.e. A accepts B rejects
     allowedValues: ['INITIAL_OFFER', 'DECLINED', 'CANCELED', 'ACCEPTED']
   },
+  createdTimestamp: {
+    type: Date,
+    label: 'Internal created timestamp'
+  },
+  modifiedTimestamp: {
+    type: Date,
+    label: 'Internal modified timestamp'
+  }
 });
 
 Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, stage) {
