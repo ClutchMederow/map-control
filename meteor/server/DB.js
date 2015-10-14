@@ -281,12 +281,14 @@ DB = {
         }
       };
 
+      var options = { multi: true };
+
       // Logically delete the item if it is not a part of our ecosystem
       if (status === Enums.ItemStatus.EXTERNAL) {
         doc.$set.deleteInd = true;
       }
 
-      return DB.items.update(selector, doc);
+      return DB.items.update(selector, doc, options);
     },
 
     getItemBot: function(itemId, userId) {

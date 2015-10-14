@@ -17,7 +17,8 @@ body {
 
 nav {
   background-color: #5BA4C7;
-  box-shadow: none;
+  box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
+  // box-shadow: none;
 
   .brand-logo {
     color: $nav-text-color;
@@ -252,6 +253,7 @@ main {
   margin-right: -20px;
   padding-top: 0;
   padding: 5px 20px 5px 20px;
+  border-radius: 4px;
   // padding-left: 20px;
   // padding-right: 20px;
   // padding-bottom: 0;
@@ -319,7 +321,7 @@ main {
 }
 
 .trade-alert {
-  color: red;
+  color: white !important;
 }
 
 .item-infoed .material-tooltip {

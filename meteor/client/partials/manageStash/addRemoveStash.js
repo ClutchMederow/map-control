@@ -1,5 +1,3 @@
-// var selectedItems;
-
 Template.addRemoveStash.helpers({
   inventoryOptions: function() {
     var stashManager = this.stashManager;
@@ -28,8 +26,3 @@ Template.addRemoveStash.helpers({
     };
   }
 });
-
-Template.addRemoveStash.onCreated(function() {
-  // console.log(this.data);
-});
-
