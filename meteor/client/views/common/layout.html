@@ -1,7 +1,9 @@
 <template name="layout">
 <!-- Nav Bar -->
 <header>
-  {{> navbar }}
+  {{#if currentUser}}
+    {{> navbar }}
+  {{/if}}
 </header>
 <!-- Content Area -->
 <main>

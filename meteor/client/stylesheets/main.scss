@@ -10,10 +10,15 @@
 $bg-color: #F9F9F9;
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
-$nav-color: #5BA4C7;
+// $nav-color: #5BA4C7;
+$nav-color: transparent;
 
 body {
-  background-color: $bg-color;
+  color: white;
+  // background-color: $bg-color;
+  background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/advancing_on_by_antimingebag-d5h83h6.jpg');
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 nav {
@@ -49,10 +54,14 @@ main {
   cursor: pointer;
 }
 
+#landing {
+  // background-color: #383838;
+}
+
 .landing-panel {
-  height: 300px;
+  font-size: 200%;
+  height: auto;
   text-decoration: none;
-  color: black;
   /*background-color: #24091F;*/
 }
 
@@ -91,6 +100,7 @@ main {
 }
 
 .landing-info-card {
+  font-size: 18px;
   margin-bottom: 0;
 }
 
@@ -367,7 +377,8 @@ main {
 .pan {
   box-shadow: none;
   border-radius: 4px;
-  // overflow: hidden;
+
+  color: black;
 
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
 
@@ -440,4 +451,41 @@ main {
 
 .no-margin {
   margin-bottom: 0;
+}
+
+.hello, .who-we-are {
+  .card {
+    border-radius: 4px;
+    background-color: transparent;
+  }
+
+  .pan {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+
+    .landing-panel-title {
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 10px;
+      color: #FFABAB;
+    }
+  }
+}
+
+.card {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.list {
+  list-style: none;
+  font-weight: 100;
+
+  li {
+    padding-bottom: 3px;
+  }
+}
+
+.sizing-card {
+  padding-left: 10px;
+  padding-right: 10px;
 }
