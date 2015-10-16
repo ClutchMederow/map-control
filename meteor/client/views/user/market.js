@@ -1,5 +1,5 @@
 /*
-quality, type, name, 
+quality, type, name,
 what they're asking for
 market value of item
 how many people have looked at this
@@ -10,7 +10,7 @@ Session.set('searchItems', []);
 
 Template.market.onRendered(function() {
   searchText.set('');
-  $('.tooltipped').tooltip({delay: 50}); 
+  $('.tooltipped').tooltip({delay: 50});
 });
 
 Template.market.helpers({
@@ -29,13 +29,23 @@ Template.market.helpers({
 });
 
 Template.market.events({
+
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),
+
   "click .singleItem": function(e) {
     e.preventDefault();
     console.log(this.item_name);
     searchText.set(this.item_name);
     $('#search').val(this.item_name);
+  },
+
+  'mouseenter.item-info-tooltip .market .item-infoed': function(e) {
+    DraggableItems.itemInfo.mousein(e, this);
+  },
+
+  'mouseleave.item-info-tooltip .market .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
   }
 });
