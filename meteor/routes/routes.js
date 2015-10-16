@@ -73,7 +73,7 @@ Router.route('/market/:userId', {
   name: 'market',
   template: 'market',
   data: function() {
-    if(this.params.userId === 'All') {
+    if(this.params.userId.toLowerCase() === 'all') {
       return {};
     } else {
       return {userId: this.params.userId};
