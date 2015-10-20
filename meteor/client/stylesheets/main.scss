@@ -107,10 +107,8 @@ main {
 }
 
 .landing-panel {
-  font-size: 200%;
   height: auto;
   text-decoration: none;
-  /*background-color: #24091F;*/
 }
 
 .who-we-are {
@@ -501,21 +499,30 @@ main {
   margin-bottom: 0;
 }
 
+$land-br: 6px;
+
 .hello, .who-we-are {
   .card {
-    border-radius: 4px;
+    border-radius: $land-br;
     background-color: transparent;
   }
 
   .pan {
     background-color: rgba(0, 0, 0, 0.6);
-    color: white;
+    color: #9E9EFD;
 
     .landing-panel-title {
+      font-size: 200%;
+      // background-color: rgba(255, 255, 255, 0.1);
       text-align: center;
       text-transform: uppercase;
       letter-spacing: 10px;
-      color: #FFABAB;
+      color: white;
+      border-top-right-radius: $land-br;
+      border-top-left-radius: $land-br;
+      margin: -20px;
+      padding: 10px;
+      margin-bottom: 0;
     }
   }
 }
@@ -527,9 +534,15 @@ main {
 .list {
   list-style: none;
   font-weight: 100;
+  // margin-bottom: 10px;
+  font-size: 170%;
 
   li {
-    padding-bottom: 3px;
+    padding-bottom: 1em;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
   }
 }
 
