@@ -582,3 +582,13 @@ $land-br: 6px;
     color: #ffd8a6;
   }
 }
+
+.if-btn {
+  background-color: rgba(255,255,255,.4);
+  color: white;
+
+  &:hover {
+    color: black;
+    background-color: rgba(255,255,255,.8);
+  }
+}
