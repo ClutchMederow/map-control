@@ -13,7 +13,7 @@ Template.myInventory.helpers({
     var options = {};
     //don't want to search until user enters something
     if(searchText.get()) {
-      return Items.getItems(searchText.get(), fields, options);
+      return Items.getItems(searchText.get(), fields, selector, options);
     } else {
       return Items.find(selector);
     }
