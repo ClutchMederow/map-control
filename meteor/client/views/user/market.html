@@ -1,52 +1,60 @@
 <template name="market">
-<!-- Side nav bar -->
-<ul id="slide-out" class="side-nav fixed">
-  {{> genericItems}}
-</ul>
-<!-- end side nav bar -->
-<div class="market">
   <div class="row">
     <div class="col s6 offset-s3 center-align">
-      <h1>Market</h1>
-    </div>
-    <div class="col s6 offset-s3 center-align">
-      <div class="input-field">
-        <input id="search" type="search" required>
-        <label for="search"><i class="mdi-action-search"></i></label>
+      <div class="nav">
+        <form>
+          <div class="input-field">
+            <input id="search" type="search" required>
+            <label for="search"><i class="material-icons">search</i></label>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-  {{#each listings}}
   <div class="row">
-    <div class="col s4">
-      <h5 class="center-align">{{user.profile.name}}</h5>
-      {{#each items}}
-      <img width="30%" height="30%" src="{{iconURL}}"
-                                    class="tooltipped" data-position="bottom" data-delay="25"
-                                                                              data-tooltip="{{name}} - {{type}}" >
-                                                                              {{/each}}
+    <div class="col s2">
+      <div id="slide-out">
+        {{> genericItems}}
+      </div>
     </div>
-      <div class="col s1 valign-wrapper">
-        {{formatDate datePosted}}
-        <br>
-        <i class="large material-icons valign">trending_flat</i>
+    <div class="col s10">
+      <div class="market">
+        {{#each listings}}
+          <div class="row">
+            <div class="row-height">
+              <div class="col s4 market-item-row col-xs-height">
+                <h5 class="center-align">{{user.profile.name}}</h5>
+                {{#each items}}
+                  <span class="item-infoed">
+                    <img width="30%" height="30%" src="{{iconURL}}">
+                  </span>
+                {{/each}}
+              </div>
+              <div class="col s2 valign-wrapper col-xs-height">
+                <div>
+                  {{formatDate datePosted}}
+                </div>
+                <i class="large material-icons valign">trending_flat</i>
+              </div>
+              <div class="col s4 center-align market-item-row col-xs-height">
+                <h5 class="center-align">Would Like</h5>
+                {{#each request}}
+                  <div class="item-infoed">
+                    <img width="30%" height="30%" src="{{iconURL}}">
+                  </div>
+                {{/each}}
+              </div>
+              <div class="col s2 col-xs-height market-action">
+                <a class="waves-effect waves-teal btn-flat acceptTrade"
+                   href="{{pathFor route='makeOffer' data=getListing}}">
+                  Make Offer
+                </a>
+                <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
+              </div>
+            </div>
+          </div>
+        {{/each}}
       </div>
-      <div class="col s4 center-align">
-        <h5 class="center-align">Would Like</h5>
-        {{#each request}}
-        <img width="30%" height="30%" src="{{iconURL}}"
-                                      class="tooltipped" data-position="bottom" data-delay="25"
-                                                                                data-tooltip="{{name}} - {{type}}" >
-                                                                                {{/each}}
-      </div>
-        <div class="col s3">
-          <a class="waves-effect waves-teal btn-flat acceptTrade"
-             href="{{pathFor route='makeOffer' data=getListing}}">
-            Make Offer
-          </a>
-          <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
-        </div>
+    </div>
   </div>
-  {{/each}}
-</div>
 </template>

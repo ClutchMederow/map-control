@@ -1,116 +1,118 @@
 <template name="genericItems">
-  <ul class="collapsible" data-collapsible="accordion">
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Pistols</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each pistols}}
-          <li>
-            <a class="singleItem" href="#">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--pistols -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Rifles</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each rifles}}
-          <li>
-            <a class="singleItem" href="#">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--rifles -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Sniper Rifles</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each sniperRifles}}
-          <li>
-            <a class="singleItem" href="#">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--sniper rifles -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">SMGs</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each smgs}}
-          <li>
-            <a href="#" class="singleItem">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--SMGs -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Machine Guns</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each machineGuns}}
-          <li>
-            <a href="#" class="singleItem">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--Machine Guns -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Shotguns</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each shotguns}}
-          <li>
-            <a href="#" class="singleItem">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--Shotguns -->
-    <li class="bold">
-      <a class="collapsible-header  waves-effect waves-teal">Knives</a>
-      <div class="collapsible-body" style="display: none;">
-        <ul>
-          {{#each knives}}
-          <li>
-            <a href="#" class="singleItem">
-              <img width="30%" height="30%"
-                               src="{{image_url}}">
-              {{parseItemName item_name}}
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-    </li> <!--Knives -->
-  </ul> <!-- accordion -->
+  <div class="pan item-nav">
+    <ul class="collapsible" data-collapsible="accordion">
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Pistols</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each pistols}}
+            <li>
+              <a class="singleItem" href="#">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--pistols -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Rifles</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each rifles}}
+            <li>
+              <a class="singleItem" href="#">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--rifles -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Sniper Rifles</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each sniperRifles}}
+            <li>
+              <a class="singleItem" href="#">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--sniper rifles -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">SMGs</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each smgs}}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--SMGs -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Machine Guns</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each machineGuns}}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--Machine Guns -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Shotguns</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each shotguns}}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--Shotguns -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Knives</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{#each knives}}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{parseItemName item_name}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </li> <!--Knives -->
+    </ul> <!-- accordion -->
+  </div>
 </template>

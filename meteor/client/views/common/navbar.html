@@ -8,8 +8,8 @@
     <div class="nav-wrapper">
       <a href="{{pathFor route='landing'}}" class="brand-logo">IronFoil</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="{{ pathFor 'tradingFloor' }}">Trading Floor</a></li>
-        <li><a href="#">Market</a></li>
+        <li><a href="{{ pathFor route='tradingFloor' }}">Trading Floor</a></li>
+        <li><a href="{{ pathFor route='market' userId='all' }}">Market</a></li>
         {{ #if loggedIn }}
           <li><a href="{{pathFor route='inventory'}}">My Inventory</a></li>
           <li><a href="{{pathFor route='home'}}">Command Center</a></li>
