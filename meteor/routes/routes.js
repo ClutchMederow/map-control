@@ -2,6 +2,22 @@ Router.configure({
   layoutTemplate: 'layout'
 });
 
+Router.route('/help', {
+  name: 'help',
+  template: 'help'
+});
+
+
+Router.route('/contact', {
+  name: 'contact',
+  template: 'contact'
+});
+
+Router.route('/about', {
+  name: 'about',
+  template: 'about'
+});
+
 Router.route('/faq', {
   name: 'faq',
   template: 'faq'
@@ -36,10 +52,6 @@ Router.route('/chats', {
   template: 'chats'
 });
 
-Router.route('/help', {
-  name: 'help',
-  template: 'help'
-});
 
 Router.route('/steam', {
   name: "configureLoginServiceDialogForSteam",
