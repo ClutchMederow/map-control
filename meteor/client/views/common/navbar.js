@@ -2,21 +2,25 @@ var userNavOptions = {
   loggedOut: [
     {
       text: 'log in',
-      thisClass: 'navLogin'
+      thisClass: 'navLogin',
+      href: '#!'
     },
     {
       text: 'sign up',
-      thisClass: 'navLogin'
+      thisClass: 'navLogin',
+      href: '#!'
     }
   ],
   loggedIn: [
     {
       text: 'profile',
-      thisClass: 'navProfile'
+      thisClass: 'navProfile',
+      href: '/profile'
     },
     {
       text: 'sign out',
-      thisClass: 'navLogout'
+      thisClass: 'navLogout',
+      href: '#!'
     }
   ],
   loggingIn: []

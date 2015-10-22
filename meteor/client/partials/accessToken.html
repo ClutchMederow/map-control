@@ -1,0 +1,37 @@
+<template name="accessToken">
+  <div class="card-panel pan">
+    <div class="colored-title">
+      TRADE URL
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <p>
+          Add your trade URL so our bots can send you trade offers. Without this, you will be
+          unable to add or remove items from your stash.
+        </p>
+        <p>
+          To find it, navigate to <a href="{{ tradeURL }}">{{ tradeURL }}</a>
+        </p>
+        <p>
+          Near the bottom, under <strong>Third-Party Sites</strong>, copy the Trade URL and paste it exactly
+          in the box below.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <form id="tradeurl-form">
+        <div class="input-field col s10">
+          <input value="{{ currentTradeURL }}" placeholder="trade url" id="tradeurl-input" type="text" autocomplete="off">
+        </div>
+        <div class="input-field col s2">
+          <button class="btn waves-effect light-blue darken-1" type="submit" id="save">save</button>
+        </div>
+      </form>
+    </div>
+    <div class="row">
+      <div class="col s10 error-msg">
+        <p>Please enter a valid trade URL</p>
+      </div>
+    </div>
+  </div>
+</template>

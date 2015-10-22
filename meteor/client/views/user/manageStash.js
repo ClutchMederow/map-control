@@ -1,8 +1,7 @@
-var stashTemplate = new ReactiveVar(null);
 
 Template.manageStash.helpers({
   stashTemplate: function() {
-    return stashTemplate.get();
+    return Template.instance().stashTemplate.get();
   },
 
   data: function() {
@@ -13,14 +12,15 @@ Template.manageStash.helpers({
 });
 
 Template.manageStash.onCreated(function() {
-  stashTemplate.set('addRemoveStash');
+  this.stashTemplate = new ReactiveVar('addRemoveStash');
   this.stashManager = new StashManager();
 });
 
 Template.manageStash.events({
   'click #next': function(e, thisInstance) {
     if (thisInstance.stashManager.hasItems()) {
-      stashTemplate.set('confirmStashTransaction');
+      console.log(thisInstance);
+      thisInstance.stashTemplate.set('confirmStashTransaction');
     } else {
       sAlert.warning('Please select at least one item');
     }
@@ -28,15 +28,15 @@ Template.manageStash.events({
     return true;
   },
 
-  'click #backToAddRemove': function() {
-    stashTemplate.set('addRemoveStash');
+  'click #backToAddRemove': function(e, thisInstance) {
+    thisInstance.stashTemplate.set('addRemoveStash');
   },
 
   'click #submitStashTrans': function(e, thisInstance) {
 
     if (thisInstance.stashManager.hasItems()) {
       thisInstance.stashManager.execute();
-      stashTemplate.set('stashTransNextSteps');
+      thisInstance.stashTemplate.set('stashTransNextSteps');
     } else {
       sAlert.warning('Please select at least one item');
     }

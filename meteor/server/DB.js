@@ -40,6 +40,26 @@ DB = {
       DB.users.update(userId, doc);
 
       return Meteor.users.findOne(userId).profile.botName;
+    },
+
+    updateTradeURL: function(userId, tradeURL) {
+      check(userId, String);
+      check(tradeURL, String);
+
+      var token = url.parse(tradeURL, true).query.token;
+
+      if (!token) {
+        throw new Error('BAD_TRADE_URL: ' + tradeURL);
+      }
+
+      var doc = {
+        $set: {
+          'profile.tradeURL': tradeURL,
+          'profile.tradeToken': token
+        }
+      };
+
+      return DB.users.update(userId, doc);
     }
   },
 
