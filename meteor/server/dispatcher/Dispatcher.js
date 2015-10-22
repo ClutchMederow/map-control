@@ -132,20 +132,18 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   function getJobsToSendOffers(transferBot, groupedItems, taskId) {
-    var sendOffersJobs = _.chain(groupedItems)
-      .filter(function(thisBot, botName) {
-        return botName !== transferBot.botName;
-      })
-      .map(function(itemArray, botName) {
-        var bot = bots[botName];
-        var options = {
-          items: itemArray,
-          userId: userId
-        };
+    if (groupedItems[transferBot.botName]) {
+      delete groupedItems[transferBot.botName];
+    }
 
-        return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
-      })
-      .value();
+    var sendOffersJobs = _.map(groupedItems, function(itemArray, botName) {
+      var bot = bots[botName];
+      var options = {
+        items: itemArray,
+        otherBot: transferBot
+      };
+      return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+    });
 
     return sendOffersJobs;
   }
@@ -311,6 +309,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       console.log('Bots initialized. Count: ' + _.keys(bots).length);
     },
 
+    disconnect: function() {
+      _.each(bots, function(bot) {
+        bot.disconnect();
+      });
+    },
+
     checkOutstandingTradeoffers: function() {
       _.each(bots, function(bot) {
         var offers = bot.queryOffers();
@@ -351,6 +355,7 @@ _.extend(Dispatcher, {
     DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
     WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
     INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
+    ACCEPT_OFFER: 'ACCEPT_OFFER',
     TASK: 'TASK'
   }),
 

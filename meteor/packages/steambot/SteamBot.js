@@ -30,6 +30,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   });
 
   this.logOn();
+  this.loadTradeToken();
 };
 
 SteamBot.prototype.logOn = function() {
@@ -74,21 +75,11 @@ SteamBot.prototype.logOn = function() {
 
   self.steam.once('webSessionID', function(sessionID) {
     self.sessionID = sessionID;
-    self.steam.webLogOn(function(newCookie){
-      self.offers.setup({
-        sessionID: sessionID,
-        webCookie: newCookie
-      }, function(err) {
-        if (err) {
-          console.log(err);
-        }
-        self.cookie = newCookie;
 
-        // We need to avoid resolving this future more than once if we get disconnected and reconnect
-        if (!sessionFuture.isResolved())
-          sessionResolver(newCookie);
-      });
-    });
+    // We need to avoid resolving this future more than once if we get disconnected and reconnect
+    if (!sessionFuture.isResolved()) {
+      sessionResolver();
+    }
   });
 
   // Save the token
@@ -98,8 +89,49 @@ SteamBot.prototype.logOn = function() {
 
   Future.wait([logOnFuture, sessionFuture]);
 
+  self.webLogOn();
   // logOnFuture.get();
   // sessionFuture.get();
+};
+
+SteamBot.prototype.webLogOn = function() {
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+  var self = this;
+
+  self.steam.webLogOn(function(newCookie){
+    self.cookie = newCookie;
+
+    self.offers.setup({
+      sessionID: self.sessionID,
+      webCookie: newCookie
+    }, function(err) {
+      if (err) {
+        future.throw(err);
+      } else {
+        future.return();
+      }
+    });
+  });
+
+  future.wait();
+};
+
+SteamBot.prototype.loadTradeToken = function() {
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+  var self = this;
+
+  this.offers.getOfferToken(function(err, res) {
+    if (err) {
+      future.throw(err);
+    } else {
+      self.tradeToken = res;
+      future.return();
+    }
+  });
+
+  future.wait();
 };
 
 SteamBot.prototype.getBotItems = function() {
@@ -219,16 +251,16 @@ SteamBot.prototype.getOwnedItemObjsWithIds = function(items) {
   return out;
 };
 
-SteamBot.prototype.takeItems = function(userSteamId, itemsToReceive, message) {
-  return this._makeOffer(userSteamId, [], itemsToReceive, message);
+SteamBot.prototype.takeItems = function(userSteamId, userToken, itemsToReceive, message) {
+  return this._makeOffer(userSteamId, userToken, [], itemsToReceive, message);
 };
 
-SteamBot.prototype.giveItems = function(userSteamId, itemsToGive, message) {
-  return this._makeOffer(userSteamId, itemsToGive, [], message);
+SteamBot.prototype.giveItems = function(userSteamId, userToken, itemsToGive, message) {
+  return this._makeOffer(userSteamId, userToken, itemsToGive, [], message);
 };
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
-SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceive, message) {
+SteamBot.prototype._makeOffer = function(userSteamId, userToken, itemsToSend, itemsToReceive, message) {
 
   var itemObjsToReceive = wrapItemForBot(itemsToReceive);
   var itemObjsToSend = wrapItemForBot(itemsToSend);
@@ -239,6 +271,7 @@ SteamBot.prototype._makeOffer = function(userSteamId, itemsToSend, itemsToReceiv
   // TODO: Add some transaction id in message
   this.offers.makeOffer({
     partnerSteamId: userSteamId,
+    accessToken: userToken,
     itemsFromMe: itemObjsToSend,
     itemsFromThem: itemObjsToReceive,
     message: message
@@ -327,7 +360,7 @@ SteamBot.prototype.acceptOffer = function(tradeofferId) {
   var future = new Future();
 
   this.offers.acceptOffer({
-    tradeofferid: tradeofferId
+    tradeOfferId: tradeofferId
   }, function(err, res) {
     if (err) {
       future.throw(err);

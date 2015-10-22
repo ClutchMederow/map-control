@@ -5,9 +5,6 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
 
-  if (options.items.length < 1)
-    throw new Error('NO_ITEMS');
-
   check(taskId, String);
   check(DBLayer, Object);
 
@@ -30,6 +27,9 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
       userId: String
     });
 
+    if (options.items.length < 1)
+      throw new Error('NO_ITEMS');
+
     this.userId = options.userId;
     this.items = options.items;
 
@@ -39,6 +39,9 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
       items: [String],
       userId: String
     });
+
+    if (options.items.length < 1)
+      throw new Error('NO_ITEMS');
 
     this.userId = options.userId;
     this.items = options.items;
@@ -53,6 +56,7 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
     this.items = options.items;
     this._otherBot = options.otherBot;
     this.otherBotName = options.otherBot.botName;
+    this.userId = '_BOT_' + this._bot.botName;
 
   } else if (jobType === Dispatcher.jobType.ACCEPT_OFFER) {
 
@@ -72,12 +76,17 @@ BotJob.prototype._executeDeposit = function() {
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
+  var tradeToken = Meteor.users.findOne(this.userId).profile.tradeToken;
+
+  if (!tradeToken) {
+    throw new Error('INVALID_TOKEN, steamid: ' + steamId);
+  }
 
   var id = Random.id();
   var message = 'Deposit ID: ' + id;
 
   // Make the tradeoffer
-  self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
+  self.tradeofferId = self._bot.takeItems(steamId, tradeToken, self.items, message);
 
   // Save the tradeoffer
   self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
@@ -94,12 +103,17 @@ BotJob.prototype._executeWithdrawal = function() {
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
   var steamId = Meteor.users.findOne(this.userId).services.steam.id;
+  var tradeToken = Meteor.users.findOne(this.userId).profile.tradeToken;
+
+  if (!tradeToken) {
+    throw new Error('INVALID_TOKEN, steamid: ' + steamId);
+  }
 
   var id = Random.id();
   var message = 'Withdrawl ID: ' + id;
 
   // Make the tradeoffer
-  self.tradeofferId = self._bot.giveItems(steamId, self.items, message);
+  self.tradeofferId = self._bot.giveItems(steamId, tradeToken, self.items, message);
 
   // Save the tradeoffer
   self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
@@ -111,11 +125,12 @@ BotJob.prototype._executeInternalTransfer = function() {
   var self = this;
 
   var steamId = this._otherBot.getSteamId();
+  var tradeToken = this._otherBot.tradeToken;
   var id = Random.id();
   var message = 'Transfer ID: ' + id;
 
   // Make the tradeoffer
-  self.tradeofferId = self._bot.takeItems(steamId, self.items, message);
+  self.tradeofferId = self._bot.giveItems(steamId, tradeToken, self.items, message);
 
   // Save the tradeoffer
   self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
@@ -127,6 +142,10 @@ BotJob.prototype._executeAcceptOffer = function() {
 
   // TODO: CHECK THAT A BOT MADE THE OFFER
   var result = this._bot.acceptOffer(this.tradeofferId);
+
+  // Manually set the tradeoffer state since we can trust it
+  // Steam sometimes fails
+  result.trade_offer_state = SteamConstants.offerStatus[3];
 
   this._DB.tradeoffers.updateStatus(result);
   this._DB.items.assignItemsToBot(this.items, this._bot.botName);
