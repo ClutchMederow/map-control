@@ -9,6 +9,10 @@ Config = {
 
   tradingFloor: {
     defaultChannel: 'Trading Floor'
+  },
+
+  contactInfo: {
+    email: "deltaveelabs@gmail.com"
   }
 };
 
@@ -16,3 +20,4 @@ Constants = {
   tradeOfferURL: 'https://steamcommunity.com/tradeoffer/',
   steamCDN: 'http://steamcommunity-a.akamaihd.net/economy/image/'
 };
+

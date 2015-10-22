@@ -9,5 +9,5 @@ var OnBeforeActions = {
 };
 
 Router.onBeforeAction(OnBeforeActions.loginRequired, {
-  except: [ 'landing', 'about', 'help', 'contact' ]
+  except: [ 'landing', 'about', 'help', 'contact', 'tradingFloor', 'market']
 });

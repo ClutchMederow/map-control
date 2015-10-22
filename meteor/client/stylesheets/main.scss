@@ -44,7 +44,7 @@ body:before {
   z-index: -1;
 
   display: block;
-  background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/49460.jpg');
+  background-image: linear-gradient( rgba(0,27,179, 0.5), rgba(0,27,179, 0.5) ), url('images/49460.jpg');
   // background-image: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('images/72039.jpg');
   background-size:cover;
   width: 100%;
@@ -60,6 +60,9 @@ body:before {
 body {
   overflow: auto;
   position: relative;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
 
@@ -90,6 +93,7 @@ footer.page-footer {
 main {
   padding-top: 1em;
   min-height: 400px;
+  flex: 1 0 auto;
 }
 
 .material-tooltip { white-space: normal; }
@@ -590,5 +594,17 @@ $land-br: 6px;
   &:hover {
     color: black;
     background-color: rgba(255,255,255,.8);
+  }
+}
+
+.tabs.basic {
+  background-color: transparent; 
+}
+
+.bottom-links {
+  display: table;
+  width: 100%;
+  span {
+    display: table-cell;
   }
 }
