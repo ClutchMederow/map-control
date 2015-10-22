@@ -9,6 +9,10 @@ Config = {
 
   tradingFloor: {
     defaultChannel: 'Trading Floor'
+  },
+
+  contactInfo: {
+    email: "deltaveelabs@gmail.com"
   }
 };
 
@@ -17,3 +21,4 @@ Constants = {
   steamCDN: 'http://steamcommunity-a.akamaihd.net/economy/image/',
   tradeURL: 'https://steamcommunity.com/id/meatsting/tradeoffers/privacy'
 };
+
