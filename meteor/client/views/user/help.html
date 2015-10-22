@@ -1,15 +1,45 @@
 <template name="help">
+<div class="container">
 <div class="row">
   <div class="col s12">
-    <ul class="tabs">
+    <ul class="tabs basic">
       <li class="tab col s3"><a class="active" href="#overview">Overview</a></li>
       <li class="tab col s3"><a href="#tradingFloor">Trading Floor</a></li>
       <li class="tab col s3"><a href="#market">Market</a></li>
-      <li class="tab col s3"><a href="#selling">Selling</a></li>
+      <li class="tab col s3"><a href="#termsOfUse">Terms of Use</a></li>
     </ul>
   </div>
   <div id="overview" class="col s12">
     <div id="ironBucks" class="col s9">
+      <h3>Using IronFoil</h3>
+      <hr>
+      <p>IronFoil is designed as a CSGO platform. By logging in with your steam
+      account, you can view any of the content on the web site. You can chat,
+      post content, view CSGO analytics, etc. To trade items however you have
+      to do two additional things</p>
+      <p>If you want to trade items, i.e. put items on the market or use the
+      real time trading feature, you have to transfer items from your Steam
+      inventory to the IronFoil stash. You can do this by going to manage your
+      inventory, then dragging and dropping items. When you do this, a trade
+      request will be sent from IronFoil's bot to your steam account. You will
+      have 2 minutes to accept this trade request or it will expire. After the
+      trade is complete, you can place trade your item. At any point you can
+      also move your item back to your Steam inventory by dragging and dropping
+      the item from the manage your inventory screen.
+      </p>
+      <p>If you want to buy items, you will need to purchase IronBucks.
+      IronBucks are the virtual currency that IronFoil uses. They have no value
+      outside of IronFoil, but may be exchanged back into your local currency
+      at any time (note: a 10% fee applies each time you cash out. See FAQ for
+      more details).</p>
+
+      <p>Our payment vendor is responsible for holding all financial
+      information. IronFoil does not store <b>ANY</b> financial information on
+      its servers. To purchase items, you provide your credit card, debit card,
+      or bank account information to our payment vendor. After the transaction is
+      successfully transferred, we give you the appropriate amount of
+      IronBucks.</p>
+      
       <h3>Iron Bucks</h3>
       <hr>
       <p>IronBucks are the currency you use to purchase services and goods from
@@ -17,7 +47,40 @@
       or service without having to wait for a payment to clear. You can cash
       out IronBucks at any point to your local currency.</p>
     </div>
-    <div id="termsOfUse" class="col s9">
+    <div class="col s3">
+      <ul class="section table-of-contents">
+        <li><a href="#ironBucks">Iron Bucks</a></li>
+        <li><a href="#termsOfUse">Terms of Use</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="tradingFloor" class="col s12">
+    <h3>Trading Floor</h3>
+    <p>The trading floor allows players to chat in real time. Chats occur
+    within a channel. There are a number of pre-existing channels based around
+    maps, guns, or meta. Players are free to create their own channels, which
+    can either be public or private. Within a chat you can drag and drop
+    weapons from your stash as a short-hand for typing and to indicate you actually have the
+    item.</p>
+  </div>
+  <div id="market" class="col s12">
+    <h3>Market</h3>
+    <p>The market allows you to trade or sell items from your stash. After you
+    go to the market, you are prompted to indicate what you items you wish to
+    post and what items or cash you would like. Then the item is posted to the
+    market. Sellers are free to contact you and you can agree to any deal you
+    would like. You are also free to post an item multiple times, remove it
+    from your stash, etc. As soon as your item is traded, removed, etc. all
+    market listings related to this item will disappear.</p>
+    
+    <p>You can check your market listings, and view any offers you received, by
+    going to your home page. You will receive notifications whenever anyone
+    makes you an offer or sends you a message.</p>
+
+    <p>You are also welcome to move freely between the trading floor and the
+    market.</p>
+  </div>
+  <div id="termsOfUse" class="col s12">
       <h3>
         Web Site Terms and Conditions of Use
       </h3>
@@ -127,16 +190,7 @@
       <p>
       We are committed to conducting our business in accordance with these principles in order to ensure that the confidentiality of personal information is protected and maintained. 
       </p>    
-    </div>
-    <div class="col s3">
-      <ul class="section table-of-contents">
-        <li><a href="#ironBucks">Iron Bucks</a></li>
-        <li><a href="#termsOfUse">Terms of Use</a></li>
-      </ul>
-    </div>
   </div>
-  <div id="tradingFloor" class="col s12">Trading Floor</div>
-  <div id="market" class="col s12">Market</div>
-  <div id="selling" class="col s12">Selling</div>
+</div>
 </div>
 </template>
