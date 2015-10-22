@@ -608,3 +608,12 @@ $land-br: 6px;
     display: table-cell;
   }
 }
+
+.command-ribbon {
+  text-align: center;
+  color: #E6B1B1;
+
+  .val {
+    color: white;
+  }
+}
