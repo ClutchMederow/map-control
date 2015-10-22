@@ -87,7 +87,7 @@ Router.route('/inventory', {
   onBeforeAction: function() {
     var userId = Meteor.userId();
 
-    if (Items.find({ userId: userId }).count()) {
+    if (Items.find({ userId: userId, deleteInd: false, status: Enums.ItemStatus.STASH }).count()) {
       this.next();
     } else {
       this.redirect('manageStash');
@@ -116,6 +116,11 @@ Router.route('/stripepayment', {
 Router.route('/managestash', {
   name: 'manageStash',
   template: 'manageStash'
+});
+
+Router.route('/profile', {
+  name: 'profile',
+  template: 'profile'
 });
 
 Router.route('/tradingfloor/:channel?',{

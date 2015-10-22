@@ -14,5 +14,6 @@ Config = {
 
 Constants = {
   tradeOfferURL: 'https://steamcommunity.com/tradeoffer/',
-  steamCDN: 'http://steamcommunity-a.akamaihd.net/economy/image/'
+  steamCDN: 'http://steamcommunity-a.akamaihd.net/economy/image/',
+  tradeURL: 'https://steamcommunity.com/id/meatsting/tradeoffers/privacy'
 };

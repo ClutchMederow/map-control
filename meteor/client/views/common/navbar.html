@@ -1,7 +1,7 @@
 <template name="navbar">
   <ul id="loginNavLink" class="dropdown-content">
     {{#each userNavOptions }}
-      <li><a href="#!" class="{{ thisClass }}">{{ text }}</a></li>
+      <li><a href="{{ href }}" class="{{ thisClass }}">{{ text }}</a></li>
     {{/each}}
   </ul>
   <nav>

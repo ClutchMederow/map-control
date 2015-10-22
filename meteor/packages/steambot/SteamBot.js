@@ -26,6 +26,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
 
   this.steam.on('error', function(err) {
     console.log(err);
+    console.log(err.eresult);
   });
 
   this.logOn();
@@ -59,7 +60,7 @@ SteamBot.prototype.logOn = function() {
   var logOnFuture = new Future();
   var logOnResolver = logOnFuture.resolver();
 
-  self.steam.on('loggedOn', function(result) {
+  self.steam.once('loggedOn', function(result) {
     console.log('Logged in!');
     self.steam.setPersonaState(Steam.EPersonaState.Online);
 
@@ -71,7 +72,7 @@ SteamBot.prototype.logOn = function() {
   var sessionFuture = new Future();
   var sessionResolver = sessionFuture.resolver();
 
-  self.steam.on('webSessionID', function(sessionID) {
+  self.steam.once('webSessionID', function(sessionID) {
     self.sessionID = sessionID;
     self.steam.webLogOn(function(newCookie){
       self.offers.setup({
@@ -91,7 +92,7 @@ SteamBot.prototype.logOn = function() {
   });
 
   // Save the token
-  self.steam.on('sentry', function(data) {
+  self.steam.once('sentry', function(data) {
     Npm.require('fs').writeFileSync(tokenPath, data);
   });
 
