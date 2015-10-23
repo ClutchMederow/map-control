@@ -2,7 +2,9 @@
 <div class="background-image"></div>
 <!-- Nav Bar -->
 <header>
-  {{> navbar }}
+  {{ #if currentUser }}
+    {{> navbar }}
+  {{ /if }}
 </header>
 <!-- Content Area -->
 <main>
