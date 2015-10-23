@@ -141,11 +141,12 @@ BotJob.prototype._executeInternalTransfer = function() {
 BotJob.prototype._executeAcceptOffer = function() {
 
   // TODO: CHECK THAT A BOT MADE THE OFFER
-  var result = this._bot.acceptOffer(this.tradeofferId);
+  this._bot.acceptOffer(this.tradeofferId);
+  var result = this._bot.getSingleOffer(this.tradeofferId);
 
   // Manually set the tradeoffer state since we can trust it
   // Steam sometimes fails
-  result.trade_offer_state = SteamConstants.offerStatus[3];
+  // result.trade_offer_state = SteamConstants.offerStatus[3];
 
   this._DB.tradeoffers.updateStatus(result);
   this._DB.items.assignItemsToBot(this.items, this._bot.botName);

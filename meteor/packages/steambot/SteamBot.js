@@ -352,7 +352,23 @@ SteamBot.prototype.getNewItemIds = function(tradeId) {
 };
 
 SteamBot.prototype.getSingleOffer = function(offerId) {
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
 
+  var options = {
+    tradeofferid: offerId
+  };
+
+  this.offers.getOffer(options, function(err, res) {
+    if (err) {
+      future.throw(err);
+    } else {
+      future.return(res);
+    }
+  });
+
+  var out = future.wait();
+  return out.response.offer;
 };
 
 SteamBot.prototype.acceptOffer = function(tradeofferId) {
