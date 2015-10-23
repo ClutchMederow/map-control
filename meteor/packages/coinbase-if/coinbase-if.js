@@ -16,11 +16,7 @@ var client = new coinbase.Client({
 });
 
 Coinbase = {
-  send: function(recipient, amount, currency, description) {
-    check(recipient, String);
-    check(amount, String);
-    check(currency, String);
-    check(description, String);
+  sendMoney: function(recipient, amount, currency, description) {
     var myAccounts = getAccounts();
     console.log(myAccounts);
     _.each(myAccounts, function(account) {
