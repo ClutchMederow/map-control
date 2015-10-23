@@ -1,61 +1,60 @@
 <template name="landing">
-<div id="landing">
-  <div class="row who-we-are">
-    <div class="row landing-info-card">
-      <div class="col s8 offset-s2 center">
-        {{> companyOverview}}
-      </div>
-      <div class="col s2">
-        <img src="http://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
-      </div>
-    </div>
-  </div>
-  <div class="row hello">
-    <div class="col s4">
-      <div class="sizing-card">
-        <div class="card">
-            <div class="card-content landing-panel pan">
-              <div class="landing-panel-title">Explore</div>
-              <ul class="list">
-                <li>learn from the pros</li>
-                <li>find the top items</li>
-                <li>understand the meta</li>
-              </ul>
+  <div id="landing">
+    <div class="land-main">
+      <div class="row">
+        <div class="col s8">
+          <div class="land-brand">IRON<span>FOIL</span></div>
+        </div>
+        <div class="col s4 land-signin">
+          {{ #unless currentUser }}
+            <div>
+              <img src="http://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
             </div>
+          {{ /unless }}
         </div>
       </div>
-    </div>
-    <div class="col s4">
-      <div class="sizing-card">
-        <div class="card">
-          <div class="card-content landing-panel pan">
-            <div class="landing-panel-title">Trade</div>
-            <ul class="list">
-              <li>market your items</li>
-              <li>negotiate real-time</li>
-            </ul>
+      <div class="row">
+        <div class="col s8 land-main">
+          <div class="land-sub">
+            a better
+            <br>
+            way to
+            <br>
+            trade
           </div>
         </div>
-      </div>
-    </div>
-    <div class="col s4">
-      <div class="sizing-card">
-        <div class="card">
-          <div class="card-content landing-panel pan">
-            <div class="landing-panel-title">Share</div>
-            <ul class="list">
-              <li>contribute to the community</li>
-              <li>build your rep</li>
-              <li>vote for the best</li>
-            </ul>
+        <div class="col s4 hello">
+          <div class="land-container">
+            <div class="sizing-card">
+              <div class="card">
+                <div class="card-content landing-panel pan">
+                  <a href="{{ pathFor route='market' userId='all' }}">
+                    <div class="landing-panel-title">Explore</div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="sizing-card">
+              <div class="card">
+                <div class="card-content landing-panel pan">
+                  <a href="{{ pathFor route='tradingFloor' }}">
+                    <div class="landing-panel-title">Trade</div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="sizing-card">
+              <div class="card">
+                <div class="card-content landing-panel pan">
+                  <a href="#">
+                    <div class="landing-panel-title">Share</div>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row center-align">
-    <div class="s12">
-    </div>
-  </div>
-</div>
 </template>
