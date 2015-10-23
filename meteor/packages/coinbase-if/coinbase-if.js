@@ -12,9 +12,7 @@ if(!COINBASE_API_KEY || !COINBASE_API_SECRET) {
 var coinbase = Npm.require('coinbase');
 var client = new coinbase.Client({
   'apiKey': COINBASE_API_KEY,
-  'apiSecret': COINBASE_API_SECRET,
-  'baseApiUri': "https://api.sandbox.coinbase.com/v2/",
-  'tokenUri': 'https://api.sandbox.coinbase.com/oauth/token'
+  'apiSecret': COINBASE_API_SECRET
 });
 
 Coinbase = {
@@ -31,6 +29,14 @@ Coinbase = {
       }
     });
   },
+  createCheckout: function(amount, currency, name) {
+    check(name, String);
+    check(currency, String);
+    check(amount, String);
+
+    var checkout = createCheckout(client, amount, currency, name);
+    return checkout.embed_code;
+  }
 };
 
 function getAccounts() {
@@ -63,6 +69,30 @@ function sendMoney(account, recipient, amount, currency, description) {
     } else {
       console.log('my txn id is: ' + txn.id);
       myFuture.return(txn);
+    }
+  });
+
+  return myFuture.wait();
+}
+
+function createCheckout(client, amount, currency, name) {
+  var Future = Npm.require('fibers/future');
+  var myFuture = new Future();
+
+  client.createCheckout({
+    amount: amount,
+    currency: currency,
+    name: name,
+    type: "order",
+    style: "buy_now_large",
+    collect_email: true,
+    collect_country: true
+  }, function(err, res){
+    if(err) {
+      myFuture.throw(err);
+    } else {
+      console.log(res);
+      myFuture.return(res);
     }
   });
 

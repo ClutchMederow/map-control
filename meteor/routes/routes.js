@@ -7,6 +7,10 @@ Router.route('/help', {
   template: 'help'
 });
 
+Router.route('/bitcoin', {
+  name: 'bitcoin',
+  template: 'bitcoin'
+});
 
 Router.route('/contact', {
   name: 'contact',
