@@ -17,6 +17,7 @@ blaze-tools@1.0.3
 boilerplate-generator@1.0.3
 callback-hook@1.0.3
 check@1.0.5
+coinbase-if@0.0.1
 dbernhard:jquery-ui-draggable@0.1.2
 dburles:collection-helpers@1.0.3
 dburles:factory@0.3.10
