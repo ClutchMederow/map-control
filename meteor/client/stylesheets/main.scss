@@ -6,6 +6,8 @@
 
 @import "colors.import.scss";
 @import ".meteor/local/build/programs/server/assets/packages/poetic_materialize-scss/bower_components/materialize/sass/materialize.scss";
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300,100,700);
+@import url(https://fonts.googleapis.com/css?family=Slabo+27px);
 
 $bg-color: #F9F9F9;
 $border-color: #D4D4D4;
@@ -32,6 +34,8 @@ $nav-color: transparent;
 
 html {
   background-color: black;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
 }
 
 body:before {
@@ -107,7 +111,7 @@ main {
 }
 
 #landing {
-  // background-color: #383838;
+  margin-top: -1em;
 }
 
 .landing-panel {
@@ -524,8 +528,6 @@ $land-br: 6px;
       color: white;
       border-top-right-radius: $land-br;
       border-top-left-radius: $land-br;
-      margin: -20px;
-      padding: 10px;
       margin-bottom: 0;
     }
   }
@@ -598,7 +600,7 @@ $land-br: 6px;
 }
 
 .tabs.basic {
-  background-color: transparent; 
+  background-color: transparent;
 }
 
 .bottom-links {
@@ -631,4 +633,71 @@ $land-br: 6px;
   text-align: left;
   color: red;
   display: none;
+}
+
+.land-sub {
+  font-size: 60px;
+  line-height: 1;
+  font-family: 'Lato', sans-serif;
+  font-weight: 100;
+}
+
+.land-brand {
+  font-family: 'Slabo 27px', serif;
+  font-size: 12vw;
+  font-weight: 300;
+  color: #D4A36A;
+  text-transform: lowercase;
+
+  span {
+    font-size: 8vw;
+    color: #FFD8AA;
+  }
+}
+
+.land-container {
+  width: 30%;
+  right: 20px;
+  position: absolute;
+  bottom: 90px;
+
+  a {
+    display: block;
+    margin: -20px;
+    padding: 20px;
+  }
+
+  .pan {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      .landing-panel-title {
+        color: #060402;
+      }
+    }
+  }
+
+  .landing-panel-title {
+    font-size: 150% !important;
+  }
+}
+
+.sizing-card {
+  &:first-child {
+    margin-left: -100%;
+  }
+
+  &:nth-child(2) {
+    margin-left: -50%;
+  }
+}
+
+.land-main {
+  padding-left: 8%;
+
+  .land-signin {
+    text-align: center;
+    color: white;
+    padding-top: 10%;
+    font-size: 18px;
+  }
 }
