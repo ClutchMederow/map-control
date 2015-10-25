@@ -133,7 +133,7 @@ BotJob.prototype._executeInternalTransfer = function() {
   self.tradeofferId = self._bot.giveItems(steamId, tradeToken, self.items, message);
 
   // Save the tradeoffer
-  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId);
+  self._DB.tradeoffers.insertNew(id, self.tradeofferId, self.userId, self.jobType, self._bot.botName, self._taskId, self.otherBotName);
 
   return this.tradeofferId;
 };
@@ -144,11 +144,11 @@ BotJob.prototype._executeAcceptOffer = function() {
   this._bot.acceptOffer(this.tradeofferId);
   var result = this._bot.getSingleOffer(this.tradeofferId);
 
-  // Manually set the tradeoffer state since we can trust it
-  // Steam sometimes fails
-  // result.trade_offer_state = SteamConstants.offerStatus[3];
-
   this._DB.tradeoffers.updateStatus(result);
+
+  var offer = Tradeoffers.findOne({ tradeofferid: this.tradeofferId });
+
+  this.items = _.pluck(offer.items_to_receive, 'assetid');
   this._DB.items.assignItemsToBot(this.items, this._bot.botName);
 
   // Update all asset after changing everything else since the tradeoffer references the old ids
@@ -162,6 +162,10 @@ BotJob.prototype.execute = function(callback) {
   var future = new Future();
 
   function functionForQueue() {
+    if (self.cancelQueue) {
+      future.return();
+    }
+
     var err, res;
     self._setStatus(Dispatcher.jobStatus.PENDING);
 
@@ -179,9 +183,15 @@ BotJob.prototype.execute = function(callback) {
         throw new Error(self.jobType + ' is not a valid jobtype: ' + self.jobId);
       }
 
-      console.log(res);
+      // If a cancel was called for during the execution of this function,
+      // we just add an extra function call here to execute once it is complete
+      if (self.cancelCallback) {
+        self.cancelCallback();
+        self._setStatus(Dispatcher.jobStatus.CANCELLED);
+      } else {
+        self._setStatus(Dispatcher.jobStatus.COMPLETE);
+      }
 
-      self._setStatus(Dispatcher.jobStatus.COMPLETE);
       future.return(self.tradeofferId);
     } catch(e) {
       console.log(e);
@@ -196,11 +206,25 @@ BotJob.prototype.execute = function(callback) {
 };
 
 BotJob.prototype.cancel = function() {
+  var self = this;
 
-  if (this.tradeofferId) {
-    // bot cancel tradeoffer
+  // If queued, nothing else needs to be done
+  if (self.jobStatus = Dispatcher.jobStatus.QUEUED) {
+    this.cancelQueue = true;
+
+  } else if (self.jobStatus === Dispatcher.jobStatus.PENDING) {
+
+    if (self.jobType === Dispatcher.jobType.DEPOSIT_ITEMS ||
+        self.jobType === Dispatcher.jobType.WITHDRAW_ITEMS ||
+        self.jobType === Dispatcher.jobType.INTERNAL_TRANSFER) {
+
+      if (self.jobStatus === Dispatcher.jobStatus.PENDING) {
+        this.cancelCallback = function() {
+          self._bot.cancelOffer(self.tradeofferId);
+        }
+      }
+    }
   }
-
 };
 
 // Saves all non-private fields in a collection
@@ -223,60 +247,3 @@ BotJob.prototype._setStatus = function(status) {
   this.status = status;
   this._save();
 };
-
-BOTTEST = function() {
-
-  // items = [{
-  //   classId: '341291325',
-  //   instanceId: '188530139'
-  // }];
-
-  var items = [ '3079813020', '3080132388', '2812184353' ];
-
-  // var options = {
-  //   items: items,
-  //   steamId: '76561197965124635'
-  // };
-
-  Dispatcher.init();
-
-  var bot = Dispatcher.getUsersBot('uYrKadsnCzyg9TLrC');
-
-  bot.loadBotInventory();
-
-  fff = _.pluck(bot.items.find().fetch(), 'id');
-  // DB.items.insertNewItems('uYrKadsnCzyg9TLrC','dsf',fff);
-
-
-  // bot.takeItems('76561197965124635', items);
-
-  // var options = {
-  //   partnerSteamId: '76561197965124635',
-  //   appId: 730,
-  //   contextId: 2
-  // };
-
-  // var bot = Dispatcher.getUsersBot('uYrKadsnCzyg9TLrC');
-  // bot.offers.loadPartnerInventory(options, function(err, res) {
-  //   if (err)
-  //     console.log(err);
-
-  //   itemObj = res;
-  // });
-
-  // Dispatcher.depositItems('uYrKadsnCzyg9TLrC', items);
-
-};
-/*
-
-1. request to add items
-  - find bot assigned to user
-  - dispatcher adds job to bot queue
-  - on job success, bot removes item from queue and starts the next
-  - on failure, job is put at the end of the queue and count in incremented
-  - need to implement timeout somehow
-1. Request to remove items
-  - Dispatcher find the items needed and all bots the items are on
-  - Dispatcher creates a job or jobs
-
-*/

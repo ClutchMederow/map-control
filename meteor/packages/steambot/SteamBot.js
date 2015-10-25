@@ -308,7 +308,7 @@ SteamBot.prototype.queryOffersReceived = function() {
   });
 
   var res = future.wait();
-  return res.response.trade_offers_sent;
+  return res.response.trade_offers_received;
 };
 
 SteamBot.prototype.queryOffers = function() {
@@ -351,6 +351,10 @@ SteamBot.prototype.getNewItemIds = function(tradeId) {
   return future.wait();
 };
 
+SteamBot.prototype.loggedOn = function() {
+  return this.steam.loggedOn;
+};
+
 SteamBot.prototype.getSingleOffer = function(offerId) {
   var Future = Npm.require('fibers/future');
   var future = new Future();
@@ -369,6 +373,23 @@ SteamBot.prototype.getSingleOffer = function(offerId) {
 
   var out = future.wait();
   return out.response.offer;
+};
+
+SteamBot.prototype.cancelOffer = function(tradeofferId) {
+  var Future = Npm.require('fibers/future');
+  var future = new Future();
+
+  this.offers.cancelOffer({
+    tradeOfferId: tradeofferId
+  }, function(err, res) {
+    if (err) {
+      future.throw(err);
+    } else {
+      future.return(res);
+    }
+  });
+
+  return future.wait();
 };
 
 SteamBot.prototype.acceptOffer = function(tradeofferId) {
