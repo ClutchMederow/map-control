@@ -9,28 +9,15 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300,100,700);
 @import url(https://fonts.googleapis.com/css?family=Slabo+27px);
 
-$bg-color: #F9F9F9;
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
 // $nav-color: #5BA4C7;
 $nav-color: transparent;
 
-// .background-image {
-//   position: fixed;
-//   width: 100%;
-//   height: 100%;
-//   // background-color: $bg-color;
-//   background-image: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url('images/49460.jpg');
-//   // background-image: url('images/5014.jpg');
-//   background-size: cover;
-//   background-attachment: fixed;
-
-//   -webkit-filter: blur(5px);
-//   -moz-filter: blur(5px);
-//   -o-filter: blur(5px);
-//   -ms-filter: blur(5px);
-//   filter: blur(5px);
-// }
+$text-color: rgba(0, 0, 0, 0.51);
+$bg-color: rgba(255, 255, 255, 0.9);
+$highlight: #ffab40;
+$highlight-hover: #ffd8a6;
 
 html {
   background-color: black;
@@ -315,26 +302,17 @@ main {
 .colored-title {
   overflow: hidden;
 
-  // border-bottom: 1px solid $border-color;
-
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
   padding-top: 0;
   padding: 5px 20px 5px 20px;
   border-radius: 4px;
-  // padding-left: 20px;
-  // padding-right: 20px;
-  // padding-bottom: 0;
 
-  // background-color: #EAEAEA;
-  // color: #B93F3F;
-
-  background-color: white;
-  color: rgba(0, 0, 0, 0.51);
+  background-color: transparent;
+  color: $text-color;
   letter-spacing: 2px;
   font-weight: 300;
-  // background-color: #EAF1F0;
   font-size: 1.5rem;
 }
 
@@ -398,7 +376,7 @@ main {
 }
 
 .item-tooltip-contents {
-  font-size: .8rem;
+  // font-size: .8rem;
   text-align: left;
   padding: .8rem;
 
@@ -431,6 +409,7 @@ main {
 .pan {
   box-shadow: none;
   border-radius: 4px;
+  background-color: $bg-color;
 
   color: #352D2D;
 
@@ -570,13 +549,13 @@ $land-br: 6px;
 }
 
 .market-item-row {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: black;
-  border-radius: 4px;
+  background-color: $bg-color;
+  color: $text-color;
+  border-radius: 2px;
 }
 
 .market-action a {
-  color: #ffab40;
+  color: $highlight;
   -webkit-transition: color .3s ease;
   -moz-transition: color .3s ease;
   -o-transition: color .3s ease;
@@ -585,7 +564,7 @@ $land-br: 6px;
   text-transform: uppercase;
 
   &:hover {
-    color: #ffd8a6;
+    color: $highlight-hover;
   }
 }
 
@@ -699,5 +678,24 @@ $land-br: 6px;
     color: white;
     padding-top: 10%;
     font-size: 18px;
+  }
+}
+
+.filter-term {
+  display: inline-block;
+  float: left;
+  margin: 5px;
+  background-color: rgba(27, 27, 27, 0.44);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 5px 10px 5px 10px;
+  border-radius: 2px;
+
+  span {
+    margin-left: 5px;
+    color: $highlight;
+
+    &:hover {
+      color: $highlight-hover;
+    }
   }
 }

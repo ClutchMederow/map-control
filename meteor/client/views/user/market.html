@@ -10,6 +10,17 @@
       </div>
     </div>
   </div>
+  {{ #if filterTerms }}
+    <div class="row">
+      <div class="col s10 offset-s2">
+        {{ #each filterTerms }}
+          <a href="#!" class="filter-term">
+            {{ name }} <span>&times;</span>
+          </a>
+        {{ /each }}
+      </div>
+    </div>
+  {{ /if }}
   <div class="row">
     <div class="col s2">
       <div id="slide-out">
@@ -46,7 +57,7 @@
               <div class="col s2 col-xs-height market-action">
                 <a class="waves-effect waves-teal btn-flat acceptTrade"
                    href="{{pathFor route='makeOffer' data=getListing}}">
-                  Make Offer
+                  Offer
                 </a>
                 <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
               </div>

@@ -388,7 +388,7 @@ DB = {
       // Case 2: We make an internal trade, thus the receiving bot updates assetids
       // Case 3: We give items in a withdrawal, thus we don't care about assetids
 
-      if (offer.items_to_receive) {
+      if (offer.tradeid && offer.items_to_receive) {
         var itemIds = _.pluck(offer.items_to_receive, 'assetid');
 
 

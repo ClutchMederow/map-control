@@ -7,6 +7,7 @@ picture of gun
 */
 var searchText = new ReactiveVar('');
 Session.set('searchItems', []);
+var genericFilter = new GenericFilter();
 
 Template.market.onRendered(function() {
   searchText.set('');
@@ -15,16 +16,23 @@ Template.market.onRendered(function() {
 
 Template.market.helpers({
   listings: function() {
-    var selector = this; //either 'All' or a userId from router
+    var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
+    var selector = _.extend(filterSelector, this); //either 'All' or a userId from router
+
     if(searchText.get()) {
       var fields = ['name', 'internal_name'];
       return Listings.searchItems(selector, searchText.get(), fields);
     } else {
-      return Listings.find();
+      return Listings.find(selector);
     }
   },
+
   getListing: function() {
     return {listingId: this._id};
+  },
+
+  filterTerms: function() {
+    return genericFilter.get();
   }
 });
 
@@ -36,9 +44,11 @@ Template.market.events({
 
   "click .singleItem": function(e) {
     e.preventDefault();
-    console.log(this.item_name);
-    searchText.set(this.item_name);
-    $('#search').val(this.item_name);
+    genericFilter.add(this);
+  },
+
+  'click .filter-term': function() {
+    genericFilter.remove(this);
   },
 
   'mouseenter.item-info-tooltip .market .item-infoed': function(e) {
