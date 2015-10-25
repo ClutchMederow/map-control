@@ -42,7 +42,7 @@ StashManager.prototype.refresh = function() {
 
   Meteor.call('getPlayerInventory', function(err, res) {
     if (err) {
-      console.log(err);
+      sAlert.error('Unable to retrieve inventory. Please try again later.');
     } else {
       _.each(res, function(item) {
         self.userInventoryItems.insert(item);

@@ -20,7 +20,7 @@ Meteor.publish('channels', function() {
 Channels._ensureIndex({"publishedToUsers": 1});
 
 Meteor.publish('items', function() {
-  return Items.find({ userId: this.userId, deleteInd: false });
+  return Items.find({ userId: this.userId, deleteInd: false }, { fields: { botName: 0 }});
 });
 
 Items._ensureIndex({"userId": 1});
