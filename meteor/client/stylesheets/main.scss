@@ -538,14 +538,6 @@ $land-br: 6px;
 
 .item-nav {
   background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
-
-  ul {
-    border-radius: 4px;
-    a {
-      color: #585858;
-    }
-  }
 }
 
 .market-item-row {
@@ -699,3 +691,67 @@ $land-br: 6px;
     }
   }
 }
+
+.dark-pan {
+  border-radius: $land-br;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #9E9EFD;
+
+  .collapsible, {
+    border: none;
+  }
+
+  .collapsible-body {
+    border: none;
+    padding: 5px 10px;
+    border-radius: $land-br;
+
+    li {
+      border-radius: $land-br;
+      padding: 5px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      img {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .collapsible-header {
+    background-color: transparent;
+    border: none;
+  }
+
+  .active {
+    background-color: rgba(255, 255, 255, 0.1);;
+    border-radius: $land-br;
+  }
+
+  ul {
+    border-radius: $land-br;
+    a {
+      color: #E4E4E4;
+      border-radius: $land-br;
+
+      &.active {
+        color: white;
+        // font-weight: 500;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
