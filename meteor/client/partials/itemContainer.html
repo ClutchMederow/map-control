@@ -35,5 +35,10 @@
         {{ /if }}
       {{ /each}}
     </div>
+    {{ #if addItemLink }}
+      <div class="add-item-link">
+        <a href="{{ pathFor route='manageStash' }}">add items</a>
+      </div>
+    {{ /if }}
   </div>
 </template>

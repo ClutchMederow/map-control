@@ -1,5 +1,9 @@
 var offerManager = new OfferManager();
 
+Template.offerModal.onCreated(function() {
+  Session.set('offer', null);
+});
+
 Template.offerModal.helpers({
   listing: function() {
     return Session.get('offer');
@@ -21,7 +25,8 @@ Template.offerModal.helpers({
       columns: '6',
       class: '',
       selectedItems: offerManager.selectedItems,
-      ready: true
+      ready: true,
+      addItemLink: true
     };
   },
 
