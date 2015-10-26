@@ -1,8 +1,10 @@
 <template name="itemContainer">
   <div class="card-panel portable-stash pan">
-    <div class="colored-title">
-      {{ title }}
-    </div>
+    {{ #if title }}
+      <div class="colored-title">
+        {{ title }}
+      </div>
+    {{ /if }}
     {{ #if noSearch }}
       <div class="row">
       </div>

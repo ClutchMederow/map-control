@@ -305,11 +305,11 @@ main {
 
   &.selected {
     img {
-      /*background-color: #ECEAE7;*/
-      border-radius: 10px;
-      -moz-box-shadow:    inset 0 0 10px #B2DED3;
-      -webkit-box-shadow: inset 0 0 10px #B2DED3;
-      box-shadow:         inset 0 0 10px #B2DED3;
+      background-color: #ECEAE7;
+      border-radius: 4px;
+      // -moz-box-shadow:    inset 0 0 10px #B2DED3;
+      // -webkit-box-shadow: inset 0 0 10px #B2DED3;
+      // box-shadow:         inset 0 0 10px #B2DED3;
     }
 
     .selected-checkmark {
@@ -818,6 +818,10 @@ $land-br: 4px;
     &.cell1 {
       width: unquote(((1/12) * 100) + "%");
     }
+
+    &.cell6 {
+      width: unquote(((1/2) * 100) + "%");
+    }
   }
 }
 
@@ -830,6 +834,30 @@ $land-br: 4px;
   user-select: none;
 }
 
+.offer-modal-container {
+  height: 100% !important;
+  position: absolute;
+  z-index: 10000;
+  top: 0 !important;
+  right: 0px;
+  border-radius: 0;
+  max-height: 100%;
+  overflow: auto;
+  width: 100%;
+  padding: 0.5em;
+
+  .offer-modal-content {
+    padding: 0;
+
+    .pan {
+      background-color: white;
+    }
+
+    .timeinforow {
+      display: none;
+    }
+  }
+}
 
 
 
