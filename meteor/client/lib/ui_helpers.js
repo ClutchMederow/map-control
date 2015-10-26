@@ -4,7 +4,7 @@ UI.registerHelper("arrayify", function(obj) {
     result = [];
     for (var key in obj) {
           result.push({name: key, value: obj[key]});
-            
+
     }
       return result;
 
@@ -55,9 +55,10 @@ UI.registerHelper('shotguns', function() {
 });
 
 UI.registerHelper('knives', function() {
-  return GenericItems.find({item_type_name:"#CSGO_Type_Knife"});
+  return GenericItems.find({item_type_name:"#CSGO_Type_Knife", name: { $ne: 'weapon_knife_t' }});
 });
 
 UI.registerHelper('parseItemName', function(itemName) {
-  return itemName.split('_WPNHUD_').pop();
+  var out = itemName.split('_WPNHUD_').pop();
+  return out.replace('Knife', '').replace('knife', '').replace('_', ' ').replace('_', ' ').trim() || 'All';
 });
