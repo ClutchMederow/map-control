@@ -12,6 +12,11 @@ Router.route('/bitcoin', {
   template: 'bitcoin'
 });
 
+Router.route('/addIronBucks', {
+  name: 'addIronBucks',
+  template: 'addIronBucks'
+});
+
 Router.route('/contact', {
   name: 'contact',
   template: 'contact'
