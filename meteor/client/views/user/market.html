@@ -31,6 +31,9 @@
         {{ /if }}
         {{#each listings}}
           <div class="row table-fun">
+            <div class="timeinforow">
+              <span class="username">{{ user.profile.name }}</span> posted on {{ justDate datePosted }} at {{ justTime datePosted }}
+            </div>
             <div class="market-item-row table-row">
               <div class="table-cell cell45 item-cont market-pan">
                 {{#each items}}

@@ -26,6 +26,14 @@ UI.registerHelper('formatPrettyDate', function(unformattedDate) {
     }
 });
 
+UI.registerHelper('justDate', function(unformattedDate) {
+    if(moment(unformattedDate).isValid()) {
+      return moment(unformattedDate).format('M/D/YY');
+    } else {
+      return "Invalid Date";
+    }
+});
+
 UI.registerHelper('justTime', function(unformattedDate) {
     return moment(unformattedDate).format('h:mm A');
 });
@@ -60,5 +68,9 @@ UI.registerHelper('knives', function() {
 
 UI.registerHelper('parseItemName', function(itemName) {
   var out = itemName.split('_WPNHUD_').pop();
-  return out.replace('Knife', '').replace('knife', '').replace('_', ' ').replace('_', ' ').trim() || 'All';
+  return out.replace('Knife', '')
+    .replace('knife', '')
+    .replace('_', ' ')
+    .replace('_', ' ')
+    .trim() || 'All';
 });

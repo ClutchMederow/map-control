@@ -513,6 +513,15 @@ $land-br: 4px;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
+.timeinforow {
+  color: #f0f4c3;
+
+  .username {
+    color: #dce775;
+    font-weight: 700;
+  }
+}
+
 .market-item-row {
   .market-pan {
     background-color: $bg-color;
