@@ -20,3 +20,11 @@ OfferManager.prototype.toggleItem = function(item) {
     this.selectedItems.insert(item);
   }
 };
+
+OfferManager.prototype.execute = function(id, cb) {
+  if (this.hasItems()) {
+    Meteor.call('createOffer', id, cb);
+  } else {
+    cb(new Meteor.Error('NO_ITEMS', 'Please offer at least one item'));
+  }
+};

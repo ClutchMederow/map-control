@@ -1,0 +1,45 @@
+<template name="marketRow">
+  <div class="row table-fun">
+    {{ #if timeinforow }}
+      <div class="timeinforow">
+        <span class="username">{{ data.user.profile.name }}</span> posted on {{ justDate data.datePosted }} at {{ justTime data.datePosted }}
+      </div>
+    {{ /if }}
+    <div class="market-item-row table-row">
+      <div class="table-cell {{ contWidth }} item-cont market-pan">
+        {{ #each data.items }}
+          <div class="item-infoed">
+            <img width="70px" src="{{iconURL}}">
+          </div>
+        {{ /each }}
+      </div>
+      <div class="table-cell cell1 market-pan connector">
+        <div>
+          <i class="material-icons valign">swap_horiz</i>
+        </div>
+      </div>
+      <div class="table-cell {{ contWidth }} item-cont market-pan">
+        {{ #each rightSide }}
+          <div class="item-infoed">
+            <img width="70px" src="{{iconURL}}">
+          </div>
+        {{ else }}
+          <div class="none-specified">
+            ?
+          </div>
+        {{ /each }}
+      </div>
+      {{ #if showControls }}
+        <div class="table-cell cell2 market-action">
+          <div class="market-action-cont">
+            <!-- <a class="acceptTrade" href="{{ pathFor route='makeOffer' data=getListing }}"> -->
+            <a class="acceptTrade" href="#">
+              Offer
+            </a>
+            <a href="#" class="sendMessage">Message</a>
+          </div>
+        </div>
+      {{ /if }}
+    </div>
+  </div>
+</template>
