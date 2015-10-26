@@ -19,6 +19,9 @@ $bg-color: rgba(255, 255, 255, 0.9);
 $highlight: #ffab40;
 $highlight-hover: #ffd8a6;
 
+// old: rgba(0, 13, 84, 0.65)
+$bg-overlay: rgba(0, 13, 84, 0.65);
+
 html {
   background-color: black;
   font-family: 'Lato', sans-serif;
@@ -35,7 +38,7 @@ body:before {
   z-index: -1;
 
   display: block;
-  background-image: linear-gradient( rgba(0,27,179, 0.5), rgba(0,27,179, 0.5) ), url('images/49460.jpg');
+  background-image: linear-gradient( $bg-overlay, $bg-overlay ), url('images/49460.jpg');
   // background-image: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('images/72039.jpg');
   background-size:cover;
   width: 100%;
