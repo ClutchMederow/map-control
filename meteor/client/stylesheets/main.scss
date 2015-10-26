@@ -561,6 +561,7 @@ $land-br: 4px;
 
       img {
         width: 70px;
+        height: auto;
       }
     }
   }
@@ -811,6 +812,10 @@ $land-br: 4px;
       width: unquote((9/24 * 100) + "%");
     }
 
+    &.cell55 {
+      width: unquote((11/24 * 100) + "%");
+    }
+
     &.cell2 {
       width: unquote((1/6 * 100) + "%");
     }
@@ -851,10 +856,6 @@ $land-br: 4px;
 
     .pan {
       background-color: white;
-    }
-
-    .timeinforow {
-      display: none;
     }
   }
 }

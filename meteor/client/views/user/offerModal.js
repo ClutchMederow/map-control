@@ -23,6 +23,10 @@ Template.offerModal.helpers({
       selectedItems: offerManager.selectedItems,
       ready: true
     };
+  },
+
+  selectedItems: function() {
+    return offerManager.selectedItems.find().fetch();
   }
 });
 
