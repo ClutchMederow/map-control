@@ -5,17 +5,17 @@
         <p>Selecting items from your inventory will deposit them into your stash, while selecting items from your stash will withdraw them back into your steam account. Items must be in your stash to be able to trade them on the market or trading floor.</p>
       </div>
     </div>
+    <div class="row">
+      <div class="col s12">
+        <a href="#" class="waves-effect waves-light btn right if-btn" id="next"><i class="material-icons right">play_arrow</i>next</a>
+      </div>
+    </div>
     <div class="row" id="add-remove-row">
       <div class="col s6" id="deposit-div">
         {{> itemContainer inventoryOptions }}
       </div>
       <div class="col s6" id="withdraw-div">
         {{> itemContainer stashOptions }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12">
-        <a href="#" class="waves-effect waves-light btn right" id="next"><i class="material-icons right">play_arrow</i>next</a>
       </div>
     </div>
   </div>

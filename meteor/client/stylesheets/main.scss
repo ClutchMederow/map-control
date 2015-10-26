@@ -363,8 +363,15 @@ main {
 
 .next-steps-div {
   margin-top: 2rem;
-  margin-bottom: 2rem;
   text-align: center;
+
+  .emphasis {
+    font-weight: 400;
+
+    span {
+      color: red;
+    }
+  }
 }
 
 .trade-alert {

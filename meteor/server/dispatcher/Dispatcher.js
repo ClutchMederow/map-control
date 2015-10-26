@@ -241,6 +241,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
         var transferBot = getUsersBot(userId);
 
+        if (!transferBot) {
+          throw new Meteor.Error('No bots available');
+        }
+
         var persistentIds = _.pluck(Items.find({ itemId: { $in: items } }).fetch(), '_id');
 
         // Group all items by the bot they are on

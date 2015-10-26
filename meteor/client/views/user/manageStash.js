@@ -19,8 +19,8 @@ Template.manageStash.onCreated(function() {
 Template.manageStash.events({
   'click #next': function(e, thisInstance) {
     if (thisInstance.stashManager.hasItems()) {
-      console.log(thisInstance);
       thisInstance.stashTemplate.set('confirmStashTransaction');
+      window.scrollTo(0,0);
     } else {
       sAlert.warning('Please select at least one item');
     }
@@ -30,6 +30,7 @@ Template.manageStash.events({
 
   'click #backToAddRemove': function(e, thisInstance) {
     thisInstance.stashTemplate.set('addRemoveStash');
+    window.scrollTo(0,0);
   },
 
   'click #submitStashTrans': function(e, thisInstance) {
@@ -37,6 +38,7 @@ Template.manageStash.events({
     if (thisInstance.stashManager.hasItems()) {
       thisInstance.stashManager.execute();
       thisInstance.stashTemplate.set('stashTransNextSteps');
+      window.scrollTo(0,0);
     } else {
       sAlert.warning('Please select at least one item');
     }
@@ -48,13 +50,11 @@ Template.manageStash.events({
 
   'click #withdraw-div .contained-item': function(e, thisInstance) {
     e.preventDefault();
-
     thisInstance.stashManager.toggleItem(this, Enums.TransType.WITHDRAW);
   },
 
   'click #deposit-div .contained-item': function(e, thisInstance) {
     e.preventDefault();
-
     thisInstance.stashManager.toggleItem(this, Enums.TransType.DEPOSIT);
   }
 
