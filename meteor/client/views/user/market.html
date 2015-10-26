@@ -16,42 +16,23 @@
         {{> genericItems}}
       </div>
     </div>
-    <div class="col s10">
+    <div class="col s8">
       <div class="market">
-        {{#each listings}}
+        {{ #if filterTerms }}
           <div class="row">
-            <div class="row-height">
-              <div class="col s4 market-item-row col-xs-height">
-                <h5 class="center-align">{{user.profile.name}}</h5>
-                {{#each items}}
-                  <span class="item-infoed">
-                    <img width="30%" height="30%" src="{{iconURL}}">
-                  </span>
-                {{/each}}
-              </div>
-              <div class="col s2 valign-wrapper col-xs-height">
-                <div>
-                  {{formatDate datePosted}}
-                </div>
-                <i class="large material-icons valign">trending_flat</i>
-              </div>
-              <div class="col s4 center-align market-item-row col-xs-height">
-                <h5 class="center-align">Would Like</h5>
-                {{#each request}}
-                  <div class="item-infoed">
-                    <img width="30%" height="30%" src="{{iconURL}}">
-                  </div>
-                {{/each}}
-              </div>
-              <div class="col s2 col-xs-height market-action">
-                <a class="waves-effect waves-teal btn-flat acceptTrade"
-                   href="{{pathFor route='makeOffer' data=getListing}}">
-                  Make Offer
+            <div class="col s10">
+              {{ #each filterTerms }}
+                <a href="#!" class="filter-term">
+                  {{ name }} <span>&times;</span>
                 </a>
-                <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
-              </div>
+              {{ /each }}
             </div>
           </div>
+        {{ /if }}
+        {{#each listings}}
+          {{> marketRow timeinforow=true data=this showControls=true rightSide=this.request }}
+        {{ else }}
+          <div class="col s10 center">There are no items that match your search criteria</div>
         {{/each}}
       </div>
     </div>

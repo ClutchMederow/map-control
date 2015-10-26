@@ -132,20 +132,18 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   function getJobsToSendOffers(transferBot, groupedItems, taskId) {
-    var sendOffersJobs = _.chain(groupedItems)
-      .filter(function(thisBot, botName) {
-        return botName !== transferBot.botName;
-      })
-      .map(function(itemArray, botName) {
-        var bot = bots[botName];
-        var options = {
-          items: itemArray,
-          userId: userId
-        };
+    if (groupedItems[transferBot.botName]) {
+      delete groupedItems[transferBot.botName];
+    }
 
-        return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
-      })
-      .value();
+    var sendOffersJobs = _.map(groupedItems, function(itemArray, botName) {
+      var bot = bots[botName];
+      var options = {
+        items: itemArray,
+        otherBot: transferBot
+      };
+      return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+    });
 
     return sendOffersJobs;
   }
@@ -204,19 +202,25 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       check(userId, String);
       check(items, [String]);
 
-      var bot = getUsersBot(userId);
+      try {
+        var bot = getUsersBot(userId);
 
-      var options = {
-        items: items,
-        userId: userId
-      };
+        var options = {
+          items: items,
+          userId: userId
+        };
 
-      var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
+        var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
 
-      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
-      var task = new Task([job], false, taskId, DB);
+        var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
+        var task = new Task([job], false, taskId, DB);
 
-      task.execute();
+        task.execute();
+
+      } catch (e) {
+        DB.items.revertStatus(items);
+        throw e;
+      }
 
       return job.tradeofferId;
     },
@@ -236,6 +240,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       try {
 
         var transferBot = getUsersBot(userId);
+
+        if (!transferBot) {
+          throw new Meteor.Error('No bots available');
+        }
 
         var persistentIds = _.pluck(Items.find({ itemId: { $in: items } }).fetch(), '_id');
 
@@ -290,8 +298,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         return withdrawJob.tradeofferId;
 
       } catch (e) {
-        // DB.items.changeStatus('Failed withdrawal', items, Enums.ItemStatus.STASH);
-        console.log(e);
+        DB.items.revertStatus(items);
         throw e;
       }
     },
@@ -311,6 +318,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       console.log('Bots initialized. Count: ' + _.keys(bots).length);
     },
 
+    disconnect: function() {
+      _.each(bots, function(bot) {
+        bot.disconnect();
+      });
+    },
+
     checkOutstandingTradeoffers: function() {
       _.each(bots, function(bot) {
         var offers = bot.queryOffers();
@@ -320,10 +333,83 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       });
     },
 
-    test: function() {
-      Dispatcher.init();
+    botsLogOn: function() {
+      var counter = 0;
+      var failures = 0;
 
-      var meat = Dispatcher.getBot('meatsting');
+      _.each(bots, function(bot) {
+        try {
+
+          if (bot.loggedOn()) {
+            bot.webLogOn();
+          } else {
+            bot.logOn();
+          }
+
+          counter++;
+
+        } catch(e) {
+
+          console.log(e);
+          console.log(e.eresult);
+
+        }
+      });
+
+      console.log(counter + ' bots successfully logged on');
+
+      if (failures) {
+        console.log(failures + ' bots failed to log on');
+      }
+    },
+
+    fixItem: function(itemMongoId) {
+      var item = Items.findOne(itemMongoId);
+
+      var offers = Tradeoffers.find({
+        items_to_receive: { $elemMatch: { assetid: item.itemId }}
+      }, {
+        sort: { createdTimestamp: -1 }
+      }).fetch();
+
+      var offer = offers[0];
+      var botName = this.getBot(offer.otherBotName);
+      var bot = this.getBot(botName);
+
+      // fix the bot name
+      DB.items.assignItemsToBot([item], botName);
+
+      // Update the assetids
+      DB.items.updateAssetIds(offer.tradeofferid, bot);
+
+    },
+
+    tradeItemToBot: function(itemId, newBotName) {
+      var item = Items.findOne({ itemId: itemId });
+      var newBot = Dispatcher.getBot(newBotName);
+      var oldBot = Dispatcher.getBot(item.botName);
+
+      var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, 'internal', [ itemId ]);
+      var options = {
+        items: [ itemId ],
+        otherBot: newBot
+      };
+      var job = new BotJob(oldBot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+
+      var offerIdsToAccept = job.execute();
+
+      // Create the task to accept all internal outstanding tradeoffers
+      var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, 'internal', null);
+      var acceptanceJobs = getJobsToAcceptOffers(newBot, offerIdsToAccept, acceptTaskId);
+      var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
+
+      // Accept all offers
+      acceptOffersTask.execute();
+    },
+
+    test: function(botName) {
+
+      var meat = Dispatcher.getBot(botName);
 
       meat.loadBotInventory();
       var items = _.pluck(meat.getBotItems(), 'id');
@@ -351,6 +437,7 @@ _.extend(Dispatcher, {
     DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
     WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
     INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
+    ACCEPT_OFFER: 'ACCEPT_OFFER',
     TASK: 'TASK'
   }),
 
@@ -361,6 +448,7 @@ _.extend(Dispatcher, {
     QUEUED: 'QUEUED',
     PENDING: 'PENDING',
     READY: 'READY',
+    CANCELLED: 'CANCELLED',
     TIMEOUT: 'TIMEOUT'
   }),
 });

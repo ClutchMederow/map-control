@@ -14,6 +14,9 @@
           <img src="{{ iconURL }}" class="responsive-img draggable-stash-item" id="stash_{{ _id }}" data-itemid="{{ _id }}">
         </div>
       {{/each}}
+      <div class="add-item-link">
+        <a href="{{ pathFor route='manageStash' }}">add items</a>
+      </div>
     </div>
   </div>
 </template>

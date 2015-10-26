@@ -4,7 +4,7 @@ UI.registerHelper("arrayify", function(obj) {
     result = [];
     for (var key in obj) {
           result.push({name: key, value: obj[key]});
-            
+
     }
       return result;
 
@@ -21,6 +21,14 @@ UI.registerHelper('formatDate', function(unformattedDate) {
 UI.registerHelper('formatPrettyDate', function(unformattedDate) {
     if(moment(unformattedDate).isValid()) {
       return moment(unformattedDate).format('dddd, MMMM Do');
+    } else {
+      return "Invalid Date";
+    }
+});
+
+UI.registerHelper('justDate', function(unformattedDate) {
+    if(moment(unformattedDate).isValid()) {
+      return moment(unformattedDate).format('M/D/YY');
     } else {
       return "Invalid Date";
     }
@@ -55,9 +63,14 @@ UI.registerHelper('shotguns', function() {
 });
 
 UI.registerHelper('knives', function() {
-  return GenericItems.find({item_type_name:"#CSGO_Type_Knife"});
+  return GenericItems.find({item_type_name:"#CSGO_Type_Knife", name: { $ne: 'weapon_knife_t' }});
 });
 
 UI.registerHelper('parseItemName', function(itemName) {
-  return itemName.split('_WPNHUD_').pop();
+  var out = itemName.split('_WPNHUD_').pop();
+  return out.replace('Knife', '')
+    .replace('knife', '')
+    .replace('_', ' ')
+    .replace('_', ' ')
+    .trim() || 'All';
 });

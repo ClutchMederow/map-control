@@ -6,8 +6,9 @@
 </header>
 <!-- Content Area -->
 <main>
-{{> sAlert}}
-{{> yield}}
+  {{> sAlert }}
+  {{> offerModal }}
+  {{> yield}}
 </main>
 <!-- Footer -->
 <footer class="page-footer">
@@ -16,20 +17,27 @@
       <div class="row">
         <div class="col s12">
           <div class="bottom-links">
-          <span>© 2015 Copyright IronFoil and DeltaVeeLabs</span>
-          <span><a class="grey-text text-lighten-3 " href="{{pathFor route='about'}}">
-              About Us
-            </a></span>
-            <span><a class="grey-text text-lighten-3" href="{{pathFor route='contact'}}">
+            <span>© 2015 Copyright IronFoil and DeltaVeeLabs</span>
+            <span>
+              <a class="grey-text text-lighten-3 " href="{{pathFor route='about'}}">
+                About Us
+              </a>
+            </span>
+            <span>
+              <a class="grey-text text-lighten-3" href="{{pathFor route='contact'}}">
                 Contact
-              </a></span>
-              <span><a class="grey-text text-lighten-3" href="{{pathFor route='help'}}">
-                  Help
-                </a></span>
-
-                <span><a class="grey-text text-lighten-3" href="{{pathFor route='faq'}}">
-                    FAQ
-                  </a></span>
+              </a>
+            </span>
+            <span>
+              <a class="grey-text text-lighten-3" href="{{pathFor route='help'}}">
+                Help
+              </a>
+            </span>
+            <span>
+              <a class="grey-text text-lighten-3" href="{{pathFor route='faq'}}">
+                FAQ
+              </a>
+            </span>
           </div>
         </div>
       </div>

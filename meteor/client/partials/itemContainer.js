@@ -55,6 +55,14 @@ Template.itemContainer.events({
 
   'mouseleave.item-info-tooltip .portable-stash .item-infoed': function(e) {
     DraggableItems.itemInfo.mouseout(e);
+  },
+
+  'click .add-item-link a': function() {
+    console.log('here');
+    if (!Session.equals('offer', null)) {
+      Session.set('offer', null);
+    }
+    return true;
   }
 });
 

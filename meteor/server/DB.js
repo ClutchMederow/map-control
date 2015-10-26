@@ -137,13 +137,14 @@ DB = {
       return Tradeoffers.update(selector, setDoc);
     },
 
-    insertNew: function(id, tradeofferId, userId, jobType, botName, taskId) {
+    insertNew: function(id, tradeofferId, userId, jobType, botName, taskId, otherBotName) {
       check(id, String);
       check(tradeofferId, String);
       check(userId, String);
       check(jobType, String);
       check(botName, String);
       check(taskId, String);
+      check(otherBotName, Match.Optional(String));
 
       var doc = {
         _id: id,
@@ -155,6 +156,10 @@ DB = {
         botName: botName,
         deleteInd: false
       };
+
+      if (otherBotName) {
+        doc.otherBotName = otherBotName;
+      }
 
       return DB.tradeoffers.insert(doc);
     },
@@ -311,6 +316,38 @@ DB = {
       return DB.items.update(selector, doc, options);
     },
 
+    // Revert status in the case of an error
+    revertStatus: function(assetIds) {
+      check(assetIds, [String]);
+
+      _.each(assetIds, function(assetId) {
+        var item = Items.find({ itemId: assetId, deleteInd: false });
+        var doc;
+
+        if (item.status === Enums.ItemStatus.PENDING_WITHDRAWAL) {
+          doc = {
+            $set: {
+              status: Enums.ItemStatus.STASH
+            }
+          };
+        } else if (item.status === Enums.ItemStatus.PENDING_DEPOSIT) {
+          doc = {
+            $set: {
+              status: Enums.ItemStatus.EXTERNAL,
+              deleteInd: true
+            }
+          };
+        }
+
+        var selector = {
+          itemId: assetId,
+          deleteInd: false
+        };
+
+        DB.items.update(selector, doc, {});
+      });
+    },
+
     getItemBot: function(itemId, userId) {
       check(itemId, String);
       check(userId, String);
@@ -328,10 +365,10 @@ DB = {
       check(newBotName, String);
 
       _.each(items, function(itemId) {
-        var doc = { $set: { botName: botName } };
-        var result = DB.items.update({ itemId: item, deleteInd: false }, doc);
+        var doc = { $set: { botName: newBotName } };
+        var result = DB.items.update({ itemId: itemId, deleteInd: false }, doc);
         if (!result) {
-          throw new Error('Item not found, bot reassingment failed: ' + item + ' ' + newBotName);
+          throw new Error('Item not found, bot reassingment failed: ' + itemId + ' ' + newBotName);
         }
       });
     },
@@ -351,7 +388,7 @@ DB = {
       // Case 2: We make an internal trade, thus the receiving bot updates assetids
       // Case 3: We give items in a withdrawal, thus we don't care about assetids
 
-      if (offer.items_to_receive) {
+      if (offer.tradeid && offer.items_to_receive) {
         var itemIds = _.pluck(offer.items_to_receive, 'assetid');
 
 

@@ -1,17 +1,19 @@
 <template name="genericItems">
-  <div class="pan item-nav">
+  <div class="pan dark-pan">
     <ul class="collapsible" data-collapsible="accordion">
       <li class="bold">
-        <a class="collapsible-header  waves-effect">Pistols</a>
+        <a class="collapsible-header waves-effect">Pistols</a>
         <div class="collapsible-body" style="display: none;">
           <ul>
             {{#each pistols}}
             <li>
-              <a class="singleItem" href="#">
-                <img width="30%" height="30%"
-                                 src="{{image_url}}">
-                {{parseItemName item_name}}
-              </a>
+              <div>
+                <a class="singleItem" href="#">
+                  <img width="30%" height="30%"
+                                   src="{{image_url}}">
+                  {{parseItemName item_name}}
+                </a>
+              </div>
             </li>
             {{/each}}
           </ul>
