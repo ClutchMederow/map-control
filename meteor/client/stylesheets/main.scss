@@ -19,6 +19,9 @@ $bg-color: rgba(255, 255, 255, 0.9);
 $highlight: #ffab40;
 $highlight-hover: #ffd8a6;
 
+// old: rgba(0, 13, 84, 0.65)
+$bg-overlay: rgba(0, 13, 84, 0.65);
+
 html {
   background-color: black;
   font-family: 'Lato', sans-serif;
@@ -35,7 +38,7 @@ body:before {
   z-index: -1;
 
   display: block;
-  background-image: linear-gradient( rgba(0,27,179, 0.5), rgba(0,27,179, 0.5) ), url('images/49460.jpg');
+  background-image: linear-gradient( $bg-overlay, $bg-overlay ), url('images/49460.jpg');
   // background-image: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('images/72039.jpg');
   background-size:cover;
   width: 100%;
@@ -302,11 +305,11 @@ main {
 
   &.selected {
     img {
-      /*background-color: #ECEAE7;*/
-      border-radius: 10px;
-      -moz-box-shadow:    inset 0 0 10px #B2DED3;
-      -webkit-box-shadow: inset 0 0 10px #B2DED3;
-      box-shadow:         inset 0 0 10px #B2DED3;
+      background-color: #CACACA;
+      border-radius: 4px;
+      // -moz-box-shadow:    inset 0 0 10px #B2DED3;
+      // -webkit-box-shadow: inset 0 0 10px #B2DED3;
+      // box-shadow:         inset 0 0 10px #B2DED3;
     }
 
     .selected-checkmark {
@@ -379,6 +382,15 @@ main {
   }
 }
 
+.fade-up {
+  animation-name: fadeInUp;
+  animation-duration: 0.2s;
+  animation-iteration-count: 1;
+  -webkit-animation-name: fadeInUp;
+  -webkit-animation-duration: 0.2s;
+  -webkit-animation-iteration-count: 1;
+}
+
 .pan {
   box-shadow: none;
   border-radius: 4px;
@@ -387,13 +399,6 @@ main {
   color: #352D2D;
 
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
-
-  animation-name: fadeInUp;
-  animation-duration: 0.5s;
-  animation-iteration-count: 1;
-  -webkit-animation-name: fadeInUp;
-  -webkit-animation-duration: 0.5s;
-  -webkit-animation-iteration-count: 1;
 
   &:hover {
     transition: box-shadow 0.25s;
@@ -558,6 +563,7 @@ $land-br: 4px;
 
       img {
         width: 70px;
+        height: auto;
       }
     }
   }
@@ -808,12 +814,20 @@ $land-br: 4px;
       width: unquote((9/24 * 100) + "%");
     }
 
+    &.cell55 {
+      width: unquote((11/24 * 100) + "%");
+    }
+
     &.cell2 {
       width: unquote((1/6 * 100) + "%");
     }
 
     &.cell1 {
       width: unquote(((1/12) * 100) + "%");
+    }
+
+    &.cell6 {
+      width: unquote(((1/2) * 100) + "%");
     }
   }
 }
@@ -827,7 +841,55 @@ $land-br: 4px;
   user-select: none;
 }
 
+.offer-modal-container {
+  height: 100% !important;
+  position: fixed;
+  z-index: 500;
+  top: 0 !important;
+  right: 0px;
+  border-radius: 0;
+  max-height: 100%;
+  overflow: auto;
+  width: 100%;
 
+  .username {
+    margin-top: -1em;
+
+    span {
+      font-size: 150%;
+      color: #4BBF91;
+      font-weight: 400;
+      padding-left: .5em;
+    }
+  }
+
+  > .row {
+    padding-top: 4rem;
+  }
+
+  .offer-modal-content {
+    padding-top: 30px;
+    background-color: black;
+    opacity: .98;
+    border-radius: 8px;
+
+    .pan {
+      opacity: 1;
+      background-color: white;
+
+      -webkit-animation-name: none;
+              animation-name: none;
+    }
+  }
+}
+
+#offer-stash-items {
+  max-height: 400px;
+}
+
+.add-item-link {
+  text-align: right;
+}
 
 
 

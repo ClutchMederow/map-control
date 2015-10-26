@@ -30,44 +30,7 @@
           </div>
         {{ /if }}
         {{#each listings}}
-          <div class="row table-fun">
-            <div class="timeinforow">
-              <span class="username">{{ user.profile.name }}</span> posted on {{ justDate datePosted }} at {{ justTime datePosted }}
-            </div>
-            <div class="market-item-row table-row">
-              <div class="table-cell cell45 item-cont market-pan">
-                {{#each items}}
-                  <div class="item-infoed">
-                    <img width="30%" height="30%" src="{{iconURL}}">
-                  </div>
-                {{/each}}
-              </div>
-              <div class="table-cell cell1 market-pan connector">
-                <div>
-                  <i class="material-icons valign">swap_horiz</i>
-                </div>
-              </div>
-              <div class="table-cell cell45 market-pan">
-                {{#each request}}
-                  <div class="item-infoed">
-                    <img width="30%" height="30%" src="{{iconURL}}">
-                  </div>
-                {{ else }}
-                  <div class="none-specified">
-                    ?
-                  </div>
-                {{/each}}
-              </div>
-              <div class="table-cell cell2 market-action">
-                <div class="market-action-cont">
-                  <a class="acceptTrade" href="{{ pathFor route='makeOffer' data=getListing }}">
-                    Offer
-                  </a>
-                  <a href="#" class="sendMessage">Message</a>
-                </div>
-              </div>
-            </div>
-          </div>
+          {{> marketRow timeinforow=true data=this showControls=true rightSide=this.request }}
         {{ else }}
           <div class="col s10 center">There are no items that match your search criteria</div>
         {{/each}}

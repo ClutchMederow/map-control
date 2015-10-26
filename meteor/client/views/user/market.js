@@ -57,5 +57,10 @@ Template.market.events({
 
   'mouseleave.item-info-tooltip .market .item-infoed': function(e) {
     DraggableItems.itemInfo.mouseout(e);
+  },
+
+  'click .market .acceptTrade': function(e) {
+    e.preventDefault();
+    Session.set('offer', this);
   }
 });
