@@ -514,22 +514,67 @@ $land-br: 4px;
 }
 
 .market-item-row {
-  background-color: $bg-color;
-  color: $text-color;
-  border-radius: 2px;
+  .market-pan {
+    background-color: $bg-color;
+    color: $text-color;
+    text-align: center;
+    vertical-align: middle;
+
+    .none-specified {
+      font-size: 36px;
+    }
+
+    i {
+      font-size: 48px;
+    }
+
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+    }
+
+    &:nth-child(3) {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  .item-cont {
+    overflow: hidden;
+    padding: 10px;
+
+    .item-infoed {
+      float: left;
+
+      img {
+        width: 70px;
+      }
+    }
+  }
 }
 
-.market-action a {
-  color: $highlight;
-  -webkit-transition: color .3s ease;
-  -moz-transition: color .3s ease;
-  -o-transition: color .3s ease;
-  -ms-transition: color .3s ease;
-  transition: color .3s ease;
-  text-transform: uppercase;
+.market-action {
+  vertical-align: middle;
 
-  &:hover {
-    color: $highlight-hover;
+  .market-action-cont {
+    height: 100%;
+    padding: 10px 5px 10px 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0 $land-br $land-br 0;
+  }
+
+  a {
+    color: $highlight;
+    -webkit-transition: color .3s ease;
+    -moz-transition: color .3s ease;
+    -o-transition: color .3s ease;
+    -ms-transition: color .3s ease;
+    transition: color .3s ease;
+    text-transform: uppercase;
+
+    display: block;
+
+    &:hover {
+      color: $highlight-hover;
+    }
   }
 }
 
@@ -735,7 +780,40 @@ $land-br: 4px;
   }
 }
 
+.table-fun {
+  display: table;
+  width: 100%;
+  margin-bottom: 10px;
 
+  .table-row {
+    display: table-row;
+  }
+
+  .table-cell {
+    display: table-cell;
+
+    &.cell4 {
+      width: unquote((1/3 * 100) + "%");
+    }
+
+    &.cell2 {
+      width: unquote((1/6 * 100) + "%");
+    }
+
+    &.cell1 {
+      width: unquote(((1/12) * 100) + "%");
+    }
+  }
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
 
 
