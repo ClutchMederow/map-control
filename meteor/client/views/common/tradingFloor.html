@@ -1,26 +1,21 @@
 <template name="tradingFloor">
   <div class="row">
     <div class="col s3">
-      <div class="card-panel pan">
-        <div class="colored-title">
-          Channels
-        </div>
-        <div class="section channelList">
-          <ul class="collapsible" data-collapsible="accordion">
-          {{#each arrayify channelsByCategory}}
-            <li>
-              <div class="collapsible-header">
-                {{name}}
-              </div>
-              <div class="collapsible-body">
-                {{#each value}}
-                  {{> channel}}
-                {{/each}}
-              </div>
-            </li>
-          {{/each}}
-          </ul>
-        </div>
+      <div class="channelList pan dark-pan">
+        <ul class="collapsible" data-collapsible="accordion">
+        {{#each arrayify channelsByCategory}}
+          <li>
+            <div class="collapsible-header noselect">
+              {{name}}
+            </div>
+            <div class="collapsible-body">
+              {{#each value}}
+                {{> channel}}
+              {{/each}}
+            </div>
+          </li>
+        {{/each}}
+        </ul>
       </div>
     </div>
     <div class="col s6">

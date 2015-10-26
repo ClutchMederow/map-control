@@ -16,42 +16,60 @@
         {{> genericItems}}
       </div>
     </div>
-    <div class="col s10">
+    <div class="col s8">
       <div class="market">
-        {{#each listings}}
+        {{ #if filterTerms }}
           <div class="row">
-            <div class="row-height">
-              <div class="col s4 market-item-row col-xs-height">
-                <h5 class="center-align">{{user.profile.name}}</h5>
+            <div class="col s10">
+              {{ #each filterTerms }}
+                <a href="#!" class="filter-term">
+                  {{ name }} <span>&times;</span>
+                </a>
+              {{ /each }}
+            </div>
+          </div>
+        {{ /if }}
+        {{#each listings}}
+          <div class="row table-fun">
+            <div class="timeinforow">
+              <span class="username">{{ user.profile.name }}</span> posted on {{ justDate datePosted }} at {{ justTime datePosted }}
+            </div>
+            <div class="market-item-row table-row">
+              <div class="table-cell cell45 item-cont market-pan">
                 {{#each items}}
-                  <span class="item-infoed">
-                    <img width="30%" height="30%" src="{{iconURL}}">
-                  </span>
-                {{/each}}
-              </div>
-              <div class="col s2 valign-wrapper col-xs-height">
-                <div>
-                  {{formatDate datePosted}}
-                </div>
-                <i class="large material-icons valign">trending_flat</i>
-              </div>
-              <div class="col s4 center-align market-item-row col-xs-height">
-                <h5 class="center-align">Would Like</h5>
-                {{#each request}}
                   <div class="item-infoed">
                     <img width="30%" height="30%" src="{{iconURL}}">
                   </div>
                 {{/each}}
               </div>
-              <div class="col s2 col-xs-height market-action">
-                <a class="waves-effect waves-teal btn-flat acceptTrade"
-                   href="{{pathFor route='makeOffer' data=getListing}}">
-                  Make Offer
-                </a>
-                <a class="waves-effect waves-teal btn-flat sendMessage">Message</a>
+              <div class="table-cell cell1 market-pan connector">
+                <div>
+                  <i class="material-icons valign">swap_horiz</i>
+                </div>
+              </div>
+              <div class="table-cell cell45 market-pan">
+                {{#each request}}
+                  <div class="item-infoed">
+                    <img width="30%" height="30%" src="{{iconURL}}">
+                  </div>
+                {{ else }}
+                  <div class="none-specified">
+                    ?
+                  </div>
+                {{/each}}
+              </div>
+              <div class="table-cell cell2 market-action">
+                <div class="market-action-cont">
+                  <a class="acceptTrade" href="{{ pathFor route='makeOffer' data=getListing }}">
+                    Offer
+                  </a>
+                  <a href="#" class="sendMessage">Message</a>
+                </div>
               </div>
             </div>
           </div>
+        {{ else }}
+          <div class="col s10 center">There are no items that match your search criteria</div>
         {{/each}}
       </div>
     </div>
