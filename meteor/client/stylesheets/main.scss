@@ -519,6 +519,16 @@ $land-br: 4px;
     color: $text-color;
     text-align: center;
     vertical-align: middle;
+    border-radius: 4px;
+
+    &.connector {
+      background-color: transparent;
+      color: #AF9B9B;
+
+      div {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    }
 
     .none-specified {
       font-size: 36px;
@@ -527,14 +537,6 @@ $land-br: 4px;
     i {
       font-size: 48px;
     }
-
-    &:first-child {
-      border-radius: 4px 0 0 4px;
-    }
-
-    &:nth-child(3) {
-      border-radius: 0 4px 4px 0;
-    }
   }
 
   .item-cont {
@@ -542,7 +544,8 @@ $land-br: 4px;
     padding: 10px;
 
     .item-infoed {
-      float: left;
+      // float: left;
+      display: inline;
 
       img {
         width: 70px;
@@ -792,8 +795,8 @@ $land-br: 4px;
   .table-cell {
     display: table-cell;
 
-    &.cell4 {
-      width: unquote((1/3 * 100) + "%");
+    &.cell45 {
+      width: unquote((9/24 * 100) + "%");
     }
 
     &.cell2 {
