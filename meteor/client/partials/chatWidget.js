@@ -9,5 +9,6 @@ Template.chatWidget.events({
     e.preventDefault();
     var id = this._id;
     $('#' + id).toggleClass('active-chat');
+    $('#' + id).find('input').focus();
   }
 });

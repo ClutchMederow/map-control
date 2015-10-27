@@ -904,12 +904,16 @@ $land-br: 4px;
 $chat-width: 260px;
 $chat-height: 200px;
 $chat-input-height: 32px;
+$chat-bg: rgba(0, 0, 0, 0.9);
+$chat-bg-light: rgba(255, 255, 255, 0.15);
+$chat-border: none;
+$chat-window-height: $chat-height - $chat-input-height;
 
 #chat-widget {
   position: fixed;
   bottom: 0;
   width: 100%;
-  color: black;
+  color: white;
 
   .chat-rel {
     position: relative;
@@ -921,32 +925,46 @@ $chat-input-height: 32px;
     position: relative;
     margin-right: 5px;
     width: $chat-width;
+    background-color: $chat-bg;
     // height: $chat-input-height;
-    background-color: rgba(0, 0, 0, 0.6);
 
     .label-row {
-      // background-color: aliceblue;
+      background-color: $chat-bg-light;
       border-radius: 4px 4px 0 0;
     }
 
     .label-input-row {
-      // background-color: aliceblue;
       border-radius: 2px;
+      // background-color: $chat-bg;
+      // border: $chat-border;
 
       .chat-inp {
         display: none;
+        table-layout: fixed;
+
+        .table-cell {
+          padding: 4px;
+        }
 
         input {
           border: none;
           margin: 0;
-          height: 1.5em;
           padding: 5px 5px 5px 10px;
-          height: 20px;
+          height: 24px;
+          background-color: grey;
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
 
           &:focus {
             border: none;
             box-shadow: none;
           }
+        }
+
+        i {
+          font-size: 1rem;
+
         }
       }
     }
@@ -954,6 +972,7 @@ $chat-input-height: 32px;
     &.active-chat {
       .label-input-row {
         border-radius: 0 0 2px 2px;
+        background-color: $chat-bg-light;
 
         a {
           display: none;
@@ -992,7 +1011,8 @@ $chat-input-height: 32px;
     }
 
     .message-row {
-      // background-color: white;
+      border: $chat-border;
+      background-color: $chat-bg;
       width: $chat-width;
       position: absolute;
       bottom: 100%;
@@ -1003,22 +1023,35 @@ $chat-input-height: 32px;
     }
   }
 
-  .chat-msg {
+  .chat-display-box {
     position: relative;
-    overflow: scroll;
     text-overflow: clip;
-    word-wrap: break-word;
+    overflow: scroll;
+    padding: 10px;
+    height: $chat-window-height;
+    border-left: 4px solid $chat-bg-light;
+    border-right: 4px solid $chat-bg-light;
   }
+
+  .chat-msg {
+  }
+}
+
+.submit-cell {
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-chatsubmit {
   line-height: inherit;
-  width: 100%;
-  height: auto;
-  padding: 0;
+  position: absolute;
+  left: -20px;
+  width: 20px;
+  height: 26px;
   background-color: inherit;
   color: #86C5FD;
   box-shadow: none;
+  display: block;
 
   &:hover {
     background-color: inherit;
@@ -1033,7 +1066,20 @@ $chat-input-height: 32px;
   height: 100%;
   padding-left: 10px;
   font-size: 22px;
-  color: red;
+  color: white;
+}
+
+.chat-userinfo {
+  font-size: 11px;
+  margin-top: 15px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .chat-time {
+    color: grey;
+  }
 }
 
 
