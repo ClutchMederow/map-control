@@ -32,6 +32,9 @@ Coinbase = {
 
     var checkout = createCheckout(client, amount, currency, name);
     return checkout.embed_code;
+  },
+  getCurrencies: function() {
+    return getCurrencies().data;
   }
 };
 
@@ -82,12 +85,27 @@ function createCheckout(client, amount, currency, name) {
     type: "order",
     style: "buy_now_large",
     collect_email: true,
-    collect_country: true
+    collect_country: true,
+    success_url: "http://localhost:3000"
   }, function(err, res){
     if(err) {
       myFuture.throw(err);
     } else {
-      console.log(res);
+      myFuture.return(res);
+    }
+  });
+
+  return myFuture.wait();
+}
+
+function getCurrencies() {
+  var Future = Npm.require('fibers/future');
+  var myFuture = new Future();
+
+  client.getCurrencies(function(err, res) {
+    if(err) {
+      myFuture.throw(err);
+    } else {
       myFuture.return(res);
     }
   });

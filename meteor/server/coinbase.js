@@ -1,6 +1,8 @@
 Meteor.methods({
-  'createCheckout': function() {
-    return Coinbase.createCheckout("0.0001", "BTC", "IronBucks");
+  'createCheckout': function(amount, currency) {
+    check(amount, String);
+    check(currency, String);
+    return Coinbase.createCheckout(amount, currency, "IronBucks");
   },
   //TODO: do NOT have amount sent by client side, make sure
   //we verify values, etc.
@@ -10,5 +12,8 @@ Meteor.methods({
     check(currency, String);
     check(description, String);
     return Coinbase.sendMoney(recipient, amount, currency, description);
+  },
+  getCurrencies: function() {
+    return Coinbase.getCurrencies();
   }
 });

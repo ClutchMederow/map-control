@@ -16,17 +16,28 @@
         </div>
         <div class="chatTextWindow">
           <!-- show current iron bucks balance -->
-          <div class="input-field col s12">
+          <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
+          currency you'd like to purchase</p>
+          <div class="input-field col s8">
             <input id="amount" type="number" class="validate">
-            <label for="amount">Enter number of IronBucks here...</label> 
+            <label for="amount">Enter amount of currency</label> 
+          </div>
+          <div class="input-field col s4">
+            <input id="currency" type="text" class="validate">
+            <label for="currency">Enter currency...</label> 
+          </div>
+          <div class="col s12 center">
+            {{#if conversionRate}}
+            <p>
+            <h5>${{conversionRate}} USD</h5>
+            </p>
+            {{/if}}
           </div>
           <div class="col s12 center">
             <a class="btn-floating btn-large waves-effect waves-light green
               center" id="add">
               Add!
             </a>
-            <p><small>Note: you will be redirected to CoinBase and then return
-              to our app</small></p>
           </div>
         </div>
       </div>
