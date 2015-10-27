@@ -18,18 +18,16 @@ Router.route('/addIronBucks', {
 });
 
 Router.route('/webhooks/coinbase', function() {
-  var request = this.request;
-  var response = this.response;
-  var coinbaseSecret = request.query.coinbasesecret;
+  var coinbaseSecret = this.request.query.coinbasesecret;
 
   var COINBASE_SECRET = process.env.coinbase_callback_secret || 
     (Meteor.settings && Meteor.settings.coinbase_callback_secret);
 
   if(coinbaseSecret === COINBASE_SECRET) {
-    console.log(this.params);
+    DB.updateIronBucksCallback(this.request.body);
     
-    response.statusCode = 200;
-    response.end('complete');
+    this.response.statusCode = 200;
+    this.response.end('complete');
   } else {
     this.response.statusCode = 403;
     this.response.end('forbidden');

@@ -650,5 +650,8 @@ DB = {
       message: message,
       viewed: false
     });
+  },
+  updateIronBucksCallback: function(params) {
+    console.log(params);
   }
 };
