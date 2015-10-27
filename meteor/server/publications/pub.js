@@ -10,9 +10,12 @@ Meteor.publish('messages', function(channel) {
 Messages._ensureIndex({"channel.name": 1});
 
 Meteor.publish('channels', function() {
-  return Channels.find({$or: [
-    {publishedToUsers: {$in: [this.userId]}},
-    {publishedToUsers: {$in: ['Public']}}
+  return Channels.find({ $or: [
+      {
+        publishedToUsers: { $in: [this.userId] },
+        show: this.userId
+      },
+      { publishedToUsers: { $in: ['Public'] }}
     ]
   });
 });

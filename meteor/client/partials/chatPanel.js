@@ -9,17 +9,15 @@ Template.chatPanel.onCreated(function() {
 Template.chatPanel.onRendered(function() {
   var self = this;
 
-  console.log($('#' + self.data._id + ' .chat-display-box'));
-
   // Adds a scroll handle to run when a new message arrives
-  this.changesHandle = Messages.find({'channel.name': self.name }).observeChanges({
+  this.changesHandle = Messages.find({'channel.name': self.data.name }).observeChanges({
     added: _.throttle(function() {
-      console.log(self);
-      $('.chatTextWindow').animate({
-        scrollTop: $('#' + self.data._id + ' .chat-display-box').get(0).scrollHeight
-      }, 500);
+      ChatFunctions.scrollToBottom(self.data._id);
     }, 500)
   });
+
+  // Initially scroll all windows to bottom
+  ChatFunctions.scrollToBottom(self.data._id);
 });
 
 Template.chatPanel.helpers({
@@ -33,7 +31,7 @@ Template.chatPanel.helpers({
 
   status: function() {
     var otherUser = getOtherUser(this.users);
-    var presence = Presences.findOne({userId: otherUser.userId});
+    var presence = Presences.findOne({ userId: otherUser.userId });
     return presence ? presence.state : "offline";
   },
 
@@ -42,32 +40,7 @@ Template.chatPanel.helpers({
   }
 });
 
-Template.chatPanel.events({
-  'submit .chat-inp-form': function(e) {
-    e.preventDefault();
-
-    var $inputElem = $(e.target).find('input');
-
-    var channelName = this.name;
-    var attributes = {
-      channel: channelName,
-      text: $inputElem.val().trim()
-    };
-
-    Meteor.call('insertChat',attributes, function(error){
-      if(error) {
-        console.log(error);
-      } else {
-        $inputElem.val('');
-      }
-
-      $inputElem.focus();
-    });
-  }
-});
-
 Template.chatPanel.destroyed = function() {
-  console.log(this);
 
   // Need to destroy the handle - it will run infinitely if not explicitly released
   if (this.changesHandle) {
@@ -76,11 +49,10 @@ Template.chatPanel.destroyed = function() {
 };
 
 function getOtherUser(users) {
-  var thisUser = Meteor.user().profile.name;
+  var thisUser = Meteor.user();
 
   var otherUser = _.find(users, function(user) {
-    return (user.name !== thisUser);
+    return (user.name !== thisUser.profile.name);
   });
-  return otherUser || 'unknown';
+  return otherUser || { name: thisUser.profile.name, userId: thisUser._id };
 }
-

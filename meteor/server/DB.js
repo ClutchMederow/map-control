@@ -21,6 +21,20 @@ DB = {
     });
   },
 
+  insertPrivateChat: function(attributes) {
+
+    // Shows the channel if a user has it hidden
+    var thisChannel = Channels.findOne(attributes.channel._id);
+    var userIds = _.pluck(thisChannel.users, 'userId');
+    var hiddenUsers = _.without(userIds, thisChannel.show);
+
+    if (hiddenUsers.length) {
+      Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
+    }
+
+    return DB.insertChat(attributes);
+  },
+
   users: {
     update: function(userId, doc) {
       if (!doc.$set)
@@ -499,25 +513,50 @@ DB = {
     }
   },
 
-  insertPrivateChannel: function(user1Id, user2Id) {
-    var requestor = Users.findOne(user1Id);
-    var submittor = Users.findOne(user2Id);
+  startChat: function(user1Id, user2Id) {
+    check(user1Id, String);
+    check(user2Id, String);
 
-    if (!requestor || !submittor) {
+    var requestor = Users.findOne(user1Id);
+    var otherUser = Users.findOne(user2Id);
+
+    if (!requestor || !otherUser) {
       throw new Error('NO_USER_FOUND');
     }
 
+    var chatSelector = { $and: [
+      { 'users.userId': 'oj75Az7ifWnRxLGep' },
+      { 'users.userId': 'uYrKadsnCzyg9TLrC' },
+      { category: 'Private' }
+    ]};
+
+    var currentChat = Channels.findOne(chatSelector);
+    var isShown = (currentChat.show.indexOf(user1Id) > -1);
+
+    // If a channel between the two users already exists, just show it
+    // otherwise, create a new one
+    if (currentChat) {
+      if (!isShown) {
+        Channels.update(channelId, { $push: { show: Meteor.userId() }});
+      }
+    } else {
+      DB.insertPrivateChannel(user1Id, user2Id);
+    }
+  },
+
+  insertPrivateChannel: function(requestor, otherUser) {
     return Channels.insert({
       //shouldn't need name for private chats
-      name: requestor.profile.name + '_' + submittor.profile.name + Math.round(Math.random()*100),
-      publishedToUsers: [user1Id, user2Id],
+      name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
+      publishedToUsers: [ user1Id, user2Id ],
       users: [{
         userId: requestor._id,
         name: requestor.profile.name
       }, {
-        userId: submittor._id,
-        name: submittor.profile.name
+        userId: otherUser._id,
+        name: otherUser.profile.name
       }],
+      show: [ requestor._id, otherUser._id ],
       category: 'Private'
     });
   },

@@ -902,12 +902,13 @@ $land-br: 4px;
 }
 
 $chat-width: 260px;
-$chat-height: 200px;
+$chat-height: 300px;
 $chat-input-height: 32px;
-$chat-bg: rgba(0, 0, 0, 0.9);
+$chat-bg: rgba(0, 0, 0, 0.95);
 $chat-bg-light: rgba(255, 255, 255, 0.15);
 $chat-border: none;
 $chat-window-height: $chat-height - $chat-input-height;
+$chat-br: 2px;
 
 #chat-widget {
   position: fixed;
@@ -926,15 +927,16 @@ $chat-window-height: $chat-height - $chat-input-height;
     margin-right: 5px;
     width: $chat-width;
     background-color: $chat-bg;
+    border-radius: $chat-br;
     // height: $chat-input-height;
 
     .label-row {
       background-color: $chat-bg-light;
-      border-radius: 4px 4px 0 0;
+      border-radius: $chat-br $chat-br 0 0;
     }
 
     .label-input-row {
-      border-radius: 2px;
+      border-radius: $chat-br;
       // background-color: $chat-bg;
       // border: $chat-border;
 
@@ -970,8 +972,10 @@ $chat-window-height: $chat-height - $chat-input-height;
     }
 
     &.active-chat {
+      border-radius: 0 0 $chat-br $chat-br;
+
       .label-input-row {
-        border-radius: 0 0 2px 2px;
+        border-radius: 0 0 $chat-br $chat-br;
         background-color: $chat-bg-light;
 
         a {
@@ -1019,7 +1023,7 @@ $chat-window-height: $chat-height - $chat-input-height;
       width: 100%;
       height: $chat-height;
       display: none;
-      border-radius: 4px 4px 0 0;
+      border-radius: $chat-br $chat-br 0 0;
     }
   }
 
@@ -1053,10 +1057,14 @@ $chat-window-height: $chat-height - $chat-input-height;
   box-shadow: none;
   display: block;
 
+  &:focus {
+    background-color: inherit;
+  }
+
   &:hover {
     background-color: inherit;
     box-shadow: none;
-    color: #4487C3;
+    color: #CFE8FF;
   }
 }
 
@@ -1072,6 +1080,7 @@ $chat-window-height: $chat-height - $chat-input-height;
 .chat-userinfo {
   font-size: 11px;
   margin-top: 15px;
+  color: #C3C3C3;
 
   &:first-child {
     margin-top: 0;
