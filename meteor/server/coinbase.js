@@ -2,7 +2,8 @@ Meteor.methods({
   'createCheckout': function(amount, currency) {
     check(amount, String);
     check(currency, String);
-    return Coinbase.createCheckout(amount, currency, "IronBucks");
+    var user = Meteor.users.findOne(this.userId);
+    return Coinbase.createCheckout(amount, currency, user.profile.email);
   },
   //TODO: do NOT have amount sent by client side, make sure
   //we verify values, etc.

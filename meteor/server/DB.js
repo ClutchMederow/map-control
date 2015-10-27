@@ -42,11 +42,13 @@ DB = {
       return Meteor.users.findOne(userId).profile.botName;
     },
 
-    updateTradeURL: function(userId, tradeURL) {
+    updateTradeURL: function(userId, tradeURL, email) {
       check(userId, String);
       check(tradeURL, String);
+      check(email, String);
 
-      var token = url.parse(tradeURL, true).query.token;
+      var token = tradeURL.split("token=")[1];
+      console.log(token);
 
       if (!token) {
         throw new Error('BAD_TRADE_URL: ' + tradeURL);
@@ -55,7 +57,8 @@ DB = {
       var doc = {
         $set: {
           'profile.tradeURL': tradeURL,
-          'profile.tradeToken': token
+          'profile.tradeToken': token,
+          'profile.email': email
         }
       };
 
@@ -641,7 +644,7 @@ DB = {
   //pass in positive number for adding ironBucks
   //pass in negative number of removing ironBucks
   //Note: $inc will create field if it doesn't exist
-  updateIronBucks: function(userId, amount) {
+  updateIronBucks: function(email, amount) {
     Meteor.users.update(userId, {$inc: {ironBucks: amount}});
   },
   addNotification: function(userId, message) {
@@ -651,7 +654,32 @@ DB = {
       viewed: false
     });
   },
-  updateIronBucksCallback: function(params) {
-    console.log(params);
+  updateIronBucksCallback: function(body) {
+    console.log(body.body);
+    console.log(Object.keys(body.body));
+    console.log(body.body.order);
+    var order = body.body.order;
+    /*
+    var amount = order.total_native.cents;
+    var currency = order.total_native.currency_iso;
+
+    //note: have to collect user email when they register?
+    //or maybe use uuid?
+    if(order.status === 'completed') {
+      //TODO: get email from meta-data
+      var email = params.metadata;
+
+
+      if(currency === "USD") {
+        //ensure email checks out, matches correctly, else issue refund
+        DB.updateIronBucks();
+      } else {
+        //TODO: use currValue with currency to add appropriate amount...
+        //should we worry about 6 hour caching?
+      }
+    } else {
+      //TODO: notify customer, log exception
+    }
+   */
   }
 };

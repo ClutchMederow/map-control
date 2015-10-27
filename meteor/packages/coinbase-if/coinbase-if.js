@@ -25,12 +25,12 @@ Coinbase = {
       }
     });
   },
-  createCheckout: function(amount, currency, name) {
-    check(name, String);
-    check(currency, String);
+  createCheckout: function(amount, currency, email) {
     check(amount, String);
+    check(currency, String);
+    check(email, String);
 
-    var checkout = createCheckout(client, amount, currency, name);
+    var checkout = createCheckout(client, amount, currency, email);
     return checkout.embed_code;
   },
   getCurrencies: function() {
@@ -74,19 +74,24 @@ function sendMoney(account, recipient, amount, currency, description) {
   return myFuture.wait();
 }
 
-function createCheckout(client, amount, currency, name) {
+function createCheckout(client, amount, currency, email) {
   var Future = Npm.require('fibers/future');
   var myFuture = new Future();
+
+  console.log(email);
 
   client.createCheckout({
     amount: amount,
     currency: currency,
-    name: name,
+    name: "IronBucks",
     type: "order",
     style: "buy_now_large",
     collect_email: true,
     collect_country: true,
-    success_url: "http://localhost:3000"
+    success_url: "http://localhost:3000",
+    metadata: {
+      email: email
+    }
   }, function(err, res){
     if(err) {
       myFuture.throw(err);
