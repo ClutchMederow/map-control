@@ -17,6 +17,17 @@ Router.route('/addIronBucks', {
   template: 'addIronBucks'
 });
 
+Router.route('/webhooks/coinbase', function() {
+  console.log(this);
+  var request = this.request;
+  var response = this.response;
+  this.response.statusCode = 200;
+  this.response.end('complete');
+}, {
+  name: 'webhooksCoinbase',
+  where: 'server'
+});
+
 Router.route('/contact', {
   name: 'contact',
   template: 'contact'
