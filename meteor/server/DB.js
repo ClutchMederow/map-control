@@ -511,6 +511,13 @@ DB = {
       //shouldn't need name for private chats
       name: requestor.profile.name + '_' + submittor.profile.name + Math.round(Math.random()*100),
       publishedToUsers: [user1Id, user2Id],
+      users: [{
+        userId: requestor._id,
+        name: requestor.profile.name
+      }, {
+        userId: submittor._id,
+        name: submittor.profile.name
+      }],
       category: 'Private'
     });
   },
