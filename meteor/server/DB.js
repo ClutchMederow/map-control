@@ -21,6 +21,27 @@ DB = {
     });
   },
 
+  insertPrivateChat: function(attributes) {
+
+    // Shows the channel if a user has it hidden
+    var thisChannel = Channels.findOne(attributes.channel._id);
+    var userIds = _.pluck(thisChannel.users, 'userId');
+    var hiddenUsers = _.without(userIds, thisChannel.show);
+
+    // increments the unseen
+    var otherUsers = _.difference(userIds, [ attributes.user.userId ]);
+
+    _.each(otherUsers, function(other) {
+      DB.addUnseen(attributes.channel._id, other);
+    });
+
+    if (hiddenUsers.length) {
+      Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
+    }
+
+    return DB.insertChat(attributes);
+  },
+
   users: {
     update: function(userId, doc) {
       if (!doc.$set)
@@ -502,18 +523,72 @@ DB = {
     }
   },
 
-  insertPrivateChannel: function(user1Id, user2Id) {
-    var requestor = Users.findOne(user1Id);
-    var submittor = Users.findOne(user2Id);
+  startChat: function(user1Id, user2Id) {
+    check(user1Id, String);
+    check(user2Id, String);
 
-    if (!requestor || !submittor) {
+    var requestor = Users.findOne(user1Id);
+    var otherUser = Users.findOne(user2Id);
+
+    if (!requestor || !otherUser) {
       throw new Error('NO_USER_FOUND');
     }
 
+    var chatSelector = { $and: [
+      { 'users.userId': user1Id },
+      { 'users.userId': user2Id },
+      { category: 'Private' }
+    ]};
+
+    var currentChat = Channels.findOne(chatSelector);
+    var isShown = (currentChat.show.indexOf(user1Id) > -1);
+
+    // If a channel between the two users already exists, just show it
+    // otherwise, create a new one
+
+    if (currentChat) {
+      if (!isShown) {
+        Channels.update(currentChat._id, { $push: { show: Meteor.userId() }});
+      }
+    } else {
+      DB.insertPrivateChannel(requestor, otherUser);
+    }
+  },
+
+  updateUnseen: function(channelId, userId) {
+    check(channelId, String);
+    check(userId, String);
+
+    var selector = { _id: channelId, 'users.userId': userId };
+    var doc = { $set: { 'users.$.unseen': 0 } };
+
+    Channels.update(selector, doc);
+  },
+
+  addUnseen: function(channelId, userId) {
+    check(channelId, String);
+    check(userId, String);
+
+    var selector = { _id: channelId, 'users.userId': userId };
+    var doc = { $inc: { 'users.$.unseen': 1 } };
+    Channels.update(selector, doc);
+  },
+
+  insertPrivateChannel: function(requestor, otherUser) {
     return Channels.insert({
       //shouldn't need name for private chats
-      name: requestor.profile.name + '_' + submittor.profile.name + Math.round(Math.random()*100),
-      publishedToUsers: [user1Id, user2Id],
+      name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
+      publishedToUsers: [ requestor._id, otherUser._id ],
+      users: [{
+        userId: requestor._id,
+        name: requestor.profile.name,
+        unseen: 0
+      }, {
+        userId: otherUser._id,
+        name: otherUser.profile.name,
+        unseen: 0
+      }],
+      show: [ requestor._id, otherUser._id ],
       category: 'Private'
     });
   },

@@ -1,13 +1,27 @@
 function channelsCursor() {
-    return Channels.find();
+  return Channels.find({ category: { $ne: 'Private' } });
 }
 
 var changesHandle;
+var channelName;
 
 Template.tradingFloor.onCreated(function() {
   var self = this;
   self.autorun(function() {
-    self.subscribe('messages', Iron.controller().getParams().channel);
+    var newChannel = Iron.controller().getParams().channel;
+    self.subscribe('messages', newChannel);
+
+    if (channelName !== newChannel) {
+      channelName = newChannel;
+
+      if (changesHandle) {
+        changesHandle.stop();
+      }
+      // Adds a scroll handle to run when a new message arrives
+      changesHandle = Messages.find({'channel.name': newChannel }).observeChanges({
+        added: scrollToBottom
+      });
+    }
   });
 });
 
@@ -34,10 +48,7 @@ Template.tradingFloor.onRendered(function() {
   // Define the area where we can drop stash items to be inserted into the chat
   DraggableItems.droppable('.tradingFloor', '.draggable-stash-item', dropItem);
 
-  // Adds a scroll handle to run when a new message arrives
-  changesHandle = Messages.find({'channel.name': Iron.controller().getParams().channel }).observeChanges({
-    added: scrollToBottom
-  });
+  scrollToBottom();
 });
 
 Template.tradingFloor.destroyed = function() {
@@ -55,11 +66,12 @@ Template.tradingFloor.helpers({
   },
 
   channels: function() {
-    return Channels.find();
+    return Channels.find({ category: { $ne: 'Private' } });
   },
 
   channelsByCategory: function() {
     var channels = channelsCursor().fetch();
+
     return _.groupBy(channels, function(channel) {
       return channel.category;
     });
@@ -122,7 +134,7 @@ function placeCaretAfterNode(node) {
 }
 
 var scrollToBottom = _.throttle(function() {
-  $('.chatTextWindow').animate({
-    scrollTop: $('.chatTextWindow').get(0).scrollHeight
-  }, 500);
+  setTimeout(function() {
+    $('.chatTextWindow').scrollTop($('.chatTextWindow').get(0).scrollHeight);
+  }, 0)
 }, 500);

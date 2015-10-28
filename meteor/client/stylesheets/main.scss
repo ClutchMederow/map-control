@@ -802,6 +802,7 @@ $land-br: 4px;
   display: table;
   width: 100%;
   margin-bottom: 10px;
+  border-collapse: collapse;
 
   .table-row {
     display: table-row;
@@ -828,6 +829,14 @@ $land-br: 4px;
 
     &.cell6 {
       width: unquote(((1/2) * 100) + "%");
+    }
+
+    &.cell11 {
+      width: unquote(((11/12) * 100) + "%");
+    }
+
+    &.cell10 {
+      width: unquote(((5/6) * 100) + "%");
     }
   }
 }
@@ -888,9 +897,213 @@ $land-br: 4px;
 }
 
 .add-item-link {
+  padding-top: 8px;
   text-align: right;
 }
 
+$chat-width: 260px;
+$chat-height: 300px;
+$chat-input-height: 32px;
+$chat-bg: rgba(0, 0, 0, 0.95);
+$chat-bg-light: rgba(255, 255, 255, 0.15);
+$chat-border: none;
+$chat-window-height: $chat-height - $chat-input-height;
+$chat-br: 2px;
+$chat-bg-alert: rgba(255, 255, 255, 0.3);
+
+#chat-widget {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: white;
+
+  .chat-rel {
+    position: relative;
+    float: right;
+  }
+
+  .chat-panel {
+    float: left;
+    position: relative;
+    margin-right: 5px;
+    width: $chat-width;
+    background-color: $chat-bg;
+    border-radius: $chat-br;
+    // height: $chat-input-height;
+
+    .label-row {
+      background-color: $chat-bg-light;
+      border-radius: $chat-br $chat-br 0 0;
+    }
+
+    .label-input-row {
+      border-radius: $chat-br;
+      // background-color: $chat-bg;
+      // border: $chat-border;
+
+      .chat-inp {
+        display: none;
+        table-layout: fixed;
+
+        .table-cell {
+          padding: 4px;
+        }
+
+        input {
+          border: none;
+          margin: 0;
+          padding: 5px 5px 5px 10px;
+          height: 24px;
+          background-color: grey;
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+
+          &:focus {
+            border: none;
+            box-shadow: none;
+          }
+        }
+
+        i {
+          font-size: 1rem;
+
+        }
+      }
+    }
+
+    &.active-chat {
+      border-radius: 0 0 $chat-br $chat-br;
+
+      .label-input-row {
+        border-radius: 0 0 $chat-br $chat-br;
+        background-color: $chat-bg-light;
+
+        a {
+          display: none;
+        }
+
+        .chat-inp {
+          display: table;
+          // height: $chat-input-height;
+        }
+
+        .table-fun {
+          margin: 0;
+        }
+      }
+
+      .message-row {
+        display: block;
+      }
+    }
+
+    .chat-label {
+      padding: 5px;
+      display: block;
+      text-align: center;
+      font-weight: 700;
+
+      &.new-messages {
+        background-color: $chat-bg-alert;
+        border-radius: $chat-br;
+      }
+    }
+
+    i.status-icon {
+      float: right;
+      vertical-align: middle;
+      color: red;
+
+      &.online {
+        color: green;
+      }
+    }
+
+    .message-row {
+      border: $chat-border;
+      background-color: $chat-bg;
+      width: $chat-width;
+      position: absolute;
+      bottom: 100%;
+      width: 100%;
+      height: $chat-height;
+      display: none;
+      border-radius: $chat-br $chat-br 0 0;
+    }
+  }
+
+  .chat-display-box {
+    position: relative;
+    text-overflow: clip;
+    overflow: scroll;
+    padding: 10px;
+    height: $chat-window-height;
+    border-left: 4px solid $chat-bg-light;
+    border-right: 4px solid $chat-bg-light;
+  }
+
+  .chat-msg {
+  }
+}
+
+.submit-cell {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-chatsubmit {
+  line-height: inherit;
+  position: absolute;
+  left: -20px;
+  width: 20px;
+  height: 26px;
+  background-color: inherit;
+  color: #86C5FD;
+  box-shadow: none;
+  display: block;
+
+  &:focus {
+    background-color: inherit;
+  }
+
+  &:hover {
+    background-color: inherit;
+    box-shadow: none;
+    color: #CFE8FF;
+  }
+}
+
+.close-chat {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  padding-left: 10px;
+  font-size: 22px;
+  color: white;
+}
+
+.chat-userinfo {
+  font-size: 11px;
+  margin-top: 15px;
+  color: #C3C3C3;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .chat-time {
+    color: grey;
+  }
+}
+
+.msg-badge {
+  border-radius: 1em;
+  background-color: white;
+  color: #616161;
+  margin-left: 10px;
+  padding: 0 5px 0 5px;
+}
 
 
 

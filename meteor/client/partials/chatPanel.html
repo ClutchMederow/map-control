@@ -1,0 +1,42 @@
+<template name="chatPanel">
+  <div class="chat-panel active-chat" id="{{ _id }}">
+    <div class="label-input-row">
+      <a href="#!" class="close-chat">&times;</a>
+      <a href="#!" class="chat-label {{ unreadMessages }}">
+        {{ otherUser.name }}
+        {{ #if unseenCount }}
+          <span class="msg-badge"> {{ unseenCount }}</span>
+        {{ /if }}
+        <i class="material-icons status-icon {{ status }}">perm_identity</i>
+      </a>
+      <form class="chat-inp-form">
+        <div class="table-fun chat-inp">
+          <div class="table-row">
+            <div class="table-cell cell10">
+              <div>
+                <input type="text" placeholder="Send a message">
+              </div>
+            </div>
+            <div class="table-cell cell2 submit-cell">
+              <button type="submit" class="btn btn-chatsubmit"><i class="material-icons">play_arrow</i></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="message-row">
+      <div class="label-row">
+        <a href="#!" class="close-chat">&times;</a>
+        <a href="#!" class="chat-label">{{ otherUser.name }}<i class="material-icons status-icon {{ status }}">perm_identity</i></a>
+      </div>
+      <div class="chat-display-box">
+        {{ #each messages }}
+          <div class="chat-userinfo">
+            <span class="chat-time">{{ justTime datePosted }}</span> {{ user.profile.name }}
+          </div>
+          <div class="chat-msg">{{ textWithImages }}</div>
+        {{ /each }}
+      </div>
+    </div>
+  </div>
+</template>
