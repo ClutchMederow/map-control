@@ -13,6 +13,9 @@ Config = {
 
   contactInfo: {
     email: "deltaveelabs@gmail.com"
+  },
+  financial: {
+    fee: 0.1
   }
 };
 

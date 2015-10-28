@@ -17,6 +17,11 @@ Router.route('/addIronBucks', {
   template: 'addIronBucks'
 });
 
+Router.route('/withdrawIronBucks', {
+  name: 'withdrawIronBucks',
+  template: 'withdrawIronBucks'
+});
+
 Router.route('/webhooks/coinbase', function() {
   var coinbaseSecret = this.request.query.coinbasesecret;
 
