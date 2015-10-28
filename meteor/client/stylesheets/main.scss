@@ -909,7 +909,7 @@ $chat-bg-light: rgba(255, 255, 255, 0.15);
 $chat-border: none;
 $chat-window-height: $chat-height - $chat-input-height;
 $chat-br: 2px;
-$chat-bg-alert: rgba(255,255,255,.1);
+$chat-bg-alert: rgba(255, 255, 255, 0.3);
 
 #chat-widget {
   position: fixed;
@@ -1006,7 +1006,7 @@ $chat-bg-alert: rgba(255,255,255,.1);
 
       &.new-messages {
         background-color: $chat-bg-alert;
-        border-radius: 1em;
+        border-radius: $chat-br;
       }
     }
 

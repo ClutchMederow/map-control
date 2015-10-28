@@ -5,8 +5,7 @@ Meteor.methods({
       channel: String
     });
 
-    // var user = Users.findOne(this.userId);
-    var user = Users.findOne('oj75Az7ifWnRxLGep');
+    var user = Users.findOne(this.userId);
 
     //TODO: make this cleaner, risky to rely on names
     var channel = Channels.findOne({ name: attributes.channel });
@@ -14,8 +13,7 @@ Meteor.methods({
 
     attributes.items = items;
     attributes.channel = channel;
-    // attributes.user = { userId: this.userId, profile: user.profile };
-    attributes.user = { userId: 'oj75Az7ifWnRxLGep', profile: user.profile };
+    attributes.user = {userId: this.userId, profile: user.profile};
 
     if (channel.category === 'Private') {
       DB.insertPrivateChat(attributes);
