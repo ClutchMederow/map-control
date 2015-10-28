@@ -995,6 +995,7 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
 
       .message-row {
         display: block;
+        height: $chat-height;
       }
     }
 
@@ -1027,9 +1028,9 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
       position: absolute;
       bottom: 100%;
       width: 100%;
-      height: $chat-height;
-      display: none;
       border-radius: $chat-br $chat-br 0 0;
+      display: none;
+      height: 0;
     }
   }
 
