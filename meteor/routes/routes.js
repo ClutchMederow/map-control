@@ -7,6 +7,40 @@ Router.route('/help', {
   template: 'help'
 });
 
+Router.route('/bitcoin', {
+  name: 'bitcoin',
+  template: 'bitcoin'
+});
+
+Router.route('/addIronBucks', {
+  name: 'addIronBucks',
+  template: 'addIronBucks'
+});
+
+Router.route('/withdrawIronBucks', {
+  name: 'withdrawIronBucks',
+  template: 'withdrawIronBucks'
+});
+
+Router.route('/webhooks/coinbase', function() {
+  var coinbaseSecret = this.request.query.coinbasesecret;
+
+  var COINBASE_SECRET = process.env.coinbase_callback_secret || 
+    (Meteor.settings && Meteor.settings.coinbase_callback_secret);
+
+  if(coinbaseSecret === COINBASE_SECRET) {
+    DB.updateIronBucksCallback(this.request);
+    
+    this.response.statusCode = 200;
+    this.response.end('complete');
+  } else {
+    this.response.statusCode = 403;
+    this.response.end('forbidden');
+  }
+}, {
+  name: 'webhooksCoinbase',
+  where: 'server'
+});
 
 Router.route('/contact', {
   name: 'contact',

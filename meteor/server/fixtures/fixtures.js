@@ -24,6 +24,12 @@ Meteor.startup(function() {
   }
 
   //Fixture data
+  if(CoinbaseCurrencies.find().count() === 0) {
+    _.each(Coinbase.getCurrencies(), function(currency) {
+      CoinbaseCurrencies.insert(currency);
+    });
+  }
+  
 
   //Users
   Users = Meteor.users;
