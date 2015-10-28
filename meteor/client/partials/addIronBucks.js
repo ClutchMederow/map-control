@@ -1,5 +1,6 @@
 var reactiveAmount = new ReactiveVar(null);
 var reactiveCurrency = new ReactiveVar(null);
+var reactiveIronBucks = new ReactiveVar(null);
 
 Template.addIronBucks.onCreated(function(){ 
   this.subscribe('coinbaseCurrencies');
@@ -9,6 +10,14 @@ Template.addIronBucks.onRendered(function() {
   this.autorun(function() {
     if(CoinbaseCurrencies.findOne()) {
       $('select').material_select();
+    }
+  });
+
+  Meteor.call('getIronBucks', function(error, ironBucks) {
+    if(error) {
+      console.log(error);
+    } else {
+      reactiveIronBucks.set(ironBucks);
     }
   });
 });
@@ -25,6 +34,9 @@ Template.addIronBucks.helpers({
   },
   currencies: function() {
     return CoinbaseCurrencies.find(); 
+  },
+  ironBucks: function() {
+    return reactiveIronBucks.get();
   }
 });
 

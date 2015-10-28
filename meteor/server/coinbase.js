@@ -16,5 +16,9 @@ Meteor.methods({
   },
   getCurrencies: function() {
     return Coinbase.getCurrencies();
+  },
+  getIronBucks: function() {
+    return Meteor.users.findOne(this.userId).ironBucks;
   }
+  
 });

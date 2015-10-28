@@ -644,7 +644,7 @@ DB = {
   //pass in positive number for adding ironBucks
   //pass in negative number of removing ironBucks
   //Note: $inc will create field if it doesn't exist
-  updateIronBucks: function(email, amount) {
+  updateIronBucks: function(userId, amount) {
     Meteor.users.update(userId, {$inc: {ironBucks: amount}});
   },
   addNotification: function(userId, message) {
@@ -655,31 +655,34 @@ DB = {
     });
   },
   updateIronBucksCallback: function(body) {
-    console.log(body.body);
-    console.log(Object.keys(body.body));
-    console.log(body.body.order);
     var order = body.body.order;
-    /*
-    var amount = order.total_native.cents;
-    var currency = order.total_native.currency_iso;
+    var customer = body.body.customer;
 
     //note: have to collect user email when they register?
     //or maybe use uuid?
     if(order.status === 'completed') {
-      //TODO: get email from meta-data
-      var email = params.metadata;
+      var email = order.metadata.email;
+      var user = Meteor.users.findOne({"profile.email": email});
 
-
-      if(currency === "USD") {
-        //ensure email checks out, matches correctly, else issue refund
-        DB.updateIronBucks();
+      if(!_.isObject(user)) {
+        //TODO
+        console.log("couldn't find user...ERROR");
       } else {
-        //TODO: use currValue with currency to add appropriate amount...
-        //should we worry about 6 hour caching?
+        //Note: 1 unit = 100 cents in any native currency 
+        //in coinbase callbacks
+        var amount = parseFloat(order.total_native.cents) / 100;
+        var currency = order.total_native.currency_iso;
+        if(currency === "USD") {
+          DB.updateIronBucks(user._id, amount);
+        } else {
+          var exchangeRate = currValue(currency);
+          var usdAmount = amount / exchangeRate;
+          DB.updateIronBucks(user._id, usdAmount);
+        }
       }
     } else {
-      //TODO: notify customer, log exception
+      //TODO
+      console.log('order not completed correctly');
     }
-   */
   }
 };
