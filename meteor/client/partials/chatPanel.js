@@ -48,7 +48,6 @@ Template.chatPanel.helpers({
   unreadMessages: function() {
     var userData = _.findWhere(this.users, { userId: Meteor.userId() });
     if (userData) {
-      console.log(userData.unseen);
       return !!userData.unseen ? 'new-messages' : ''
     }
   }

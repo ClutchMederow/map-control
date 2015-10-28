@@ -532,8 +532,8 @@ DB = {
     }
 
     var chatSelector = { $and: [
-      { 'users.userId': 'oj75Az7ifWnRxLGep' },
-      { 'users.userId': 'uYrKadsnCzyg9TLrC' },
+      { 'users.userId': user1Id },
+      { 'users.userId': user2Id },
       { category: 'Private' }
     ]};
 
@@ -542,12 +542,13 @@ DB = {
 
     // If a channel between the two users already exists, just show it
     // otherwise, create a new one
+
     if (currentChat) {
       if (!isShown) {
-        Channels.update(channelId, { $push: { show: Meteor.userId() }});
+        Channels.update(currentChat._id, { $push: { show: Meteor.userId() }});
       }
     } else {
-      DB.insertPrivateChannel(user1Id, user2Id);
+      DB.insertPrivateChannel(requestor, otherUser);
     }
   },
 
@@ -574,7 +575,7 @@ DB = {
     return Channels.insert({
       //shouldn't need name for private chats
       name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
-      publishedToUsers: [ user1Id, user2Id ],
+      publishedToUsers: [ requestor._id, otherUser._id ],
       users: [{
         userId: requestor._id,
         name: requestor.profile.name,

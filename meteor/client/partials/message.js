@@ -49,7 +49,7 @@ Template.message.events({
 
     Meteor.call('startPrivateChat',this.user.userId, function(error) {
       if(error) {
-        console.log(error.reason);
+        sAlert.error(error.reason);
       }
     });
   },
