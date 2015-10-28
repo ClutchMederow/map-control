@@ -22,11 +22,13 @@ ChatFunctions = {
       text: $inputElem.val().trim()
     };
 
+    // clear it first
+    $inputElem.val('');
+
     Meteor.call('insertChat',attributes, function(error){
       if(error) {
         sAlert.error(error.message);
       } else {
-        $inputElem.val('');
       }
 
       $inputElem.focus();
