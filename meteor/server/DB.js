@@ -541,12 +541,12 @@ DB = {
     ]};
 
     var currentChat = Channels.findOne(chatSelector);
-    var isShown = (currentChat.show.indexOf(user1Id) > -1);
 
     // If a channel between the two users already exists, just show it
     // otherwise, create a new one
 
     if (currentChat) {
+      var isShown = (currentChat.show.indexOf(user1Id) > -1);
       if (!isShown) {
         Channels.update(currentChat._id, { $push: { show: Meteor.userId() }});
       }
@@ -743,7 +743,7 @@ DB = {
         //TODO
         console.log("couldn't find user...ERROR");
       } else {
-        //Note: 1 unit = 100 cents in any native currency 
+        //Note: 1 unit = 100 cents in any native currency
         //in coinbase callbacks
         var amount = parseFloat(order.total_native.cents) / 100;
         var currency = order.total_native.currency_iso;
