@@ -994,9 +994,14 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
       }
 
       .message-row {
-        display: block;
+        // display: block;
         height: $chat-height;
-        transition: height .2s;
+        -webkit-transition: height .1s ease-out;
+        transition: height .1s ease-out;
+      }
+
+      .chat-display-box {
+        visibility: visible;
       }
     }
 
@@ -1030,8 +1035,11 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
       bottom: 100%;
       width: 100%;
       border-radius: $chat-br $chat-br 0 0;
-      display: none;
+      // display: none;
+        display: block;
       height: 0;
+      -webkit-transition: height .1s ease-out;
+      transition: height .1s ease-out;
     }
   }
 
@@ -1043,6 +1051,7 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
     height: $chat-window-height;
     border-left: 4px solid $chat-bg-light;
     border-right: 4px solid $chat-bg-light;
+    visibility: hidden;
   }
 
   .chat-msg {
