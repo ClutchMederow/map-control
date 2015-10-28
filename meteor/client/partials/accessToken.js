@@ -9,7 +9,7 @@ Template.accessToken.helpers({
     if (user && user.profile) {
       return user.profile.tradeURL || '';
     } else {
-      return ''
+      return '';
     }
   }
 });
@@ -21,13 +21,15 @@ Template.accessToken.events({
 
     try {
       var url = $('#tradeurl-input').val();
+      var email = $('#emailAddress').val();
 
       // Do a cursory check - see if the token is present
       // we will do a more thorough check server side
       var hasToken = /&token=/.test(url);
 
-      if (hasToken) {
-        Meteor.call('addTradeURL', url, function(error, result) {
+      //TODO: ensure valid email
+      if (hasToken && _.isString(email)) {
+        Meteor.call('addTradeURL', url, email, function(error, result) {
           if (error) {
             sAlert.error('Failed to update trade URL - please try again later.');
           } else {
@@ -41,4 +43,4 @@ Template.accessToken.events({
       $('.error-msg').show();
     }
   }
-})
+});

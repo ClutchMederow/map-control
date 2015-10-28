@@ -1,6 +1,7 @@
 Meteor.methods({
-  addTradeURL: function(tradeURL) {
+  addTradeURL: function(tradeURL, email) {
     check(tradeURL, String);
-    return DB.users.updateTradeURL(this.userId, tradeURL);
+    check(email, String);
+    return DB.users.updateTradeURL(this.userId, tradeURL, email);
   }
 });

@@ -46,7 +46,7 @@ SteamBot.prototype.logOn = function() {
     return;
 
   var baseDir = process.cwd().split('meteor')[0];
-  var tokenPath = baseDir + 'steambot-auth/' + self.logOnOptions.accountName;
+  var tokenPath = baseDir + '/meteor/server/steambot-auth/' + self.logOnOptions.accountName;
 
   if (Npm.require('fs').existsSync(tokenPath)) {
     self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
