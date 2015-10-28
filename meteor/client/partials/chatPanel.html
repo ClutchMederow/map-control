@@ -2,7 +2,13 @@
   <div class="chat-panel" id="{{ _id }}">
     <div class="label-input-row">
       <a href="#!" class="close-chat">&times;</a>
-      <a href="#!" class="chat-label">{{ otherUser.name }}<i class="material-icons status-icon {{ status }}">perm_identity</i></a>
+      <a href="#!" class="chat-label {{ unreadMessages }}">
+        {{ otherUser.name }}
+        {{ #if unseenCount }}
+          <span class="msg-badge"> {{ unseenCount }}</span>
+        {{ /if }}
+        <i class="material-icons status-icon {{ status }}">perm_identity</i>
+      </a>
       <form class="chat-inp-form">
         <div class="table-fun chat-inp">
           <div class="table-row">

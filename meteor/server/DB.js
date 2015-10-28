@@ -28,6 +28,13 @@ DB = {
     var userIds = _.pluck(thisChannel.users, 'userId');
     var hiddenUsers = _.without(userIds, thisChannel.show);
 
+    // increments the unseen
+    var otherUsers = _.difference(userIds, [ attributes.user.userId ]);
+
+    _.each(otherUsers, function(other) {
+      DB.addUnseen(attributes.channel._id, other);
+    });
+
     if (hiddenUsers.length) {
       Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
     }
@@ -544,6 +551,25 @@ DB = {
     }
   },
 
+  updateUnseen: function(channelId, userId) {
+    check(channelId, String);
+    check(userId, String);
+
+    var selector = { _id: channelId, 'users.userId': userId };
+    var doc = { $set: { 'users.$.unseen': 0 } };
+
+    Channels.update(selector, doc);
+  },
+
+  addUnseen: function(channelId, userId) {
+    check(channelId, String);
+    check(userId, String);
+
+    var selector = { _id: channelId, 'users.userId': userId };
+    var doc = { $inc: { 'users.$.unseen': 1 } };
+    Channels.update(selector, doc);
+  },
+
   insertPrivateChannel: function(requestor, otherUser) {
     return Channels.insert({
       //shouldn't need name for private chats
@@ -551,10 +577,12 @@ DB = {
       publishedToUsers: [ user1Id, user2Id ],
       users: [{
         userId: requestor._id,
-        name: requestor.profile.name
+        name: requestor.profile.name,
+        unseen: 0
       }, {
         userId: otherUser._id,
-        name: otherUser.profile.name
+        name: otherUser.profile.name,
+        unseen: 0
       }],
       show: [ requestor._id, otherUser._id ],
       category: 'Private'

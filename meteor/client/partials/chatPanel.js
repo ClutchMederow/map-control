@@ -12,6 +12,7 @@ Template.chatPanel.onRendered(function() {
   // Adds a scroll handle to run when a new message arrives
   this.changesHandle = Messages.find({'channel.name': self.data.name }).observeChanges({
     added: _.throttle(function() {
+      ChatFunctions.updateUnseen(self.data._id);
       ChatFunctions.scrollToBottom(self.data._id);
     }, 500)
   });
@@ -37,6 +38,19 @@ Template.chatPanel.helpers({
 
   textWithImages: function() {
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
+  },
+
+  unseenCount: function() {
+    var userData = _.findWhere(this.users, { userId: Meteor.userId() });
+    return !!userData ? userData.unseen : 0;
+  },
+
+  unreadMessages: function() {
+    var userData = _.findWhere(this.users, { userId: Meteor.userId() });
+    if (userData) {
+      console.log(userData.unseen);
+      return !!userData.unseen ? 'new-messages' : ''
+    }
   }
 });
 

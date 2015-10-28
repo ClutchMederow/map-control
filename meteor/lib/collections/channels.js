@@ -27,7 +27,8 @@ Channels.attachSchema({
 
   show: {
     type: [String],
-    label: 'Show to'
+    label: 'Show',
+    optional: true
   }
 });
 

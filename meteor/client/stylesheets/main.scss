@@ -909,6 +909,7 @@ $chat-bg-light: rgba(255, 255, 255, 0.15);
 $chat-border: none;
 $chat-window-height: $chat-height - $chat-input-height;
 $chat-br: 2px;
+$chat-bg-alert: rgba(255,255,255,.1);
 
 #chat-widget {
   position: fixed;
@@ -1002,6 +1003,11 @@ $chat-br: 2px;
       display: block;
       text-align: center;
       font-weight: 700;
+
+      &.new-messages {
+        background-color: $chat-bg-alert;
+        border-radius: 1em;
+      }
     }
 
     i.status-icon {
@@ -1090,6 +1096,15 @@ $chat-br: 2px;
     color: grey;
   }
 }
+
+.msg-badge {
+  border-radius: 1em;
+  background-color: white;
+  color: #616161;
+  margin-left: 10px;
+  padding: 0 5px 0 5px;
+}
+
 
 
 
