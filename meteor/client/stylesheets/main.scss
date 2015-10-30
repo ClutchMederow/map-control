@@ -1171,8 +1171,9 @@ $cs-size: 400px;
   display: none;
 
   .pan {
-    background-color: rgba(255, 255, 255, .98);
+    background-color: rgb(255, 255, 255);
     color: black;
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.2);
 
     input[type=text]:focus {
       border-bottom-color: black;
@@ -1183,7 +1184,7 @@ $cs-size: 400px;
 
 .close-link {
   position: absolute;
-  right: .5em;
+  left: .5em;
   top: .5em;
   font-size: 24px;
   color: black;
