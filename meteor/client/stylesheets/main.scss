@@ -90,6 +90,10 @@ main {
   flex: 1 0 auto;
 }
 
+.waves-effect {
+  z-index: inherit;
+}
+
 .material-tooltip { white-space: normal; }
 
 .brand-logo {
@@ -929,7 +933,17 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
     width: $chat-width;
     background-color: $chat-bg;
     border-radius: $chat-br;
-    // height: $chat-input-height;
+
+    .new-messages {
+      &.chat-label {
+        background-color: $chat-bg-alert;
+        border-radius: $chat-br;
+      }
+
+      &.message-row .chat-label {
+        display: none;
+      }
+    }
 
     .label-row {
       background-color: $chat-bg-light;
@@ -938,8 +952,6 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
 
     .label-input-row {
       border-radius: $chat-br;
-      // background-color: $chat-bg;
-      // border: $chat-border;
 
       .chat-inp {
         display: none;
@@ -1010,11 +1022,6 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
       display: block;
       text-align: center;
       font-weight: 700;
-
-      &.new-messages {
-        background-color: $chat-bg-alert;
-        border-radius: $chat-br;
-      }
     }
 
     i.status-icon {
@@ -1164,7 +1171,7 @@ $cs-size: 400px;
   display: none;
 
   .pan {
-    color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, .98);
     color: black;
 
     input[type=text]:focus {
@@ -1186,6 +1193,4 @@ $cs-size: 400px;
     color: #989393;
   }
 }
-
-
 
