@@ -3,3 +3,5 @@
 /meteor/private
 /meteor/server/steambot-auth
 *.swp
+*.sublime-project
+*.sublime-workspace
