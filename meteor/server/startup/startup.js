@@ -1,3 +1,3 @@
 Meteor.startup(function() {
-  // Dispatcher.init();
+  SyncedCron.start();
 });
