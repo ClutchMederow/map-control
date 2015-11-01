@@ -1,9 +1,12 @@
 <template name="chatWidget">
-  <div id="chat-widget">
-    <div class="chat-rel">
-      {{ #each chatChannels }}
-        {{> chatPanel }}
-      {{ /each }}
+  {{# if currentUser }}
+    <div id="chat-widget">
+      <div class="chat-rel">
+        {{ #each chatChannels }}
+          {{> chatPanel }}
+        {{ /each }}
+        {{> chatStash }}
+      </div>
     </div>
-  </div>
+  {{ /if }}
 </template>
