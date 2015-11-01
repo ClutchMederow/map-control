@@ -40,3 +40,4 @@ meteorhacks:npm
 npm-container
 coinbase-if
 alisalaah:currencies
+percolate:synced-cron

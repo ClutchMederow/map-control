@@ -108,6 +108,13 @@ if (Meteor.isServer) {
   Items._ensureIndex({ itemId: 1, unique: true });
 }
 
+//Helpers
+Items.helpers({
+  price: function() {
+    return ItemPrices.findOne(this.name);
+  }
+});
+
 //Attach Search to Collections
 Items.searchFor = SearchFunctions.searchFor;
 Items.searchForOne = SearchFunctions.searchForOne;
