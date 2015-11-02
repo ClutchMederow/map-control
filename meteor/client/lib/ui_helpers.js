@@ -87,7 +87,7 @@ UI.registerHelper('parseItemName', function(itemName) {
   var out = itemName.split('_WPNHUD_').pop();
   return out.replace('Knife', '')
     .replace('knife', '')
-    .split('_', ' ')
+    .split('_')
     .join(' ')
     .trim() || 'All';
 });
