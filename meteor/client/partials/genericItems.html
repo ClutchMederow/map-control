@@ -115,6 +115,38 @@
           </ul>
         </div>
       </li> <!--Knives -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Crates</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{ #each crates }}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{ parseCrateName name }}
+              </a>
+            </li>
+            {{ /each }}
+          </ul>
+        </div>
+      </li> <!--Knives -->
+      <li class="bold">
+        <a class="collapsible-header  waves-effect">Keys</a>
+        <div class="collapsible-body" style="display: none;">
+          <ul>
+            {{ #each keys }}
+            <li>
+              <a href="#" class="singleItem">
+                <img width="30%" height="30%"
+                                 src="{{image_url}}">
+                {{ parseItemName item_name }}
+              </a>
+            </li>
+            {{ /each }}
+          </ul>
+        </div>
+      </li> <!--Knives -->
     </ul> <!-- accordion -->
   </div>
 </template>
