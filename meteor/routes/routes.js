@@ -12,6 +12,11 @@ Router.route('/bitcoin', {
   template: 'bitcoin'
 });
 
+Router.route('/ironBucks', {
+  name: 'ironBucks', 
+  template: 'ironBucks'
+});
+
 Router.route('/addIronBucks', {
   name: 'addIronBucks',
   template: 'addIronBucks'
@@ -94,7 +99,19 @@ Router.route('/steam', {
 
 Router.route('/home', {
   name: 'home',
-  template: 'home'
+  template: 'home',
+  action: function() {
+    if(Meteor.user().profile.firstTimeUser) {
+      this.redirect('tour');
+    } else {
+      this.render('home');
+    }
+  }
+});
+
+Router.route('/tour', {
+  name: 'tour',
+  template: 'tour'
 });
 
 Router.route('/realtime/:tradeId', {

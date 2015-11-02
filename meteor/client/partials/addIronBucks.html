@@ -1,48 +1,46 @@
 <template name="addIronBucks">
-<div class="container">
-  <div class="row">
-    <div class="col s6 offset-s3">
-{{#if embedCode}}
-<iframe id="coinbase_inline_iframe_{{embedCode}}" 
-        src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
-        style="width: 460px; height: 350px; border: none; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.25);" 
-        allowtransparency="true" frameborder="0">
-</iframe>
-{{else}}
-      <div class="tradingFloor pan">
-        <div class="colored-title">
-          Current Balance: {{ironBucks}}
+<div class="row">
+  <div class="col s6 offset-s3">
+    {{#if embedCode}}
+    <iframe id="coinbase_inline_iframe_{{embedCode}}" 
+            src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
+            style="width: 460px; height: 350px; border: none; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);" 
+            allowtransparency="true" frameborder="0">
+    </iframe>
+    {{else}}
+    <div class="tradingFloor pan">
+      <div class="colored-title">
+        Current Balance: {{ironBucks}}
+      </div>
+      <div class="chatTextWindow">
+        <!-- show current iron bucks balance -->
+        <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
+        currency you'd like to purchase</p>
+        <div class="input-field col s8">
+          <input id="amount" type="number" class="validate">
+          <label for="amount">Enter amount of currency</label> 
         </div>
-        <div class="chatTextWindow">
-          <!-- show current iron bucks balance -->
-          <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
-          currency you'd like to purchase</p>
-          <div class="input-field col s8">
-            <input id="amount" type="number" class="validate">
-            <label for="amount">Enter amount of currency</label> 
-          </div>
-          <div class="input-field col s4">
-            <input id="currency" type="text" class="validate">
-            <label for="currency">Enter currency...</label> 
-          </div>
-          <div class="col s12 center">
-            {{#if conversionRate}}
-            <p>
-            <h5>${{conversionRate}} USD</h5>
-            </p>
-            {{/if}}
-          </div>
-          <div class="col s12 center">
-            <a class="btn-floating btn-large waves-effect waves-light green
-              center" id="add">
-              Add!
-            </a>
-          </div>
+        <div class="input-field col s4">
+          <input id="currency" type="text" class="validate">
+          <label for="currency">Enter currency...</label> 
+        </div>
+        <div class="col s12 center">
+          {{#if conversionRate}}
+          <p>
+          <h5>${{conversionRate}} USD</h5>
+          </p>
+          {{/if}}
+        </div>
+        <div class="col s12 center">
+          <a class="btn-floating btn-large waves-effect waves-light green
+          center" id="add">
+            Add!
+          </a>
         </div>
       </div>
-{{/if}}
     </div>
+    {{/if}}
   </div>
 </div>
 </template>
