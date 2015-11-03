@@ -12,12 +12,12 @@ Router.route('/bitcoin', {
   template: 'bitcoin'
 });
 
-Router.route('/addIronBucks', {
+Router.route('/ironbucks/add', {
   name: 'addIronBucks',
   template: 'addIronBucks'
 });
 
-Router.route('/withdrawIronBucks', {
+Router.route('/ironbucks/withdraw', {
   name: 'withdrawIronBucks',
   template: 'withdrawIronBucks'
 });
@@ -25,12 +25,12 @@ Router.route('/withdrawIronBucks', {
 Router.route('/webhooks/coinbase', function() {
   var coinbaseSecret = this.request.query.coinbasesecret;
 
-  var COINBASE_SECRET = process.env.coinbase_callback_secret || 
+  var COINBASE_SECRET = process.env.coinbase_callback_secret ||
     (Meteor.settings && Meteor.settings.coinbase_callback_secret);
 
   if(coinbaseSecret === COINBASE_SECRET) {
     DB.updateIronBucksCallback(this.request);
-    
+
     this.response.statusCode = 200;
     this.response.end('complete');
   } else {
@@ -57,10 +57,10 @@ Router.route('/faq', {
   template: 'faq'
 });
 
-Router.route('/paypalPayment', {
-  name: 'paypalPayment',
-  template: 'paypalPayment'
-});
+// Router.route('/paypalPayment', {
+//   name: 'paypalPayment',
+//   template: 'paypalPayment'
+// });
 
 Router.route('/paypalRedirect', {
   action: function() {
@@ -147,11 +147,6 @@ Router.route('/transactions/:userId', {
   data: function() {
     return {userId: this.params.userId};
   }
-});
-
-Router.route('/list', {
-  name: 'list',
-  template: 'postTradeRequest'
 });
 
 Router.route('/stripepayment', {

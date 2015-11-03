@@ -5,5 +5,9 @@ Template.marketRow.helpers({
     } else {
       return 'cell55';
     }
+  },
+
+  icon: function(isGeneric) {
+    return this.iconURL || this.image_url;
   }
 });

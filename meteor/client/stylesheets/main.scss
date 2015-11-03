@@ -1195,3 +1195,20 @@ $cs-size: 400px;
   }
 }
 
+.leftside, .rightside {
+  .item-infoed {
+    cursor: pointer;
+  }
+}
+
+#my-listing-items .make-offer-items {
+  height: 120px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#their-listing-items .make-offer-items {
+  height: 150px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}

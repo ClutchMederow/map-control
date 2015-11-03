@@ -66,11 +66,28 @@ UI.registerHelper('knives', function() {
   return GenericItems.find({item_type_name:"#CSGO_Type_Knife", name: { $ne: 'weapon_knife_t' }});
 });
 
+UI.registerHelper('keys', function() {
+  return GenericItems.find({ item_type_name:"#CSGO_Tool_WeaponCase_KeyTag" });
+});
+
+UI.registerHelper('crates', function() {
+  return GenericItems.find({ item_type_name:"#CSGO_Type_WeaponCase", 'capabilities.can_delete': true });
+});
+
+UI.registerHelper('parseCrateName', function(itemName) {
+  return itemName.replace('crate_', '')
+    .split('_')
+    .map(function(word) {
+      return word.charAt(0).toUpperCase() + word.substr(1);
+    })
+    .join(' ');
+});
+
 UI.registerHelper('parseItemName', function(itemName) {
   var out = itemName.split('_WPNHUD_').pop();
   return out.replace('Knife', '')
     .replace('knife', '')
-    .replace('_', ' ')
-    .replace('_', ' ')
+    .split('_')
+    .join(' ')
     .trim() || 'All';
 });

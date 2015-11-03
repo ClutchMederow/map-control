@@ -9,7 +9,7 @@ Template.chatInput.events({
 
     Meteor.call('insertChat',attributes, function(error){
       if(error) {
-        console.log(error);
+        throw error;
       } else {
         $('#chat_message').text("");
       }

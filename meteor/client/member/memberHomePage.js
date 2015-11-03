@@ -9,3 +9,10 @@ Template.home.helpers({
     return {userId: Meteor.userId()};
   }
 });
+
+Template.home.events({
+  'click .post-item': function(e) {
+    e.preventDefault();
+    Session.set('listing', true);
+  }
+});

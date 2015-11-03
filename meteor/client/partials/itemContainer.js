@@ -45,6 +45,14 @@ Template.itemContainer.helpers({
         return '';
       }
     }
+  },
+
+  icon: function(isGeneric) {
+    if (isGeneric) {
+      return this.image_url;
+    } else {
+      return this.iconURL;
+    }
   }
 });
 
