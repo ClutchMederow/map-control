@@ -55,10 +55,6 @@ Template.navbar.helpers({
   loggedIn: function() {
     return !!Meteor.user();
   },
-
-  ironBucks: function() {
-    return Meteor.user().profile.ironBucks;
-  }
 });
 
 Template.navbar.events({

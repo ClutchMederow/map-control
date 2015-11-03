@@ -10,6 +10,10 @@ UI.registerHelper("arrayify", function(obj) {
 
 });
 
+UI.registerHelper('ironBucks', function() {
+  return Meteor.user().profile.ironBucks;
+});
+
 UI.registerHelper('formatDate', function(unformattedDate) {
     if(moment(unformattedDate).isValid()) {
       return moment(unformattedDate).format('MMMM DD h:mm A');
