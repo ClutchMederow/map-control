@@ -50,18 +50,6 @@ Template.createListing.helpers({
 });
 
 Template.createListing.events({
-  // 'click #makeOffer': function(e) {
-  //   offerManager.execute(this.data._id, function(error) {
-  //     if(error) {
-  //       sAlert.error(error.reason);
-  //     } else {
-  //       offerManager.clearSelected();
-  //       Session.set('offer', null);
-  //       sAlert.success('Offer sent!');
-  //     }
-  //   });
-  // },
-
   'click #cancelModal': function(e) {
     e.preventDefault();
     Session.set('listing', false);
@@ -79,6 +67,16 @@ Template.createListing.events({
     });
   },
 
+  'click .leftside .item-infoed': function(e) {
+    e.preventDefault();
+    listingManager.toggleMyItem(this);
+  },
+
+  'click .rightside .item-infoed': function(e) {
+    e.preventDefault();
+    listingManager.toggleTheirItem(this);
+  },
+
   'click #my-listing-items .contained-item': function(e) {
     e.preventDefault();
     listingManager.toggleMyItem(this);
@@ -89,13 +87,13 @@ Template.createListing.events({
     listingManager.toggleTheirItem(this);
   },
 
-  'mouseenter.item-info-tooltip #current-listing-row .item-infoed': function(e) {
+  'mouseenter.item-info-tooltip .offer-modal-container .item-infoed': function(e) {
     DraggableItems.itemInfo.mousein(e, this);
   },
 
-  'mouseleave.item-info-tooltip #current-listing-row .item-infoed': function(e) {
+  'mouseleave.item-info-tooltip .offer-modal-container .item-infoed': function(e) {
     DraggableItems.itemInfo.mouseout(e);
-  },
+  }
 });
 
 
