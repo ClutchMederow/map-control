@@ -144,33 +144,18 @@ function createTooltipHtml(data) {
   }
 
   if (data.descriptions && data.descriptions.length) {
+    var elems = ItemDescriptionParser.getJqueryElement(data);
 
-    //  if it is a weapon case, get the constituents
-    if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
-
-      // We have to parse this a bit to make it presentable
-      var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
-      var end = findIndex(data.descriptions, ' ', start);
-
-      if (start !== -1 && end !== -1) {
-        var containerItems = data.descriptions.slice(start, end);
-
-        _.each(containerItems, function(item) {
-          var $newDiv = $('<div></div>');
-          $newDiv.css('color', '#' + item.color);
-          $newDiv.addClass('container-items');
-          $newDiv.text(item.value);
-          tooltipElement.append($newDiv);
-        });
-      }
-    }
+    _.each(elems, function($newDiv) {
+      tooltipElement.append($newDiv);
+    });
   }
 
-  if (!data.tradable) {
-    var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
-    $notTradable.addClass('not-tradable');
-    tooltipElement.append($notTradable);
-  }
+  // if (!data.tradable) {
+  //   var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
+  //   $notTradable.addClass('not-tradable');
+  //   tooltipElement.append($notTradable);
+  // }
 
   return tooltipElement;
 }
@@ -335,3 +320,40 @@ function getAnimateFunction(origin, tooltip, backdrop) {
       });
   };
 }
+
+var ItemDescriptionParser = {
+  itemType: {
+    CSGO_Type_WeaponCase: function(data) {
+      var elems = [];
+
+      // We have to parse this a bit to make it presentable
+      var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
+      var end = findIndex(data.descriptions, ' ', start);
+
+      if (start !== -1 && end !== -1) {
+        var containerItems = data.descriptions.slice(start, end);
+
+        _.each(containerItems, function(item) {
+          var $newDiv = $('<div></div>');
+          $newDiv.css('color', '#' + item.color);
+          $newDiv.addClass('container-items');
+          $newDiv.text(item.value);
+          elems.push($newDiv);
+        });
+      }
+
+      return elems;
+    }
+  },
+
+  getJqueryElement: function(data) {
+    var elems = [];
+
+    //  if it is a weapon case, get the constituents
+    if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
+      elems = ItemDescriptionParser.itemType.CSGO_Type_WeaponCase(data);
+    }
+
+    return elems;
+  }
+};

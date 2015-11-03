@@ -142,3 +142,6 @@ Items.ensureItemsInStash = function(itemIds) {
   return true;
 };
 
+Items.getItemsAndCash = function() {
+
+};

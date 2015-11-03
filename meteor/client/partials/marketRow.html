@@ -7,9 +7,9 @@
     {{ /if }}
     <div class="market-item-row table-row">
       <div class="table-cell {{ contWidth }} item-cont market-pan">
-        {{ #each data.items }}
+        {{ #each leftSide }}
           <div class="item-infoed">
-            <img width="70px" src="{{iconURL}}">
+            <img width="70px" src="{{ icon }}">
           </div>
         {{ /each }}
       </div>
@@ -21,7 +21,7 @@
       <div class="table-cell {{ contWidth }} item-cont market-pan">
         {{ #each rightSide }}
           <div class="item-infoed">
-            <img width="70px" src="{{iconURL}}">
+            <img width="70px" src="{{ icon }}">
           </div>
         {{ else }}
           <div class="none-specified">

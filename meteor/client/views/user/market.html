@@ -30,7 +30,7 @@
           </div>
         {{ /if }}
         {{ #each listings }}
-          {{> marketRow timeinforow=true data=this showControls=true rightSide=this.request }}
+          {{> marketRow timeinforow=true data=this showControls=true leftSide=this.items rightSide=this.request }}
         {{ else }}
           <div class="col s10 center">There are no items that match your search criteria</div>
         {{ /each }}
