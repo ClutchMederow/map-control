@@ -17,15 +17,25 @@ Meteor.methods({
     if(withdrawalAmount <= user.ironBucks) {
 
       var withdrawalObject = checkWithdrawal(this.userId);
+      var logData = withdrawalObject;
+      logData.date = new Date();
 
       if(withdrawalObject.total === 0) {
-        //TODO: ideally this would be transaction
+
+        logData.type = Enums.LogType.AUDIT;
+        Logs.insert(logData);
+
         DB.updateIronBucks(user._id, -withdrawalAmount);
+
         var roundedAmount = roundCurrency(withdrawalAmount);
         Coinbase.sendMoney(user.profile.email, roundedAmount, "USD", 
                            "withdrawing Iron Bucks");
       } else {
-        sendTotalErrorEmail();
+        logData.type = Enums.LogType.ERROR;
+
+        var logId = Logs.insert(logData);
+
+        sendTotalErrorEmail(logId, withdrawalObject, userId);
         throw new Meteor.Error("INCORRECT_WITHDRAWAL", "transactions do not match");
       }
     } else {

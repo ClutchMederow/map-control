@@ -15,7 +15,13 @@ checkWithdrawal = function(userId) {
   var sumBuys = 0;
   var sumFees = 0;
 
-  Logs.find({userId: userId}).forEach(function(log) {
+  var selector = {};
+
+  if(userId) {
+    selector.userId = userId;
+  }
+ 
+  Logs.find(selector).forEach(function(log) {
     if(log.type === Enums.LogType.CREDIT) {
       sumCredits = sumCredits + amount;
     }
@@ -43,6 +49,7 @@ checkWithdrawal = function(userId) {
     sumSales: sumSales,
     sumBuys: sumBuys,
     sumFees: sumFees,
-    total: (sumDebits + sumCredits + sumSales + sumBuys + sumFees)
+    total: (sumDebits + sumCredits + sumSales + sumBuys + sumFees),
+    userId: userId
   };
 };
