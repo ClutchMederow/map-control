@@ -1,37 +1,35 @@
 <template name="withdrawIronBucks">
-<div class="container">
-  <div class="row">
-    <div class="col s6 offset-s3">
-      <div class="tradingFloor pan">
-        <div class="colored-title">
-          Current Balance: {{ironBucks}}
+<div class="row">
+  <div class="col s6 offset-s3">
+    <div class="tradingFloor pan">
+      <div class="colored-title">
+        Current Balance: {{ironBucks}}
+      </div>
+      <div class="chatTextWindow">
+        <!-- show current iron bucks balance -->
+        <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
+        currency you'd like to purchase</p>
+        <div class="input-field col s8">
+          <input id="amount" type="number" class="validate">
+          <label for="amount">Enter amount of currency</label> 
         </div>
-        <div class="chatTextWindow">
-          <!-- show current iron bucks balance -->
-          <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
-          currency you'd like to purchase</p>
-          <div class="input-field col s8">
-            <input id="amount" type="number" class="validate">
-            <label for="amount">Enter amount of currency</label> 
-          </div>
-          <div class="input-field col s4">
-            <input id="currency" type="text" class="validate">
-            <label for="currency">Enter currency...</label> 
-          </div>
-          <div class="col s12 center">
-            {{#if conversionRate}}
-            <p>
-            <h5>Amount Received: {{conversionRate}} USD</h5>
-            <p>Total Cost (fee included): {{totalCost}} USD </p>
-            </p>
-            {{/if}}
-          </div>
-          <div class="col s12 center">
-            <a class="btn-floating btn-large waves-effect waves-light red
-              center" id="withdraw">
-              Withdraw!
-            </a>
-          </div>
+        <div class="input-field col s4">
+          <input id="currency" type="text" class="validate">
+          <label for="currency">Enter currency...</label> 
+        </div>
+        <div class="col s12 center">
+          {{#if conversionRate}}
+          <p>
+          <h5>Amount Received: {{conversionRate}} USD</h5>
+          <p>Total Cost (fee included): {{totalCost}} USD </p>
+          </p>
+          {{/if}}
+        </div>
+        <div class="col s12 center">
+          <a class="btn-floating btn-large waves-effect waves-light red
+          center" id="withdraw">
+            Withdraw!
+          </a>
         </div>
       </div>
     </div>

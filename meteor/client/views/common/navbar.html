@@ -12,6 +12,7 @@
         <li><a href="{{ pathFor route='market' userId='all' }}">Market</a></li>
         {{ #if loggedIn }}
           <li><a href="{{pathFor route='inventory'}}">My Inventory</a></li>
+          <li><a href="{{pathFor route='ironBucks'}}">IronBucks: {{ironBucks}}</a></li>
           <li><a href="{{pathFor route='home'}}">Command Center</a></li>
         {{ /if }}
         <li><a class="dropdown-button loginDropdown" href="#!" data-activates="loginNavLink" hover="true">{{ userNavText }}<i class="material-icons right loginDropIcon">arrow_drop_down</i></a></li>
