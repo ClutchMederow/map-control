@@ -1,13 +1,13 @@
 Meteor.methods({
-  'createCheckout': function(amount, currency) {
+  'createCheckout': function(amount) {
     check(amount, String);
-    check(currency, String);
+    var currency = "USD";
     var user = Meteor.users.findOne(this.userId);
     return Coinbase.createCheckout(amount, currency, user.profile.email);
   },
-  'sendMoney': function(amount, currency) {
+  'sendMoney': function(amount) {
     check(amount, String);
-    check(currency, String);
+    var currency = "USD";
 
     var user = Meteor.users.findOne(this.userId);
     //convert to USD, aka IronBucks

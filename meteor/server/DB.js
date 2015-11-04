@@ -760,6 +760,7 @@ DB = {
       } else {
         //Note: 1 unit = 100 cents in any native currency
         //in coinbase callbacks
+        console.log(amount);
         var amount = parseFloat(order.total_native.cents) / 100;
         var currency = order.total_native.currency_iso;
         if(currency === "USD") {

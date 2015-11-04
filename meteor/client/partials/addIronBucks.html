@@ -14,19 +14,14 @@
         Current Balance: {{ironBucks}}
       </div>
       <div class="chatTextWindow">
-        <!-- show current iron bucks balance -->
-        <div class="input-field col s8">
+        <div class="input-field col s8 offset-s2">
           <input id="amount" type="number" class="validate">
-          <label for="amount">Amount</label> 
-        </div>
-        <div class="input-field col s4">
-          <input id="currency" type="text" class="validate">
-          <label for="currency">Currency</label> 
+          <label for="amount">Amount of IronBucks to Purchase</label> 
         </div>
         <div class="col s12 center">
-          {{#if conversionRate}}
+          {{#if price}}
           <p>
-          <h5>Receive {{conversionRate}} IronBucks</h5>
+          <h5>Price: {{price}} USD</h5>
           </p>
           {{/if}}
         </div>
