@@ -21,7 +21,7 @@ IronBucks = {
       tradable: 1,
       classId: '0',
       instanceId: '0',
-      iconURL: 'images/cash.png',
+      iconURL: '/images/cash.png',
       tradeofferId: '0',
       status: 'STASH',
       deleteInd: false,

@@ -22,6 +22,22 @@ $highlight-hover: #ffd8a6;
 // old: rgba(0, 13, 84, 0.65)
 $bg-overlay: rgba(0, 13, 84, 0.65);
 
+// overwrite material design coloring
+input[type=text]:focus:not([readonly]),
+input[type=password]:focus:not([readonly]),
+input[type=email]:focus:not([readonly]),
+input[type=url]:focus:not([readonly]),
+input[type=time]:focus:not([readonly]),
+input[type=date]:focus:not([readonly]),
+input[type=datetime-local]:focus:not([readonly]),
+input[type=tel]:focus:not([readonly]),
+input[type=number]:focus:not([readonly]),
+input[type=search]:focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom: 1px solid black;
+  box-shadow: 0 1px 0 0 black;
+}
+
 html {
   background-color: black;
   font-family: 'Lato', sans-serif;
@@ -58,9 +74,6 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
-
-
-
 
 body {
   color: white;

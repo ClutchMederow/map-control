@@ -2,7 +2,7 @@ oeapikey = process.env.open_exchange_key ||
   (Meteor.settings && Meteor.settings.open_exchange_key);
 
 sendTotalErrorEmail = function(userId) {
-  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
+  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com",
     "duncanrenfrow@gmail.com"];
     var options = {
       from: "deltaveelabs@gmail.com",
@@ -28,6 +28,10 @@ SyncedCron.add({
     var steamlyticsApi = SteamlyticsApi;
     var price = null;
     Items.find().forEach(function(item) {
+
+      // ignore ironbucks
+      if (item.name === IronBucks.name) return;
+
       var itemPrice = ItemPrices.findOne({ name: item.name });
       if(itemPrice) {
         if(itemPrice.upToDate) {
@@ -87,5 +91,5 @@ SyncedCron.add({
       //create ERROR event in log
       sendTotalErrorEmail();
     }
-  }  
+  }
 });
