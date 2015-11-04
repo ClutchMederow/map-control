@@ -20,6 +20,12 @@ Enums = {
     BUY: "BUY",  //buying an item 
     FEE: "FEE", //our DL fee
     ERROR: "ERROR"
+  },
+
+  Environments: {
+    DEV: "dev",
+    QA: "qa",
+    PROD: "prod"
   }
 };
 

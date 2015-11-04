@@ -1,4 +1,5 @@
 Meteor.startup(function() {
+  var environment = Meteor.settings.environment;
   //setup steam api
   configureSteam = function(config) {
     ServiceConfiguration.configurations.upsert(
@@ -21,7 +22,6 @@ Meteor.startup(function() {
   //Load Generic Items
   if(GenericItems.find().count() === 0) {
     SteamAPI.getGenericItems();
-    //
   }
 
   //Fixture data
@@ -47,10 +47,10 @@ Meteor.startup(function() {
 
   //Users
   Users = Meteor.users;
-  if(Users.find().count() === 0) {
+  if(environment === Enums.Environments.DEV && Users.find().count() === 0) {
     _(5).times(function(n) {
       var user = Fake.user({fields: ['emails.address', 'profile.name']});
-      //Users.insert(user);
+      Users.insert(user);
     });
   }
 
@@ -85,7 +85,7 @@ Meteor.startup(function() {
     }
   });
 
-  if (Channels.find().count() === 0) {
+  if (environment === Enums.Environments.DEV && Channels.find().count() === 0) {
     Channels.insert({name: 'Trading Floor',
                     publishedToUsers: ['Public'],
                     category: 'Trading Floor'});
@@ -138,17 +138,9 @@ Meteor.startup(function() {
   });
 
   //TODO: put in dev / production flag here
-  if (Messages.find().count() === 0) {
+  if (environment === Enums.Environments.DEV && Messages.find().count() === 0) {
     _(10).times(function(n) {
       Factory.create('message');
     });
   }
-
-  /*
-  if (Items.find().count() === 0) {
-    _(100).times(function(n) {
-      Factory.create('item');
-    });
-  }
- */
 });
