@@ -18,7 +18,7 @@ Template.addRemoveStash.helpers({
 
     return {
       title: 'Stash',
-      items: Items.find({ userId: userId, status: Enums.ItemStatus.STASH, deleteInd: false }).fetch(),
+      items: Items.find({ userId: userId, status: Enums.ItemStatus.STASH, deleteInd: false, name: { $ne: IronBucks.name } }).fetch(),
       columns: '3',
       class: 'add-remove-items',
       selectedItems: stashManager.selectedItems,

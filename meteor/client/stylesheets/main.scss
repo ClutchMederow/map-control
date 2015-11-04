@@ -387,6 +387,10 @@ main {
   }
 }
 
+.ironbucks-amount {
+  color: red;
+}
+
 .fade-up {
   animation-name: fadeInUp;
   animation-duration: 0.2s;
@@ -637,6 +641,28 @@ $land-br: 4px;
   input[type=text]:focus {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+      transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input[type=email] {
+    border-bottom: 1px solid #000;
+    box-shadow: none;
+
+    .valid {
+      border-bottom: 1px solid #000;
+      box-shadow: 0 1px 0 0 #000;
+    }
+
+    &:focus {
+      border-bottom: 1px solid #000;
+      box-shadow: 0 1px 0 0 #000;
+    }
   }
 }
 

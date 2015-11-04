@@ -1,7 +1,7 @@
 <template name="accessToken">
   <div class="card-panel pan">
     <div class="colored-title">
-      TRADE URL
+      PROFILE
     </div>
     <div class="row">
       <div class="col s12">
@@ -25,8 +25,7 @@
           <input value="{{ currentTradeURL }}" placeholder="trade url" id="tradeurl-input" type="text" autocomplete="off">
         </div>
         <div class="input-field col s10">
-          <input placeholder="Email address" id="emailAddress" type="email"
-                                                               class="validate">
+          <input value="{{ currentEmail }}" placeholder="Email address" id="emailAddress" type="email" class="validate">
         </div>
         <div class="input-field col s2">
           <button class="btn waves-effect light-blue darken-1" type="submit" id="save">save</button>
@@ -34,6 +33,11 @@
       </form>
     </div>
     <div class="row">
+    {{ #if goodToGo }}
+      <div class="col s12 center">
+        <a href="{{ pathFor route='home' }}" class="btn waves-effect light-blue darken-2">To your command center</a>
+      </div>
+    {{ /if }}
       <div class="col s10 error-msg">
         <p>Please enter a valid trade URL and Email</p>
       </div>

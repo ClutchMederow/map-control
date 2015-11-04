@@ -1,14 +1,18 @@
 IronBucks = {
+  name: 'IronBucks',
+
   getDoc: function(userId) {
+    check(userId, String);
+
     return {
       userId: userId,
       botName: null,
-      name: 'IronBucks',
+      name: IronBucks.name,
       nameColor: '3F9049',
-      type: 'IronBucks',
+      type: IronBucks.name,
       descriptions: [{
         type: 'html',
-        value: 'IronBucks'
+        value: IronBucks.name,
       }],
       tags: [],
       itemId: '0',

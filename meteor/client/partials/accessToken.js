@@ -11,6 +11,20 @@ Template.accessToken.helpers({
     } else {
       return '';
     }
+  },
+
+  currentEmail: function() {
+    var user = Meteor.user();
+
+    if (user && user.profile) {
+      return user.profile.email || '';
+    } else {
+      return '';
+    }
+  },
+
+  goodToGo: function() {
+    return !!Meteor.user().profile.email && !!Meteor.user().profile.tradeURL;
   }
 });
 
@@ -33,7 +47,7 @@ Template.accessToken.events({
           if (error) {
             sAlert.error('Failed to update trade URL - please try again later.');
           } else {
-            sAlert.success('Updated trade URL successfully');
+            sAlert.success('Updated details successfully');
           }
         });
       } else {
