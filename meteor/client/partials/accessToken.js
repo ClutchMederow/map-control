@@ -24,7 +24,11 @@ Template.accessToken.helpers({
   },
 
   goodToGo: function() {
-    return !!Meteor.user().profile.email && !!Meteor.user().profile.tradeURL;
+    if (Meteor.user() && Meteor.user().profile) {
+      return !!Meteor.user().profile.email && !!Meteor.user().profile.tradeURL;
+    } else {
+      return false;
+    }
   }
 });
 
