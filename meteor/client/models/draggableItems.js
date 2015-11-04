@@ -137,19 +137,18 @@ function createTooltipHtml(data) {
     tooltipElement.append(title);
   }
 
-  if (data.type) {
+  // blacklist certain items from having descriptions
+  if (ItemDescriptionParser.ignoreTypeSub.indexOf(data.type) === -1) {
     var typeElem = $('<div>' + data.type + '</div>');
     typeElem.addClass('item-info-type');
     tooltipElement.append(typeElem);
   }
 
-  if (data.descriptions && data.descriptions.length) {
-    var elems = ItemDescriptionParser.getJqueryElement(data);
-
-    _.each(elems, function($newDiv) {
-      tooltipElement.append($newDiv);
-    });
-  }
+  // Add descriptions for certain types
+  var descriptionElems = ItemDescriptionParser.getJqueryElement(data);
+  _.each(descriptionElems, function($newDiv) {
+    tooltipElement.append($newDiv);
+  });
 
   // if (!data.tradable) {
   //   var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
@@ -322,27 +321,45 @@ function getAnimateFunction(origin, tooltip, backdrop) {
 }
 
 var ItemDescriptionParser = {
+
+  // Do not display the type if it is in this array
+  ignoreTypeSub: [ IronBucks.name ],
+
   itemType: {
     CSGO_Type_WeaponCase: function(data) {
       var elems = [];
 
       // We have to parse this a bit to make it presentable
-      var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
-      var end = findIndex(data.descriptions, ' ', start);
 
-      if (start !== -1 && end !== -1) {
-        var containerItems = data.descriptions.slice(start, end);
+      if (data.descriptions && data.descriptions.length) {
+        var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
+        var end = findIndex(data.descriptions, ' ', start);
 
-        _.each(containerItems, function(item) {
-          var $newDiv = $('<div></div>');
-          $newDiv.css('color', '#' + item.color);
-          $newDiv.addClass('container-items');
-          $newDiv.text(item.value);
-          elems.push($newDiv);
-        });
+        if (start !== -1 && end !== -1) {
+          var containerItems = data.descriptions.slice(start, end);
+
+          _.each(containerItems, function(item) {
+            var $newDiv = $('<div></div>');
+            $newDiv.css('color', '#' + item.color);
+            $newDiv.addClass('container-items');
+            $newDiv.text(item.value);
+            elems.push($newDiv);
+          });
+        }
       }
 
       return elems;
+    },
+
+    IronBucks: function(data) {
+      var amount = Meteor.user().profile.ironBucks;
+
+      var $newDiv = $('<div></div>');
+      $newDiv.addClass('container-items');
+      $newDiv.addClass('ironbucks-amount');
+
+      $newDiv.text('$' + amount + ' available');
+      return $newDiv;
     }
   },
 
@@ -352,6 +369,8 @@ var ItemDescriptionParser = {
     //  if it is a weapon case, get the constituents
     if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
       elems = ItemDescriptionParser.itemType.CSGO_Type_WeaponCase(data);
+    } else if (data.type === IronBucks.name) {
+      elems = ItemDescriptionParser.itemType.IronBucks(data);
     }
 
     return elems;
