@@ -7,10 +7,13 @@ Log = new Mongo.Collection('log');
 
 //TODO: add index to logs?
 
-//need function that takes in userId, determines if debits & credits add up to 0
-checkDebitsCredits = function(userId) {
+
+checkWithdrawal = function(userId) {
   var sumDebits = 0;
   var sumCredits = 0;
+  var sumSales = 0;
+  var sumBuys = 0;
+  var sumFees = 0;
 
   Logs.find({userId: userId}).forEach(function(log) {
     if(log.type === Enums.LogType.CREDIT) {
@@ -20,11 +23,26 @@ checkDebitsCredits = function(userId) {
     if(log.type === Enums.LogType.DEBIT) {
       sumDebits = sumDebits + amount;
     }
+
+    if(log.type === Enums.LogType.SALE) {
+      sumSales = sumSales + amount;
+    }
+    
+    if(log.type === Enums.LogType.BUY) {
+      sumBuys = sumBuys + amount;
+    }
+
+    if(log.type === Enums.LogType.FEE) {
+      sumFees = sumFees + amount;
+    }
   });
 
   return {
     sumDebits: sumDebits,
     sumCredits: sumCredits,
-    difference: (sumDebits + sumCredits)
+    sumSales: sumSales,
+    sumBuys: sumBuys,
+    sumFees: sumFees,
+    total: (sumDebits + sumCredits + sumSales + sumBuys + sumFees)
   };
 };

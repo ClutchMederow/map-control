@@ -1,6 +1,22 @@
 oeapikey = process.env.open_exchange_key ||
   (Meteor.settings && Meteor.settings.open_exchange_key);
 
+sendTotalErrorEmail = function(userId) {
+  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
+    "duncanrenfrow@gmail.com"];
+    var options = {
+      from: "deltaveelabs@gmail.com",
+      to: recepients,
+      subject: "ERROR: Debits and Credits DO NOT match"
+    };
+    if(userId) {
+      options.text = "Please immediately check the application. Financial totals did not match for userId: " + userId;
+    } else {
+      options.text = "Please immediately check the application. Financial totals did not match for the application";
+    }
+    Email.send(options);
+};
+
 //setup pricing chron job
 SyncedCron.add({
   name: 'Update pricing information',
@@ -68,15 +84,8 @@ SyncedCron.add({
       });
     } else {
       //TODO: send email, text, log an anomalous event?
-      var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
-          "duncanrenfrow@gmail.com"];
-      var options = {
-        from: "deltaveelabs@gmail.com",
-        to: recepients,
-        subject: "ERROR: Debits and Credits DO NOT match",
-        text: "Please immediately check the application. Sum of Credits: " + sumCredits + ". Sum of debits: " + sumDebits + ". Difference: " + sumCredits + sumDebits
-      };
-      Email.send(options);
+      //create ERROR event in log
+      sendTotalErrorEmail();
     }
   }  
 });

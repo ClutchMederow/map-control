@@ -30,15 +30,27 @@ Meteor.startup(function() {
       CoinbaseCurrencies.insert(currency);
     });
   }
-
+ 
+  //admin user, holds ironbucks
+  var adminName = Meteor.settings.adminUser.userName;
+  var adminUser = Meteor.users.findOne({"profile.name": adminName});
+  if(!_.isObject(adminUser)) {
+    console.log("creating admin user");
+    Accounts.createUser({
+      username: adminName,
+      password: Meteor.settings.adminUser.password,
+      profile: {
+        name: adminName
+      }
+    });
+  }
 
   //Users
   Users = Meteor.users;
   if(Users.find().count() === 0) {
     _(5).times(function(n) {
       var user = Fake.user({fields: ['emails.address', 'profile.name']});
-      console.log(user);
-      Users.insert(user);
+      //Users.insert(user);
     });
   }
 

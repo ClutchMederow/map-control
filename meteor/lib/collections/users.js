@@ -1,9 +1,10 @@
 Meteor.users.after.insert(function (userId, doc) {
-  console.log(doc);
+
   Meteor.users.update(doc._id, {$set: {
     "profile.ironBucks": 0,
     "profile.firstTimeUser": true
   }});
+
 });
 
 //This is probably unnecessary, see quote from Meteor docs below:
