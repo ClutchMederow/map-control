@@ -11,7 +11,9 @@ UI.registerHelper("arrayify", function(obj) {
 });
 
 UI.registerHelper('ironBucks', function() {
-  return Meteor.user().profile.ironBucks;
+  if(Meteor.user()) {
+    return formatCurr(Meteor.user().profile.ironBucks, "USD");
+  }
 });
 
 UI.registerHelper('formatDate', function(unformattedDate) {

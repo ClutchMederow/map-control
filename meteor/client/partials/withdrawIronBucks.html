@@ -7,21 +7,18 @@
       </div>
       <div class="chatTextWindow">
         <!-- show current iron bucks balance -->
-        <p>Note: 1 IronBuck = $1 USD. Please enter the amount of <b>your</b>
-        currency you'd like to purchase</p>
         <div class="input-field col s8">
           <input id="amount" type="number" class="validate">
-          <label for="amount">Enter amount of currency</label> 
+          <label for="amount">Amount</label> 
         </div>
         <div class="input-field col s4">
           <input id="currency" type="text" class="validate">
-          <label for="currency">Enter currency...</label> 
+          <label for="currency">Currency</label> 
         </div>
         <div class="col s12 center">
           {{#if conversionRate}}
           <p>
-          <h5>Amount Received: {{conversionRate}} USD</h5>
-          <p>Total Cost (fee included): {{totalCost}} USD </p>
+          <h5>Withdrawing: {{conversionRate}} IronBucks</h5>
           </p>
           {{/if}}
         </div>

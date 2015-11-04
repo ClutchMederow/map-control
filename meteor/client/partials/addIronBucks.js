@@ -29,14 +29,12 @@ Template.addIronBucks.helpers({
   conversionRate: function() {
     if(reactiveAmount.get() && reactiveCurrency.get()) {
       //TODO: handle bitcoin?
-      return reactiveAmount.get() / currValue(reactiveCurrency.get());
+      var total = reactiveAmount.get() / currValue(reactiveCurrency.get());
+      return formatCurr(total, "USD");
     }
   },
   currencies: function() {
     return CoinbaseCurrencies.find(); 
-  },
-  ironBucks: function() {
-    return reactiveIronBucks.get();
   }
 });
 

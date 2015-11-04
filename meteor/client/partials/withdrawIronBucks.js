@@ -43,9 +43,6 @@ Template.withdrawIronBucks.helpers({
   },
   currencies: function() {
     return CoinbaseCurrencies.find(); 
-  },
-  ironBucks: function() {
-    return reactiveIronBucks.get();
   }
 });
 
