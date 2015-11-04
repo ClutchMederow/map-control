@@ -9,6 +9,13 @@ Enums = {
   TransType: {
     WITHDRAW: 'WITHDRAW',
     DEPOSIT: 'DEPOSIT'
+  },
+
+  LogType: {
+    DEBIT: 'DEBIT', //removing money from their IronBucks account
+    CREDIT: 'CREDIT', //adding money to their IronBucks account
+    TRADE: 'TRADE', //trade between 2 players
+    AUDIT: 'AUDIT' //internal audit
   }
 };
 

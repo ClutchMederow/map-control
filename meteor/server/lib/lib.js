@@ -36,3 +36,46 @@ SyncedCron.add({
     ItemPrices.update({}, {$set: {upToDate: false}}, {multi: true});
   }
 });
+
+
+//checks to make sure credits / debits in sync. Sends an alert / email if not
+SyncedCron.add({
+  name: 'Check debits & credits',
+  schedule: function(parser) {
+    return parser.text('every 1 hours');
+  },
+  job: function() {
+    var sumDebits = 0;
+    var sumCredits = 0;
+
+    Logs.find().forEach(function(log) {
+      if(log.type === Enums.LogType.CREDIT) {
+        sumCredits = sumCredits + amount;
+      }
+
+      if(log.type === Enums.LogType.DEBIT) {
+        sumDebits = sumDebits + amount;
+      }
+    });
+
+    if(sumDebits + sumCredits === 0) {
+      Logs.insert({
+        type: Enums.LogType.AUDIT,
+        date: new Date(),
+        sumDebits: sumDebits,
+        sumCredits: sumCredits
+      });
+    } else {
+      //TODO: send email, text, log an anomalous event?
+      var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
+          "duncanrenfrow@gmail.com"];
+      var options = {
+        from: "deltaveelabs@gmail.com",
+        to: recepients,
+        subject: "ERROR: Debits and Credits DO NOT match",
+        text: "Please immediately check the application. Sum of Credits: " + sumCredits + ". Sum of debits: " + sumDebits + ". Difference: " + sumCredits + sumDebits
+      };
+      Email.send(options);
+    }
+  }  
+});
