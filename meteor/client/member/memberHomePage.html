@@ -30,6 +30,7 @@
         <h5><a href="{{pathFor route='market' data=getMarket}}">Market</a></h5>
         <h5><a href="#!" class="post-item">Post Item to Market</a></h5>
         <h5><a href="{{ pathFor route='tradingFloor' }}">Trading Floor</a></h5>
+        <h5><a href="{{pathFor route='faq'}}">FAQ</a></h5>
       </div>
     </div>
     <div class="col s4">
@@ -40,7 +41,7 @@
         <h5><a href="{{pathFor route='inventory'}}">My Inventory</a></h5>
         <h5><a href="{{pathFor route='market' data=getMyListings}}">My Listings</a></h5>
         <h5><a href="{{pathFor route='transactions' data=getMyTransactions}}">
-            My Open Trades
+            My Sent Offers
           </a>
         </h5>
         <h5><a href="#">Add Items to Stash</a></h5>
@@ -51,9 +52,7 @@
         <div class="colored-title">
           Notifications
         </div>
-        <p>This will eventually streams notifications</p>
-        <h5><a href="{{pathFor route='notifications'}}">Notifications</a></h5>
-        <h5><a href="{{pathFor route='faq'}}">FAQ</a></h5>
+        {{> notifications }}
       </div>
     </div>
   </div>
