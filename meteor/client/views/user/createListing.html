@@ -1,0 +1,54 @@
+<template name="createListing">
+  {{ #if listing }}
+    <div id="offer-modal" class="offer-modal-container">
+      <div class="row">
+        <div class="col s6 offset-s3 offer-modal-content fade-up">
+          {{ #if inProgress }}
+            <div class="row">
+              <div class="col s12 center">
+                <h3>Sending offer...</h3>
+                <div class="col s12 loading">
+                  <div class="spinner">
+                    <div class="dot1"></div>
+                    <div class="dot2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ else }}
+            <div class="row">
+              <div class="col s6 username">
+                create a new listing
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12" id="current-offer-row">
+                {{> marketRow rightSide=theirItems leftSide=myItems }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6" id="my-listing-items">
+                {{> itemContainer stashOptions }}
+              </div>
+              <div class="col s6" id="their-listing-items">
+                {{> itemContainer lookingForStashOptions }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s4">
+                <div>
+                  <a href="#!" id="cancelModal" class="btn btn-block red">Cancel</a>
+                </div>
+              </div>
+              <div class="col s4 offset-s4">
+                <div>
+                  <a href="#!" id="postTrade" class="btn btn-block green">Create</a>
+                </div>
+              </div>
+            </div>
+          {{ /if }}
+        </div>
+      </div>
+    </div>
+  {{ /if }}
+</template>

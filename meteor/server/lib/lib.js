@@ -7,11 +7,12 @@ SyncedCron.add({
   schedule: function(parser) {
     return parser.text('every 1 hours');
   },
+
   job: function() {
     var steamlyticsApi = SteamlyticsApi;
     var price = null;
     Items.find().forEach(function(item) {
-      var itemPrice = ItemPrices.findOne({name: name});
+      var itemPrice = ItemPrices.findOne({ name: item.name });
       if(itemPrice) {
         if(itemPrice.upToDate) {
           console.log(name + "'s price is  already up to date");

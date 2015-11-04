@@ -21,6 +21,7 @@ Meteor.startup(function() {
   //Load Generic Items
   if(GenericItems.find().count() === 0) {
     SteamAPI.getGenericItems();
+    //
   }
 
   //Fixture data
@@ -29,7 +30,7 @@ Meteor.startup(function() {
       CoinbaseCurrencies.insert(currency);
     });
   }
-  
+
 
   //Users
   Users = Meteor.users;

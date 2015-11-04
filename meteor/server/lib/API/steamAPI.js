@@ -99,8 +99,7 @@ SteamAPI = (function () {
       try {
         var items = HTTP.get(callString).data.result.items;
         _.map(items, function(item) {
-          //TODO: remove this and include crates and keys
-          if(item.craft_class === 'weapon') {
+          if([ 'weapon', 'supply_crate', 'tool' ].indexOf(item.craft_class) > -1 || item.item_type_name === '#CSGO_Type_WeaponCase') {
             GenericItems.insert(item);
           }
         });
