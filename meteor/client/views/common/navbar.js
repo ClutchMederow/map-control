@@ -54,7 +54,7 @@ Template.navbar.helpers({
 
   loggedIn: function() {
     return !!Meteor.user();
-  }
+  },
 });
 
 Template.navbar.events({
@@ -77,4 +77,4 @@ Template.navbar.events({
       }
     });
   }
-})
+});

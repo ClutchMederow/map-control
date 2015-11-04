@@ -1,0 +1,24 @@
+<template name="ironBucks">
+<div class="container">
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s3"><a href="#overview" class="active">Overview</a></li>
+      <li class="tab col s3"><a href="#add">Add IronBucks </a></li>
+      <li class="tab col s3"><a href="#withdraw">Withdraw IronBucks</a></li>
+    </ul>
+  </div>
+  <div id="overview" class="col s12 center">
+    <p>Here you can add and withdraw IronBucks</p>
+    <p>A few things to note. You'll need to either signup with Coinbase or have
+    your own bitcoin wallet to buy IronBucks. Depending on your country of
+    origin buying bitcoins may take anywhere from a few seconds to a few days.
+    See Coinbase for details </p>
+    <p>Withdrawal should be instant, and you can convert your bitcoins to
+    almost any currency</p>
+  </div>
+  <div id="add" class="col s12">{{> addIronBucks}}</div>
+  <div id="withdraw" class="col s12">{{> withdrawIronBucks}}</div>
+</div>
+</div>
+</template>

@@ -12,16 +12,22 @@ Meteor.methods({
     var user = Meteor.users.findOne(this.userId);
     //convert to USD, aka IronBucks
     var withdrawalAmount = parseFloat(amount) / currValue(currency);
-    //add in our fee to total
-    var totalAmount = withdrawalAmount + (withdrawalAmount * Config.financial.fee);
     
     //check to make sure they have enough to withdraw including our fee
-    if(totalAmount <= user.ironBucks) {
-      //TODO: consider order of operations here...
-      DB.updateIronBucks(user._id, -totalAmount);
-      var roundedAmount = roundCurrency(withdrawalAmount);
-      Coinbase.sendMoney(user.profile.email, roundedAmount, "USD", 
-                         "withdrawing Iron Bucks");
+    if(withdrawalAmount <= user.ironBucks) {
+
+      var withdrawalObject = checkWithdrawal(this.userId);
+
+      if(withdrawalObject.total === 0) {
+        //TODO: ideally this would be transaction
+        DB.updateIronBucks(user._id, -withdrawalAmount);
+        var roundedAmount = roundCurrency(withdrawalAmount);
+        Coinbase.sendMoney(user.profile.email, roundedAmount, "USD", 
+                           "withdrawing Iron Bucks");
+      } else {
+        sendTotalErrorEmail();
+        throw new Meteor.Error("INCORRECT_WITHDRAWAL", "transactions do not match");
+      }
     } else {
       throw new Meteor.Error('insufficient_funds', 'not enough IronBucks');
     }
