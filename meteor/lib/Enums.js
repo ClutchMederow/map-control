@@ -17,8 +17,13 @@ Enums = {
     TRADE: 'TRADE', //trade between 2 players
     AUDIT: 'AUDIT', //internal audit
     SALE: "SALE", //selling an item
-    BUY: "BUY",  //buying an item 
+    BUY: "BUY",  //buying an item
     FEE: "FEE" //our DL fee
+  },
+
+  ChatType: {
+    TRADE: 'TRADE',
+    CHAT: 'CHAT'
   }
 };
 

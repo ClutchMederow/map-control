@@ -1,23 +1,47 @@
 RealTimeTrade = new Mongo.Collection('realtimetrade');
 
+RealTimeTrade.allow({
+  update: function(userId, doc, fieldNames, modifier) {
+    var allowedField;
+    var stageField;
+
+    if (doc.user1Id === userId) {
+      allowedField = 'user1Items';
+      stageField = 'user1Stage';
+    } else if (doc.user2Id === userId) {
+      allowedField = 'user2Items';
+      stageField = 'user2Stage';
+    }
+
+    return ((fieldNames.length == 1) && (doc[stageField] === 'TRADING') && (fieldNames[0] === allowedField));
+  }
+});
+
 //TODO: make all string values enums
 RealTimeTrade.attachSchema({
   user1Id: {
     type: String,
     label: 'User that requests real time trade'
   },
+  user1Name: {
+    type: String,
+    label: 'User name that requests real time trade'
+  },
   user1Items: {
-    type: [Object],
+    type: Match.Any,
     label: 'Items of User 1 in trade',
     optional: true,
-    blackbox: true
   },
   user2Id: {
     type: String,
     label: 'User that received real time trade invite'
   },
+  user2Name: {
+    type: String,
+    label: 'User name that received real time trade invite'
+  },
   user2Items: {
-    type: [Object],
+    type: Match.Any,
     label: 'Items of User 2 in trade',
     optional: true,
     blackbox: true

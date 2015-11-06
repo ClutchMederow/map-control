@@ -533,7 +533,7 @@ DB = {
     }
   },
 
-  startChat: function(user1Id, user2Id) {
+  startChat: function(user1Id, user2Id, chatType) {
     check(user1Id, String);
     check(user2Id, String);
 
@@ -554,12 +554,19 @@ DB = {
 
     // If a channel between the two users already exists, just show it
     // otherwise, create a new one
-
     if (currentChat) {
+
+      var doc = {
+        $set: { chatType: chatType }
+      };
+
       var isShown = (currentChat.show.indexOf(user1Id) > -1);
       if (!isShown) {
-        Channels.update(currentChat._id, { $push: { show: Meteor.userId() }});
+        doc.$push = { show: Meteor.userId() };
       }
+
+      // Update the channel with chat type and let them know a new message has arrived
+      Channels.update(currentChat._id, doc);
     } else {
       DB.insertPrivateChannel(requestor, otherUser);
     }
@@ -584,7 +591,7 @@ DB = {
     Channels.update(selector, doc);
   },
 
-  insertPrivateChannel: function(requestor, otherUser) {
+  insertPrivateChannel: function(requestor, otherUser, chatType) {
     return Channels.insert({
       //shouldn't need name for private chats
       name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
@@ -599,7 +606,8 @@ DB = {
         unseen: 0
       }],
       show: [ requestor._id, otherUser._id ],
-      category: 'Private'
+      category: 'Private',
+      chatType: chatType
     });
   },
 
@@ -650,9 +658,17 @@ DB = {
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
+    var user1 = Meteor.users.findOne(user1Id);
+    var user2 = Meteor.users.findOne(user2Id);
+
+    check(user1, Object);
+    check(user2, Object);
+
     RealTimeTrade.insert({
       user1Id: user1Id,
+      user1Name: user1.profile.name,
       user2Id: user2Id,
+      user2Name: user2.profile.name,
       user1Stage: "INVITED",
       user2Stage: "INVITED",
       createdTimestamp: new Date(),
