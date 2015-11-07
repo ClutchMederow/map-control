@@ -11,6 +11,16 @@
 // });
 
 DB = {
+  // for dev purposes - REMOVE
+  migrate: function() {
+    Meteor.users.find().forEach(function(user) {
+      Meteor.users.update(user._id, {$set: {
+        "profile.ironBucks": 0,
+        "profile.firstTimeUser": true
+      }});
+    });
+  },
+
   insertChat: function(attributes) {
     Messages.insert({
       user: attributes.user,

@@ -32,6 +32,10 @@ SyncedCron.add({
     var steamlyticsApi = SteamlyticsApi;
     var price = null;
     Items.find().forEach(function(item) {
+
+      // ignore ironbucks
+      if (item.name === IronBucks.name) return;
+
       var itemPrice = ItemPrices.findOne({ name: item.name });
       if(itemPrice) {
         if(itemPrice.upToDate) {
@@ -82,5 +86,5 @@ SyncedCron.add({
 
       sendTotalErrorEmail(logId, withdrawalObject);
     }
-  }  
+  }
 });
