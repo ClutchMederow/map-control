@@ -59,6 +59,15 @@ TradeHelper = (function () {
           moveItem(item, transaction.user1Id);
         }
       });
+
+      Logs.insert({
+        date: new Date(),
+        type: Enum.LogType.TRADE,
+        user1Id: transaction.user1Id,
+        user2Id: transaction.user2Id,
+        itemsSentToUser1: transaction.user2Items,
+        itemsSentToUser2: transaction.user1Items
+      });
     }
   };
 })();
