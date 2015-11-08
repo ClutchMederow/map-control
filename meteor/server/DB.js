@@ -637,18 +637,6 @@ DB = {
     //Note: transaction hook fires to update inventory items
   },
 
-  removeTrade: function(transactionId) {
-    //TODO: make this an ENUM
-    var doc = {
-      $set: {
-        stage: "CANCELED",
-        modifiedTimestamp: new Date()
-      }
-    };
-
-    Transactions.update({_id: transactionId}, doc);
-  },
-
   insertRealTimeTrade: function(user1Id, user2Id) {
     RealTimeTrade.insert({
       user1Id: user1Id,
@@ -770,6 +758,7 @@ DB = {
       } else {
         //Note: 1 unit = 100 cents in any native currency
         //in coinbase callbacks
+        console.log(amount);
         var amount = parseFloat(order.total_native.cents) / 100;
         var currency = order.total_native.currency_iso;
         if(currency === "USD") {

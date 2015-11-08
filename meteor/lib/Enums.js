@@ -11,6 +11,13 @@ Enums = {
     DEPOSIT: 'DEPOSIT'
   },
 
+  TransStage: {
+    PENDING: 'PENDING',
+    ACCEPTED: 'ACCEPTED',
+    DECLINED: 'DECLINED',
+    CANCELED: 'CANCELED'
+  },
+
   LogType: {
     DEBIT: 'DEBIT', //removing money from their IronBucks account
     CREDIT: 'CREDIT', //adding money to their IronBucks account
@@ -18,7 +25,14 @@ Enums = {
     AUDIT: 'AUDIT', //internal audit
     SALE: "SALE", //selling an item
     BUY: "BUY",  //buying an item 
-    FEE: "FEE" //our DL fee
+    FEE: "FEE", //our DL fee
+    ERROR: "ERROR"
+  },
+
+  Environments: {
+    DEV: "dev",
+    QA: "qa",
+    PROD: "prod"
   }
 };
 
