@@ -55,12 +55,15 @@ matb33:collection-hooks@0.7.13
 meteor@1.1.6
 meteor-platform@1.2.2
 meteorhacks:async@1.0.0
+meteorhacks:kadira@2.26.3
+meteorhacks:meteorx@1.4.1
 meteorhacks:npm@1.5.0
 minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
 momentjs:moment@2.10.6
 mongo@1.1.0
+mongo-livedata@1.0.8
 mrgalaxy:stripe@2.1.0
 mrt:accounts-steam@0.0.1
 mrt:steam@0.0.1
