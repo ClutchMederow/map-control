@@ -35,7 +35,7 @@ Transactions.attachSchema({
     type: String,
     label: 'Current Stage',
     //may need compound states, i.e. A accepts B rejects
-    allowedValues: ['INITIAL_OFFER', 'DECLINED', 'CANCELED', 'ACCEPTED']
+    allowedValues: ['PENDING', 'DECLINED', 'CANCELED', 'ACCEPTED']
   },
   createdTimestamp: {
     type: Date,
@@ -54,13 +54,19 @@ Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items) {
                              user2Id: user2Id,
                              user2Items: user2Items,
                              stage: Enums.TransStage.PENDING ,
+                             createdTimestamp: new Date(),
+                             modifiedTimestamp: new Date(),
                              user1Accept: false,
                              user2Accept: false
+
                             });
 };
 
 Transactions.changeStage = function(transactionId, stage) {
-  return Transactions.update(transactionId, {$set: {stage: stage}});
+  return Transactions.update(transactionId, {$set: {
+    stage: stage,
+    modifiedTimestamp: new Date()
+  }});
 };
 
 //update the inventory items after transaction inserted
@@ -78,12 +84,12 @@ Transactions.after.update(function(userId, doc, fieldNames, modifier, option) {
   //if the transaction is not pending, remove transaction from list attached to
   // an item
   if(_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.ACCEPTED)) {
-    executeTrade(doc); 
-    removeItemsInTransaction(doc);
+    TradeHelper.executeTrade(doc); 
+    TradeHelper.removeItemsInTransaction(doc);
   } else if (_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.CANCELED)) {
-    removeItemsInTransaction(doc);
+    TradeHelper.removeItemsInTransaction(doc);
   } else if (_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.DECLINED)) {
-    removeItemsInTransaction(doc);
+    TradeHelper.removeItemsInTransaction(doc);
   } else {
     if(_.contains(fieldNames, "stage") && (doc.stage !== Enums.TransStage.PENDING)) {
       throw new Meteor.ERROR("LOGICAL_ERROR", 'this is invalid state');

@@ -24,6 +24,6 @@ Meteor.methods({
   },
   cancelTrade: function(transactionId) {
     check(transactionId, String);
-    DB.removeTrade(transactionId);
+    Transactions.changeStage(transactionId, Enums.TransStage.CANCELED);
   }
 });

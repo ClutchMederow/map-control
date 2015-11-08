@@ -3,6 +3,15 @@
 //this happens automatically in collection hook
 Meteor.methods({
   
+  initializeTrade: function(user1Id, user1Items, user2Id, user2Items){
+    check(user1Id, String);
+    check(user1Items, [Object]);
+    check(user2Id, String);
+    check(user2Items, [Object]);
+
+    Transactions.initialize(user1Id, user1Items, user2Id, user2Items);
+  },
+
   acceptOffer: function(transactionId) {
     check(transactionId, String);
     var trans = Transactions.findOne(transactionId);   
@@ -15,7 +24,7 @@ Meteor.methods({
     }
 
     if(trans.user1Accept && trans.user2Accept) {
-      Transactions.update({_id: transactionId}, {$set: {stage: Enums.TransStage.ACCEPTED}});
+      Transactions.changeStage(transactionId, Enums.TransStage.ACCEPTED);
     }
   },
 
@@ -23,7 +32,7 @@ Meteor.methods({
     check(transactionId, String);
     var trans = Transactions.findOne(transactionId);   
     if(this.userId === trans.userId1 || this.userId === trans.userId2) {
-      Transactions.update({_id: transactionId}, {$set: {stage: Enum.TransStage.DECLINED}});
+      Transactions.changeStage(transactionId, Enums.TransStage.DECLINED);
     }
   }
 

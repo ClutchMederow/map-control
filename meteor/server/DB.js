@@ -637,18 +637,6 @@ DB = {
     //Note: transaction hook fires to update inventory items
   },
 
-  removeTrade: function(transactionId) {
-    //TODO: make this an ENUM
-    var doc = {
-      $set: {
-        stage: "CANCELED",
-        modifiedTimestamp: new Date()
-      }
-    };
-
-    Transactions.update({_id: transactionId}, doc);
-  },
-
   insertRealTimeTrade: function(user1Id, user2Id) {
     RealTimeTrade.insert({
       user1Id: user1Id,
