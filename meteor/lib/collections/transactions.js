@@ -6,6 +6,7 @@ Transactions = new Mongo.Collection('transactions');
 //create a market collection as well
 //user1Id = user with good on market
 //user2Id = person requesting trade
+/*
 Transactions.attachSchema({
   //TODO: relabel this something like lister / buyer
   user1Id: {
@@ -45,13 +46,17 @@ Transactions.attachSchema({
     label: 'Internal modified timestamp'
   }
 });
+*/
 
-Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items, stage) {
+Transactions.initialize = function(user1Id, user1Items, user2Id, user2Items) {
   return Transactions.insert({user1Id: user1Id,
                              user1Items: user1Items,
                              user2Id: user2Id,
                              user2Items: user2Items,
-                             stage: stage});
+                             stage: Enums.TransStage.PENDING ,
+                             user1Accept: false,
+                             user2Accept: false
+                            });
 };
 
 Transactions.changeStage = function(transactionId, stage) {
@@ -70,14 +75,18 @@ Transactions.after.insert(function(userId, doc) {
 });
 
 Transactions.after.update(function(userId, doc, fieldNames, modifier, option) {
-  if(_.contains(fieldNames, "stage") && doc.stage === 'CANCELED') {
-
-    _.each(doc.user1Items, function(item1) {
-      Items.update({_id: item1._id}, {$pull: {currentTransactions: doc._id}});
-    });
-
-    _.each(doc.user2Items, function(item2) {
-      Items.update({_id: item2._id}, {$pull: {currentTransactions: doc._id}});
-    });
+  //if the transaction is not pending, remove transaction from list attached to
+  // an item
+  if(_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.ACCEPTED)) {
+    executeTrade(doc); 
+    removeItemsInTransaction(doc);
+  } else if (_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.CANCELED)) {
+    removeItemsInTransaction(doc);
+  } else if (_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.DECLINED)) {
+    removeItemsInTransaction(doc);
+  } else {
+    if(_.contains(fieldNames, "stage") && (doc.stage !== Enums.TransStage.PENDING)) {
+      throw new Meteor.ERROR("LOGICAL_ERROR", 'this is invalid state');
+    }
   }
 });

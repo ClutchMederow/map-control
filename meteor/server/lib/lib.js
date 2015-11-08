@@ -1,6 +1,21 @@
 oeapikey = process.env.open_exchange_key ||
   (Meteor.settings && Meteor.settings.open_exchange_key);
 
+getAdminUser = function() {
+  var adminName = Meteor.settings.adminUser.userName;
+  return Meteor.users.findOne({"profile.name": adminName});
+};
+
+//checks to see if there are sufficient ironBucks
+sufficientIronBucks = function(userId, amount) {
+  var user = Meteor.users.findOne(userId);
+  if(user.profile.ironBucks >= amount) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
   var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
     "duncanrenfrow@gmail.com"];

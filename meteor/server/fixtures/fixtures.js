@@ -33,7 +33,7 @@ Meteor.startup(function() {
  
   //admin user, holds ironbucks
   var adminName = Meteor.settings.adminUser.userName;
-  var adminUser = Meteor.users.findOne({"profile.name": adminName});
+  var adminUser = getAdminUser();
   if(!_.isObject(adminUser)) {
     console.log("creating admin user");
     Accounts.createUser({

@@ -11,6 +11,13 @@ Enums = {
     DEPOSIT: 'DEPOSIT'
   },
 
+  TransStage: {
+    PENDING: 'PENDING',
+    ACCEPTED: 'ACCEPTED',
+    DECLINED: 'DECLINED',
+    CANCELED: 'CANCELED'
+  },
+
   LogType: {
     DEBIT: 'DEBIT', //removing money from their IronBucks account
     CREDIT: 'CREDIT', //adding money to their IronBucks account

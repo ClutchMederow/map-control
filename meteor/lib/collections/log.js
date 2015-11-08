@@ -1,4 +1,4 @@
-Log = new Mongo.Collection('log');
+Logs = new Mongo.Collection('log');
 
 //logs should have:
 //[userId], date, type (credit, debit, trade, audit)
