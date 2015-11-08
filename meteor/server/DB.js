@@ -732,8 +732,10 @@ DB = {
       throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
     }
 
+    console.log("userId: " + userId);
+    console.log("amount: " + amount);
+    Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
     Logs.insert(logData);
-    Meteor.users.update(userId, {$inc: {ironBucks: amount}});
   },
   addNotification: function(userId, message) {
     Notifications.insert({
@@ -756,18 +758,9 @@ DB = {
         //TODO
         console.log("couldn't find user...ERROR");
       } else {
-        //Note: 1 unit = 100 cents in any native currency
-        //in coinbase callbacks
-        console.log(amount);
         var amount = parseFloat(order.total_native.cents) / 100;
-        var currency = order.total_native.currency_iso;
-        if(currency === "USD") {
-          DB.updateIronBucks(user._id, amount);
-        } else {
-          var exchangeRate = currValue(currency);
-          var usdAmount = amount / exchangeRate;
-          DB.updateIronBucks(user._id, usdAmount);
-        }
+
+        DB.updateIronBucks(user._id, amount);
       }
     } else {
       //TODO
