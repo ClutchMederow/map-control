@@ -1253,8 +1253,6 @@ $cs-size: 400px;
 }
 
 .my-realtime-items {
-
-
   .make-offer-items {
     height: 120px;
     overflow-y: scroll;
@@ -1273,6 +1271,31 @@ $cs-size: 400px;
     overflow-x: hidden;
     text-overflow: clip;
     padding: 10px;
+  }
+}
+
+$confirmed-color: #00FF4E;
+$done-color: #FFE000;
+
+.current-realtime-row {
+  &.me-done .leftside {
+    box-shadow: 0 0 10px 4px $done-color;
+  }
+
+  &.them-done .rightside {
+    box-shadow: 0 0 10px 4px $done-color;
+  }
+
+  &.me-confirmed .leftside {
+    box-shadow: 0 0 10px 4px $confirmed-color;
+  }
+
+  &.them-confirmed .rightside {
+    box-shadow: 0 0 10px 4px $confirmed-color;
+  }
+
+  .market-item-row .market-pan.connector div {
+    background-color: transparent;
   }
 }
 

@@ -1,80 +1,67 @@
 <template name="realTimeTrading">
-  {{ #if realTime }}
-    <div id="realtime-modal" class="offer-modal-container">
-      <div class="row">
-        <div class="col s6 offset-s3 offer-modal-content fade-up">
-          {{ #if inProgress }}
-            <div class="row">
-              <div class="col s12 center">
-                <h3>Sending offer...</h3>
-                <div class="col s12 loading">
-                  <div class="spinner">
-                    <div class="dot1"></div>
-                    <div class="dot2"></div>
+  <div id="realtime-modal" class="offer-modal-container">
+    <div class="row">
+      <div class="col s6 offset-s3 offer-modal-content fade-up">
+        {{ #if complete }}
+          <div class="row">
+            <div class="col s12 center">
+              <h3>Trade complete!</h3>
+            </div>
+          </div>
+        {{ else }}
+          <div class="row">
+            <div class="col s6 username">
+              trading with <span>{{ otherUserName }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 current-realtime-row {{ stageClass }}">
+              {{> marketRow leftSide=myItems rightSide=theirItems }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s6 my-realtime-items">
+              {{> itemContainer stashOptions }}
+            </div>
+            <div class="col s6 realtime-chat-box">
+              <div class="chat-display-box">
+                {{ #each messages }}
+                  <div class="chat-userinfo">
+                    <span class="chat-time">{{ justTime datePosted }}</span> {{ user.profile.name }}
                   </div>
-                </div>
+                  <div class="chat-msg">{{ textWithImages }}</div>
+                {{ /each }}
               </div>
-            </div>
-          {{ else }}
-            <div class="row">
-              <div class="col s6 username">
-                create a new listing
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s12 current-realtime-row">
-                {{> marketRow leftSide=myItems rightSide=theirItems }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s6 my-realtime-items">
-                {{> itemContainer stashOptions }}
-              </div>
-              <div class="col s6 realtime-chat-box">
-                <div class="chat-display-box">
-                  {{ #each messages }}
-                    <div class="chat-userinfo">
-                      <span class="chat-time">{{ justTime datePosted }}</span> {{ user.profile.name }}
-                    </div>
-                    <div class="chat-msg">{{ textWithImages }}</div>
-                  {{ /each }}
-                </div>
-                <form class="chat-inp-form">
-                  <div class="table-fun chat-inp">
-                    <div class="table-row">
-                      <div class="table-cell cell10">
-                        <div>
-                          <input type="text" placeholder="Send a message">
-                        </div>
-                      </div>
-                      <div class="table-cell cell2 submit-cell">
-                        <button type="submit" class="btn btn-chatsubmit"><i class="material-icons">play_arrow</i></button>
+              <form class="chat-inp-form">
+                <div class="table-fun chat-inp">
+                  <div class="table-row">
+                    <div class="table-cell cell10">
+                      <div>
+                        <input type="text" placeholder="Send a message">
                       </div>
                     </div>
+                    <div class="table-cell cell2 submit-cell">
+                      <button type="submit" class="btn btn-chatsubmit"><i class="material-icons">play_arrow</i></button>
+                    </div>
                   </div>
-                </form>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s4">
+              <div>
+                <a href="#!" id="cancelModal" class="btn btn-block red">Cancel</a>
               </div>
             </div>
-            <div class="row">
-              <div class="col s4">
-                <div>
-                  <a href="#!" id="cancelModal" class="btn btn-block red">Cancel</a>
-                </div>
-              </div>
-              <div class="col s4 offset-s4">
-                <div>
-                  <a href="#!" id="postTrade" class="btn btn-block green">Create</a>
-                </div>
+            <div class="col s4 offset-s4">
+              <div>
+                <a href="#!" class="btn btn-block green {{ buttonClass }} {{ isDiabled }}">{{ rightButtonText }}</a>
               </div>
             </div>
-          {{ /if }}
-        </div>
+          </div>
+        {{ /if }}
       </div>
     </div>
-  {{ /if }}
-<!-- if userId matches userid of this block make it read only -->
-<!-- also remove any submit buttons -->
-<!-- also double check to make sure userId matches item holder -->
-<!-- rely on this.userId for security -->
-<!-- if block -> if status is rejected then put up close message -->
+  </div>
 </template>

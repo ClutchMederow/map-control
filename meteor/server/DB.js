@@ -726,9 +726,9 @@ DB = {
 
   setTradeStage: function(tradeId, field, stage) {
     if(field === "user1Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user1Stage: stage}, $set: { modifiedTimestamp: new Date() } });
+      RealTimeTrade.update(tradeId, {$set: { user1Stage: stage, modifiedTimestamp: new Date() } });
     } else if (field === "user2Stage") {
-      RealTimeTrade.update(tradeId, {$set: {user2Stage: stage}, $set: { modifiedTimestamp: new Date() } });
+      RealTimeTrade.update(tradeId, {$set: { user2Stage: stage, modifiedTimestamp: new Date() } });
     } else {
       throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
     }

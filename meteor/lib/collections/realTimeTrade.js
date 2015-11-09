@@ -31,6 +31,7 @@ RealTimeTrade.attachSchema({
     type: Match.Any,
     label: 'Items of User 1 in trade',
     optional: true,
+    blackbox: true
   },
   user2Id: {
     type: String,

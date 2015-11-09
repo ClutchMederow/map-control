@@ -1,5 +1,15 @@
+var loading = new ReactiveVar(false);
+
 function findMe(trade) {
   return trade.user1Id === Meteor.userId() ? 'user1Items' : 'user2Items';
+}
+
+function getMe(trade) {
+  return trade.user1Id === Meteor.userId() ? 'user1' : 'user2';
+}
+
+function getThem(trade) {
+  return trade.user1Id === Meteor.userId() ? 'user2' : 'user1';
 }
 
 function getStageField(trade) {
@@ -19,7 +29,7 @@ function toggleItem(tradeId, item) {
   var trade = RealTimeTrade.findOne(selector);
   var doc = {};
 
-  // Not already in trade
+  // Item is already selected
   if (!trade) {
 
     trade = RealTimeTrade.findOne(tradeId);
@@ -28,7 +38,7 @@ function toggleItem(tradeId, item) {
     doc.$pull = {};
     doc.$pull[findMe(trade)] = { _id: itemId };
 
-  // Item is in trade
+  // Not already in trade
   } else {
 
     doc.$push = {};
@@ -39,27 +49,31 @@ function toggleItem(tradeId, item) {
 }
 
 Template.realTimeTrading.onCreated(function() {
+  loading.set(false);
   var templateInstance = this;
 
-  Tracker.autorun(function() {
+  templateInstance.autorun(function() {
     var trade = Session.get('realTime');
 
     if (trade) {
       var users = [ trade.user1Id, trade.user2Id ];
       templateInstance.channel = Channels.findOne({ publishedToUsers: { $all: users }, category: 'Private' });
-      templateInstance.subscribe('messages', templateInstance.channel.name);
 
       // Adds a scroll handle to run when a new message arrives
       if (templateInstance.changesHandle) {
         templateInstance.changesHandle.stop();
       }
 
-      templateInstance.changesHandle = Messages.find({'channel.name': templateInstance.channel.name }).observeChanges({
-        added: _.throttle(function() {
-          ChatFunctions.updateUnseen('realtime-modal');
-          ChatFunctions.scrollToBottom('realtime-modal');
-        }, 500)
-      });
+      if (templateInstance.channel) {
+        templateInstance.subscribe('messages', templateInstance.channel.name);
+
+        templateInstance.changesHandle = Messages.find({'channel.name': templateInstance.channel.name }).observeChanges({
+          added: _.throttle(function() {
+            ChatFunctions.updateUnseen('realtime-modal');
+            ChatFunctions.scrollToBottom('realtime-modal');
+          }, 500)
+        });
+      }
     }
   });
 });
@@ -70,10 +84,6 @@ Template.realTimeTrading.onRendered(function() {
 });
 
 Template.realTimeTrading.helpers({
-  realTime: function() {
-    return Session.get('realTime');
-  },
-
   inProgress: function() {
     return false;
   },
@@ -123,93 +133,77 @@ Template.realTimeTrading.helpers({
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
   },
 
-  leftButtonText: function() {
-    // var stageField = getStageField(this);
-    // var stage = this[]Items
-    console.log(this);
+  rightButtonText: function() {
+    var stageField = getStageField(this);
+    var stage = this[stageField]
 
+    if (stage === 'TRADING') {
+      if (loading.get()) {
+        return 'Offering...';
+      } else {
+        return 'Done';
+      }
+    } else if (stage === 'DONE') {
+      if (loading.get()) {
+        return 'Confirming...';
+      } else {
+        return 'Confirm';
+      }
+    } else if (stage === 'CONFIRMED') {
+      return 'Waiting...';
+    }
   },
 
-  // items: function() {
-  //   var fields = ['name', 'type'];
-  //   var selector = {marketable: 1, deleteInd: false};
-  //   var options = {limit: 5};
-  //   //don't want to search until user enters something
-  //   if(searchText.get()) {
-  //     return Items.getItems(searchText.get(), fields, selector, options );
-  //   } else {
-  //     return null;
-  //   }
-  // },
-  // getOtherPlayerName: function() {
-  //   //TODO: denormalize profile name into real time trade
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user2Id;
-  //   } else {
-  //     return this.user1Id;
-  //   }
-  // },
-  // getOtherUserItems: function() {
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user2Items;
-  //   } else {
-  //     return this.user1Items;
-  //   }
-  // },
-  // tradeItems: function() {
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user1Items;
-  //   } else {
-  //     return this.user2Items;
-  //   }
-  // },
-  // isDone: function() {
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user1Stage === 'DONE';
-  //   } else {
-  //     return this.user2Stage === 'DONE';
-  //   }
-  // },
-  // isConfirmed: function() {
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user1Stage === 'CONFIRMED';
-  //   } else {
-  //     return this.user2Stage === 'CONFIRMED';
-  //   }
-  // },
-  // stage: function() {
-  //   var userStage = "";
-  //   if(Meteor.userId() === this.user1Id) {
-  //     userStage = "user1Stage";
-  //   } else {
-  //     userStage = "user2Stage";
-  //   }
-  //   if(this[userStage] === "TRADING") {
-  //     return "done";
-  //   } else if(this[userStage] === "DONE") {
-  //     return "confirm";
-  //   } else if(this[userStage] === "CONFIRMED") {
-  //     return "confirmed";
-  //   } else {
-  //     //ERROR
-  //   }
-  // },
-  // isTrading: function() {
-  //   if(Meteor.userId() === this.user1Id) {
-  //     return this.user1Stage === "TRADING";
-  //   } else {
-  //     return this.user2Stage === "TRADING";
-  //   }
-  // },
-  // messages: function() {
-  //   return Messages.find({'channel.name': Session.get('channel')});
-  // },
+  buttonClass: function() {
+    var stageField = getStageField(this);
+    var stage = this[stageField]
+
+    if (stage === 'TRADING') {
+      if (loading.get()) {
+        return '';
+      } else {
+        return 'done';
+      }
+    } else if (stage === 'DONE') {
+      if (loading.get()) {
+        return '';
+      } else {
+        return 'confirm';
+      }
+    } else if (stage === 'CONFIRMED') {
+      if (loading.get()) {
+        return '';
+      } else {
+        return 'disabled';
+      }
+    }
+  },
+
+  stageClass: function() {
+    var me = getMe(this);
+    var them = getThem(this);
+    var myStage = ('me-' + this[me + 'Stage']).toLowerCase();
+    var theirStage = ('them-' + this[them + 'Stage']).toLowerCase();
+
+    return [ myStage, theirStage ].join(' ');
+  },
+
+  isDisabled: function() {
+    return loading.get() ? '' : 'disabled';
+  },
+
+  otherUserName: function() {
+    if(Meteor.userId() === this.user1Id) {
+      return this.user2Name;
+    } else {
+      return this.user1Name;
+    }
+  },
 });
 
 Template.realTimeTrading.events({
   'click .my-realtime-items .item-infoed': function(e) {
     e.preventDefault();
-
     var trade = Session.get('realTime');
 
     if (trade) {
@@ -223,39 +217,40 @@ Template.realTimeTrading.events({
     if (template.channel) {
       ChatFunctions.inputMessage(e.target, template.channel.name);
     } else {
-      console.log('No channel');
+      sAlert.error('No channel');
     }
   },
 
-  'click .addMyItem': function(e) {
-    searchText.set('');
-    $('#search').val('');
-    Meteor.call('addTradeItem', this, Template.parentData()._id,function(error) {
-      if(error) {
-        sAlert.error("Cannot add that item");
-      }
-    });
-  },
-  'click .removeMyItem': function(e) {
-    Meteor.call('removeTradeItem', this, Template.parentData()._id,function(error) {
-      if(error) {
-        sAlert.error("Cannot add that item");
-      }
-    });
-  },
   'click .done': function(e) {
-    Meteor.call('setStatusDone', this._id, function(error) {
-      if(error) {
-        console.log(error.reason);
-      }
-    });
+    if (!loading.get()) {
+      loading.set(true);
+
+      Meteor.call('setStatusDone', this._id, function(error) {
+        loading.set(false);
+
+        if(error) {
+          sAlert.error(error.reason);
+        }
+      });
+    }
   },
+
   'click .confirm': function(e) {
-    Meteor.call('setStatusConfirm', this._id, function(error) {
-      if(error) {
-        console.log(error.reason);
-      }
-    });
+    if (!loading.get()) {
+      loading.set(true);
+      Meteor.call('setStatusConfirm', this._id, function(error) {
+        loading.set(false);
+
+        if(error) {
+          sAlert.error(error.reason);
+        }
+      });
+    }
+  },
+
+  'click #cancelModal': function(e) {
+    e.preventDefault();
+    Session.set('realTime', null);
   }
 });
 
