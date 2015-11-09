@@ -1,5 +1,7 @@
 Messages = new Mongo.Collection('messages');
 
+SpamChecks = new Mongo.Collection('spamChecks');
+
 // Messages.attachSchema({
 //   user: {
 //     type: Object,
