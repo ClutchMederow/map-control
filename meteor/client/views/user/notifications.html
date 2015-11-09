@@ -1,15 +1,44 @@
 <template name="notifications">
-<h3>Real Time Trading Requests</h3>
-{{#each realTimeRequests}}
-<div class="row">
-  <div class="col s8">
-    {{user1Id}} would like to trade
+<div class="container">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel pan">
+        <div class="colored-title">
+          Real Time Trade Requests
+        </div>
+        {{#each realTimeRequests}}
+        <div class="row">
+          <div class="col s8">
+            {{user1Id}} would like to trade
+          </div>
+          <div class="s4">
+            <a class="waves-effect waves-light btn accept">Accept</a>
+            <a class="waves-effect waves-light btn reject">Reject</a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
   </div>
-  <div class="s4">
-    <a class="waves-effect waves-light btn accept">Accept</a>
-    <a class="waves-effect waves-light btn reject">Reject</a>
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel pan">
+        <div class="colored-title">
+          Offers
+        </div>
+        {{#each offers}}
+        <div class="row">
+          <div class="col s8">
+            {{user1Id}} has made an offer
+          </div>
+          <div class="s4">
+            <a class="waves-effect waves-light btn accept">Accept</a>
+            <a class="waves-effect waves-light btn reject">Reject</a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
   </div>
 </div>
-{{/each}}
-<hr>
 </template>
