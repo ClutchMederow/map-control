@@ -30,7 +30,7 @@ Enums = {
 
   ChatType: {
     TRADE: 'TRADE',
-    CHAT: 'CHAT'
+    CHAT: 'CHAT',
     BUY: "BUY",  //buying an item
     FEE: "FEE", //our DL fee
     ERROR: "ERROR"
