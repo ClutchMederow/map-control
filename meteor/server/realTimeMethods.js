@@ -6,12 +6,13 @@ Meteor.methods({
   acceptRealTimeTrade: function(tradeId) {
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
+
     //security check
     if(this.userId === trade.user2Id) {
-      var channelId = DB.insertPrivateChannel(this.userId, trade.user1Id);
+      var channelId = DB.startChat(this.userId, trade.user1Id, Enums.ChatType.TRADE);
       var channel = Channels.findOne(channelId);
       DB.acceptRealTimeTrade(tradeId, channel);
-      //start private chat 
+      //start private chat
       return tradeId;
     } else {
       throw new Meteor.Error("SECURITY_ERROR", "You are not authorized to accept this trade");

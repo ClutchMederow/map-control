@@ -49,7 +49,7 @@ Meteor.methods({
 
   startPrivateChat: function(otherUserId) {
     check(otherUserId, String);
-    DB.startChat(this.userId, otherUserId);
+    DB.startChat(this.userId, otherUserId,Enums.ChatType.CHAT);
   },
 
   updateUnseen: function(channelId) {

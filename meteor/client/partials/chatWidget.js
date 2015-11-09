@@ -1,6 +1,12 @@
 Template.chatWidget.helpers({
   chatChannels: function() {
-    return Channels.find({ category: 'Private', show: Meteor.userId() }, { sort: { name: 1 } });
+    return Channels.find({
+      category: 'Private',
+      show: Meteor.userId(),
+      chatType: { $ne: Enums.ChatType.TRADE }
+    }, {
+      sort: { name: 1 }
+    });
   }
 });
 

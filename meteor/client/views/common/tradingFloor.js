@@ -11,6 +11,10 @@ Template.tradingFloor.onCreated(function() {
     var newChannel = Iron.controller().getParams().channel;
     self.subscribe('messages', newChannel);
 
+    if (self.subscriptionsReady()) {
+      scrollToBottom();
+    }
+
     if (channelName !== newChannel) {
       channelName = newChannel;
 
