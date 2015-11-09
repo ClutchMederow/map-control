@@ -1,8 +1,23 @@
 oeapikey = process.env.open_exchange_key ||
   (Meteor.settings && Meteor.settings.open_exchange_key);
 
-sendTotalErrorEmail = function(userId) {
-  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com",
+getAdminUser = function() {
+  var adminName = Meteor.settings.adminUser.userName;
+  return Meteor.users.findOne({"profile.name": adminName});
+};
+
+//checks to see if there are sufficient ironBucks
+sufficientIronBucks = function(userId, amount) {
+  var user = Meteor.users.findOne(userId);
+  if(user.profile.ironBucks >= amount) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
+  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
     "duncanrenfrow@gmail.com"];
     var options = {
       from: "deltaveelabs@gmail.com",
@@ -10,9 +25,13 @@ sendTotalErrorEmail = function(userId) {
       subject: "ERROR: Debits and Credits DO NOT match"
     };
     if(userId) {
-      options.text = "Please immediately check the application. Financial totals did not match for userId: " + userId;
+      options.text = "Please immediately check the application. " + 
+        "Financial totals did not match for userId: " + userId +
+        ". The descrepancy was: " + withdrawalObject.total;
     } else {
-      options.text = "Please immediately check the application. Financial totals did not match for the application";
+      options.text = "Please immediately check the application. " + 
+        "Financial totals did not match for the application" + 
+        ". The descrepancy was: " + withdrawalObject.total;
     }
     Email.send(options);
 };
@@ -66,30 +85,21 @@ SyncedCron.add({
     return parser.text('every 1 hours');
   },
   job: function() {
-    var sumDebits = 0;
-    var sumCredits = 0;
 
-    Logs.find().forEach(function(log) {
-      if(log.type === Enums.LogType.CREDIT) {
-        sumCredits = sumCredits + amount;
-      }
+    var withdrawalObject = checkWithdrawal();
 
-      if(log.type === Enums.LogType.DEBIT) {
-        sumDebits = sumDebits + amount;
-      }
-    });
+    var logData = withdrawalObject;
+    logData.date = new Date();
 
-    if(sumDebits + sumCredits === 0) {
-      Logs.insert({
-        type: Enums.LogType.AUDIT,
-        date: new Date(),
-        sumDebits: sumDebits,
-        sumCredits: sumCredits
-      });
+    if(total === 0) {
+      logData.type = Enums.LogType.AUDIT;
+
+      Logs.insert(logData);
     } else {
-      //TODO: send email, text, log an anomalous event?
-      //create ERROR event in log
-      sendTotalErrorEmail();
+      logData.type = Enums.LogType.ERROR;
+      var logId = Logs.insert(logData);
+
+      sendTotalErrorEmail(logId, withdrawalObject);
     }
   }
 });
