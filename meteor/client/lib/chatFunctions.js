@@ -2,7 +2,9 @@ ChatFunctions = {
   scrollToBottom: function(id) {
     setTimeout(function() {
       var $thisElem = $('#' + id + ' .chat-display-box');
-      $thisElem.scrollTop($thisElem.get(0).scrollHeight);
+      if ($thisElem.get(0)) {
+        $thisElem.scrollTop($thisElem.get(0).scrollHeight);
+      }
     }, 0)
   },
 

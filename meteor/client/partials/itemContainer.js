@@ -39,12 +39,24 @@ Template.itemContainer.helpers({
 
   selected: function() {
     if (Template.instance().data && Template.instance().data.selectedItems) {
-      if (Template.instance().data.selectedItems.findOne(this._id)) {
+      var selected = Template.instance().data.selectedItems;
+      var isSelected = false;
+
+      // Need to support both cursors and arrays
+      if (selected instanceof Mongo.Cursor) {
+        isSelected = !!selected.findOne(this._id);
+      } else if (selected instanceof Array) {
+        isSelected = !!_.findWhere(selected, { _id: this._id });
+      }
+
+      if (isSelected) {
         return 'selected';
       } else {
         return '';
       }
     }
+
+    return '';
   },
 
   icon: function(isGeneric) {

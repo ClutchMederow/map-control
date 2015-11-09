@@ -954,6 +954,35 @@ $chat-window-height: $chat-height - $chat-input-height;
 $chat-br: 2px;
 $chat-bg-alert: rgba(255, 255, 255, 0.3);
 
+.chat-inp {
+  table-layout: fixed;
+
+  .table-cell {
+    padding: 4px;
+  }
+
+  input {
+    border: none;
+    margin: 0;
+    padding: 5px 5px 5px 10px;
+    height: 24px;
+    background-color: grey;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  i {
+    font-size: 1rem;
+
+  }
+}
+
 #chat-widget {
   position: fixed;
   bottom: 0;
@@ -994,32 +1023,6 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
 
       .chat-inp {
         display: none;
-        table-layout: fixed;
-
-        .table-cell {
-          padding: 4px;
-        }
-
-        input {
-          border: none;
-          margin: 0;
-          padding: 5px 5px 5px 10px;
-          height: 24px;
-          background-color: grey;
-          display: block;
-          width: 100%;
-          box-sizing: border-box;
-
-          &:focus {
-            border: none;
-            box-shadow: none;
-          }
-        }
-
-        i {
-          font-size: 1rem;
-
-        }
       }
     }
 
@@ -1099,9 +1102,6 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
     border-left: 4px solid $chat-bg-light;
     border-right: 4px solid $chat-bg-light;
     visibility: hidden;
-  }
-
-  .chat-msg {
   }
 }
 
@@ -1251,3 +1251,51 @@ $cs-size: 400px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
+
+.my-realtime-items {
+  .make-offer-items {
+    height: 120px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+}
+
+.realtime-chat-box {
+  height: 298.5px;
+  margin-top: 7.5px;
+  margin-bottom: 15px;
+
+  .chat-display-box {
+    height: 250px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-overflow: clip;
+    padding: 10px;
+  }
+}
+
+$confirmed-color: #00FF4E;
+$done-color: #FFE000;
+
+.current-realtime-row {
+  &.me-done .leftside {
+    box-shadow: 0 0 10px 4px $done-color;
+  }
+
+  &.them-done .rightside {
+    box-shadow: 0 0 10px 4px $done-color;
+  }
+
+  &.me-confirmed .leftside {
+    box-shadow: 0 0 10px 4px $confirmed-color;
+  }
+
+  &.them-confirmed .rightside {
+    box-shadow: 0 0 10px 4px $confirmed-color;
+  }
+
+  .market-item-row .market-pan.connector div {
+    background-color: transparent;
+  }
+}
+

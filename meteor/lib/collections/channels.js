@@ -29,6 +29,13 @@ Channels.attachSchema({
     type: [String],
     label: 'Show',
     optional: true
+  },
+
+  // Only used for private chat
+  chatType: {
+    type: String,
+    label: 'Type of private chat',
+    optional: true
   }
 });
 

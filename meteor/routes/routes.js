@@ -13,7 +13,7 @@ Router.route('/bitcoin', {
 });
 
 Router.route('/ironBucks', {
-  name: 'ironBucks', 
+  name: 'ironBucks',
   template: 'ironBucks'
 });
 
@@ -112,19 +112,6 @@ Router.route('/home', {
 Router.route('/tour', {
   name: 'tour',
   template: 'tour'
-});
-
-Router.route('/realtime/:tradeId', {
-  name: 'realtime',
-  template: 'realTimeTrading',
-  data: function() {
-    return RealTimeTrade.findOne(this.params.tradeId);
-  },
-  action: function() {
-    if(this.ready()) {
-      this.render();
-    }
-  }
 });
 
 Router.route('/notifications', {
