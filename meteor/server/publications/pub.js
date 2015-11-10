@@ -40,7 +40,7 @@ Meteor.publish('marketItems', function(){
 });
 
 Meteor.publish('listings', function() {
-  return Listings.find();
+  return Listings.find({ closeDate: null });
 });
 
 Meteor.publish('transactions', function() {
@@ -51,9 +51,15 @@ Meteor.publish('transactions', function() {
 //Note: do not take in userid here, it can be spoofed
 //and is insecure
 Meteor.publish('realtimetrade', function() {
-  return RealTimeTrade.find({$or: [{user1Id: this.userId},
-                                   {user2Id: this.userId}
-  ]});
+  return RealTimeTrade.find({
+    $or: [
+      { user1Id: this.userId },
+      { user2Id: this.userId }
+    ],
+    $and: [
+      { closeDate: null }
+    ]
+  });
 });
 
 RealTimeTrade._ensureIndex({"user1Id": 1});

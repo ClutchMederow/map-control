@@ -16,6 +16,10 @@ function getStageField(trade) {
   return trade.user1Id === Meteor.userId() ? 'user1Stage' : 'user2Stage';
 }
 
+function getTheirStageField(trade) {
+  return trade.user1Id === Meteor.userId() ? 'user2Stage' : 'user1Stage';
+}
+
 function toggleItem(tradeId, item) {
   var itemId = item._id;
 
@@ -135,7 +139,9 @@ Template.realTimeTrading.helpers({
 
   rightButtonText: function() {
     var stageField = getStageField(this);
-    var stage = this[stageField]
+    var theirStageField = getTheirStageField(this);
+    var stage = this[stageField];
+    var theirStage = this[theirStageField];
 
     if (stage === 'TRADING') {
       if (loading.get()) {
@@ -150,7 +156,10 @@ Template.realTimeTrading.helpers({
         return 'Confirm';
       }
     } else if (stage === 'CONFIRMED') {
-      return 'Waiting...';
+      if (theirStage === 'CONFIRMED') {
+        return 'Working...'
+      }
+      return 'Awaiting Acceptance';
     }
   },
 
@@ -160,13 +169,13 @@ Template.realTimeTrading.helpers({
 
     if (stage === 'TRADING') {
       if (loading.get()) {
-        return '';
+        return 'disabled';
       } else {
         return 'done';
       }
     } else if (stage === 'DONE') {
       if (loading.get()) {
-        return '';
+        return 'disabled';
       } else {
         return 'confirm';
       }

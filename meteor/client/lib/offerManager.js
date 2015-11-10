@@ -23,7 +23,8 @@ OfferManager.prototype.toggleItem = function(item) {
 
 OfferManager.prototype.execute = function(id, cb) {
   if (this.hasItems()) {
-    Meteor.call('createOffer', id, cb);
+    var offeredItems = this.selectedItems.find().fetch();
+    Meteor.call('createOffer', id, offeredItems, cb);
   } else {
     cb(new Meteor.Error('NO_ITEMS', 'Please offer at least one item'));
   }

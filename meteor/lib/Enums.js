@@ -31,9 +31,11 @@ Enums = {
   ChatType: {
     TRADE: 'TRADE',
     CHAT: 'CHAT',
-    BUY: "BUY",  //buying an item
-    FEE: "FEE", //our DL fee
-    ERROR: "ERROR"
+  },
+
+  TradeCloseReason: {
+    CANCELED: 'CANCELED',
+    ITEM_NOT_AVAILABLE: 'ITEM_NOT_AVAILABLE'
   },
 
   Environments: {
