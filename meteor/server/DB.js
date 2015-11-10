@@ -679,7 +679,11 @@ DB = {
 
   rejectRealTimeTrade: function(tradeId) {
     var doc = {
+      //TODO: figure out better way to do rejections so we can log who rejected
+      //what? 
+      //TODO: add logging
       $set: {
+        user1Stage: "REJECTED",
         user2Stage: "REJECTED",
         closeDate: new Date(),
         modifiedTimestamp: new Date()

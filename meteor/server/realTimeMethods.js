@@ -12,6 +12,7 @@ Meteor.methods({
       var channelId = DB.startChat(this.userId, trade.user1Id, Enums.ChatType.TRADE);
       var channel = Channels.findOne(channelId);
       DB.acceptRealTimeTrade(tradeId, channel);
+      DB.addNotification(trade.user1Id, trade.user2Name + " accepted trade");
       //start private chat
       return tradeId;
     } else {
@@ -22,8 +23,14 @@ Meteor.methods({
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
     //security check
-    if(this.userId === trade.user2Id) {
+    if(this.userId === trade.user1Id || this.userId === trade.user2Id) {
       DB.rejectRealTimeTrade(tradeId);
+      //TODO: BAD CODE! I'm sorry, it's late...
+      if(this.userId === trade.user1Id) {
+        DB.addNotification(trade.user2Id, trade.user1Name + " rejected trade");
+      } else {
+        DB.addNotification(trade.user1Id, trade.user1Name + " rejected trade");
+      }
       return tradeId;
     } else {
       throw new Meteor.Error("SECURITY_ERROR", "You are not authorized to reject this trade");
