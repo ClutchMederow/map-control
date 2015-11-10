@@ -32,6 +32,9 @@ TradeHelper = (function () {
     removeItemsInTransaction: function(transaction) {
       DB.listings.cancelListingsForItems(transaction.user1Items);
       DB.listings.cancelListingsForItems(transaction.user2Items);
+
+      DB.cancelRealTimeTradeForItems(transaction.user1Items);
+      DB.cancelRealTimeTradeForItems(transaction.user2Items);
       // _.each(transaction.user1Items, function(item1) {
       //   Items.update({_id: item1._id}, {$pull: {currentTransactions: transaction._id}});
       // });

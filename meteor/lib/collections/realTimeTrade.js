@@ -84,6 +84,11 @@ RealTimeTrade.attachSchema({
     optional: true,
     label: 'Transaction _id'
   },
+  completed: {
+    type: Boolean,
+    optional: true,
+    label: 'trade completed'
+  },
   createdTimestamp: {
     type: Date,
     label: 'Internal created timestamp'

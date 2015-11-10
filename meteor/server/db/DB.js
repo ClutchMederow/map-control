@@ -603,7 +603,9 @@ _.extend(DB, {
     Items.remove({userId: userId});
   },
 
-  addOffer: function(userId, listing) {
+  addOffer: function(userId, listing, offeredItems) {
+    check(userId, String);
+
     var lister = Meteor.users.findOne(listing.user._id);
     var offerer = Meteor.users.findOne(userId);
 
@@ -615,7 +617,7 @@ _.extend(DB, {
       user1Items: listing.items,
       user1Name: lister.profile.name,
       user2Id: offerer._id,
-      user2Items: listing.request,
+      user2Items: offeredItems,
       user2Name: offerer.profile.name,
       user1Stage: "DONE",
       user2Stage: "CONFIRMED",
@@ -700,28 +702,28 @@ _.extend(DB, {
     RealTimeTrade.update(tradeId, doc);
   },
 
-  addItemToTrade: function(item, tradeId, field) {
-    //TODO: for some reason when I use field directly in the push
-    //statement below I get a simple schema validation error...
-    //this is a little more verbose, but cleaner I suppose
-    if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-    } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
-    } else {
-      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
-    }
-  },
+  // addItemToTrade: function(item, tradeId, field) {
+  //   //TODO: for some reason when I use field directly in the push
+  //   //statement below I get a simple schema validation error...
+  //   //this is a little more verbose, but cleaner I suppose
+  //   if(field === "user1Items") {
+  //     RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
+  //   } else if (field === "user2Items") {
+  //     RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
+  //   } else {
+  //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+  //   }
+  // },
 
-  removeItemFromTrade: function(item, tradeId, field) {
-    if(field === "user1Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-    } else if (field === "user2Items") {
-      RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
-    } else {
-      throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
-    }
-  },
+  // removeItemFromTrade: function(item, tradeId, field) {
+  //   if(field === "user1Items") {
+  //     RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
+  //   } else if (field === "user2Items") {
+  //     RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
+  //   } else {
+  //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+  //   }
+  // },
 
   setTradeStage: function(tradeId, field, stage) {
     if(field === "user1Stage") {
@@ -733,12 +735,19 @@ _.extend(DB, {
     }
   },
 
+  setRealTimeCompleted: function(tradeId) {
+    return RealTimeTrade.update(tradeId, { $set: { completed: true } });
+  },
+
   checkForTradeCompletion: function(tradeId) {
     var trade = RealTimeTrade.findOne(tradeId);
     if(trade.user1Stage === "CONFIRMED" && trade.user2Stage == "CONFIRMED") {
-      //TODO: execute trade
-      //Transactions.insert...
-      //Dispatcher
+      var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
+
+      DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
+      DB.setRealTimeCompleted(trade._id);
+
+      return transId;
     }
   },
   //pass in positive number for adding ironBucks

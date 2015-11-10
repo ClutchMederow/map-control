@@ -1,19 +1,19 @@
 DB.transactions = {
   insert: function(doc) {
-    check(doc, {
-      user1Id: String,
-      user1Items: Match.Any,
-      user2Id: String,
-      user2Items: Match.Any,
-      stage: _.values(Enums.TransStage),
-      user1Accept: Boolean,
-      user2Accept: Boolean
-    });
+    // check(doc, {
+    //   user1Id: String,
+    //   user1Items: Match.Any,
+    //   user2Id: String,
+    //   user2Items: Match.Any,
+    //   stage: _.values(Enums.TransStage),
+    //   user1Accept: Boolean,
+    //   user2Accept: Boolean
+    // });
 
     doc.createdTimestamp = new Date();
     doc.modifiedTimestamp = new Date();
 
-    Transactions.insert(doc);
+    return Transactions.insert(doc);
   },
 
   update: function(selector, doc) {
