@@ -1,8 +1,8 @@
 Template.alerts.helpers({
   //can be offers, requests, or invites
   myAlerts: function() {
-    //TODO: make enums
-    return RealTimeTrade.find({user1Stage: {$in: ['INVITED', 'TRADING']}},
+    //TODO: have logical delete
+    return RealTimeTrade.find({completed: true},
                               {sort: {modifiedTimestamp: -1}});
   },
   isAccepted: function() {
