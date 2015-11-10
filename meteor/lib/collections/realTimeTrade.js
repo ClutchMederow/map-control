@@ -47,6 +47,7 @@ RealTimeTrade.attachSchema({
     optional: true,
     blackbox: true
   },
+  //TODO: change below to Enums
   user1Stage: {
     type: String,
     label: 'Current stage of user 2',

@@ -1,13 +1,14 @@
 <template name="notifications">
-  {{#each realTimeRequests}}
+<div class="container">
   <div class="row">
-    <div class="col s8">
-      {{user1Id}} would like to trade
-    </div>
-    <div class="s4">
-      <a class="waves-effect waves-light btn accept">Accept</a>
-      <a class="waves-effect waves-light btn reject">Reject</a>
+    <div class="col s12">
+      <div class="card-panel pan">
+        <div class="colored-title">
+          Real Time Trade Requests
+        </div>
+        {{> alerts}}
+      </div>
     </div>
   </div>
-  {{/each}}
+</div>
 </template>

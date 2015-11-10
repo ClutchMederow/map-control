@@ -53,5 +53,18 @@ Chat = {
       // If something really went wrong, just don't display the message
       return '<span class="msg-removed">message removed</span>';
     }
+  },
+
+  //checks to see if user is spamming
+  //potentially one way to do it, have a spam check collection, 
+  //record the current delay time (which increments by say .5 seconds every time
+  //a message is sent but resets when message successfully posted)
+  //also keeps the last three messages for comparison, to see if its the same
+  //the issue is performance, for every message we're now basically doubling the
+  //work
+  isSpam: function(input) {
+    //check to see if message is repeated several times
+
+    //see if user has sent too many messages in past several seconds
   }
 };
