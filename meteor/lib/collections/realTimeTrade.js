@@ -13,7 +13,7 @@ RealTimeTrade.allow({
       stageField = 'user2Stage';
     }
 
-    return ((fieldNames.length == 1) && (doc[stageField] === 'TRADING') && (fieldNames[0] === allowedField));
+    return ((fieldNames.length === 1) && (doc[stageField] === 'TRADING') && (fieldNames[0] === allowedField));
   }
 });
 
@@ -78,6 +78,11 @@ RealTimeTrade.attachSchema({
     blackbox: true,
     optional: true,
     label: 'chat channel, specific to this transaction'
+  },
+  listingId: {
+    type: String,
+    optional: true,
+    label: 'Transaction _id'
   },
   createdTimestamp: {
     type: Date,

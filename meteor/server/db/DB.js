@@ -1,16 +1,4 @@
-// Hooks
-
-// // Updates every item after a tradeoffer is updated
-// Tradeoffers.after.update(function(userId, doc, fieldNames, modifier) {
-
-//   // Dont execute this logic for internal transfers
-//   if (doc.internal) {
-//     return;
-//   }
-
-// });
-
-DB = {
+_.extend(DB, {
   // for dev purposes - REMOVE
   migrate: function() {
     Meteor.users.find().forEach(function(user) {
@@ -615,34 +603,26 @@ DB = {
     Items.remove({userId: userId});
   },
 
-  addListing: function(user,tradeItems, marketItems) {
-    var datePosted = new Date();
-    Listings.insert({
-      user: user,
-      items: tradeItems,
-      request: marketItems,
-      datePosted: datePosted
-    });
-  },
-
-  removeListing: function(listingId) {
-    Listings.remove({_id: listingId});
-    //TODO: send notification to anyone watching this listing, etc.
-  },
-
   addOffer: function(userId, listing) {
-    var currentDate = new Date();
-    Transactions.insert({
-      user1Id: listing.user._id,
+    var lister = Meteor.users.findOne(listing.user._id);
+    var offerer = Meteor.users.findOne(userId);
+
+    check(lister, Object);
+    check(offerer, Object);
+
+    RealTimeTrade.insert({
+      user1Id: lister._id,
       user1Items: listing.items,
-      user2Id: userId,
+      user1Name: lister.profile.name,
+      user2Id: offerer._id,
       user2Items: listing.request,
-      offerDate: currentDate,
-      stage: 'INITIAL_OFFER',
+      user2Name: offerer.profile.name,
+      user1Stage: "DONE",
+      user2Stage: "CONFIRMED",
+      listingId: listing._id,
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
     });
-    //Note: transaction hook fires to update inventory items
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
@@ -675,6 +655,37 @@ DB = {
     };
 
     RealTimeTrade.update(tradeId, doc);
+  },
+
+  cancelRealTimeTradeForItems: function(items) {
+    // Ignore cash
+    var items = _.reject(items, function(item) {
+      return item.name === IronBucks.name;
+    });
+
+    if (!items.length) return 0;
+
+    var itemIds = _.pluck(items, '_id');
+
+    var selector1 = {
+      'user1Items._id': itemIds,
+      closeDate: { $ne: null }
+    };
+
+    var selector2 = {
+      'user2Items._id': itemIds,
+      closeDate: { $ne: null }
+    };
+
+    var doc = {
+      $set: {
+        closeDate: new Date(),
+        closeReason: Enums.TradeCloseReason.ITEM_NOT_AVAILABLE
+      }
+    };
+
+    RealTimeTrade.update(selector1, doc, { multi: true });
+    RealTimeTrade.update(selector2, doc, { multi: true });
   },
 
   rejectRealTimeTrade: function(tradeId) {
@@ -790,4 +801,4 @@ DB = {
       console.log('order not completed correctly');
     }
   }
-};
+});

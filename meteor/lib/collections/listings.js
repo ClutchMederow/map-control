@@ -35,16 +35,15 @@ Listings.attachSchema({
   closeReason: {
     type: String,
     label: 'Reason TradeRequest closed',
-    allowedValues: ['Trade completed','No offers', 'Decided to keep item', 'Etc..'],
     optional: true
   }
 });
 
-//TODO: make this work for either items or requests 
+//TODO: make this work for either items or requests
 //and put a radio button on the market
 Listings.searchItems = function(selector, searchText, fields) {
   var listings = Listings.find(selector).fetch();
-  var matchingDocuments = []; 
+  var matchingDocuments = [];
   var terms = searchText.replace(/\W/g,' ').trim().split(" ");
   var regExp = new RegExp("(?=.*" + terms.join(")(?=.*") + ")", 'i');
   listings.forEach(function(listing) {
@@ -55,7 +54,7 @@ Listings.searchItems = function(selector, searchText, fields) {
       });
       return regExp.test(concatFields);
     })) {
-      matchingDocuments.push(listing);  
+      matchingDocuments.push(listing);
     } else {
       return "false";
     }

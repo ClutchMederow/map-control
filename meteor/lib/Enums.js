@@ -33,6 +33,11 @@ Enums = {
     CHAT: 'CHAT',
   },
 
+  TradeCloseReason: {
+    CANCELED: 'CANCELED',
+    ITEM_NOT_AVAILABLE: 'ITEM_NOT_AVAILABLE'
+  },
+
   Environments: {
     DEV: "dev",
     QA: "qa",

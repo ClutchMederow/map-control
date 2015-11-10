@@ -51,9 +51,15 @@ Meteor.publish('transactions', function() {
 //Note: do not take in userid here, it can be spoofed
 //and is insecure
 Meteor.publish('realtimetrade', function() {
-  return RealTimeTrade.find({$or: [{user1Id: this.userId},
-                                   {user2Id: this.userId}
-  ]});
+  return RealTimeTrade.find({
+    $or: [
+      { user1Id: this.userId },
+      { user2Id: this.userId }
+    ],
+    $and: [
+      { closeDate: { $ne: null } }
+    ]
+  });
 });
 
 RealTimeTrade._ensureIndex({"user1Id": 1});

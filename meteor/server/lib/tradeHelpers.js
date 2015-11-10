@@ -18,7 +18,7 @@ TradeHelper = (function () {
       DB.updateIronBucks(receiverId, transferredAmount);
       //Logs
     } else {
-      throw new Meteor.Error("INSUFFICIENT_FUNDS", 
+      throw new Meteor.Error("INSUFFICIENT_FUNDS",
                              "There are not enough funds to handle this amount");
     }
 
@@ -30,13 +30,15 @@ TradeHelper = (function () {
 
   return {
     removeItemsInTransaction: function(transaction) {
-      _.each(transaction.user1Items, function(item1) {
-        Items.update({_id: item1._id}, {$pull: {currentTransactions: transaction._id}});
-      });
+      DB.listings.cancelListingsForItems(transaction.user1Items);
+      DB.listings.cancelListingsForItems(transaction.user2Items);
+      // _.each(transaction.user1Items, function(item1) {
+      //   Items.update({_id: item1._id}, {$pull: {currentTransactions: transaction._id}});
+      // });
 
-      _.each(transaction.user2Items, function(item2) {
-        Items.update({_id: item2._id}, {$pull: {currentTransactions: transaction._id}});
-      });
+      // _.each(transaction.user2Items, function(item2) {
+      //   Items.update({_id: item2._id}, {$pull: {currentTransactions: transaction._id}});
+      // });
     },
 
     executeTrade: function(transaction) {
@@ -45,7 +47,7 @@ TradeHelper = (function () {
         //if CASH...
         if(item.name === IronBucks.name) {
           moveCash(transaction.user1Id, transaction.user2Id);
-        } else {  
+        } else {
           moveItem(item, transaction.user2Id);
         }
       });
@@ -55,7 +57,7 @@ TradeHelper = (function () {
         //if CASH...
         if(item.name === IronBucks.name) {
           moveCash(transaction.user2Id, transaction.user1Id);
-        } else {  
+        } else {
           moveItem(item, transaction.user1Id);
         }
       });
