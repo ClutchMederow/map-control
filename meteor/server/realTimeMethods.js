@@ -90,6 +90,6 @@ Meteor.methods({
     }
 
     //check to see if both users have confirmed trade
-    DB.checkForTradeCompletion(tradeId);
+    return DB.checkForTradeCompletion(tradeId);
   }
 });
