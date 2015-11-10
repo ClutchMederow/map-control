@@ -97,5 +97,10 @@ RealTimeTrade.attachSchema({
   modifiedTimestamp: {
     type: Date,
     label: 'Internal modified timestamp'
+  },
+  deleteInd: {
+    type: Boolean,
+    optional: true,
+    defaultValue: false
   }
 });

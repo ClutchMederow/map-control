@@ -599,10 +599,6 @@ _.extend(DB, {
     });
   },
 
-  removeItems: function(userId) {
-    Items.remove({userId: userId});
-  },
-
   addOffer: function(userId, listing, offeredItems) {
     check(userId, String);
 
@@ -693,7 +689,7 @@ _.extend(DB, {
   rejectRealTimeTrade: function(tradeId) {
     var doc = {
       //TODO: figure out better way to do rejections so we can log who rejected
-      //what? 
+      //what?
       //TODO: add logging
       $set: {
         user1Stage: "REJECTED",
@@ -740,16 +736,16 @@ _.extend(DB, {
   },
 
   setRealTimeCompleted: function(tradeId) {
-    return RealTimeTrade.update(tradeId, { $set: { completed: true } });
+    RealTimeTrade.update(tradeId, { $set: { completed: true } });
   },
 
   checkForTradeCompletion: function(tradeId) {
     var trade = RealTimeTrade.findOne(tradeId);
-    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage == "CONFIRMED") {
+    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
       var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
 
       DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
-      DB.setRealTimeCompleted(trade._id);
+      DB.setRealTimeCompleted(tradeId);
 
       return transId;
     }

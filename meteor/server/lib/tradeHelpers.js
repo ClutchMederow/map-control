@@ -24,8 +24,8 @@ TradeHelper = (function () {
 
   };
 
-  var moveItems = function(item, receiverId) {
-    DB.update(item._id, {$set: {userId: receiverId}});
+  var moveItem = function(item, receiverId) {
+    DB.items.update({ _id: item._id }, {$set: {userId: receiverId}});
   };
 
   return {
@@ -67,7 +67,7 @@ TradeHelper = (function () {
 
       Logs.insert({
         date: new Date(),
-        type: Enum.LogType.TRADE,
+        type: Enums.LogType.TRADE,
         user1Id: transaction.user1Id,
         user2Id: transaction.user2Id,
         itemsSentToUser1: transaction.user2Items,

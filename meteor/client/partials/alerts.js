@@ -2,7 +2,7 @@ Template.alerts.helpers({
   //can be offers, requests, or invites
   myAlerts: function() {
     //TODO: have logical delete
-    return RealTimeTrade.find({completed: true},
+    return RealTimeTrade.find({completed: { $ne: true }},
                               {sort: {modifiedTimestamp: -1}});
   },
   isAccepted: function() {

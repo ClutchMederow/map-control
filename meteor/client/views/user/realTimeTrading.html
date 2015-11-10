@@ -2,23 +2,23 @@
   <div id="realtime-modal" class="offer-modal-container">
     <div class="row">
       <div class="col s6 offset-s3 offer-modal-content fade-up">
-        {{ #if complete }}
+        <div class="row">
+          <div class="col s6 username">
+            trading with <span>{{ otherUserName }}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 current-realtime-row {{ stageClass }}">
+            {{> marketRow leftSide=myItems rightSide=theirItems }}
+          </div>
+        </div>
+        {{ #if completed }}
           <div class="row">
             <div class="col s12 center">
               <h3>Trade complete!</h3>
             </div>
           </div>
         {{ else }}
-          <div class="row">
-            <div class="col s6 username">
-              trading with <span>{{ otherUserName }}</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12 current-realtime-row {{ stageClass }}">
-              {{> marketRow leftSide=myItems rightSide=theirItems }}
-            </div>
-          </div>
           <div class="row">
             <div class="col s6 my-realtime-items">
               {{> itemContainer stashOptions }}

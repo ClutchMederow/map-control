@@ -17,7 +17,7 @@ DB.transactions = {
   },
 
   update: function(selector, doc) {
-    doc.modifiedTimestamp = new Date()
+    doc.$set.modifiedTimestamp = new Date()
     Transactions.update(selector, doc);
   },
 
@@ -36,11 +36,7 @@ DB.transactions = {
   changeStage: function(transactionId, stage) {
     var selector = { _id: transactionId };
 
-    return DB.transactions.update(selector, {
-      $set: {
-        stage: stage
-      }
-    });
+    return DB.transactions.update(selector, { $set: { stage: stage } });
   },
 };
 
@@ -59,6 +55,7 @@ DB.transactions = {
 Transactions.after.update(function(userId, doc, fieldNames, modifier, option) {
   //if the transaction is not pending, remove transaction from list attached to
   // an item
+
   if(_.contains(fieldNames, "stage") && (doc.stage === Enums.TransStage.ACCEPTED)) {
     TradeHelper.executeTrade(doc);
     TradeHelper.removeItemsInTransaction(doc);
