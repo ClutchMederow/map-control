@@ -17,6 +17,8 @@ DB.listings = {
   },
 
   cancelListingsForItems: function(items) {
+    if (!items) return 0;
+
     check(items, [ Match.Any ]);
 
     // Ignore cash

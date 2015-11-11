@@ -43,7 +43,7 @@ Template.itemContainer.helpers({
       var isSelected = false;
 
       // Need to support both cursors and arrays
-      if (selected instanceof Mongo.Cursor) {
+      if (selected instanceof Mongo.Collection) {
         isSelected = !!selected.findOne(this._id);
       } else if (selected instanceof Array) {
         isSelected = !!_.findWhere(selected, { _id: this._id });
