@@ -4,6 +4,8 @@ var reactiveCurrency = new ReactiveVar(null);
 var reactiveIronBucks = new ReactiveVar(null);
 */
 
+var addPending = new ReactiveVar(null);
+
 Template.addIronBucks.onCreated(function(){ 
   this.subscribe('coinbaseCurrencies');
 });
@@ -39,7 +41,12 @@ Template.addIronBucks.helpers({
     }
   },
   hasEmail: function() {
-    return Meteor.user().profile.email;
+    if(Meteor.user()) {
+      return Meteor.user().profile.email;
+    }
+  },
+  addPending: function() {
+    return addPending.get();
   }
 });
 
@@ -48,11 +55,13 @@ Template.addIronBucks.events({
     Session.set('payment', null);
     var amount = $('#amount').val();
     if(!_.isEmpty(amount)) {
+      addPending.set('pending');
       Meteor.call('createCheckout', amount, function(err, embed_code) {
         if(err) {
           console.log(err);
         } else {
           Session.set('embed_code',embed_code);
+          addPending.set(null);
         }
       });
     }

@@ -27,10 +27,17 @@
           {{/if}}
         </div>
         <div class="col s12 center">
+          {{#if addPending}}
+          <a class="btn-floating btn-large waves-effect waves-light green
+          center disabled" id="pending">
+            Wait
+          </a>
+          {{else}}
           <a class="btn-floating btn-large waves-effect waves-light green
           center" id="add">
             Add!
           </a>
+          {{/if}}
         </div>
         {{else}}
           <p>Please enter your email address and trade URL <a href="{{pathFor

@@ -18,10 +18,17 @@
           {{/if}}
         </div>
         <div class="col s12 center">
+          {{#if withdrawPending}}
+          <a class="btn-floating btn-large waves-effect waves-light
+          center disabled" id="pending">
+            Wait
+          </a>
+          {{else}}
           <a class="btn-floating btn-large waves-effect waves-light red
           center" id="withdraw">
             Go!
           </a>
+          {{/if}}
         </div>
       </div>
     </div>

@@ -4,6 +4,8 @@ var reactiveAmount = new ReactiveVar(null);
    var reactiveIronBucks = new ReactiveVar(null);
    */
 
+var withdrawPending = new ReactiveVar(null);
+
 Template.withdrawIronBucks.onCreated(function(){ 
   this.subscribe('coinbaseCurrencies');
 });
@@ -45,7 +47,11 @@ return CoinbaseCurrencies.find();
       var total = parseFloat(reactiveAmount.get());
       return formatCurr(total, "USD");
     }
-  }
+  },
+
+  withdrawPending: function() {
+    return withdrawPending.get();
+  },
 });
 
 Template.withdrawIronBucks.events({
@@ -53,12 +59,14 @@ Template.withdrawIronBucks.events({
     Session.set('payment', null);
     var amount = $('#amount').val();
     if(!_.isEmpty(amount)) {
-      Meteor.call('sendMoney', amount, currency, function(err, withdrawalAmount) {
+      withdrawPending.set('pending');
+      Meteor.call('sendMoney', amount, function(err, withdrawalAmount) {
         if(err) {
           console.log(err);
         } else {
           //TODO: round this to two decimal places
           sAlert.success('Successfully withdrew: $' + roundCurrency(withdrawalAmount) + " USD");
+          withdrawPending.set(null);
         }
       });
 
