@@ -63,6 +63,7 @@ Template.withdrawIronBucks.events({
       Meteor.call('sendMoney', amount, function(err, withdrawalAmount) {
         if(err) {
           console.log(err);
+          withdrawPending.set(null);
         } else {
           //TODO: round this to two decimal places
           sAlert.success('Successfully withdrew: $' + roundCurrency(withdrawalAmount) + " USD");

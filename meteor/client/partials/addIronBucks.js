@@ -59,6 +59,7 @@ Template.addIronBucks.events({
       Meteor.call('createCheckout', amount, function(err, embed_code) {
         if(err) {
           console.log(err);
+          addPending.set(null);
         } else {
           Session.set('embed_code',embed_code);
           addPending.set(null);
