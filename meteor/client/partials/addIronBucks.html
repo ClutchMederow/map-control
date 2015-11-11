@@ -14,6 +14,7 @@
         Current Balance: {{ironBucks}}
       </div>
       <div class="chatTextWindow">
+        {{#if hasEmail}}
         <div class="input-field col s8 offset-s2">
           <input id="amount" type="number" class="validate">
           <label for="amount">Amount of IronBucks to Purchase</label> 
@@ -26,11 +27,22 @@
           {{/if}}
         </div>
         <div class="col s12 center">
+          {{#if addPending}}
+          <a class="btn-floating btn-large waves-effect waves-light green
+          center disabled" id="pending">
+            Wait
+          </a>
+          {{else}}
           <a class="btn-floating btn-large waves-effect waves-light green
           center" id="add">
             Add!
           </a>
+          {{/if}}
         </div>
+        {{else}}
+          <p>Please enter your email address and trade URL <a href="{{pathFor
+          route='profile'}}">here</a> to allow you to add IronBucks</p>
+        {{/if}}
       </div>
     </div>
     {{/if}}

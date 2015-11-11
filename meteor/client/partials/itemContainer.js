@@ -78,7 +78,7 @@ Template.itemContainer.events({
   },
 
   'click .add-item-link a': function() {
-    console.log('here');
+    Session.set('listing', false);
     if (!Session.equals('offer', null)) {
       Session.set('offer', null);
     }

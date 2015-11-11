@@ -1,6 +1,8 @@
 Router.configure({
-  layoutTemplate: 'layout'
+  layoutTemplate: 'layout',
+  notFoundTemplate: "notFound"
 });
+
 
 Router.route('/help', {
   name: 'help',
