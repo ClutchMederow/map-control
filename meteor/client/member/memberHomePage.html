@@ -5,49 +5,49 @@
     </div>
   </div>
   <div class="row">
-    <div class="col s4">
+    <div class="col l3">
       <div class="command-ribbon">
         Items Currently on Market: <span class="val">10</span>
       </div>
     </div>
-    <div class="col s4">
+    <div class="col l3">
       <div class="command-ribbon">
         Outstanding Offers: <span class="val">4</span>
       </div>
     </div>
-    <div class="col s4">
+    <div class="col l6">
       <div class="command-ribbon">
         Stash Value: <span class="val">$10,220</span>
       </div>
     </div>
   </div>
   <div class="row">
-    <div class="col s4">
+    <div class="col l3">
       <div class="card-panel pan">
         <div class="colored-title">
           Trade
         </div>
-        <h5><a href="{{pathFor route='market' data=getMarket}}">Market</a></h5>
-        <h5><a href="#!" class="post-item">Post Item to Market</a></h5>
         <h5><a href="{{ pathFor route='tradingFloor' }}">Trading Floor</a></h5>
-        <h5><a href="{{pathFor route='faq'}}">FAQ</a></h5>
+        <h5><a href="{{pathFor route='market' data=getMarket}}">Market</a></h5>
+        <h5><a href="#!" class="post-item">Create Listing on Market</a></h5>
       </div>
     </div>
-    <div class="col s4">
+    <div class="col l3">
       <div class="card-panel pan">
         <div class="colored-title">
-          Command Center
+          Manage
         </div>
+        <h5><a href="{{pathFor route='ironBucks'}}">Add IronBucks</a></h5>
+        <h5><a href="{{pathFor route='manageStash'}}">Add Items to Stash</a></h5>
         <h5><a href="{{pathFor route='inventory'}}">My Inventory</a></h5>
-        <h5><a href="{{pathFor route='market' data=getMyListings}}">My Listings</a></h5>
+        <h5><a href="{{pathFor route='market' data=getMyListings}}">My Market Listings</a></h5>
         <h5><a href="{{pathFor route='transactions' data=getMyTransactions}}">
             My Sent Offers
           </a>
         </h5>
-        <h5><a href="#">Add Items to Stash</a></h5>
       </div>
     </div>
-    <div class="col s4">
+    <div class="col l6">
       <div class="card-panel pan">
         <div class="colored-title">
           Notifications
