@@ -1,5 +1,26 @@
 var loading = new ReactiveVar(false);
 
+CashItem = function() {
+  this.open = false;
+  this.template = null;
+};
+
+CashItem.prototype.init = function(cb) {
+  this.completedCallback = cb;
+  this.open = true;
+};
+
+CashItem.prototype.markAsDone = function(amount) {
+  this.completedCallback(amount);
+  this.open = false;
+};
+
+CashItem.prototype.markAsCancelled = function() {
+  this.open = false;
+};
+
+var currentCash = new CashItem();
+
 function findMe(trade) {
   return trade.user1Id === Meteor.userId() ? 'user1Items' : 'user2Items';
 }
@@ -20,7 +41,24 @@ function getTheirStageField(trade) {
   return trade.user1Id === Meteor.userId() ? 'user2Stage' : 'user1Stage';
 }
 
-function toggleItem(tradeId, item) {
+function clickBucks(item, trade, target) {
+  if (currentCash.open) return;
+
+  currentCash.init(function(amount) {
+    var cashItem = _.extend({}, item);
+    cashItem.amount = amount;
+
+    var doc = { $push: {} };
+    doc.$push[findMe(trade)] = cashItem;
+
+    RealTimeTrade.update(trade._id, doc);
+    Blaze.remove(this.template);
+  });
+
+  currentCash.template = Blaze.renderWithData(Template.ironbucksPicker, { currentCash: currentCash }, target.parentNode);
+}
+
+function toggleItem(tradeId, item, target) {
   var itemId = item._id;
 
   // check if it is already in the trade
@@ -42,14 +80,19 @@ function toggleItem(tradeId, item) {
     doc.$pull = {};
     doc.$pull[findMe(trade)] = { _id: itemId };
 
+    RealTimeTrade.update(tradeId, doc);
+
   // Not already in trade
   } else {
 
-    doc.$push = {};
-    doc.$push[findMe(trade)] = item;
+    if (item.name === 'IronBucks') {
+      clickBucks(item, trade, target);
+    } else {
+      doc.$push = {};
+      doc.$push[findMe(trade)] = item;
+      RealTimeTrade.update(tradeId, doc);
+    }
   }
-
-  RealTimeTrade.update(tradeId, doc);
 }
 
 Template.realTimeTrading.onCreated(function() {
@@ -247,7 +290,7 @@ Template.realTimeTrading.events({
     var trade = Session.get('realTime');
 
     if (trade) {
-      toggleItem(trade._id, this);
+      toggleItem(trade._id, this, e.target);
     }
   },
 
