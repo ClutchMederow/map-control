@@ -37,6 +37,9 @@ Template.addIronBucks.helpers({
       var total = parseFloat(reactiveAmount.get());
       return formatCurr(total, "USD");
     }
+  },
+  hasEmail: function() {
+    return Meteor.user().profile.email;
   }
 });
 
