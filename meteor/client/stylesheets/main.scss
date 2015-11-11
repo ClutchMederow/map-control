@@ -319,7 +319,6 @@ main {
 
 .contained-item {
   cursor: pointer;
-  /*position: relative;*/
 
   &.selected {
     img {
@@ -1299,3 +1298,51 @@ $done-color: #FFE000;
   }
 }
 
+.ironbucks-picker {
+  position: absolute;
+  // top: 0;
+  // left: 50%;
+  margin-top: -100px;
+  // margin-left: -100px;
+  width: 200px;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 20px;
+
+  .ib-close {
+    position: absolute;
+  }
+
+  .ib-title {
+    text-align: center;
+    color: grey;
+    font-weight: bold;
+  }
+
+  .btn-div {
+    padding-top: 10px;
+  }
+
+  .input-field {
+    margin: 0 !important;
+  }
+
+  .ib-form-container {
+    // padding-left: 10px;
+    // padding-right: 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  input {
+    margin: 0 !important;
+    text-align: center;
+    font-size: 30px !important;
+    color: #39D28D;
+    border-radius: 4px;
+  }
+}
