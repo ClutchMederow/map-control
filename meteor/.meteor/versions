@@ -64,7 +64,6 @@ mobile-status-bar@1.0.3
 momentjs:moment@2.10.6
 mongo@1.1.0
 mongo-livedata@1.0.8
-mrgalaxy:stripe@2.1.0
 mrt:accounts-steam@0.0.1
 mrt:steam@0.0.1
 npm-bcrypt@0.7.8_2
