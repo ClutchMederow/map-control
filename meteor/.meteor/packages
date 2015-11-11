@@ -25,7 +25,6 @@ mrt:accounts-steam
 reactive-var
 http
 jquery
-mrgalaxy:stripe
 momentjs:moment
 juliancwirko:s-alert
 accounts-password
