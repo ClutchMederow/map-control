@@ -98,5 +98,36 @@ Meteor.methods({
 
     //check to see if both users have confirmed trade
     return DB.checkForTradeCompletion(tradeId);
-  }
+  },
+
+  setStatusTrading: function(tradeId) {
+    check(tradeId, String);
+
+    var trade = RealTimeTrade.findOne(tradeId);
+
+    // just cancel the trade if someone is already confirmed
+    // this state should not be hit, but better to be safe
+    if ([ trade.user1Stage, trade.user2Stage ].indexOf('CONFIRMED') > -1) {
+      DB.rejectRealTimeTrade(tradeId);
+    }
+
+    // Only change stage if the user is currently trading
+    if(this.userId === trade.user1Id) {
+
+      if (trade.user1Stage === 'DONE') {
+        DB.setTradeStage(tradeId, "user1Stage", "TRADING");
+        DB.setTradeStage(tradeId, "user2Stage", "TRADING");
+      }
+
+    } else if (this.userId === trade.user2Id)  {
+
+      if (trade.user2Stage === 'DONE') {
+        DB.setTradeStage(tradeId, "user1Stage", "TRADING");
+        DB.setTradeStage(tradeId, "user2Stage", "TRADING");
+      }
+
+    } else {
+      throw new Meteor.Error("SECURITY_ERROR", "not authorized");
+    }
+  },
 });

@@ -137,6 +137,21 @@ Template.realTimeTrading.helpers({
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
   },
 
+  leftButtonText: function() {
+    var stageField = getStageField(this);
+    var theirStageField = getTheirStageField(this);
+    var stage = this[stageField];
+    var theirStage = this[theirStageField];
+
+    if (stage === 'TRADING') {
+      return 'Cancel';
+    } else if (stage === 'DONE') {
+      return 'Undone';
+    } else if (stage === 'CONFIRMED') {
+      return '...';
+    }
+  },
+
   rightButtonText: function() {
     var stageField = getStageField(this);
     var theirStageField = getTheirStageField(this);
@@ -150,22 +165,38 @@ Template.realTimeTrading.helpers({
         return 'Done';
       }
     } else if (stage === 'DONE') {
-      if (loading.get()) {
-        return 'Confirming...';
-      } else {
-        return 'Confirm';
-      }
+        if (theirStage === 'DONE' || theirStage === 'CONFIRMED') {
+          return 'Confirm';
+        } else {
+          return 'Waiting...';
+        }
     } else if (stage === 'CONFIRMED') {
       if (theirStage === 'CONFIRMED') {
-        return 'Working...'
+        return 'Working...';
       }
-      return 'Awaiting Acceptance';
+      return 'Waiting...';
     }
   },
 
-  buttonClass: function() {
+  leftButtonClass: function() {
     var stageField = getStageField(this);
     var stage = this[stageField]
+
+    if (stage === 'TRADING') {
+      return 'cancel';
+    } else if (stage === 'DONE') {
+      return 'undone';
+    } else if (stage === 'CONFIRMED') {
+      return 'disabled';
+    }
+  },
+
+  rightButtonClass: function() {
+    var stageField = getStageField(this);
+    var stage = this[stageField]
+
+    var theirStageField = getTheirStageField(this);
+    var theirStage = this[theirStageField];
 
     if (stage === 'TRADING') {
       if (loading.get()) {
@@ -177,14 +208,14 @@ Template.realTimeTrading.helpers({
       if (loading.get()) {
         return 'disabled';
       } else {
-        return 'confirm';
+        if (theirStage === 'DONE' || theirStage === 'CONFIRMED') {
+          return 'confirm';
+        } else {
+          return 'disabled';
+        }
       }
     } else if (stage === 'CONFIRMED') {
-      if (loading.get()) {
-        return '';
-      } else {
-        return 'disabled';
-      }
+      return 'disabled';
     }
   },
 
@@ -257,10 +288,20 @@ Template.realTimeTrading.events({
     }
   },
 
-  'click #cancelModal': function(e) {
+  'click .undone': function(e) {
+    e.preventDefault();
+    Meteor.call('setStatusTrading', this._id);
+  },
+
+  'click .cancel': function(e) {
+    e.preventDefault();
+    Meteor.call('rejectRealTimeTrade', this._id);
+  },
+
+  'click .hide-trade': function(e) {
     e.preventDefault();
     Session.set('realTime', null);
-  }
+  },
 });
 
 Template.realTimeTrading.destroyed = function() {
