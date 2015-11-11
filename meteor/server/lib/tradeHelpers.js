@@ -1,10 +1,10 @@
 //TODO: move DB changes to DB files
 TradeHelper = (function () {
   //note: cash can only be on 1 side of trade
-  var moveCash = function(senderId, receiverId) {
+  var moveCash = function(item, senderId, receiverId) {
     var withdrawnAmount = item.amount;
-    var fee = amount * Config.financial.fee;
-    var transferredAmount = amount - fee;
+    var fee = item.amount * Config.financial.fee;
+    var transferredAmount = item.amount - fee;
 
     if(sufficientIronBucks(senderId, withdrawnAmount)) {
       var adminUser = getAdminUser();
@@ -49,7 +49,7 @@ TradeHelper = (function () {
       _.each(transaction.user1Items, function(item) {
         //if CASH...
         if(item.name === IronBucks.name) {
-          moveCash(transaction.user1Id, transaction.user2Id);
+          moveCash(item, transaction.user1Id, transaction.user2Id);
         } else {
           moveItem(item, transaction.user2Id);
         }
@@ -59,7 +59,7 @@ TradeHelper = (function () {
       _.each(transaction.user2Items, function(item) {
         //if CASH...
         if(item.name === IronBucks.name) {
-          moveCash(transaction.user2Id, transaction.user1Id);
+          moveCash(item, transaction.user2Id, transaction.user1Id);
         } else {
           moveItem(item, transaction.user1Id);
         }
