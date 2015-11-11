@@ -86,12 +86,13 @@ SyncedCron.add({
   },
   job: function() {
 
-    /* TODO: build out logging for this
     var withdrawalObject = checkWithdrawal();
 
     var logData = withdrawalObject;
     logData.date = new Date();
-    if(total === 0) {
+    //TODO: adjust this with a threshold to account
+    //for small rounding errors?
+    if(withdrawalObject.total === 0) {
       logData.type = Enums.LogType.AUDIT;
 
       Logs.insert(logData);
@@ -101,6 +102,5 @@ SyncedCron.add({
 
       sendTotalErrorEmail(logId, withdrawalObject);
     }
-   */
   }
 });

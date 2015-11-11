@@ -88,7 +88,7 @@ function createCheckout(client, amount, currency, email) {
     style: "buy_now_large",
     collect_email: true,
     collect_country: true,
-    success_url: "http://localhost:3000",
+    success_url: Meteor.settings.success_url,
     metadata: {
       email: email
     }

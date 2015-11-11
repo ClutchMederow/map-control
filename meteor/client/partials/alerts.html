@@ -11,10 +11,10 @@
   </div>
   {{else}} <!-- is an real time trading request or invite -->
     {{#if isRequest}}
-      <div class="col s8">
+      <div class="col s6">
         Invited <b>{{user2Name}}</b> to trade
       </div>
-      <div class="s4">
+      <div class="s6">
         {{#if isAccepted}}
         <a class="waves-effect waves-light btn btn-block blue open">Open</a>
         {{else}}
@@ -23,10 +23,10 @@
         <a class="waves-effect waves-light btn btn-block red reject">Cancel</a>
       </div>
     {{else}} <!-- is an invite -->
-      <div class="col s8">
+      <div class="col s6">
         <b>{{user1Name}}</b> would like to trade
       </div>
-      <div class="s4">
+      <div class="s6">
         {{#if isAccepted}}
         <a class="waves-effect waves-light btn btn-block blue open">Open</a>
         {{else}}
