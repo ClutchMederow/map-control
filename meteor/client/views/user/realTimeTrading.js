@@ -346,6 +346,14 @@ Template.realTimeTrading.events({
     e.preventDefault();
     Session.set('realTime', null);
   },
+
+  'mouseenter.item-info-tooltip .current-realtime-row .item-infoed': function(e) {
+    DraggableItems.itemInfo.mousein(e, this);
+  },
+
+  'mouseleave.item-info-tooltip .current-realtime-row .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
+  },
 });
 
 Template.realTimeTrading.destroyed = function() {

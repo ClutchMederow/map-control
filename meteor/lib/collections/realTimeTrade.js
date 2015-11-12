@@ -13,7 +13,7 @@ RealTimeTrade.allow({
       stageField = 'user2Stage';
     }
 
-    return ((fieldNames.length === 1) && (doc[stageField] === 'TRADING') && (fieldNames[0] === allowedField));
+    return ((fieldNames.length === 1) && (doc[stageField] === 'TRADING' || doc[stageField] === 'DONE') && (fieldNames[0] === allowedField));
   }
 });
 

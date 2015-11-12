@@ -1,6 +1,6 @@
 Template.ironbucksPicker.onRendered(function() {
   this.$('.ironbucks-input').number(true, 2);
-  this.$('.ironbucks-input').select();
+  this.$('.ironbucks-input').focus();
 });
 
 Template.ironbucksPicker.events({

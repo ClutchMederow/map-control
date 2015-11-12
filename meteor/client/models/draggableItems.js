@@ -352,13 +352,22 @@ var ItemDescriptionParser = {
     },
 
     IronBucks: function(data) {
-      var amount = Meteor.user().profile.ironBucks;
-
       var $newDiv = $('<div></div>');
       $newDiv.addClass('container-items');
       $newDiv.addClass('ironbucks-amount');
 
-      $newDiv.text('$' + amount + ' available');
+      var otherText;
+      var amount;
+
+      if (data.amount > 0) {
+        amount = data.amount;
+        otherText = '';
+      } else {
+        amount = Meteor.user().profile.ironBucks;
+        otherText = ' available';
+      }
+
+      $newDiv.text('$' + amount + otherText);
       return $newDiv;
     }
   },
