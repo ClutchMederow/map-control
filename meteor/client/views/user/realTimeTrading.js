@@ -16,6 +16,7 @@ CashItem.prototype.markAsDone = function(amount) {
 };
 
 CashItem.prototype.markAsCancelled = function() {
+  Blaze.remove(this.template);
   this.open = false;
 };
 
@@ -344,6 +345,14 @@ Template.realTimeTrading.events({
   'click .hide-trade': function(e) {
     e.preventDefault();
     Session.set('realTime', null);
+  },
+
+  'mouseenter.item-info-tooltip .current-realtime-row .item-infoed': function(e) {
+    DraggableItems.itemInfo.mousein(e, this);
+  },
+
+  'mouseleave.item-info-tooltip .current-realtime-row .item-infoed': function(e) {
+    DraggableItems.itemInfo.mouseout(e);
   },
 });
 

@@ -400,7 +400,8 @@ main {
 }
 
 .ironbucks-amount {
-  color: red;
+  text-align: center;
+  color: white;
 }
 
 .fade-up {
@@ -1309,7 +1310,7 @@ ul.tabs {
   margin-top: -100px;
   // margin-left: -100px;
   width: 200px;
-  background-color: black;
+  background-color: #404040;
   color: white;
   padding: 10px;
   border-radius: 4px;
@@ -1333,11 +1334,6 @@ ul.tabs {
     margin: 0 !important;
   }
 
-  .ib-form-container {
-    // padding-left: 10px;
-    // padding-right: 10px;
-  }
-
   button {
     width: 100%;
   }
@@ -1349,4 +1345,17 @@ ul.tabs {
     color: #39D28D;
     border-radius: 4px;
   }
+}
+
+.faq-q {
+  color: #FDBFBF;
+  font-size: 24px;
+}
+
+.faq-a {
+  color: #97DE7C;
+  li {
+    color: white;
+  }
+  font-size: 18px;
 }

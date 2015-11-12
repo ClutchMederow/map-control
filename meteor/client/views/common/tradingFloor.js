@@ -7,6 +7,7 @@ var channelName;
 
 Template.tradingFloor.onCreated(function() {
   var self = this;
+
   self.autorun(function() {
     var newChannel = Iron.controller().getParams().channel;
     self.subscribe('messages', newChannel);
@@ -15,17 +16,14 @@ Template.tradingFloor.onCreated(function() {
       scrollToBottom();
     }
 
-    if (channelName !== newChannel) {
-      channelName = newChannel;
-
-      if (changesHandle) {
-        changesHandle.stop();
-      }
-      // Adds a scroll handle to run when a new message arrives
-      changesHandle = Messages.find({'channel.name': newChannel }).observeChanges({
-        added: scrollToBottom
-      });
+    if (changesHandle) {
+      changesHandle.stop();
     }
+
+    // Adds a scroll handle to run when a new message arrives
+    changesHandle = Messages.find({'channel.name': newChannel }).observeChanges({
+      added: scrollToBottom
+    });
   });
 });
 
@@ -128,9 +126,11 @@ function dropItem(id) {
 // Moves the text cursor to the end
 function placeCaretAfterNode(node) {
   if (typeof window.getSelection != "undefined") {
+
     var range = document.createRange();
     range.setStartAfter(node);
     range.collapse(true);
+
     var selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
