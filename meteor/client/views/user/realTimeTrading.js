@@ -16,6 +16,7 @@ CashItem.prototype.markAsDone = function(amount) {
 };
 
 CashItem.prototype.markAsCancelled = function() {
+  Blaze.remove(this.template);
   this.open = false;
 };
 
