@@ -740,14 +740,23 @@ _.extend(DB, {
   },
 
   checkForTradeCompletion: function(tradeId) {
-    var trade = RealTimeTrade.findOne(tradeId);
-    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
-      var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
+    try {
+      var trade = RealTimeTrade.findOne(tradeId);
 
-      DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
-      DB.setRealTimeCompleted(tradeId);
+      if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
+        var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
 
-      return transId;
+        DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
+        DB.setRealTimeCompleted(tradeId);
+
+        return transId;
+      }
+    } catch (e) {
+
+      DB.setTradeStage(tradeId, "user1Stage", "TRADING");
+      DB.setTradeStage(tradeId, "user2Stage", "TRADING");
+
+      throw e;
     }
   },
   //pass in positive number for adding ironBucks

@@ -62,5 +62,11 @@ Template.market.events({
   'click .market .acceptTrade': function(e) {
     e.preventDefault();
     Session.set('offer', this);
+  },
+
+  'click .sendMessage': function() {
+    if (this.data && this.data.user) {
+      Meteor.call('startPrivateChat', this.data.user._id);
+    }
   }
 });

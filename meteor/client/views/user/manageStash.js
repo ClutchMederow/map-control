@@ -57,8 +57,4 @@ Template.manageStash.events({
     e.preventDefault();
     thisInstance.stashManager.toggleItem(this, Enums.TransType.DEPOSIT);
   }
-
-  // 'click .trade-alert a': function(e) {
-
-  // }
 });

@@ -41,21 +41,16 @@ Template.alerts.events({
   'click .accept': function() {
     Meteor.call('acceptRealTimeTrade', this._id, function(error, realTimeTradeId) {
       if(error) {
-        console.log(error.reason);
         sAlert.error('Could not accept real time trade');
       } else {
-        console.log(realTimeTradeId);
-        sAlert.success("Click on open button to go to trading floor");
+        Session.set('realTime', RealTimeTrade.findOne({"_id": this._id}));
       }
     });
   },
   'click .reject': function() {
     Meteor.call('rejectRealTimeTrade', this._id, function(error) {
       if(error) {
-        console.log(error.reason);
         sAlert.error('Could not reject trade');
-      } else {
-        sAlert.warning("Trade offer rejected");
       }
     });
   },
