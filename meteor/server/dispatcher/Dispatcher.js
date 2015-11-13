@@ -66,6 +66,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     var usersBot = bots[botName];
 
+    if (!usersBot) {
+      throw new Meteor.Error('OUT_OF_BOTS', 'There are no bots available to process your request');
+    }
+
     // Verify that the bot assigned to the player has enough space
     if (usersBot.getItemCount() > Config.bots.maxBotInventory * Config.bots.maxFullPercentage) {
       botName = DB.users.addBot(userId, assignBot());
@@ -202,8 +206,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       check(userId, String);
       check(items, [String]);
 
-      try {
-        var bot = getUsersBot(userId);
+      var bot = getUsersBot(userId);
 
         var options = {
           items: items,
@@ -215,8 +218,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
         var task = new Task([job], false, taskId, DB);
 
+      try {
         task.execute();
-
       } catch (e) {
         DB.items.revertStatus(items);
         throw e;
@@ -326,10 +329,18 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     checkOutstandingTradeoffers: function() {
       _.each(bots, function(bot) {
-        var offers = bot.queryOffers();
+        try {
+          var offers = bot.queryOffers();
 
-        // Reload the inventory so we can match items
-        updateTradeofferStatus(offers, bot);
+          // Reload the inventory so we can match items
+          // May be null if unable to connect to steam servers
+          if (offers) {
+            updateTradeofferStatus(offers, bot);
+          }
+        } catch (e) {
+          console.log(bot.botName + ': Error checking outstanding tradeoffers');
+          console.log(e.stack);
+        }
       });
     },
 
@@ -406,29 +417,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       // Accept all offers
       acceptOffersTask.execute();
     },
-
-    test: function(botName) {
-
-      var meat = Dispatcher.getBot(botName);
-
-      meat.loadBotInventory();
-      var items = _.pluck(meat.getBotItems(), 'id');
-
-      var userId = 'uYrKadsnCzyg9TLrC';
-
-      // Create final job to send all offers to the user
-      var options = {
-        items: items,
-        userId: userId
-      };
-
-      var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
-      var withdrawJob = new BotJob(meat, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
-      var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
-
-      withdrawTask.execute();
-
-    }
   }
 })(SteamAPI, SteamBot);
 

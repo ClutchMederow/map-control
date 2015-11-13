@@ -343,8 +343,12 @@ _.extend(DB, {
       check(assetIds, [String]);
 
       _.each(assetIds, function(assetId) {
-        var item = Items.find({ itemId: assetId, deleteInd: false });
+        var item = Items.findOne({ itemId: assetId, deleteInd: false });
         var doc;
+
+        console.log(assetId);
+
+        if (!item) return;
 
         if (item.status === Enums.ItemStatus.PENDING_WITHDRAWAL) {
           doc = {

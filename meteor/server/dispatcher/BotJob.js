@@ -209,7 +209,8 @@ BotJob.prototype.cancel = function() {
   var self = this;
 
   // If queued, nothing else needs to be done
-  if (self.jobStatus = Dispatcher.jobStatus.QUEUED) {
+  if (self.jobStatus === Dispatcher.jobStatus.QUEUED || self.jobStatus === Dispatcher.jobStatus.READY) {
+
     this.cancelQueue = true;
 
   } else if (self.jobStatus === Dispatcher.jobStatus.PENDING) {
@@ -218,10 +219,8 @@ BotJob.prototype.cancel = function() {
         self.jobType === Dispatcher.jobType.WITHDRAW_ITEMS ||
         self.jobType === Dispatcher.jobType.INTERNAL_TRANSFER) {
 
-      if (self.jobStatus === Dispatcher.jobStatus.PENDING) {
-        this.cancelCallback = function() {
-          self._bot.cancelOffer(self.tradeofferId);
-        }
+      this.cancelCallback = function() {
+        self._bot.cancelOffer(self.tradeofferId);
       }
     }
   }
