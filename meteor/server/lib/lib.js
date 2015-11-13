@@ -40,7 +40,7 @@ sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
 SyncedCron.add({
   name: 'Update pricing information',
   schedule: function(parser) {
-    return parser.text('every 1 hours');
+    return parser.text('every 1 minutes');
   },
 
   job: function() {
@@ -52,20 +52,20 @@ SyncedCron.add({
       if (item.name === IronBucks.name) return;
 
       var itemPrice = ItemPrices.findOne({ name: item.name });
-      if(itemPrice) {
+      if(_.isObject(itemPrice)) {
         if(itemPrice.upToDate) {
           console.log(name + "'s price is  already up to date");
         } else {
-          price = steamlyticsApi.getPrice(itemPrice.name);
+          price = steamlyticsApi.getPrice(item.name);
           //note: returned object from api doesn't include market item name
-          price.name = itemPrice.name;
+          price.name = item.name;
           price.uptToDate = true;
           ItemPrices.update(itemPrice._id, price);
         }
       } else {
-          price = steamlyticsApi.getPrice(itemPrice.name);
+          price = steamlyticsApi.getPrice(item.name);
           //note: returned object from api doesn't include market item name
-          price.name = itemPrice.name;
+          price.name = item.name;
           price.upToDate = false;
           ItemPrices.insert(price);
       }
