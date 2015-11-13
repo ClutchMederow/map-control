@@ -24,6 +24,17 @@
       {{ else }}
         {{ #if ready }}
           <div class="col s12">
+            {{ #if privateInv }}
+              <div>
+              Your inventory is set to private. To fix:
+                <ol>
+                  <li>Go to your <a href="{{ editProfileLink }}" target="_blank">steam profile settings</a></li>
+                  <li>Under Inventory, select <strong>Public</strong></li>
+                  <li>Scroll to the bottom and click <strong>Save Changes</strong></li>
+                  <li>Refresh this page</li>
+                </ol>
+              </div>
+            {{ /if }}
           </div>
         {{ else }}
           <div class="col s12 loading">
