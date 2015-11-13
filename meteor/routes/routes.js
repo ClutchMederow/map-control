@@ -14,7 +14,7 @@ Router.route('/bitcoin', {
   template: 'bitcoin'
 });
 
-Router.route('/ironBucks', {
+Router.route('/ironbucks', {
   name: 'ironBucks',
   template: 'ironBucks'
 });
