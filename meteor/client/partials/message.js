@@ -40,10 +40,6 @@ Template.message.helpers({
 
   textWithImages: function() {
     return Spacebars.SafeString(Chat.insertImagesForDisplay(this));
-  },
-
-  notMe: function() {
-    return Meteor.userId() !== this.user.userId;
   }
 });
 

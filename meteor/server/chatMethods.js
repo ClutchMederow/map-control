@@ -49,10 +49,6 @@ Meteor.methods({
 
   startPrivateChat: function(otherUserId) {
     check(otherUserId, String);
-
-    // can't start a chat with yourself
-    if (this.userId === otherUserId) return;
-
     DB.startChat(this.userId, otherUserId,Enums.ChatType.CHAT);
   },
 
