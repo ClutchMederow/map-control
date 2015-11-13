@@ -18,6 +18,7 @@ blaze-tools@1.0.3
 boilerplate-generator@1.0.3
 callback-hook@1.0.3
 check@1.0.5
+chuangbo:cookie@1.1.0
 coinbase-if@0.0.1
 dbernhard:jquery-ui-draggable@0.1.2
 dburles:collection-helpers@1.0.3
@@ -58,6 +59,8 @@ meteorhacks:async@1.0.0
 meteorhacks:kadira@2.26.3
 meteorhacks:meteorx@1.4.1
 meteorhacks:npm@1.5.0
+meteorhacks:picker@1.0.3
+meteorhacks:sikka@1.0.1
 minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
