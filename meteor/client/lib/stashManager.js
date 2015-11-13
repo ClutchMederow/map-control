@@ -8,6 +8,7 @@ StashManager = function() {
   this.selectedItems = new Mongo.Collection(null);
   this.userInventoryItems = new Mongo.Collection(null);
   this.invReady = new ReactiveVar(false);
+  this.invError = new ReactiveVar(null);
 
   this.refresh();
 };
@@ -42,8 +43,10 @@ StashManager.prototype.refresh = function() {
 
   Meteor.call('getPlayerInventory', function(err, res) {
     if (err) {
-      sAlert.error('Unable to retrieve inventory. Please try again later.');
+      self.invError.set(err);
+      sAlert.error(err.reason);
     } else {
+      self.invError.set(null);
       _.each(res, function(item) {
         self.userInventoryItems.insert(item);
       });
@@ -68,6 +71,10 @@ StashManager.prototype.toggleItem = function(item, transType) {
     //   sAlert.warning('That item is not tradable');
     // }
   }
+};
+
+StashManager.prototype.getInvError = function() {
+  return this.invError.get();
 };
 
 function depositItems(deposits) {

@@ -8,7 +8,7 @@ Meteor.publish('coinbaseCurrencies', function() {
 
 Meteor.publish('messages', function(channel) {
   check(channel, String);
-  return Messages.find({ 'channel.name': channel }, { limit: 50 });
+  return Messages.find({ 'channel.name': channel }, { sort: { datePosted: -1 },  limit: 50 });
 });
 
 Messages._ensureIndex({"channel.name": 1});

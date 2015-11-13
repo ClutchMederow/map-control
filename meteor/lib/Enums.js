@@ -42,7 +42,12 @@ Enums = {
     DEV: "dev",
     QA: "qa",
     PROD: "prod"
-  }
+  },
+
+  MeteorError: {
+    PRIVATE_INVENTORY: 'PRIVATE_INVENTORY',
+    BAD_HTTP: 'BAD_HTTP',
+  },
 };
 
 TradeStatus = {
@@ -62,5 +67,11 @@ SteamConstants = {
     8: 'k_ETradeOfferStateInvalidItems',
     9: 'k_ETradeOfferStateEmailPending',
     10: 'k_ETradeOfferStateEmailCanceled'
-  }
+  },
+
+  steamApi: {
+    errors: {
+      privateProfile: 'This profile is private.',
+    },
+  },
 };

@@ -8,7 +8,8 @@ Template.addRemoveStash.helpers({
       columns: '3',
       class: 'add-remove-items',
       selectedItems: stashManager.selectedItems,
-      ready: stashManager.invReady.get()
+      ready: stashManager.invReady.get(),
+      invError: stashManager.invError.get()
     };
   },
 

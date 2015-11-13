@@ -65,6 +65,19 @@ Template.itemContainer.helpers({
     } else {
       return this.iconURL;
     }
+  },
+
+  privateInv: function() {
+    return this.invError && (this.invError.error === Enums.MeteorError.PRIVATE_INVENTORY);
+  },
+
+  editProfileLink: function() {
+    var user = Meteor.user();
+    if (user && user.services && user.services.steam) {
+      return Constants.editProfile.replace('CONST_STEAM_ID', user.services.steam.id);
+    }
+
+    return '';
   }
 });
 
