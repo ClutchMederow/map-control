@@ -1,3 +1,7 @@
 Meteor.startup(function() {
-  SyncedCron.start();
+  if (Meteor.settings.environment === 'prod') {
+    SyncedCron.start();
+    Dispatcher.init();
+    Dispatcher.startPolling();
+  }
 });

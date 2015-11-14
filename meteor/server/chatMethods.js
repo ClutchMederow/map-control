@@ -38,7 +38,11 @@ Meteor.methods({
 
     attributes.items = items;
     attributes.channel = channel;
-    attributes.user = {userId: this.userId, profile: user.profile};
+    attributes.user = {
+      userId: this.userId,
+      profile: user.profile,
+      avatar: user.services.steam.avatar,
+    };
 
     if (channel.category === 'Private') {
       DB.insertPrivateChat(attributes);

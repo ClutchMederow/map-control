@@ -343,8 +343,12 @@ _.extend(DB, {
       check(assetIds, [String]);
 
       _.each(assetIds, function(assetId) {
-        var item = Items.find({ itemId: assetId, deleteInd: false });
+        var item = Items.findOne({ itemId: assetId, deleteInd: false });
         var doc;
+
+        console.log(assetId);
+
+        if (!item) return;
 
         if (item.status === Enums.ItemStatus.PENDING_WITHDRAWAL) {
           doc = {
@@ -587,10 +591,12 @@ _.extend(DB, {
       users: [{
         userId: requestor._id,
         name: requestor.profile.name,
+        avatar: requestor.services.steam.avatar,
         unseen: 0
       }, {
         userId: otherUser._id,
         name: otherUser.profile.name,
+        avatar: requestor.services.steam.avatar,
         unseen: 0
       }],
       show: [ requestor._id, otherUser._id ],
@@ -740,14 +746,23 @@ _.extend(DB, {
   },
 
   checkForTradeCompletion: function(tradeId) {
-    var trade = RealTimeTrade.findOne(tradeId);
-    if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
-      var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
+    try {
+      var trade = RealTimeTrade.findOne(tradeId);
 
-      DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
-      DB.setRealTimeCompleted(tradeId);
+      if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
+        var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
 
-      return transId;
+        DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
+        DB.setRealTimeCompleted(tradeId);
+
+        return transId;
+      }
+    } catch (e) {
+
+      DB.setTradeStage(tradeId, "user1Stage", "TRADING");
+      DB.setTradeStage(tradeId, "user2Stage", "TRADING");
+
+      throw e;
     }
   },
   //pass in positive number for adding ironBucks

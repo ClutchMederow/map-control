@@ -4,7 +4,10 @@ Config = {
     maxBotInventory: 1000,
     maxFullPercentage: 0.75,
     // in seconds
-    maxInventoryCacheTime: 60
+    maxInventoryCacheTime: 60,
+
+    // in ms
+    checkOutstandingInterval: 30000,
   },
 
   tradingFloor: {
@@ -23,6 +26,7 @@ Config = {
 Constants = {
   tradeOfferURL: 'https://steamcommunity.com/tradeoffer/',
   steamCDN: 'https://steamcommunity-a.akamaihd.net/economy/image/',
-  tradeURL: 'https://steamcommunity.com/id/meatsting/tradeoffers/privacy'
+  tradeURL: 'https://steamcommunity.com/id/meatsting/tradeoffers/privacy',
+  editProfile: 'https://steamcommunity.com/profiles/CONST_STEAM_ID/edit/settings',
 };
 

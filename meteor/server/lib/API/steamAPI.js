@@ -46,10 +46,18 @@ SteamAPI = (function () {
     var callString = "http://steamcommunity.com/profiles/" + profileId +
     "/inventory/json/" + csAppId + "/" + csContextId;
 
-    inventoryData = HTTP.get(callString).data;
+    try {
+      inventoryData = HTTP.get(callString).data;
+    } catch (e) {
+      console.log(e);
+      throw new Meteor.Error(Enums.MeteorError.BAD_HTTP, 'Unable to reach Steam servers');
+    }
 
     if(!inventoryData.success) {
-      console.log('Failed to load');
+      if ((inventoryData.success === false) && inventoryData.Error === SteamConstants.steamApi.errors.privateProfile) {
+        throw new Meteor.Error(Enums.MeteorError.PRIVATE_INVENTORY, 'Unable to load inventory. Your inventory is set to private.');
+      }
+
       throw new Meteor.Error("INVENTORY FAILED TO LOAD", inventoryData.failed);
     } else {
       //clear and remove inventory for a specific user,
