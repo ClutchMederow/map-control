@@ -26,11 +26,7 @@ Template.message.helpers({
   //TODO: refactor below 2 functions into one function with css
   state: function() {
     var presence = Presences.findOne({userId: this.user.userId});
-    if(_.isObject(presence) && presence.state === "online") {
-      return "green lighten-2";
-    } else {
-      return "blue lighten-2";
-    }
+    return (presence && presence.state) ? 'online' : '';
   },
 
   status: function() {

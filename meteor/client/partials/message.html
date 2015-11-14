@@ -1,8 +1,8 @@
 <template name="message">
   <div class="msg-container">
-    <img class="responsive-img" src="{{ getImage }}">
     <a href="#" class="user-dropdown {{state}} chat-username" data-activates="{{ _id }}">
-      {{ user.profile.name }}
+      <img class="responsive-img" src="{{ getImage }}" width="32" height="32">
+      <div>{{ user.profile.name }}</div>
     </a>
     <!-- Dropdown Structure -->
     <ul id="{{ _id }}" class="dropdown-content">
