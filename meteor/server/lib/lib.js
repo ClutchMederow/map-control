@@ -40,7 +40,7 @@ sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
 SyncedCron.add({
   name: 'Update pricing information',
   schedule: function(parser) {
-    return parser.text('every 1 minutes');
+    return parser.text('every 30 minutes');
   },
 
   job: function() {
