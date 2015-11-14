@@ -591,10 +591,12 @@ _.extend(DB, {
       users: [{
         userId: requestor._id,
         name: requestor.profile.name,
+        avatar: requestor.services.steam.avatar,
         unseen: 0
       }, {
         userId: otherUser._id,
         name: otherUser.profile.name,
+        avatar: requestor.services.steam.avatar,
         unseen: 0
       }],
       show: [ requestor._id, otherUser._id ],

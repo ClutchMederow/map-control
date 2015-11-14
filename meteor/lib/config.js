@@ -4,7 +4,10 @@ Config = {
     maxBotInventory: 1000,
     maxFullPercentage: 0.75,
     // in seconds
-    maxInventoryCacheTime: 60
+    maxInventoryCacheTime: 60,
+
+    // in ms
+    checkOutstandingInterval: 30000,
   },
 
   tradingFloor: {

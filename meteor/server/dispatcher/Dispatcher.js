@@ -6,6 +6,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   // Used to determine which bot the next person should get
   var botIndex = 0;
 
+  var checkOutstandingPollHandle;
+
   function initalizeBots(Bots) {
 
     // Clone this so we can fuck with it
@@ -342,6 +344,16 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           console.log(e.stack);
         }
       });
+    },
+
+    startPolling: function() {
+      checkOutstandingPollHandle = Meteor.setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
+    },
+
+    stopPolling: function() {
+      if (checkOutstandingPollHandle) {
+        Meteor.clearInterval(checkOutstandingPollHandle);
+      }
     },
 
     botsLogOn: function() {
