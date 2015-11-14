@@ -1,0 +1,17 @@
+<template name="playerInfoHover">
+  <ul id="{{ _id }}" class="dropdown-content">
+    <li>
+      <div class="profile-preview">
+        <img src="{{ getImageMed }}" width="64" height="64">
+        <div class="preview-text">
+          <div class="preview-text-name">{{ user.profile.name }}</div>
+          <div class="preview-status {{ state }}">{{ status }}</div>
+        </div>
+      </div>
+    </li>
+    {{ #if notMe }}
+      <li><a href="#!" class="privateChat">Start Private Chat</a></li>
+      <li><a href="#" class="beginTrade">Invite to Real Time Trade</a></li>
+    {{ /if }}
+  </ul>
+</template>
