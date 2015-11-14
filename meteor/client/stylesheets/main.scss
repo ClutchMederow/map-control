@@ -270,11 +270,43 @@ main {
 }
 
 .msg-container {
-  img {
+  .tiny-profile-img {
     border-radius: 2px;
   }
 
   margin-bottom: 5px;
+
+  .profile-preview {
+    background-color: #404040;
+
+    img {
+      border: none;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .preview-text {
+      color: white;
+      padding-left: 1em;
+      padding-right: 1em;
+      display: inline-block;
+      vertical-align: middle;
+
+      .preview-text-name {
+        font-size: 20px;
+      }
+
+      .preview-status {
+        text-align: right;
+        font-weight: 100;
+        color: #F1A6A6;
+
+        &.online {
+          color: #C0F5C0;
+        }
+      }
+    }
+  }
 }
 
 .message-time {

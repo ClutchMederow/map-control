@@ -1,17 +1,11 @@
 <template name="message">
   <div class="msg-container">
     <a href="#" class="user-dropdown {{state}} chat-username" data-activates="{{ _id }}">
-      <img class="responsive-img" src="{{ getImage }}" width="32" height="32">
+      <img class="responsive-img tiny-profile-img" src="{{ getImage }}" width="32" height="32">
       <div>{{ user.profile.name }}</div>
     </a>
     <!-- Dropdown Structure -->
-    <ul id="{{ _id }}" class="dropdown-content">
-      {{ #if notMe }}
-        <li><a href="#!" class="privateChat">Start Private Chat</a></li>
-        <li><a href="#" class="beginTrade">Invite to Real Time Trade</a></li>
-      {{ /if }}
-      <li><a href="#!">Status: {{ status }}</a></li>
-    </ul>
+    {{> playerInfoHover }}
     <span class="message-time">({{ justTime datePosted }})</span>
     <span class="message-text">{{ textWithImages }}</span>
   </div>
