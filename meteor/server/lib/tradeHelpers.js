@@ -10,12 +10,33 @@ TradeHelper = (function () {
       var adminUser = getAdminUser();
       //remove from user1 full amount
       DB.updateIronBucks(senderId, -withdrawnAmount);
+      Logs.insert({
+        userId: [senderId],
+        amount: -withdrawnAmount,
+        type: Enums.LogType.BUY,
+        date: new Date()
+      });
 
       //update admin
       DB.updateIronBucks(adminUser._id, fee);
+      //Note: basically the sender pays the fee, 
+      //because they are debited 100% of the ironBucks but only
+      //90% are credited to end user
+      Logs.insert({
+        userId: [senderId],
+        amount: -fee,
+        type: Enums.LogType.FEE,
+        date: new Date()  
+      });
 
       //update user2
       DB.updateIronBucks(receiverId, transferredAmount);
+      Logs.insert({
+        userId: [receiverId],
+        amount: withdrawnAmount,
+        type: Enums.LogType.SELL,
+        date: new Date()
+      });
       //Logs
     } else {
       throw new Meteor.Error("INSUFFICIENT_FUNDS",
