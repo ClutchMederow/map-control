@@ -1,5 +1,7 @@
 Meteor.startup(function() {
-  SyncedCron.start();
-  Dispatcher.init();
-  Meteor.setInterval(Dispatcher.checkOutstandingTradeoffers, 30000);
+  if (Meteor.settings.environment === 'prod') {
+    SyncedCron.start();
+    Dispatcher.init();
+    Dispatcher.startPolling();
+  }
 });

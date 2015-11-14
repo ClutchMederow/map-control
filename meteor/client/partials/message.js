@@ -18,8 +18,8 @@ Template.message.helpers({
   },
 
   getImage: function() {
-    if(Meteor.user().profile.avatar) {
-      return Meteor.user().profile.avatar;
+    if (this.user && this.user.avatar) {
+      return this.user.avatar.small;
     }
   },
 
