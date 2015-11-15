@@ -277,6 +277,7 @@ main {
   margin-bottom: 5px;
 
   .profile-preview {
+    cursor: auto;
     background-color: #404040;
 
     img {
@@ -1396,7 +1397,6 @@ ul.tabs {
     text-align: center;
     font-size: 30px !important;
     color: #39D28D;
-    border-radius: 4px;
   }
 }
 
