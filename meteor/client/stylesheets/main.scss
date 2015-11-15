@@ -253,14 +253,10 @@ main {
 }
 
 .chat-username {
-  color: white;
-  border-radius: 2px;
-  background-color: #476580;
-  padding-bottom: 3px;
-  padding-left: 4px;
-
-  /* keeps the rows the correct distance apart since the images fuck with things */
-  // margin: .75rem 0;
+  color: #9C6262;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
 
   div {
     margin-left: 4px;
@@ -271,7 +267,8 @@ main {
 
 .msg-container {
   .tiny-profile-img {
-    border-radius: 2px;
+    vertical-align: middle;
+    border-radius: 32px;
   }
 
   margin-bottom: 5px;
@@ -313,7 +310,6 @@ main {
 .message-time {
   color: #ACB3B9;
   font-size: .8rem;
-  padding-left: 4px;
   padding-right: 4px;
 }
 
