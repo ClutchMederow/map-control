@@ -1,13 +1,41 @@
 <template name="addIronBucks">
 <div class="row">
-  <div class="col s6 offset-s3">
+  <div class="col s4">
+    <div class="tradingFloor pan">
+      <div class="colored-title">
+        Instructions
+      </div>
+      <div class="chatTextWindow">
+        <ol>
+          <li>Enter the amount of IronBucks you want</li>
+          <li>The price will show up in USD</li>
+          <li>Click Add! This will take you to the Coinbase login screen</li>
+          <li>If you already have an existing Bitcoin wallet, you can use the
+            "Bitcoin Address" tab to receive a code and a QR code to pay with</li>
+          <li>Otherwise click on the "Coinbase Wallet" tab and enter  your Coinbase credentials or Sign Up with Coinbase</li>
+          <li>Once signed in, choose the bitcoin wallet to pay with and click
+            continue</li>
+          <li>That's it! Your IronBucks should be updated within seconds with
+            your new balance.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="col s6">
     {{#if embedCode}}
-    <iframe id="coinbase_inline_iframe_{{embedCode}}" 
-            src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
-            style="width: 460px; height: 350px; border: none; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25);" 
-            allowtransparency="true" frameborder="0">
-    </iframe>
+    <div class="tradingFloor pan">
+      <div class="colored-title">
+        Coinbase Payment
+      </div>
+      <div class="chatTextWindow">
+        <iframe id="coinbase_inline_iframe_{{embedCode}}" 
+                src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
+                style="width: 460px; height: 450px; border: none; 
+                box-shadow: 0 1px 3px rgba(0,0,0,0.25);" 
+                allowtransparency="true" frameborder="0">
+        </iframe>
+      </div>
+    </div>
     {{else}}
     <div class="tradingFloor pan">
       <div class="colored-title">
