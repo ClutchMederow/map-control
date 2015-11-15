@@ -1,7 +1,7 @@
 <template name="withdrawIronBucks">
 <div class="row">
   <div class="col s3">
-    <div class="tradingFloor pan dark-pan">
+    <div class="card-panel pan dark-pan">
       <div class="colored-title">
         Instructions
       </div>
@@ -21,15 +21,17 @@
     </div>
   </div>
   <div class="col s6">
-    <div class="tradingFloor pan">
+    <div class="card-panel pan">
       <div class="colored-title">
         Current Balance: {{ironBucks}}
       </div>
-      <div class="chatTextWindow">
+      <div class="row">
         <div class="input-field col s8 offset-s2">
           <input id="amount" type="number" class="validate">
           <label for="amount">Amount of IronBucks to Withdraw</label>
         </div>
+      </div>
+      <div class="row">
         <div class="col s12 center">
           {{#if price}}
           <p>
@@ -37,6 +39,8 @@
           </p>
           {{/if}}
         </div>
+      </div>
+      <div class="row">
         <div class="col s12 center">
           {{#if withdrawPending}}
           <a class="btn-floating btn-large waves-effect waves-light

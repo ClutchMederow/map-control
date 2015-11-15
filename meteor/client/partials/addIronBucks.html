@@ -1,11 +1,11 @@
 <template name="addIronBucks">
   <div class="row">
     <div class="col s3">
-      <div class="tradingFloor pan dark-pan">
+      <div class="card-panel pan dark-pan">
         <div class="colored-title">
           Instructions
         </div>
-        <div class="chatTextWindow">
+        <div>
           <ol>
             <li>Enter the amount of IronBucks you want</li>
             <li>The price will show up in USD</li>
@@ -23,11 +23,11 @@
     </div>
     <div class="col s6">
       {{#if embedCode}}
-      <div class="tradingFloor pan">
+      <div class="card-panel pan">
         <div class="colored-title">
           Coinbase Payment
         </div>
-        <div class="chatTextWindow">
+        <div>
           <iframe id="coinbase_inline_iframe_{{embedCode}}"
                   src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
                   style="width: 460px; height: 450px; border: none;
@@ -37,35 +37,41 @@
         </div>
       </div>
       {{else}}
-      <div class="tradingFloor pan">
+      <div class="card-panel pan">
         <div class="colored-title">
           Current Balance: {{ironBucks}}
         </div>
-        <div class="chatTextWindow">
+        <div>
           {{#if hasEmail}}
-          <div class="input-field col s8 offset-s2">
-            <input id="amount" type="number" class="validate">
-            <label for="amount">Amount of IronBucks to Purchase</label>
+          <div class="row">
+            <div class="input-field col s8 offset-s2">
+              <input id="amount" type="number" class="validate">
+              <label for="amount">Amount of IronBucks to Purchase</label>
+            </div>
           </div>
-          <div class="col s12 center">
-            {{#if price}}
-            <p>
-            <h5>Price: {{price}} USD</h5>
-            </p>
-            {{/if}}
+          <div class="row">
+            <div class="col s12 center">
+              {{#if price}}
+              <p>
+              <h5>Price: {{price}} USD</h5>
+              </p>
+              {{/if}}
+            </div>
           </div>
-          <div class="col s12 center">
-            {{#if addPending}}
-            <a class="btn-floating btn-large waves-effect waves-light green
-            center disabled" id="pending">
-              Wait
-            </a>
-            {{else}}
-            <a class="btn-floating btn-large waves-effect waves-light green
-            center" id="add">
-              Add!
-            </a>
-            {{/if}}
+          <div class="row">
+            <div class="col s12 center">
+              {{#if addPending}}
+              <a class="btn-floating btn-large waves-effect waves-light green
+              center disabled" id="pending">
+                Wait
+              </a>
+              {{else}}
+              <a class="btn-floating btn-large waves-effect waves-light green
+              center" id="add">
+                Add!
+              </a>
+              {{/if}}
+            </div>
           </div>
           {{else}}
             <p>Please enter your email address and trade URL <a href="{{pathFor
