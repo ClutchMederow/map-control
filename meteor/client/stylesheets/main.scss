@@ -545,7 +545,7 @@ $land-br: 4px;
   }
 
   .pan {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(255, 255, 255, 0.14);
     color: #9E9EFD;
 
     .landing-panel-title {
@@ -772,7 +772,7 @@ $land-br: 4px;
     &:hover {
       background-color: rgba(255, 255, 255, 0.3);
       .landing-panel-title {
-        color: #060402;
+        color: #BFA78E;
       }
     }
   }
@@ -1411,4 +1411,15 @@ ul.tabs {
     color: white;
   }
   font-size: 18px;
+}
+
+.ib-add-withdraw {
+  ol {
+    padding-left: 1.5em;
+    color: #BDBDBD;
+  }
+
+  .dark-pan .colored-title {
+    color: white;
+  }
 }
