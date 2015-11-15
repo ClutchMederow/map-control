@@ -27,9 +27,11 @@
         <div class="colored-title">
           Trade
         </div>
-        <a href="{{ pathFor route='tradingFloor' }}" class="btn btn-block btn-flat">Trading Floor</a>
-        <a href="{{ pathFor route='market' data=getMarket }}" class="btn btn-block btn-flat">Market</a>
-        <a href="#!" class="btn btn-block btn-flat post-item">Create Listing on Market</a>
+        <div class="row">
+          <a href="{{ pathFor route='tradingFloor' }}" class="btn btn-block btn-flat">Trading Floor</a>
+          <a href="{{ pathFor route='market' data=getMarket }}" class="btn btn-block btn-flat">Market</a>
+          <a href="#!" class="btn btn-block btn-flat post-item">Create Listing</a>
+        </div>
       </div>
     </div>
     <div class="col l3">
