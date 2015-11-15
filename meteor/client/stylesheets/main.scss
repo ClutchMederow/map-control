@@ -11,6 +11,7 @@
 
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
+$nav-text-color-highlight: #57ADEF;
 // $nav-color: #5BA4C7;
 $nav-color: rgba(0, 0, 0, 0.27);;
 
@@ -88,8 +89,18 @@ nav {
     color: $nav-text-color;
   }
 
-  ul a {
-    color: $nav-text-color;
+  ul {
+    a {
+      color: $nav-text-color;
+
+      &:hover {
+        color: $nav-text-color-highlight;
+      }
+    }
+
+    // li:hover {
+    //   background-color: rgba(255, 255, 255, 0.1);
+    // }
   }
 }
 
@@ -1423,4 +1434,15 @@ ul.tabs {
 nav .brand-logo img {
   padding-top: 10px;
   height: 50px;
+}
+
+.command-tile {
+  .btn-flat {
+    text-align: left;
+    color: #2B36D4;
+
+    &:hover {
+      background-color: #BBBBBB;
+    }
+  }
 }
