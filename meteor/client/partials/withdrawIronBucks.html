@@ -1,6 +1,26 @@
 <template name="withdrawIronBucks">
 <div class="row">
-  <div class="col s6 offset-s3">
+  <div class="col s4">
+    <div class="tradingFloor pan">
+      <div class="colored-title">
+        Instructions
+      </div>
+      <div class="chatTextWindow">
+        <ol>
+          <li>Enter the amount of IronBucks you want to withdraw</li>
+          <li>The price will show up in USD</li>
+          <li>Click Go!</li>
+          <li>If you have a Coinbase account, Bitcoin will automatically be
+            transferred to your account.</li>
+          <li>Otherwise you will receive an email which will allow you to
+            collect your Bitcoin</li>
+          <li>That's it! Your IronBucks should be updated within seconds with
+            your new balance.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="col s6">
     <div class="tradingFloor pan">
       <div class="colored-title">
         Current Balance: {{ironBucks}}

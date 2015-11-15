@@ -17,7 +17,11 @@ Template.market.onRendered(function() {
 Template.market.helpers({
   listings: function() {
     var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
-    var selector = _.extend(filterSelector, this); //either 'All' or a userId from router
+    //either 'All' or a userId from router
+    var selector = filterSelector;
+    if(this.userId) {
+      selector = _.extend(filterSelector, {"user._id": this.userId}); 
+    }
 
     if(searchText.get()) {
       var fields = ['name', 'internal_name'];

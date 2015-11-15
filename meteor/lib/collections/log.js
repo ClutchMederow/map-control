@@ -11,6 +11,7 @@ Logs = new Mongo.Collection('log');
 checkWithdrawal = function(userId) {
   var sumDebits = 0;
   var sumCredits = 0;
+  var sumIronBucks = 0;
   var sumSales = 0;
   var sumBuys = 0;
   var sumFees = 0;
@@ -23,23 +24,23 @@ checkWithdrawal = function(userId) {
  
   Logs.find(selector).forEach(function(log) {
     if(log.type === Enums.LogType.CREDIT) {
-      sumCredits = sumCredits + amount;
+      sumCredits = sumCredits + log.amount;
     }
 
     if(log.type === Enums.LogType.DEBIT) {
-      sumDebits = sumDebits + amount;
+      sumDebits = sumDebits + log.amount;
     }
 
     if(log.type === Enums.LogType.SALE) {
-      sumSales = sumSales + amount;
+      sumSales = sumSales + log.amount;
     }
     
     if(log.type === Enums.LogType.BUY) {
-      sumBuys = sumBuys + amount;
+      sumBuys = sumBuys + log.amount;
     }
 
     if(log.type === Enums.LogType.FEE) {
-      sumFees = sumFees + amount;
+      sumFees = sumFees + log.amount;
     }
   });
 

@@ -29,7 +29,7 @@ Meteor.methods({
       if(this.userId === trade.user1Id) {
         DB.addNotification(trade.user2Id, trade.user1Name + " rejected trade");
       } else {
-        DB.addNotification(trade.user1Id, trade.user1Name + " rejected trade");
+        DB.addNotification(trade.user1Id, trade.user2Name + " rejected trade");
       }
       return tradeId;
     } else {
