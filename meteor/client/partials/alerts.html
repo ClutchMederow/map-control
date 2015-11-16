@@ -3,11 +3,13 @@
     {{#each myAlerts}}
       <div class="row">
         {{#if isOffer}}
-        <div class="col s8">
+        <div class="col s6">
           <b>{{user2Name}}</b> has made an offer
         </div>
-        <div class="s4">
-          <a class="waves-effect waves-light btn btn-block btn-flat blue lighten-3 open">View</a>
+        <div class="col s3">
+          <a class="waves-effect waves-light btn btn-block btn-flat blue lighten-3 open">Open</a>
+        </div>
+        <div class="col s3">
           <a class="waves-effect waves-light btn btn-block btn-flat red lighten-3 reject">Reject</a>
         </div>
         {{else}} <!-- is an real time trading request or invite -->

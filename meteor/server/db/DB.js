@@ -370,7 +370,9 @@ _.extend(DB, {
           deleteInd: false
         };
 
-        DB.items.update(selector, doc, {});
+        if (doc) {
+          DB.items.update(selector, doc, {});
+        }
       });
     },
 

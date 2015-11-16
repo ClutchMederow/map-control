@@ -11,7 +11,7 @@
 
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
-$nav-text-color-highlight: #57ADEF;
+$nav-text-color-highlight: #FFBA63;
 // $nav-color: #5BA4C7;
 $nav-color: rgba(0, 0, 0, 0.27);;
 
@@ -116,6 +116,22 @@ main {
 
 .waves-effect {
   z-index: inherit;
+}
+
+.dropdown-content {
+  background-color: transparent;
+
+  li {
+    background-color: rgba(0, 0, 0, 0.51);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    > a, > span {
+      color: white;
+    }
+  }
 }
 
 .material-tooltip { white-space: normal; }
@@ -374,7 +390,8 @@ main {
 
   &.selected {
     img {
-      background-color: #CACACA;
+      border: 1px solid #B7B7B9;
+      background-color: #DEDEDE;
       border-radius: 4px;
       // -moz-box-shadow:    inset 0 0 10px #B2DED3;
       // -webkit-box-shadow: inset 0 0 10px #B2DED3;

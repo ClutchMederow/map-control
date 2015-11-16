@@ -42,11 +42,18 @@ SteamBot.prototype.logOn = function() {
   var Steam = Npm.require('steam');
   var SteamTradeOffers = Npm.require('steam-tradeoffers');
 
-  if (self.steam.connected)
+  if (self.steam.connected) {
     return;
+  }
 
-  var baseDir = process.cwd().split('meteor')[0];
-  var tokenPath = 'assets/app/steambot-auth/' + self.logOnOptions.accountName;
+  var tokenPath;
+
+  if (Meteor.settings.environment === 'dev') {
+    var baseDir = process.cwd().split('meteor')[0];
+    tokenPath = baseDir + 'meteor/private/steambot-auth/' + self.logOnOptions.accountName;
+  } else {
+    tokenPath = 'assets/app/steambot-auth/' + self.logOnOptions.accountName;
+  }
 
   if (Npm.require('fs').existsSync(tokenPath)) {
     self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
