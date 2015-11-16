@@ -819,6 +819,9 @@ _.extend(DB, {
       //TODO
       console.log('order not completed correctly');
     }
+  },
+  removeListing: function(listingId) {
+    Listings.remove(listingId);
   }
 });
 
