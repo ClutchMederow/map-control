@@ -39,11 +39,12 @@ Template.alerts.helpers({
 
 Template.alerts.events({
   'click .accept': function() {
+    var self = this;
     Meteor.call('acceptRealTimeTrade', this._id, function(error, realTimeTradeId) {
       if(error) {
         sAlert.error('Could not accept real time trade');
       } else {
-        Session.set('realTime', RealTimeTrade.findOne({"_id": this._id}));
+        Session.set('realTime', RealTimeTrade.findOne({"_id": self._id}));
       }
     });
   },

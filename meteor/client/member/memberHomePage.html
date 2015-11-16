@@ -23,28 +23,27 @@
   </div>
   <div class="row">
     <div class="col l3">
-      <div class="card-panel pan">
+      <div class="card-panel pan command-tile">
         <div class="colored-title">
           Trade
         </div>
-        <h5><a href="{{ pathFor route='tradingFloor' }}">Trading Floor</a></h5>
-        <h5><a href="{{pathFor route='market' data=getMarket}}">Market</a></h5>
-        <h5><a href="#!" class="post-item">Create Listing on Market</a></h5>
+        <div class="row">
+          <a href="{{ pathFor route='tradingFloor' }}" class="btn btn-block btn-flat">Trading Floor</a>
+          <a href="{{ pathFor route='market' data=getMarket }}" class="btn btn-block btn-flat">Market</a>
+          <a href="#!" class="btn btn-block btn-flat post-item">Create Listing</a>
+        </div>
       </div>
     </div>
     <div class="col l3">
-      <div class="card-panel pan">
+      <div class="card-panel pan command-tile">
         <div class="colored-title">
           Manage
         </div>
-        <h5><a href="{{pathFor route='ironBucks'}}">Add IronBucks</a></h5>
-        <h5><a href="{{pathFor route='manageStash'}}">Add Items to Stash</a></h5>
-        <h5><a href="{{pathFor route='inventory'}}">My Inventory</a></h5>
-        <h5><a href="{{pathFor route='market' data=getMyListings}}">My Market Listings</a></h5>
-        <h5><a href="{{pathFor route='transactions' data=getMyTransactions}}">
-            My Sent Offers
-          </a>
-        </h5>
+        <a href="{{ pathFor route='ironBucks' }}" class="btn btn-block btn-flat">Add IronBucks</a>
+        <a href="{{ pathFor route='manageStash' }}" class="btn btn-block btn-flat">Add Items to Stash</a>
+        <a href="{{ pathFor route='inventory' }}" class="btn btn-block btn-flat">My Inventory</a>
+        <a href="{{ pathFor route='market' data=getMyListings }}" class="btn btn-block btn-flat">My Market Listings</a>
+        <a href="{{ pathFor route='transactions' data=getMyTransactions }}" class="btn btn-block btn-flat">My Sent Offers</a>
       </div>
     </div>
     <div class="col l6">

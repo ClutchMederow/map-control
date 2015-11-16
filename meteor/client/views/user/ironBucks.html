@@ -1,30 +1,36 @@
 <template name="ironBucks">
-<div class="container">
-<div class="row">
-  <div class="col s12">
-    <ul class="tabs">
-      <li class="tab col s3"><a href="#overview" class="active">Overview</a></li>
-      <li class="tab col s3"><a href="#add">Add IronBucks </a></li>
-      <li class="tab col s3"><a href="#withdraw">Withdraw IronBucks</a></li>
-    </ul>
-  </div>
-  <div id="overview" class="col s6 offset-s3">
-    <div class="card-panel pan">
-      <p>To purchase Ironbucks, you'll need to use Bitcoin. Bitcoin is a
-      digital currency that allows instant, secure transactions from anywhere
-      in the world.</p>
-      <p>We use <a href="https://www.coinbase.com/">Coinbase</a> to allow our
-      customers to purchase or transfer bitcoins. Coinbase is a reliable, safe
-      way used by millions of people to buy and sell Bitcoins</p>
-      <p>Use the "Add Ironbucks" tab to acquire Bitcoins, then purchase
-      IronBucks with them!</p>
-      <p>At any point, you can withdraw your IronBucks to Bitcoins. You can
-      then use your Bitcoins to pay for other goods online or cash them out to
-      your local currency.</p>
+  <div class="row ib-add-withdraw">
+    <div class="col s8 offset-s2">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#overview" class="active">Overview</a></li>
+        <li class="tab col s3"><a href="#add">Add IronBucks </a></li>
+        <li class="tab col s3"><a href="#withdraw">Withdraw IronBucks</a></li>
+      </ul>
     </div>
+    <div id="overview" class="col s6 offset-s3">
+      <div class="card-panel pan">
+        <p>
+          To purchase Ironbucks, you'll need to use Bitcoin. Bitcoin is a
+          digital currency that allows instant, secure transactions from anywhere
+          in the world.
+        </p>
+        <p>
+          We use <a href="https://www.coinbase.com/">Coinbase</a> to allow our
+          customers to purchase or transfer bitcoins. Coinbase is a reliable, safe
+          way used by millions of people to buy and sell Bitcoins
+        </p>
+        <p>
+          Use the "Add Ironbucks" tab to acquire Bitcoins, then purchase
+          IronBucks with them!
+        </p>
+        <p>
+          At any point, you can withdraw your IronBucks to Bitcoins. You can
+          then use your Bitcoins to pay for other goods online or cash them out to
+          your local currency.
+        </p>
+      </div>
+    </div>
+    <div id="add" class="col s12">{{> addIronBucks}}</div>
+    <div id="withdraw" class="col s12">{{> withdrawIronBucks}}</div>
   </div>
-  <div id="add" class="col s12">{{> addIronBucks}}</div>
-  <div id="withdraw" class="col s12">{{> withdrawIronBucks}}</div>
-</div>
-</div>
 </template>

@@ -1,45 +1,49 @@
 <template name="alerts">
-  {{#each myAlerts}}
-    <div class="row">
-      {{#if isOffer}}
-      <div class="col s8">
-        <b>{{user2Name}}</b> has made an offer
-      </div>
-      <div class="s4">
-        <a class="waves-effect waves-light btn btn-block blue open">View</a>
-        <a class="waves-effect waves-light btn btn-block red reject">Reject</a>
-      </div>
-      {{else}} <!-- is an real time trading request or invite -->
-        {{#if isRequest}}
-          <div class="col s6">
-            Invited <b>{{user2Name}}</b> to trade
-          </div>
-          <div class="col s3">
-            {{#if isAccepted}}
-              <a class="waves-effect waves-light btn btn-block blue open">Open</a>
-            {{else}}
-              <a class="waves-effect waves-light btn btn-block green disabled">Pending</a>
-            {{/if}}
-          </div>
-          <div class="col s3">
-            <a class="waves-effect waves-light btn btn-block red reject">Cancel</a>
-          </div>
-        {{else}} <!-- is an invite -->
-          <div class="col s6">
-            <b>{{user1Name}}</b> would like to trade
-          </div>
-          <div class="col s3">
-            {{#if isAccepted}}
-              <a class="waves-effect waves-light btn btn-block blue open">Open</a>
-            {{else}}
-              <a class="waves-effect waves-light btn btn-block green accept">Accept</a>
-            {{/if}}
-          </div>
-          <div class="col s3">
-            <a class="waves-effect waves-light btn btn-block red reject">Reject</a>
-          </div>
+  <div class="user-alerts">
+    {{#each myAlerts}}
+      <div class="row">
+        {{#if isOffer}}
+        <div class="col s6">
+          <b>{{user2Name}}</b> has made an offer
+        </div>
+        <div class="col s3">
+          <a class="waves-effect waves-light btn btn-block btn-flat blue lighten-3 open">Open</a>
+        </div>
+        <div class="col s3">
+          <a class="waves-effect waves-light btn btn-block btn-flat red lighten-3 reject">Reject</a>
+        </div>
+        {{else}} <!-- is an real time trading request or invite -->
+          {{#if isRequest}}
+            <div class="col s6">
+              Invited <b>{{user2Name}}</b> to trade
+            </div>
+            <div class="col s3">
+              {{#if isAccepted}}
+                <a class="waves-effect waves-light btn btn-block btn-flat blue lighten-3 open">Open</a>
+              {{else}}
+                <a class="waves-effect waves-light btn btn-block btn-flat green lighten-3 disabled">Pending</a>
+              {{/if}}
+            </div>
+            <div class="col s3">
+              <a class="waves-effect waves-light btn btn-block btn-flat red lighten-3 reject">Cancel</a>
+            </div>
+          {{else}} <!-- is an invite -->
+            <div class="col s6">
+              <b>{{user1Name}}</b> would like to trade
+            </div>
+            <div class="col s3">
+              {{#if isAccepted}}
+                <a class="waves-effect waves-light btn btn-block btn-flat blue lighten-3 open">Open</a>
+              {{else}}
+                <a class="waves-effect waves-light btn btn-block btn-flat green lighten-3 accept">Accept</a>
+              {{/if}}
+            </div>
+            <div class="col s3">
+              <a class="waves-effect waves-light btn btn-block btn-flat red lighten-3 reject">Reject</a>
+            </div>
+          {{/if}}
         {{/if}}
-      {{/if}}
-    </div>
-  {{/each}}
+      </div>
+    {{/each}}
+  </div>
 </template>

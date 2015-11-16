@@ -11,8 +11,9 @@
 
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
+$nav-text-color-highlight: #FFBA63;
 // $nav-color: #5BA4C7;
-$nav-color: transparent;
+$nav-color: rgba(0, 0, 0, 0.27);;
 
 $text-color: rgba(0, 0, 0, 0.51);
 $bg-color: rgba(255, 255, 255, 0.8);
@@ -88,8 +89,18 @@ nav {
     color: $nav-text-color;
   }
 
-  ul a {
-    color: $nav-text-color;
+  ul {
+    a {
+      color: $nav-text-color;
+
+      &:hover {
+        color: $nav-text-color-highlight;
+      }
+    }
+
+    // li:hover {
+    //   background-color: rgba(255, 255, 255, 0.1);
+    // }
   }
 }
 
@@ -105,6 +116,22 @@ main {
 
 .waves-effect {
   z-index: inherit;
+}
+
+.dropdown-content {
+  background-color: transparent;
+
+  li {
+    background-color: rgba(0, 0, 0, 0.51);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    > a, > span {
+      color: white;
+    }
+  }
 }
 
 .material-tooltip { white-space: normal; }
@@ -198,7 +225,7 @@ main {
 
   .chatTextWindow {
     overflow: auto;
-    height:500px;
+    height:350px;
   }
 }
 
@@ -253,14 +280,10 @@ main {
 }
 
 .chat-username {
-  color: white;
-  border-radius: 2px;
-  background-color: #476580;
-  padding-bottom: 3px;
-  padding-left: 4px;
-
-  /* keeps the rows the correct distance apart since the images fuck with things */
-  // margin: .75rem 0;
+  color: #9C6262;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
 
   div {
     margin-left: 4px;
@@ -271,12 +294,14 @@ main {
 
 .msg-container {
   .tiny-profile-img {
-    border-radius: 2px;
+    vertical-align: middle;
+    border-radius: 32px;
   }
 
   margin-bottom: 5px;
 
   .profile-preview {
+    cursor: auto;
     background-color: #404040;
 
     img {
@@ -312,7 +337,6 @@ main {
 .message-time {
   color: #ACB3B9;
   font-size: .8rem;
-  padding-left: 4px;
   padding-right: 4px;
 }
 
@@ -366,7 +390,8 @@ main {
 
   &.selected {
     img {
-      background-color: #CACACA;
+      border: 1px solid #B7B7B9;
+      background-color: #DEDEDE;
       border-radius: 4px;
       // -moz-box-shadow:    inset 0 0 10px #B2DED3;
       // -webkit-box-shadow: inset 0 0 10px #B2DED3;
@@ -545,7 +570,7 @@ $land-br: 4px;
   }
 
   .pan {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(255, 255, 255, 0.14);
     color: #9E9EFD;
 
     .landing-panel-title {
@@ -772,7 +797,7 @@ $land-br: 4px;
     &:hover {
       background-color: rgba(255, 255, 255, 0.3);
       .landing-panel-title {
-        color: #060402;
+        // color: #BFA78E;
       }
     }
   }
@@ -1039,6 +1064,7 @@ $chat-bg-alert: rgba(255, 255, 255, 0.3);
   bottom: 0;
   width: 100%;
   color: white;
+  z-index: 1000;
 
   .chat-rel {
     position: relative;
@@ -1396,7 +1422,6 @@ ul.tabs {
     text-align: center;
     font-size: 30px !important;
     color: #39D28D;
-    border-radius: 4px;
   }
 }
 
@@ -1411,4 +1436,37 @@ ul.tabs {
     color: white;
   }
   font-size: 18px;
+}
+
+.ib-add-withdraw {
+  ol {
+    padding-left: 1.5em;
+    color: #BDBDBD;
+  }
+
+  .dark-pan .colored-title {
+    color: white;
+  }
+}
+
+nav .brand-logo img {
+  padding-top: 10px;
+  height: 50px;
+}
+
+.command-tile {
+  .btn-flat {
+    text-align: left;
+    color: #2B36D4;
+
+    &:hover {
+      background-color: #BBBBBB;
+    }
+  }
+}
+
+.user-alerts {
+  .btn {
+    display: block;
+  }
 }
