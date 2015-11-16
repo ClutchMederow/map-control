@@ -702,6 +702,7 @@ _.extend(DB, {
       $set: {
         user1Stage: "REJECTED",
         user2Stage: "REJECTED",
+        completed: true,
         closeDate: new Date(),
         modifiedTimestamp: new Date()
       }
