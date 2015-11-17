@@ -645,6 +645,7 @@ _.extend(DB, {
       user2Name: user2.profile.name,
       user1Stage: "INVITED",
       user2Stage: "INVITED",
+      completed: false,
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
     });
