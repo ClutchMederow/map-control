@@ -70,6 +70,9 @@ TradeHelper = (function () {
       _.each(transaction.user1Items, function(item) {
         //if CASH...
         if(item.name === IronBucks.name) {
+          if(item.amount >= Config.financial.unitPriceMax) {
+            throw new MeteorError(Enums.MeteorError.UNIT_PRICE_MAC_EXCEEDED, "Cannot buy an item for more than: " + item.amount);
+          }
           moveCash(item, transaction.user1Id, transaction.user2Id);
         } else {
           moveItem(item, transaction.user2Id);

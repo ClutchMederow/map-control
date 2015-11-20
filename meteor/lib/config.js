@@ -19,7 +19,8 @@ Config = {
   },
 
   financial: {
-    fee: 0.1
+    fee: 0.1,
+    unitPriceMax: 2000,
   }
 };
 
