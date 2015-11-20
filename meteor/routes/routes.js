@@ -9,6 +9,11 @@ Router.route('/help', {
   template: 'help'
 });
 
+Router.route('/learn', {
+  name: 'learn',
+  template: 'learn'
+});
+
 Router.route('/bitcoin', {
   name: 'bitcoin',
   template: 'bitcoin'
