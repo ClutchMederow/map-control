@@ -11,7 +11,7 @@ Logs = new Mongo.Collection('log');
 checkWithdrawal = function(userId) {
   var sumDebits = 0;
   var sumCredits = 0;
-  var sumIronBucks = 0;
+  var sumIronBucks = Meteor.users.findOne(userId).profile.ironBucks;
   var sumSales = 0;
   var sumBuys = 0;
   var sumFees = 0;
@@ -50,7 +50,8 @@ checkWithdrawal = function(userId) {
     sumSales: sumSales,
     sumBuys: sumBuys,
     sumFees: sumFees,
-    total: (sumDebits + sumCredits + sumSales + sumBuys + sumFees),
+    sumIronBucks: sumIronBucks,
+    total: (sumDebits + sumCredits + sumSales + sumBuys + sumFees + sumIronBucks),
     userId: userId
   };
 };

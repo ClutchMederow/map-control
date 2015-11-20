@@ -49,6 +49,17 @@ TradeHelper = (function () {
     DB.items.update({ _id: item._id }, {$set: {userId: receiverId}});
   };
 
+  //TODO: this code is not DRY, combine with checkwithdrawal code
+  var sumFinancials = function(logType, userId) {
+    var sum = 0;
+
+    Logs.find({userId: userId, type: logType}).forEach(function(log) {
+      sum += log.amount;
+    });
+
+    return sum;
+  };
+
   return {
     removeItemsInTransaction: function(transaction) {
       DB.listings.cancelListingsForItems(transaction.user1Items);
@@ -97,6 +108,34 @@ TradeHelper = (function () {
         itemsSentToUser1: transaction.user2Items,
         itemsSentToUser2: transaction.user1Items
       });
+    },
+    //given a user, check to see if their prior deposits in the specified time
+    //period are below a specified amount
+    //return true if deposits are below threshold and current deposit can
+    //proceed
+    //return false if it cannot
+    checkWithdrawal: function(userId) {
+      var sumPreviousWithdrawals = sumFinancials(Enums.LogType.DEBIT, userId);
+      console.log(sumPreviousWithdrawals);
+      if(sumPreviousWithdrawals >= Config.financial.maxWithdrawAmount) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    //given a user, check to see if their prior deposits in the specified time
+    //period are below a specified amount
+    //return true if deposits are below threshold and current deposit can
+    //proceed
+    //return false if it cannot
+    checkDeposit: function(userId) {
+      var sumPreviousDeposits = sumFinancials(Enums.LogType.CREDIT, userId);
+      console.log(sumPreviousDeposits);
+      if(sumPreviousDeposits >= Config.financial.maxAddAmount) {
+        return false;
+      } else {
+        return true;
+      }
     }
   };
 })();
