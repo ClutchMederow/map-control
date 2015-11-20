@@ -629,6 +629,8 @@ _.extend(DB, {
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
     });
+
+    Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
