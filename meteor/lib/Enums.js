@@ -25,7 +25,8 @@ Enums = {
     AUDIT: 'AUDIT', //internal audit
     SALE: "SALE", //selling an item
     BUY: "BUY",  //buying an item
-    FEE: "FEE" //our DL fee
+    FEE: "FEE", //our DL fee
+    ERROR: "ERROR", //an error
   },
 
   ChatType: {
@@ -47,6 +48,7 @@ Enums = {
   MeteorError: {
     PRIVATE_INVENTORY: 'PRIVATE_INVENTORY',
     BAD_HTTP: 'BAD_HTTP',
+    NEGATIVE_IRONBUCKS: "NEGATIVE_IRONBUCKS",
   },
 };
 
