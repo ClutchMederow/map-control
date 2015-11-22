@@ -341,7 +341,9 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           // May be null if unable to connect to steam servers
           if (offers) {
             updateTradeofferStatus(offers, bot);
+            bot.cancelOldOffers();
           }
+
         } catch (e) {
           console.log(bot.botName + ': Error checking outstanding tradeoffers');
           console.log(e.stack);
@@ -350,10 +352,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     startPolling: function() {
+      console.log('Polling started');
       checkOutstandingPollHandle = Meteor.setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
     },
 
     stopPolling: function() {
+      console.log('Polling stopped');
       if (checkOutstandingPollHandle) {
         Meteor.clearInterval(checkOutstandingPollHandle);
       }

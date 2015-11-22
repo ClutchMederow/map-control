@@ -3,11 +3,15 @@ Config = {
     newBotRetries: 5,
     maxBotInventory: 1000,
     maxFullPercentage: 0.75,
+
     // in seconds
     maxInventoryCacheTime: 60,
+    maxActiveOfferTime: 2*60,
 
     // in ms
     checkOutstandingInterval: 30000,
+    maxOffersRetryInterval: 30000,
+    maxOutstandingOffersSent: 30,
   },
 
   tradingFloor: {
