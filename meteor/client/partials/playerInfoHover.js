@@ -5,7 +5,7 @@ Template.playerInfoHover.onRendered( function() {
     constrain_width: false, // Does not change width of dropdown to that of the activator
     hover: true, // Activate on hover
     gutter: 50, // Spacing from edge
-    belowOrigin: true // Displays dropdown below the button
+    belowOrigin: false // Displays dropdown below the button
   });
 });
 

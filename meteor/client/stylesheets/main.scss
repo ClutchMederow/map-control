@@ -125,7 +125,7 @@ main {
     background-color: rgba(0, 0, 0, 0.51);
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.9);
+      background-color: rgba(0, 0, 0, 0.51);
     }
 
     > a, > span {
@@ -563,6 +563,18 @@ main {
 
 $land-br: 4px;
 
+.explain-if {
+  font-size: 18px;
+  padding-top: 3em;
+  text-align: left;
+  color: #DADADA;
+
+  strong {
+    font-size: 125%;
+    color: #FFAA3B;
+  }
+}
+
 .hello, .who-we-are {
   .card {
     border-radius: $land-br;
@@ -584,6 +596,13 @@ $land-br: 4px;
       border-top-left-radius: $land-br;
       margin-bottom: 0;
     }
+  }
+
+  .landing-desc {
+    font-size: 16px;
+    color: #ABABAB;
+    letter-spacing: normal;
+    text-transform: none;
   }
 }
 
@@ -831,13 +850,11 @@ $land-br: 4px;
 
 .land-main {
   padding-left: 8%;
+}
 
-  .land-signin {
-    text-align: center;
-    color: white;
-    padding-top: 10%;
-    font-size: 18px;
-  }
+.land-signin {
+  text-align: left;
+  padding-top: 40px;
 }
 
 .filter-term {
@@ -1480,5 +1497,21 @@ nav .brand-logo img {
 .user-alerts {
   .btn {
     display: block;
+  }
+}
+
+.msg-container .dropdown-content {
+  background-color: #585858;
+
+  li {
+    background-color: rgba(0, 0, 0, 0.5);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    > a, > span {
+      color: white;
+    }
   }
 }

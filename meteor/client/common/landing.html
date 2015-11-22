@@ -2,15 +2,13 @@
   <div id="landing">
     <div class="land-main">
       <div class="row">
-        <div class="col s8">
+        <div class="col s5">
           <div class="land-brand">IRON<span>FOIL</span></div>
         </div>
-        <div class="col s4 land-signin">
-          {{ #unless currentUser }}
-            <div>
-              <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
-            </div>
-          {{ /unless }}
+        <div class="col s6">
+          <div class="explain-if">
+            IronFoil is a marketplace where you can <strong>buy and sell skins for real money</strong> using bitcoin and make deals in right now using our <strong>realtime trade system</strong>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -22,6 +20,11 @@
             <br>
             trade
           </div>
+          {{ #unless currentUser }}
+            <div class="land-signin">
+              <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
+            </div>
+          {{ /unless }}
         </div>
         <div class="col s4 hello">
           <div class="land-container">
@@ -29,7 +32,7 @@
               <div class="card">
                 <div class="card-content landing-panel pan">
                   <a href="{{ pathFor route='market' userId='all' }}">
-                    <div class="landing-panel-title">Explore</div>
+                    <div class="landing-panel-title">Explore <span class="landing-desc">buy and sell skins for cash</span></div>
                   </a>
                 </div>
               </div>
@@ -38,7 +41,7 @@
               <div class="card">
                 <div class="card-content landing-panel pan">
                   <a href="{{ pathFor route='tradingFloor' }}">
-                    <div class="landing-panel-title">Trade</div>
+                    <div class="landing-panel-title">Trade <span class="landing-desc">in real time</span></div>
                   </a>
                 </div>
               </div>
@@ -46,8 +49,8 @@
             <div class="sizing-card">
               <div class="card">
                 <div class="card-content landing-panel pan">
-                  <a href="{{ pathFor route='learn' }}">
-                    <div class="landing-panel-title">Learn</div>
+                  <a href="#">
+                    <div class="landing-panel-title">Learn <span class="landing-desc">from experts</span></div>
                   </a>
                 </div>
               </div>
