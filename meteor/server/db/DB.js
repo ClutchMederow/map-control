@@ -485,7 +485,7 @@ _.extend(DB, {
     },
 
     // This must be called BEFORE updating the assetIds since the tradeoffer references the old IDs
-    updateStatusFromOffer: function(offerId) {
+    updateStatusFromOffer: function(offerId, bot) {
       check(offerId, String);
 
       var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
@@ -497,12 +497,6 @@ _.extend(DB, {
         var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
         var given = _.pluck(updatedOffer.items_to_give, 'assetid');
 
-
-        ///////////////// TODO ///////////////
-        // Verify that the item in in the bots inventory first
-        // see https://www.reddit.com/r/SteamBot/comments/3edynt/psa_reminder_dont_run_your_web_application_and/
-        // note 1
-        ///////////////////
 
         if (state === 'k_ETradeOfferStateAccepted') {
           if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
@@ -520,7 +514,20 @@ _.extend(DB, {
 
           } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
 
-            DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
+            bot.loadBotInventory();
+            var botItems = bot.items.findOne({ itemId: { $in: given } });
+
+
+            ////////////////////
+            // Verify that the item in in the bots inventory first
+            // see https://www.reddit.com/r/SteamBot/comments/3edynt/psa_reminder_dont_run_your_web_application_and/
+            // note 1
+            ///////////////////
+            if (botItems) {
+              DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.STASH);
+            } else {
+              DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
+            }
           }
         }
       }

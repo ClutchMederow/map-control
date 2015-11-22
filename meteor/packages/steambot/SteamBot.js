@@ -23,6 +23,7 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.busy = false;
   // Random date in the past
   this.itemsUpdatedTimestamp = new Date(1995, 11, 17);
+  this.outstandingOfferCount = 0;
 
   this.steam.on('error', function(err) {
     console.log(err);
@@ -338,6 +339,17 @@ SteamBot.prototype.queryOffers = function() {
   });
 
   var res = future.wait();
+
+  // set the outstanding offer count
+  var activeOffers = _.where(res.response.trade_offers_sent, function(offer) {
+    return [
+      'k_ETradeOfferStateActive',
+      'k_ETradeOfferStateCountered',
+      'k_ETradeOfferStateEmailPending'
+    ].indexOf(SteamConstants.offerStatus[offer.trade_offer_state]) > -1;
+  });
+  this.outstandingOfferCount = activeOffers ? activeOffers.length : 0;
+
   return res.response.trade_offers_sent;
 };
 
@@ -432,10 +444,13 @@ SteamBot.prototype.enqueue = function(queuedFunction) {
 SteamBot.prototype.executeNext = function () {
   var self = this;
 
-  if (!this.busy && this.queue.length > 0) {
+  if (this.outstandingOfferCount < Config.bots.maxOutstandingOffersSent) {
+
+    if (this.queue.length === 0) {
+      return;
+    }
 
     // We are now busy, grab the next function
-    this.busy = true;
     var nextFunc = this.queue.shift();
 
     // Wrap the function so we can be sure to set this to free when done
@@ -445,14 +460,36 @@ SteamBot.prototype.executeNext = function () {
       nextFunc();
 
       // Call executenext again when done
-      self.busy = false;
       self.executeNext();
     }
 
     // We don't want to block here
-    Meteor.setTimeout(wrappedQueuedFunction, 7000);
+    Meteor.setTimeout(wrappedQueuedFunction, 0);
+  } else {
+
+    // if queue length is not zero, this will kick off the dequeuing process
+    // hopefully the outstandingOfferCount will be lower next time
+    Meteor.setTimeout(executeNext, Config.bots.maxOffersRetryInterval);
   }
-}
+};
+
+SteamBot.prototype.cancelOldOffers = function(offers) {
+  var nowUnix = Math.floor(Date.now() / 1000);
+
+  _.each(offers, function(offer) {
+    if (SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateActive' ||
+      SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateEmailPending') {
+
+      if (nowUnix - offer.time_created > Config.bots.maxActiveOfferTime) {
+        this.cancelOffer(offer.tradeofferid);
+      }
+
+    } else if (SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateCountered') {
+
+      this.cancelOffer(offer.tradeofferid);
+    }
+  });
+};
 
 SteamBot.prototype.test = function(pw, SteamAPI) {
   try {
