@@ -1,6 +1,12 @@
 Meteor.methods({
   createRealTimeTrade: function(user2Id) {
     check(user2Id, String);
+    RealTimeTrade.find({user1Id: this.userId, completed: false, deleteInd: false}).forEach(
+      function(rtTrade) {
+        if(rtTrade.user2Id === user2Id) {
+          throw new Meteor.Error("EXISTING_RTT", "You have already have an active real time trade with this user");
+        }
+    });
     DB.insertRealTimeTrade(this.userId, user2Id);
   },
   acceptRealTimeTrade: function(tradeId) {

@@ -7,15 +7,15 @@
         </div>
         <div>
           <ol>
-            <li>Enter the amount of IronBucks you want</li>
-            <li>The price will show up in USD</li>
+            <li>Enter the amount of funds you want</li>
             <li>Click Add!</li>
             <li>  This will take you to the Coinbase login screen</li>
             <li>If you already have an existing Bitcoin wallet, you can use the
               "Bitcoin Address" tab to receive a code and a QR code to pay with</li>
             <li>Otherwise click on the "Coinbase Wallet" tab and enter  your Coinbase credentials or Sign Up with Coinbase</li>
-            <li>Follow the instructions on the Coinbase form to purchase your IronBucks</li>
-            <li>That's it! Your IronBucks should be updated within seconds with
+            <li>Follow the instructions on the Coinbase form to add funds to
+              your account</li>
+            <li>That's it! Your account balance should be updated within seconds with
               your new balance.</li>
           </ol>
         </div>
@@ -45,8 +45,9 @@
           {{#if hasEmail}}
           <div class="row">
             <div class="input-field col s8 offset-s2">
-              <input id="amount" type="number" class="validate">
-              <label for="amount">Amount of IronBucks to Purchase</label>
+              <input id="amount" type="number">
+              <label for="amount">Amount of funds to add (round to 2 decimal
+                places)</label>
             </div>
           </div>
           <div class="row">
@@ -75,7 +76,8 @@
           </div>
           {{else}}
             <p>Please enter your email address and trade URL <a href="{{pathFor
-            route='profile'}}">here</a> to allow you to add IronBucks</p>
+            route='profile'}}">here</a> to allow you to add funds to your
+          account</p>
           {{/if}}
         </div>
       </div>

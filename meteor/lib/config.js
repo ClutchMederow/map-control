@@ -23,7 +23,11 @@ Config = {
   },
 
   financial: {
-    fee: 0.1
+    fee: 0.1,
+    unitPriceMax: 2000,
+    maxTimePeriod: 3, //days
+    maxAddAmount: 1000, //usd
+    maxWithdrawAmount: 1000, //usd
   }
 };
 

@@ -636,6 +636,8 @@ _.extend(DB, {
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
     });
+
+    Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
@@ -652,6 +654,7 @@ _.extend(DB, {
       user2Name: user2.profile.name,
       user1Stage: "INVITED",
       user2Stage: "INVITED",
+      completed: false,
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
     });
@@ -709,6 +712,7 @@ _.extend(DB, {
       $set: {
         user1Stage: "REJECTED",
         user2Stage: "REJECTED",
+        completed: true,
         closeDate: new Date(),
         modifiedTimestamp: new Date()
       }
@@ -826,6 +830,9 @@ _.extend(DB, {
       //TODO
       console.log('order not completed correctly');
     }
+  },
+  removeListing: function(listingId) {
+    Listings.remove(listingId);
   }
 });
 

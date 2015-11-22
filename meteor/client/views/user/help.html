@@ -9,65 +9,57 @@
       <li class="tab col s3"><a href="#termsOfUse">Terms of Use</a></li>
     </ul>
   </div>
-  <div id="overview" class="col s12">
-    <div id="ironBucks" class="col s9">
-      <h3>Using IronFoil</h3>
-      <hr>
-      <p>IronFoil is designed as a CSGO platform. By logging in with your steam
-      account, you can view any of the content on the web site. You can chat,
-      post content, view CSGO analytics, etc. To trade items however you have
-      to do two additional things</p>
-      <p>If you want to trade items, i.e. put items on the market or use the
-      real time trading feature, you have to transfer items from your Steam
-      inventory to the IronFoil stash. You can do this by going to manage your
-      inventory, then dragging and dropping items. When you do this, a trade
-      request will be sent from IronFoil's bot to your steam account. You will
+  <div id="overview" class="col s12 help">
+    <br>
+    <h5 class="help-header">Using IronFoil</h5>
+    <p>IronFoil is a CSGO platform. Using your Steam account you can chat,
+    trade, and learn.</p>
+    <p>Before you start trading, make sure you've configured your IronFoil <a
+        href="{{pathFor route='profile'}}">profile.</a></p>
+    <p>To trade items you have to transfer them from your Steam
+    inventory to the IronFoil stash. You can do this by going to <a
+        href="{{pathFor route='manageStash' }}">manage your inventory</a>, 
+      then selecting the items you want to move. After you do this, a trade
+      request will be sent from IronFoil's bot to your Steam account. You will
       have 2 minutes to accept this trade request or it will expire. After the
-      trade is complete, you can place trade your item. At any point you can
+      trade is complete, you can trade your item instantly on IronFoil. At any point you can
       also move your item back to your Steam inventory by dragging and dropping
       the item from the manage your inventory screen.
-      </p>
-      <p>If you want to buy items, you will need to purchase IronBucks.
-      IronBucks are the virtual currency that IronFoil uses. They have no value
-      outside of IronFoil, but may be exchanged back into your local currency
-      at any time (note: a 10% fee applies each time you cash out. See FAQ for
-      more details).</p>
-
-      <p>Our payment vendor is responsible for holding all financial
-      information. IronFoil does not store <b>ANY</b> financial information on
-      its servers. To purchase items, you provide your credit card, debit card,
-      or bank account information to our payment vendor. After the transaction is
-      successfully transferred, we give you the appropriate amount of
-      IronBucks.</p>
-      
-      <h3>Iron Bucks</h3>
-      <hr>
-      <p>IronBucks are the currency you use to purchase services and goods from
-      IronFoil. Using our own currency enables us to instantly provide the good
-      or service without having to wait for a payment to clear. You can cash
-      out IronBucks at any point to your local currency.</p>
-    </div>
-    <div class="col s3">
-      <ul class="section table-of-contents">
-        <li><a href="#ironBucks">Iron Bucks</a></li>
-        <li><a href="#termsOfUse">Terms of Use</a></li>
-      </ul>
-    </div>
+    </p>
+    <p>If you want to buy items, you will need to <a href="{{pathFor
+    route='ironBucks'}}">add cash</a> to your account. This is done through
+    Coinbase, the leading Bitcoin payment provider. Coinbase will accept
+    payment in almost any currency and transfer you the appropriate amount of
+    Bitcoins. You can then transfer these Bitcoins to IronFoil and purchase
+    items. At any point you can withdraw your funds back to Bitcoin, which
+    can then be converted to a local currency.</p>
+    <p>
+    IronFoil takes a 10% fee of all cash transactions, which the seller pays.
+    So if an item is sold for $10, then the buyer pays $10, the seller
+    receives $9 and IronFoil receives $1. Note that all prices on IronFoil are USD.
+    </p>
   </div>
-  <div id="tradingFloor" class="col s12">
-    <h3>Trading Floor</h3>
-    <p>The trading floor allows players to chat in real time. Chats occur
-    within a channel. There are a number of pre-existing channels based around
-    maps, guns, or meta. Players are free to create their own channels, which
-    can either be public or private. Within a chat you can drag and drop
-    weapons from your stash as a short-hand for typing and to indicate you actually have the
-    item.</p>
+  <div id="tradingFloor" class="col s12 help">
+    <br>
+    <h5 class="help-header">The Lobby & Real Time Trades</h5>
+    <p>The <a href="{{pathFor route='tradingFloor'}}">Lobby</a> is a place for
+    players to meet, chat, and arrange trades. The lobby has a number of
+    channels, based on guns, maps, etc. Players can drag items from their stash
+    into the trading window to indicate they want certain items, start private
+    chats, or enter into a Real-Time Trade</p>
+    <p>The real time trading window enables users to chat and arrange trades
+    instantly. Users can negotiate a trade with various items, including cash,
+    and then confirm it. Once both players have confirmed the trade it
+    instantly executes, and players can use their new items or cash.
+    </p>
   </div>
-  <div id="market" class="col s12">
-    <h3>Market</h3>
-    <p>The market allows you to trade or sell items from your stash. After you
-    go to the market, you are prompted to indicate what you items you wish to
-    post and what items or cash you would like. Then the item is posted to the
+  <div id="market" class="col s12 help">
+    <br>
+    <h5 class="help-header">Market</h5>
+    <p>The <a href="{{pathFor route='market' userId='all'}}">market</a> allows you to trade or 
+    sell items from your stash.  After you go to the market, 
+    you are prompted to indicate what you items you wish to post and what items or 
+    cash you would like. Then the item is posted to the
     market. Sellers are free to contact you and you can agree to any deal you
     would like. You are also free to post an item multiple times, remove it
     from your stash, etc. As soon as your item is traded, removed, etc. all
@@ -80,12 +72,12 @@
     <p>You are also welcome to move freely between the trading floor and the
     market.</p>
   </div>
-  <div id="termsOfUse" class="col s12">
-      <h3>
+  <div id="termsOfUse" class="col s12 help">
+    <br>
+      <h3 class="help-header">
         Web Site Terms and Conditions of Use
       </h3>
-      <hr>
-      <h5>
+      <h5 class="help-header">
         1. Terms
       </h5>
       <p>
@@ -96,7 +88,7 @@
       using or accessing this site. The materials contained in this web site are 
       protected by applicable copyright and trade mark law.
       </p>
-      <h5>
+      <h5 class="help-header">
         2. Use License
       </h5>
       <ol type="a">
@@ -117,7 +109,7 @@
           This license shall automatically terminate if you violate any of these restrictions and may be terminated by IronFoil at any time. Upon terminating your viewing of these materials or upon the termination of this license, you must destroy any downloaded materials in your possession whether in electronic or printed format.
         </li>
       </ol>
-      <h5>
+      <h5 class="help-header">
         3. Disclaimer
       </h5>
       <ol type="a">
@@ -125,31 +117,31 @@
           The materials on IronFoil's web site are provided "as is". IronFoil makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, IronFoil does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its Internet web site or otherwise relating to such materials or on any sites linked to this site.
         </li>
       </ol>
-      <h5>
+      <h5 class="help-header">
         4. Limitations
       </h5>
       <p>
       In no event shall IronFoil or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption,) arising out of the use or inability to use the materials on IronFoil's Internet site, even if IronFoil or a IronFoil authorized representative has been notified orally or in writing of the possibility of such damage. Because some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you.
       </p>
-      <h5>
+      <h5 class="help-header">
         5. Revisions and Errata
       </h5>
       <p>
       The materials appearing on IronFoil's web site could include technical, typographical, or photographic errors. IronFoil does not warrant that any of the materials on its web site are accurate, complete, or current. IronFoil may make changes to the materials contained on its web site at any time without notice. IronFoil does not, however, make any commitment to update the materials.
       </p>
-      <h5>
+      <h5 class="help-header">
         6. Links
       </h5>
       <p>
       IronFoil has not reviewed all of the sites linked to its Internet web site and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by IronFoil of the site. Use of any such linked web site is at the user's own risk.
       </p>
-      <h5>
+      <h5 class="help-header">
         7. Site Terms of Use Modifications
       </h5>
       <p>
       IronFoil may revise these terms of use for its web site at any time without notice. By using this web site you are agreeing to be bound by the then current version of these Terms and Conditions of Use.
       </p>
-      <h5>
+      <h5 class="help-header">
         8. Governing Law
       </h5>
       <p>
@@ -158,7 +150,7 @@
       <p>
       General Terms and Conditions applicable to Use of a Web Site.
       </p>
-      <h5>
+      <h5 class="help-header">
         Privacy Policy
       </h5>
       <p>

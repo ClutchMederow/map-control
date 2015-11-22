@@ -48,7 +48,7 @@ Template.playerInfoHover.events({
 
     Meteor.call('createRealTimeTrade', this.user.userId, function(error) {
       if(error) {
-        sAlert.error('Could not invite user to real time trade');
+        sAlert.error(error.reason);
       } else {
         sAlert.success('Invite sent. You will be notified if they accept it.');
       }

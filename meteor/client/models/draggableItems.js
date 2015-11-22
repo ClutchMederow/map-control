@@ -126,6 +126,11 @@ function createTooltipHtml(data) {
   var tooltipElement = $('<div></div>');
   tooltipElement.addClass('item-tooltip-contents');
 
+  //TODO: this is a huge hack, but whatever
+  if(data.name === IronBucks.name) {
+    data.name = "Cash";
+  }
+
   if (data.name) {
     var title = $('<div>' + data.name + '</div>');
     title.addClass('item-info-title');

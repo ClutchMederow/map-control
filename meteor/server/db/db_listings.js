@@ -14,11 +14,14 @@ DB.listings = {
       request: marketItems,
       datePosted: datePosted
     });
+
+    Meteor.users.update(user._id, {$inc: {"profile.itemsOnMarket": 1}});
   },
 
   removeListing: function(listingId) {
     Listings.remove({_id: listingId});
     //TODO: send notification to anyone watching this listing, etc.
+    Meteor.users.update(user._id, {$inc: {"profile.itemsOnMarket": -1}});
   },
 
   cancelListingsForItems: function(items) {

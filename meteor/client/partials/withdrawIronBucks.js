@@ -50,6 +50,7 @@ return CoinbaseCurrencies.find();
   },
 
   withdrawPending: function() {
+    console.log(withdrawPending.get());
     return withdrawPending.get();
   },
 });
@@ -57,7 +58,7 @@ return CoinbaseCurrencies.find();
 Template.withdrawIronBucks.events({
   'click #withdraw': function(e) {
     Session.set('payment', null);
-    var amount = $('#amount').val();
+    var amount = $('#withdrawAmount').val();
     if(!_.isEmpty(amount)) {
       withdrawPending.set('pending');
       Meteor.call('sendMoney', amount, function(err, withdrawalAmount) {
@@ -78,7 +79,7 @@ Template.withdrawIronBucks.events({
     reactiveCurrency.set(e.target.value);
   }, 200),
  */
-  'change #amount': _.debounce(function(e) {
+  'change #withdrawAmount': _.debounce(function(e) {
     reactiveAmount.set(e.target.value);
   },200)
 });
