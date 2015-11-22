@@ -4,7 +4,12 @@ DB.listings = {
   addListing: function(user,tradeItems, marketItems) {
     var datePosted = new Date();
     Listings.insert({
-      user: user,
+      user: {
+        _id: user._id,
+        profile: {
+          name: user.profile.name
+        }
+      },
       items: tradeItems,
       request: marketItems,
       datePosted: datePosted
