@@ -130,7 +130,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       DB.tradeoffers.updateStatus(offer);
 
       // Update all items involved in the tradeoffer if external
-      DB.items.updateStatusFromOffer(offer.tradeofferid);
+      DB.items.updateStatusFromOffer(offer.tradeofferid, bot);
 
       // Update the assetids
       DB.items.updateAssetIds(offer.tradeofferid, bot);
