@@ -79,7 +79,7 @@ Template.withdrawIronBucks.events({
     reactiveCurrency.set(e.target.value);
   }, 200),
  */
-  'change #amount': _.debounce(function(e) {
+  'change #withdrawAmount': _.debounce(function(e) {
     reactiveAmount.set(e.target.value);
   },200)
 });

@@ -53,10 +53,10 @@ Meteor.methods({
       }
     } else {
       if(approvedForWithdrawal) {
-        throw new Meteor.Error(Enums.MeteorError.INSUFFICIENT_FUNDS, 'not enough IronBucks');
+        throw new Meteor.Error(Enums.MeteorError.INSUFFICIENT_FUNDS, 'not enough cash');
       } else {
         throw new Meteor.Error(Enums.MeteorError.EXCEEDED_WITHDRAWAL_RATE, 
-                               'You have withdrawn too many IronBucks. Please wait a day ' + 
+                               'You have withdrawn too much cash. Please wait a day ' + 
                               'or contact customer support');
       }
     }
