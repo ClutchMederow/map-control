@@ -17,7 +17,6 @@ var client = new coinbase.Client({
 
 Coinbase = {
   sendMoney: function(recipient, amount, currency, description) {
-    console.log(amount);
     var myAccounts = getAccounts();
     _.each(myAccounts, function(account) {
       if(account.primary) {
@@ -66,7 +65,6 @@ function sendMoney(account, recipient, amount, currency, description) {
     if (err) {
       myFuture.throw(err);
     } else {
-      console.log('my txn id is: ' + txn.id);
       myFuture.return(txn);
     }
   });
@@ -77,8 +75,6 @@ function sendMoney(account, recipient, amount, currency, description) {
 function createCheckout(client, amount, currency, email) {
   var Future = Npm.require('fibers/future');
   var myFuture = new Future();
-
-  console.log(email);
 
   client.createCheckout({
     amount: amount,

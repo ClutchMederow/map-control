@@ -153,7 +153,7 @@ Items.before.insert(function(userId, doc) {
     var user = Meteor.users.findOne(doc.userId);
     var totalIronBucks = user.profile.ironBucks;
     if(doc.amount > totalIronBucks) {
-      console.log("Cannot trade more IronBucks than you have");
+      console.log("Cannot trade more cash than you have");
       return false; //should stop insert
     }
   }

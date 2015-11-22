@@ -15,6 +15,10 @@ Template.ironbucksPicker.events({
     e.stopPropagation();
     e.preventDefault();
     var amount = $('.ironbucks-input').val();
-    this.currentCash.markAsDone(amount);
+    if(parseInt(amount, 10) < Config.financial.unitPriceMax) {
+      this.currentCash.markAsDone(amount);
+    } else {
+      sAlert.error("Cannot offer more than " + Config.financial.unitPriceMax + " ironBucks");
+    }
   }
 });
