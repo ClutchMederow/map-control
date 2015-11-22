@@ -59,7 +59,7 @@ SyncedCron.add({
           price = steamlyticsApi.getPrice(item.name);
           //note: returned object from api doesn't include market item name
           price.name = item.name;
-          price.uptToDate = true;
+          price.upToDate = true;
           ItemPrices.update(itemPrice._id, price);
         }
       } else {
