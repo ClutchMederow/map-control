@@ -7,7 +7,8 @@ Meteor.methods({
     var tradeHelper = TradeHelper;
     var approvedForDeposit = tradeHelper.checkDeposit(this.userId);
     if(approvedForDeposit) {
-      return Coinbase.createCheckout(amount, currency, user.profile.email);
+      var roundedAmount = parseFloat(amount).toFixed(2);
+      return Coinbase.createCheckout(roundedAmount, currency, user.profile.email);
     } else {
       throw new Meteor.Error(Enums.MeteorError.EXCEEDED_DEPOSIT_RATE, 
                             "You have deposited too much too quickly. " + 
