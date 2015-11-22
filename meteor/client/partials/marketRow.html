@@ -38,6 +38,7 @@
           </div>
         {{ /each }}
       </div>
+      {{#if showControls}}
         <div class="table-cell cell2 market-action">
           <div class="market-action-cont">
           {{ #if notMyListing }}
@@ -51,6 +52,7 @@
             {{ /if }}
           </div>
         </div>
+      {{/if}}
     </div>
   </div>
 </template>

@@ -8,6 +8,7 @@ Meteor.methods({
         }
     });
     DB.insertRealTimeTrade(this.userId, user2Id);
+    DB.addNotification(user2Id, trade.user1Name + " wants to trade with you");
   },
   acceptRealTimeTrade: function(tradeId) {
     check(tradeId, String);
