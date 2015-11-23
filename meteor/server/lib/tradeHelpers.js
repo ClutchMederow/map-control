@@ -4,7 +4,8 @@ TradeHelper = (function () {
   var moveCash = function(item, senderId, receiverId) {
     var withdrawnAmount = item.amount;
     var fee = item.amount * Config.financial.fee;
-    var transferredAmount = item.amount - fee;
+    var roundedFee = fee.toFixed(2);
+    var transferredAmount = item.amount - roundedFee;
 
     if(sufficientIronBucks(senderId, withdrawnAmount)) {
       var adminUser = getAdminUser();
@@ -18,13 +19,13 @@ TradeHelper = (function () {
       });
 
       //update admin
-      DB.updateIronBucks(adminUser._id, fee);
+      DB.updateIronBucks(adminUser._id, roundedFee);
       //Note: basically the sender pays the fee, 
       //because they are debited 100% of the ironBucks but only
       //90% are credited to end user
       Logs.insert({
         userId: [senderId],
-        amount: -fee,
+        amount: -roundedFee,
         type: Enums.LogType.FEE,
         date: new Date()  
       });
