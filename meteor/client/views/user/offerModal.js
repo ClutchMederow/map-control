@@ -56,7 +56,7 @@ Template.offerModal.events({
 
   'click #offer-stash-items .contained-item': function(e) {
     e.preventDefault();
-    offerManager.toggleItem(this);
+    offerManager.toggleItem(this, e.target);
   },
 
   'mouseenter.item-info-tooltip #current-offer-row .item-infoed': function(e) {
