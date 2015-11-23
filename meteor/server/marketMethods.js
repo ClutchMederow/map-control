@@ -18,7 +18,7 @@ Meteor.methods({
     //ensure that user in their inventory requested items
     var listing = Listings.findOne(listingId);
     var itemsInInventory = MarketHelper.checkInventoryForItems(this.userId,
-     listing.request);
+     offeredItems);
     if(itemsInInventory) {
       DB.addOffer(this.userId, listing, offeredItems);
     } else {

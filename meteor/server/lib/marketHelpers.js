@@ -22,8 +22,11 @@ MarketHelper = {
     //the requestedItems should be a subset of the player posting a trade
     //request's stash items. So we can check to see if intersection
     //of stashItems and requestedItems is equal to requestedItems
-    var intersection = _.intersectionObjects(stashItems, requestedItems);
-    if(_.isEqual(intersection, requestedItems)) {
+    var stashIds = _.pluck(stashItems, '_id');
+    var requestedIds = _.pluck(requestedItems, '_id');
+
+    var intersection = _.intersectionObjects(stashIds, requestedIds);
+    if(_.isEqual(intersection, requestedIds)) {
       return true;
     } else {
       return false;
