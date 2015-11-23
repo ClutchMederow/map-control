@@ -128,6 +128,7 @@ function createTooltipHtml(data) {
 
   //TODO: this is a huge hack, but whatever
   if(data.name === IronBucks.name) {
+    data = _.extend({}, data);
     data.name = "Cash";
   }
 
