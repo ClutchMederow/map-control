@@ -54,6 +54,7 @@ Enums = {
     EXCEEDED_DEPOSIT_RATE: 'EXCEEDED_DEPOSIT_RATE',
     EXCEEDED_WITHDRAWAL_RATE: 'EXCEEDED_WITHDRAWAL_RATE',
     INVALID_TOKEN: 'INVALID_TOKEN',
+    DECLINED_TRADE: 'DECLINED_TRADE',
   },
 };
 
@@ -80,5 +81,11 @@ SteamConstants = {
     errors: {
       privateProfile: 'This profile is private.',
     },
+  },
+
+  items: {
+    defindex: {
+      '8': 'Item Wear',
+    }
   },
 };

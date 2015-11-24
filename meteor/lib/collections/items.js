@@ -77,6 +77,16 @@ Items.attachSchema({
     label: 'icon url of image',
     optional: true
   },
+  actions: {
+    type: [Object],
+    blackbox: true,
+    optional: true
+  },
+  market_actions: {
+    type: [Object],
+    blackbox: true,
+    optional: true
+  },
   tradeofferId: {
     type: String,
     label: 'Tradeoffer ID'
@@ -146,9 +156,9 @@ Items.getItemsAndCash = function() {
 
 };
 
-//Note: this is probably just defensive programming, as I imagine 
+//Note: this is probably just defensive programming, as I imagine
 //the selector won't allow you to add more. But just in case...
-Items.before.insert(function(userId, doc) {  
+Items.before.insert(function(userId, doc) {
   if(doc.name === IronBucks.name) {
     var user = Meteor.users.findOne(doc.userId);
     var totalIronBucks = user.profile.ironBucks;

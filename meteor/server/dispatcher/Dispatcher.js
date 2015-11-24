@@ -168,27 +168,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   return {
-    makeTrade: function(userOneId, userOneItems, userTwoId, userTwoItems) {
-      var userOne = Meteor.users.findOne(userOneId);
-      var userTwo = Meteor.users.findOne(userTwoId);
-
-      if (!userOne || !userTwo)
-        throw new Meteor.Error('INVALID_USERID', 'Invalid user ID');
-
-      // get users' bots
-      var botOne = getUsersBot(userOneId);
-      var botTwo = getUsersBot(userTwoId);
-
-      // Have bot1 create tradeoffer
-      var callback = function() {
-
-      };
-
-      // Tell bot2 to accept tradeoffer in success callback
-
-      // BOTS FUCK YEAH
-    },
-
     getBot: function(botName) {
       check(botName, String);
 
@@ -227,7 +206,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         task.execute();
       } catch (e) {
         DB.items.revertStatus(items);
-        throw e;
+
+        if (e.toString().indexOf('has declined your trade request') > -1) {
+          throw new Meteor.Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
+        } else {
+          throw e;
+        }
       }
 
       return job.tradeofferId;
