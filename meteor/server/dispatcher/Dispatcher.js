@@ -138,9 +138,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   function getJobsToSendOffers(transferBot, groupedItems, taskId) {
-    console.log(transferBot);
-    console.log(groupedItems);
-
     if (groupedItems[transferBot.botName]) {
       delete groupedItems[transferBot.botName];
     }

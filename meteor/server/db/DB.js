@@ -67,7 +67,6 @@ _.extend(DB, {
       check(email, String);
 
       var token = tradeURL.split("token=")[1];
-      console.log(token);
 
       if (!token) {
         throw new Error('BAD_TRADE_URL: ' + tradeURL);
@@ -345,8 +344,6 @@ _.extend(DB, {
       _.each(assetIds, function(assetId) {
         var item = Items.findOne({ itemId: assetId, deleteInd: false });
         var doc;
-
-        console.log(assetId);
 
         if (!item) return;
 

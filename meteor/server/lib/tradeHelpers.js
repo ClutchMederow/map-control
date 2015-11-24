@@ -20,14 +20,14 @@ TradeHelper = (function () {
 
       //update admin
       DB.updateIronBucks(adminUser._id, roundedFee);
-      //Note: basically the sender pays the fee, 
+      //Note: basically the sender pays the fee,
       //because they are debited 100% of the ironBucks but only
       //90% are credited to end user
       Logs.insert({
         userId: [senderId],
         amount: -roundedFee,
         type: Enums.LogType.FEE,
-        date: new Date()  
+        date: new Date()
       });
 
       //update user2
@@ -68,13 +68,6 @@ TradeHelper = (function () {
 
       DB.cancelRealTimeTradeForItems(transaction.user1Items);
       DB.cancelRealTimeTradeForItems(transaction.user2Items);
-      // _.each(transaction.user1Items, function(item1) {
-      //   Items.update({_id: item1._id}, {$pull: {currentTransactions: transaction._id}});
-      // });
-
-      // _.each(transaction.user2Items, function(item2) {
-      //   Items.update({_id: item2._id}, {$pull: {currentTransactions: transaction._id}});
-      // });
     },
 
     executeTrade: function(transaction) {
@@ -117,7 +110,6 @@ TradeHelper = (function () {
     //return false if it cannot
     checkWithdrawal: function(userId) {
       var sumPreviousWithdrawals = sumFinancials(Enums.LogType.DEBIT, userId);
-      console.log(sumPreviousWithdrawals);
       if(sumPreviousWithdrawals >= Config.financial.maxWithdrawAmount) {
         return false;
       } else {
@@ -131,7 +123,6 @@ TradeHelper = (function () {
     //return false if it cannot
     checkDeposit: function(userId) {
       var sumPreviousDeposits = sumFinancials(Enums.LogType.CREDIT, userId);
-      console.log(sumPreviousDeposits);
       if(sumPreviousDeposits >= Config.financial.maxAddAmount) {
         return false;
       } else {
