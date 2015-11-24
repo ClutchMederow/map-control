@@ -237,7 +237,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           throw new Meteor.Error('No bots available');
         }
 
-        var persistentIds = _.pluck(Items.find({ itemId: { $in: items } }).fetch(), '_id');
+        var mongoItems = Items.find({ itemId: { $in: items } }).fetch();
+        var persistentIds = _.pluck(mongoItems, '_id');
 
         // Group all items by the bot they are on
         try {
@@ -284,6 +285,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
         var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
+
+        // Cancel all existing transactions
+        DB.listings.cancelListingsForItems(mongoItems);
+        DB.cancelRealTimeTradeForItems(mongoItems);
 
         withdrawTask.execute();
 

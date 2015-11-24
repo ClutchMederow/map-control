@@ -497,7 +497,6 @@ _.extend(DB, {
         var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
         var given = _.pluck(updatedOffer.items_to_give, 'assetid');
 
-
         if (state === 'k_ETradeOfferStateAccepted') {
           if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
 
@@ -684,13 +683,13 @@ _.extend(DB, {
     var itemIds = _.pluck(items, '_id');
 
     var selector1 = {
-      'user1Items._id': itemIds,
-      closeDate: { $ne: null }
+      'user1Items._id': { $in: itemIds },
+      closeDate: { $exists: false }
     };
 
     var selector2 = {
-      'user2Items._id': itemIds,
-      closeDate: { $ne: null }
+      'user2Items._id': { $in: itemIds },
+      closeDate: { $exists: false }
     };
 
     var doc = {

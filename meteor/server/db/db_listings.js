@@ -37,8 +37,8 @@ DB.listings = {
     if (!items.length) return 0;
 
     var selector = {
-      'items._id': _.pluck(items, '_id'),
-      closeDate: { $ne: null }
+      'items._id': { $in: _.pluck(items, '_id') },
+      closeDate: { $exists: false }
     };
 
     var doc = {
