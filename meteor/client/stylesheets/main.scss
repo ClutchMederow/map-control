@@ -466,6 +466,15 @@ main {
   .container-items {
     margin: .2rem;
   }
+
+  .item-coll-desc {
+    margin-top: .5em;
+  }
+
+  .item-float-value {
+    margin-top: .5em;
+    color: #D2D2FF;
+  }
 }
 
 .ironbucks-amount {
@@ -796,7 +805,7 @@ $land-br: 4px;
 }
 
 .help-answer {
-  color: rgba(84, 84, 84, 0.8); 
+  color: rgba(84, 84, 84, 0.8);
 }
 
 .land-brand {

@@ -87,6 +87,16 @@ Items.attachSchema({
     blackbox: true,
     optional: true
   },
+  floatValue: {
+    type: Number,
+    decimal: true,
+    optional: true
+  },
+  attributes: {
+    type: [Object],
+    blackbox: true,
+    optional: true
+  },
   tradeofferId: {
     type: String,
     label: 'Tradeoffer ID'

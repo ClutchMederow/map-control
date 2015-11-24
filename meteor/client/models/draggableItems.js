@@ -132,8 +132,6 @@ function createTooltipHtml(data) {
     data.name = "Cash";
   }
 
-  // console.log(data);
-
   if (data.name) {
     var title = $('<div>' + data.name + '</div>');
     title.addClass('item-info-title');
@@ -338,7 +336,6 @@ var ItemDescriptionParser = {
       var elems = [];
 
       // We have to parse this a bit to make it presentable
-
       if (data.descriptions && data.descriptions.length) {
         var start = findIndex(data.descriptions, 'Contains one of the following:') + 1;
         var end = findIndex(data.descriptions, ' ', start);
@@ -377,7 +374,32 @@ var ItemDescriptionParser = {
 
       $newDiv.text('$' + amount + otherText);
       return $newDiv;
-    }
+    },
+
+    Weapon: function(data) {
+      var elems = [];
+
+      _.each(data.descriptions, function(item) {
+
+        // Collection name
+        if (item.value && item.value.indexOf('Collection') > -1) {
+          var $newDiv = $('<div></div>');
+          $newDiv.css('color', '#' + item.color);
+          $newDiv.addClass('item-coll-desc');
+          $newDiv.text(item.value);
+          elems.push($newDiv);
+        }
+      });
+
+      if (data.floatValue !== undefined && data.floatValue !== null) {
+          var $newDiv = $('<div></div>');
+          $newDiv.addClass('item-float-value');
+          $newDiv.text('Float Value: ' + data.floatValue.toFixed(5));
+          elems.push($newDiv);
+      }
+
+      return elems;
+    },
   },
 
   getJqueryElement: function(data) {
@@ -386,6 +408,8 @@ var ItemDescriptionParser = {
     //  if it is a weapon case, get the constituents
     if (!!_.findWhere(data.tags, { internal_name: 'CSGO_Type_WeaponCase' })) {
       elems = ItemDescriptionParser.itemType.CSGO_Type_WeaponCase(data);
+    } else if (!!_.findWhere(data.tags, { category: 'Weapon' })) {
+      elems = ItemDescriptionParser.itemType.Weapon(data);
     } else if (data.type === IronBucks.name) {
       elems = ItemDescriptionParser.itemType.IronBucks(data);
     }

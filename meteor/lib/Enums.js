@@ -82,10 +82,4 @@ SteamConstants = {
       privateProfile: 'This profile is private.',
     },
   },
-
-  items: {
-    defindex: {
-      '8': 'Item Wear',
-    }
-  },
 };
