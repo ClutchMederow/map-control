@@ -79,7 +79,8 @@ BotJob.prototype._executeDeposit = function() {
   var tradeToken = Meteor.users.findOne(this.userId).profile.tradeToken;
 
   if (!tradeToken) {
-    throw new Error('INVALID_TOKEN, steamid: ' + steamId);
+    console.log('INVALID_TOKEN, steamid: ' + steamId);
+    throw new Meteor.Error(Enums.MeteorError.INVALID_TOKEN, 'Your trade URL is invalid. Please go to your profile to fix it.');
   }
 
   var id = Random.id();

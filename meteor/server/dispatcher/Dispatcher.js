@@ -138,9 +138,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   function getJobsToSendOffers(transferBot, groupedItems, taskId) {
-    console.log(transferBot);
-    console.log(groupedItems);
-
     if (groupedItems[transferBot.botName]) {
       delete groupedItems[transferBot.botName];
     }
@@ -168,27 +165,6 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   }
 
   return {
-    makeTrade: function(userOneId, userOneItems, userTwoId, userTwoItems) {
-      var userOne = Meteor.users.findOne(userOneId);
-      var userTwo = Meteor.users.findOne(userTwoId);
-
-      if (!userOne || !userTwo)
-        throw new Meteor.Error('INVALID_USERID', 'Invalid user ID');
-
-      // get users' bots
-      var botOne = getUsersBot(userOneId);
-      var botTwo = getUsersBot(userTwoId);
-
-      // Have bot1 create tradeoffer
-      var callback = function() {
-
-      };
-
-      // Tell bot2 to accept tradeoffer in success callback
-
-      // BOTS FUCK YEAH
-    },
-
     getBot: function(botName) {
       check(botName, String);
 
@@ -227,7 +203,12 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         task.execute();
       } catch (e) {
         DB.items.revertStatus(items);
-        throw e;
+
+        if (e.toString().indexOf('has declined your trade request') > -1) {
+          throw new Meteor.Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
+        } else {
+          throw e;
+        }
       }
 
       return job.tradeofferId;
@@ -253,7 +234,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           throw new Meteor.Error('No bots available');
         }
 
-        var persistentIds = _.pluck(Items.find({ itemId: { $in: items } }).fetch(), '_id');
+        var mongoItems = Items.find({ itemId: { $in: items } }).fetch();
+        var persistentIds = _.pluck(mongoItems, '_id');
 
         // Group all items by the bot they are on
         try {
@@ -300,6 +282,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
         var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
+
+        // Cancel all existing transactions
+        DB.listings.cancelListingsForItems(mongoItems);
+        DB.cancelRealTimeTradeForItems(mongoItems);
 
         withdrawTask.execute();
 

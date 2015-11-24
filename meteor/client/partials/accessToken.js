@@ -8,8 +8,6 @@ Template.accessToken.helpers({
 
     if (user && user.profile) {
       return user.profile.tradeURL || '';
-    } else {
-      return '';
     }
   },
 
@@ -18,8 +16,6 @@ Template.accessToken.helpers({
 
     if (user && user.profile) {
       return user.profile.email || '';
-    } else {
-      return '';
     }
   },
 

@@ -67,7 +67,6 @@ _.extend(DB, {
       check(email, String);
 
       var token = tradeURL.split("token=")[1];
-      console.log(token);
 
       if (!token) {
         throw new Error('BAD_TRADE_URL: ' + tradeURL);
@@ -346,8 +345,6 @@ _.extend(DB, {
         var item = Items.findOne({ itemId: assetId, deleteInd: false });
         var doc;
 
-        console.log(assetId);
-
         if (!item) return;
 
         if (item.status === Enums.ItemStatus.PENDING_WITHDRAWAL) {
@@ -496,7 +493,6 @@ _.extend(DB, {
         var jobType = updatedOffer.jobType;
         var received = _.pluck(updatedOffer.items_to_receive, 'assetid');
         var given = _.pluck(updatedOffer.items_to_give, 'assetid');
-
 
         if (state === 'k_ETradeOfferStateAccepted') {
           if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
@@ -684,13 +680,13 @@ _.extend(DB, {
     var itemIds = _.pluck(items, '_id');
 
     var selector1 = {
-      'user1Items._id': itemIds,
-      closeDate: { $ne: null }
+      'user1Items._id': { $in: itemIds },
+      closeDate: { $exists: false }
     };
 
     var selector2 = {
-      'user2Items._id': itemIds,
-      closeDate: { $ne: null }
+      'user2Items._id': { $in: itemIds },
+      closeDate: { $exists: false }
     };
 
     var doc = {

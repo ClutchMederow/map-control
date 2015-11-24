@@ -5,7 +5,7 @@ SteamAPI = (function () {
   var csAppId = 730; //730 = CSGO
   var apiKey = Meteor.settings.steam.apiKey;
 
-  var parseSteamAPIInventory = function(data, userId) {
+  var parseSteamAPIInventory = function(data, userId, invAttrData) {
     var parsed = data;
 
     var rgInventory = parsed.rgInventory;
@@ -13,6 +13,17 @@ SteamAPI = (function () {
 
     return _.map(rgInventory, function(item) {
       var itemDescription = rgDescriptions[item.classid + "_" + item.instanceid];
+
+      // if inAttrData is undefined, this will still work but return undefined
+      var itemAttributeData = _.findWhere(invAttrData, { id: Number(item.id) });
+
+      // in case it is undefined
+      itemAttributeData = itemAttributeData || {};
+      var floatValue = _.findWhere(itemAttributeData.attributes, { defindex: 8 });
+
+      if (floatValue !== undefined) {
+        floatValue = floatValue.float_value;
+      }
 
       return {
         userId: userId,
@@ -25,14 +36,31 @@ SteamAPI = (function () {
         itemId: item.id,
         amount: Number(item.amount),
         marketable: itemDescription.marketable,
-        tradable: itemDescription.commodity,
+        tradable: itemDescription.tradable,
         classId: item.classid,
         instanceId: item.instanceid,
         iconURL: Constants.steamCDN + itemDescription.icon_url,
+        attributes: itemAttributeData.attributes,
+        floatValue: floatValue,
         status: Enums.ItemStatus.EXTERNAL,
         deleteInd: false
        };
     });
+  };
+
+  // gets additional data from a different api call
+  // such as float values
+  var getPlayerItemsWithAttributes = function(steamId) {
+    var callString = Constants.getItemAttributesURL.replace('STEAM_API_KEY', apiKey).replace('CONST_STEAM_ID', steamId);
+    var invAttrData;
+
+    try {
+      invAttrData = HTTP.get(callString).data.result.items;
+    } catch (e) {
+      console.log(e);
+    }
+
+    return invAttrData;
   };
 
   //declaration of all functions, best practice due to hoisting
@@ -43,11 +71,14 @@ SteamAPI = (function () {
     var profileId = Meteor.users.findOne(userId).services.steam.id;
 
     var inventoryData;
+    var invAttrData;
+
     var callString = "http://steamcommunity.com/profiles/" + profileId +
     "/inventory/json/" + csAppId + "/" + csContextId;
 
     try {
       inventoryData = HTTP.get(callString).data;
+      invAttrData = getPlayerItemsWithAttributes(profileId);
     } catch (e) {
       console.log(e);
       throw new Meteor.Error(Enums.MeteorError.BAD_HTTP, 'Unable to reach Steam servers');
@@ -62,7 +93,7 @@ SteamAPI = (function () {
     } else {
       //clear and remove inventory for a specific user,
       //do this after API call to avoid lag
-      return parseSteamAPIInventory(inventoryData, userId);
+      return parseSteamAPIInventory(inventoryData, userId, invAttrData);
     }
   };
 
@@ -117,6 +148,8 @@ SteamAPI = (function () {
       }
     },
 
-    parseSteamAPIInventory: parseSteamAPIInventory
+    parseSteamAPIInventory: parseSteamAPIInventory,
+
+    test: getPlayerItemsWithAttributes,
   };
 }) (); //Immediately Invoked Function that returns object
