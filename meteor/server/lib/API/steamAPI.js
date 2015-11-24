@@ -25,7 +25,7 @@ SteamAPI = (function () {
         itemId: item.id,
         amount: Number(item.amount),
         marketable: itemDescription.marketable,
-        tradable: itemDescription.commodity,
+        tradable: itemDescription.tradable,
         classId: item.classid,
         instanceId: item.instanceid,
         iconURL: Constants.steamCDN + itemDescription.icon_url,

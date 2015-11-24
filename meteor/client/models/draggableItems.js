@@ -132,6 +132,8 @@ function createTooltipHtml(data) {
     data.name = "Cash";
   }
 
+  // console.log(data);
+
   if (data.name) {
     var title = $('<div>' + data.name + '</div>');
     title.addClass('item-info-title');
@@ -156,11 +158,11 @@ function createTooltipHtml(data) {
     tooltipElement.append($newDiv);
   });
 
-  // if (!data.tradable) {
-  //   var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
-  //   $notTradable.addClass('not-tradable');
-  //   tooltipElement.append($notTradable);
-  // }
+  if (!data.tradable) {
+    var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
+    $notTradable.addClass('not-tradable');
+    tooltipElement.append($notTradable);
+  }
 
   return tooltipElement;
 }
