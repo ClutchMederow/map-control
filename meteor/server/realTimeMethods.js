@@ -1,10 +1,11 @@
 Meteor.methods({
   createRealTimeTrade: function(user2Id) {
     check(user2Id, String);
-    RealTimeTrade.find({user1Id: this.userId, completed: false, deleteInd: false}).forEach(
+    RealTimeTrade.find({ $or: [ { user1Id: this.userId }, { user2Id: this.userId } ], completed: false, deleteInd: false}).forEach(
       function(rtTrade) {
         if(rtTrade.user2Id === user2Id) {
-          throw new Meteor.Error("EXISTING_RTT", "You have already have an active real time trade with this user");
+          return rtTrade._id;
+          // throw new Meteor.Error("EXISTING_RTT", "You have already have an active real time trade with this user");
         }
     });
     DB.insertRealTimeTrade(this.userId, user2Id);
@@ -12,6 +13,7 @@ Meteor.methods({
     var user1 = Meteor.users.findOne(this.userId);
     DB.addNotification(user2Id, user1.profile.name + " wants to trade with you");
   },
+
   acceptRealTimeTrade: function(tradeId) {
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
@@ -28,6 +30,7 @@ Meteor.methods({
       throw new Meteor.Error("SECURITY_ERROR", "You are not authorized to accept this trade");
     }
   },
+
   rejectRealTimeTrade: function(tradeId) {
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
@@ -45,6 +48,7 @@ Meteor.methods({
       throw new Meteor.Error("SECURITY_ERROR", "You are not authorized to reject this trade");
     }
   },
+
   addTradeItem: function(item, tradeId) {
     check(item, Object);
     check(tradeId, String);
@@ -64,6 +68,7 @@ Meteor.methods({
       throw new Meteor.Error("SECURITY_ERROR", "not authorized");
     }
   },
+
   removeTradeItem: function(item, tradeId) {
     check(item, Object);
     check(tradeId, String);
@@ -83,6 +88,7 @@ Meteor.methods({
       throw new Meteor.Error("SECURITY_ERROR", "not authorized");
     }
   },
+
   setStatusDone: function(tradeId) {
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);
@@ -94,6 +100,7 @@ Meteor.methods({
       throw new Meteor.Error("SECURITY_ERROR", "not authorized");
     }
   },
+
   setStatusConfirm: function(tradeId) {
     check(tradeId, String);
     var trade = RealTimeTrade.findOne(tradeId);

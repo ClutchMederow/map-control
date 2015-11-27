@@ -36,6 +36,9 @@ Template.playerInfoHover.events({
   'click .privateChat': function(e) {
     e.preventDefault();
 
+    // to close menu
+    $('#' + this._id).trigger('mouseleave');
+
     Meteor.call('startPrivateChat',this.user.userId, function(error) {
       if(error) {
         sAlert.error(error.reason);
@@ -46,11 +49,20 @@ Template.playerInfoHover.events({
   'click .beginTrade': function(e) {
     e.preventDefault();
 
-    Meteor.call('createRealTimeTrade', this.user.userId, function(error) {
+    // to close menu
+    $('#' + this._id).trigger('mouseleave');
+
+    Meteor.call('createRealTimeTrade', this.user.userId, function(error, result) {
       if(error) {
         sAlert.error(error.reason);
       } else {
-        sAlert.success('Invite sent. You will be notified if they accept it.');
+
+        // if trade already exists, opens it
+        if (result) {
+          Session.set('realTime', result);
+        } else {
+          sAlert.success('Invite sent. You will be notified if they accept it.');
+        }
       }
     });
   //{{pathFor route='realTimeTrading' data=getUsers}}

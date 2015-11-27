@@ -20,14 +20,16 @@ Template.market.helpers({
     //either 'All' or a userId from router
     var selector = filterSelector;
     if(this.userId) {
-      selector = _.extend(filterSelector, {"user._id": this.userId}); 
+      selector = _.extend(filterSelector, {"user._id": this.userId});
     }
+
+    var options = { sort: { datePosted: -1 } };
 
     if(searchText.get()) {
       var fields = ['name', 'internal_name'];
-      return Listings.searchItems(selector, searchText.get(), fields);
+      return Listings.searchItems(selector, searchText.get(), fields, options);
     } else {
-      return Listings.find(selector);
+      return Listings.find(selector, options);
     }
   },
 
