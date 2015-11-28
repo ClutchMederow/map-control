@@ -121,6 +121,12 @@ Items.attachSchema({
   modifiedTimestamp: {
     type: Date,
     label: 'Internal modified timestamp'
+  },
+  prices: {
+    type: Object,
+    label: 'Prices from Steamlytics',
+    blackbox: true,
+    optional: true,
   }
 });
 

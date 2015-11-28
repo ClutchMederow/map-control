@@ -16,6 +16,12 @@ sufficientIronBucks = function(userId, amount) {
   }
 };
 
+//given an itemId and a price object, 
+//set the price equal to that object
+updateItemPrices = function(itemId, prices) {
+  Items.update(itemId, {$set: {prices: prices}});
+};
+
 sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
   var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
     "duncanrenfrow@gmail.com"];
@@ -40,7 +46,7 @@ sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
 SyncedCron.add({
   name: 'Update pricing information',
   schedule: function(parser) {
-    return parser.text('every 30 minutes');
+    return parser.text('every 2 minutes');
   },
 
   job: function() {
@@ -54,13 +60,14 @@ SyncedCron.add({
       var itemPrice = ItemPrices.findOne({ name: item.name });
       if(_.isObject(itemPrice)) {
         if(itemPrice.upToDate) {
-          console.log(name + "'s price is  already up to date");
+          console.log(item.name + "'s price is  already up to date");
         } else {
           price = steamlyticsApi.getPrice(item.name);
           //note: returned object from api doesn't include market item name
           price.name = item.name;
           price.upToDate = true;
           ItemPrices.update(itemPrice._id, price);
+          updateItemPrices(item._id, price); //de-normalizing
         }
       } else {
           price = steamlyticsApi.getPrice(item.name);
@@ -68,10 +75,11 @@ SyncedCron.add({
           price.name = item.name;
           price.upToDate = false;
           ItemPrices.insert(price);
+          updateItemPrices(item._id, price); //de-normalzing
       }
     });
 
-    console.log("job complete");
+    console.log("Pricing job complete");
     //set all items to false
     ItemPrices.update({}, {$set: {upToDate: false}}, {multi: true});
   }
