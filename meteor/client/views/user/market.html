@@ -37,6 +37,9 @@
         {{ else }}
           <div class="col s10 center">There are no items that match your search criteria</div>
         {{ /each }}
+        {{#if nextPath}}
+          <a class="load-more" href="{{nextPath}}">Load more</a>
+        {{/if}}
       </div>
     </div>
   </div>

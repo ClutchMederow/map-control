@@ -107,16 +107,40 @@ Router.route('/notifications', {
   template: 'notifications'
 });
 
-Router.route('/market/:userId', {
-  name: 'market',
+MarketController = RouteController.extend({
   template: 'market',
+  increment: 5,
+  listingsLimit: function() {
+    return parseInt(this.params.marketLimit) || this.increment;
+  },
+  findOptions: function() {
+    //Note: oddly nested objects here due to security
+    return {sort: {datePosted: -1 }, limit: {limit: this.listingsLimit()}};
+  },
+  waitOn: function() {
+    var options = this.findOptions();
+    return Meteor.subscribe('listings', options.sort, options.limit);
+  },
+  listings: function() {
+    return Listings.find();
+  },
   data: function() {
+    var returnObject = {};
+
+    var hasMore = this.listings().count() === this.listingsLimit();
+    var nextPath = this.route.path({userId: this.params.userId, marketLimit: this.listingsLimit() + this.increment });
+
     if(this.params.userId.toLowerCase() === 'all') {
-      return {};
-    } else {
-      return {userId: this.params.userId};
-    }
+      returnObject.userId = this.params.userId;
+    }   
+    returnObject.listings = this.listings(); 
+    returnObject.nextPath = hasMore ? nextPath : null;
+    return returnObject;
   }
+});
+
+Router.route('/market/:userId/:marketLimit?', {
+  name: 'market',
 });
 
 Router.route('/inventory', {

@@ -39,8 +39,19 @@ Meteor.publish('marketItems', function(){
   }});
 });
 
-Meteor.publish('listings', function() {
-  return Listings.find({ closeDate: null });
+//Note: safer to check these objects individually then
+//build a single composite options object
+Meteor.publish('listings', function(sort, limit) {
+  check(sort, {
+    datePosted: Number
+  });
+
+  check(limit, {
+    limit: Number
+  });
+
+  var options = _.extend(sort, limit);
+  return Listings.find({ closeDate: null }, options);
 });
 
 Meteor.publish('transactions', function() {

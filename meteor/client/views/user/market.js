@@ -10,11 +10,13 @@ Session.set('searchItems', []);
 var genericFilter = new GenericFilter();
 
 Template.market.onRendered(function() {
+  console.log(this);
   searchText.set('');
   $('.tooltipped').tooltip({delay: 50});
 });
 
 Template.market.helpers({
+  /*
   listings: function() {
     var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
     //either 'All' or a userId from router
@@ -32,7 +34,7 @@ Template.market.helpers({
       return Listings.find(selector, options);
     }
   },
-
+ */
   getListing: function() {
     return {listingId: this._id};
   },
