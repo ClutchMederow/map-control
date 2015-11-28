@@ -58,6 +58,7 @@ Template.market.events({
   },
 
   'mouseenter.item-info-tooltip .market .item-infoed': function(e) {
+    console.log(this);
     DraggableItems.itemInfo.mousein(e, this);
   },
 
