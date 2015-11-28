@@ -41,8 +41,8 @@ Listings.attachSchema({
 
 //TODO: make this work for either items or requests
 //and put a radio button on the market
-Listings.searchItems = function(selector, searchText, fields) {
-  var listings = Listings.find(selector).fetch();
+Listings.searchItems = function(selector, searchText, fields, options) {
+  var listings = Listings.find(selector, options).fetch();
   var matchingDocuments = [];
   var terms = searchText.replace(/\W/g,' ').trim().split(" ");
   var regExp = new RegExp("(?=.*" + terms.join(")(?=.*") + ")", 'i');
