@@ -75,5 +75,9 @@ Template.market.events({
     if (this.data && this.data.user) {
       Meteor.call('startPrivateChat', this.data.user._id);
     }
-  }
+  },
+  'click #addListing': function(e) {
+    e.preventDefault();
+    Session.set('listing', true);
+  },
 });
