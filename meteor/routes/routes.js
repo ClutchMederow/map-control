@@ -122,12 +122,42 @@ MarketController = RouteController.extend({
     return Meteor.subscribe('listings', options.sort, options.limit);
   },
   listings: function() {
-    return Listings.find();
+    var searchText = this.params.query.search;
+    var filterString = this.params.query.filter;
+    var genericFilter = "";
+    if(this.params.query.filter) {
+      genericFilter = this.params.query.filter.split(",");
+    }
+    var userId = this.params.userId;
+
+    var filterSelector = genericFilter.length ? { 'items.tags.internal_name': { $in: genericFilter }} : {};
+    console.log(filterSelector);
+    
+    //either 'All' or a userId from router
+    var selector = filterSelector;
+    if(_.isString(userId) && userId !== "all") {
+      selector = _.extend(filterSelector, {"user._id": userId});
+    }
+
+
+    if(!_.isEmpty(searchText)) {
+      var fields = ['name', 'internal_name'];
+      return Listings.searchItems(selector, searchText, fields);
+    } else {
+      console.log(selector);
+      return Listings.find(selector);
+    }
   },
   data: function() {
     var returnObject = {};
 
-    var hasMore = this.listings().count() === this.listingsLimit();
+    var count;
+    if(_.isArray(this.listings())) {
+      count = this.listings().length;
+    } else {
+      count = this.listings().count();
+    }
+    var hasMore = count === this.listingsLimit();
     var nextPath = this.route.path({userId: this.params.userId, marketLimit: this.listingsLimit() + this.increment });
 
     if(this.params.userId.toLowerCase() === 'all') {
@@ -135,6 +165,7 @@ MarketController = RouteController.extend({
     }   
     returnObject.listings = this.listings(); 
     returnObject.nextPath = hasMore ? nextPath : null;
+    returnObject.limit = this.listingsLimit();
     return returnObject;
   }
 });

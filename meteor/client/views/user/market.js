@@ -10,31 +10,11 @@ Session.set('searchItems', []);
 var genericFilter = new GenericFilter();
 
 Template.market.onRendered(function() {
-  console.log(this);
   searchText.set('');
   $('.tooltipped').tooltip({delay: 50});
 });
 
 Template.market.helpers({
-  /*
-  listings: function() {
-    var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
-    //either 'All' or a userId from router
-    var selector = filterSelector;
-    if(this.userId) {
-      selector = _.extend(filterSelector, {"user._id": this.userId});
-    }
-
-    var options = { sort: { datePosted: -1 } };
-
-    if(searchText.get()) {
-      var fields = ['name', 'internal_name'];
-      return Listings.searchItems(selector, searchText.get(), fields, options);
-    } else {
-      return Listings.find(selector, options);
-    }
-  },
- */
   getListing: function() {
     return {listingId: this._id};
   },
@@ -50,17 +30,37 @@ Template.market.events({
     searchText.set($(e.target).val().trim());
   }, 200),
 
+  "click #submitSearch": function(e) {
+    e.preventDefault();
+    Router.go('market', {userId: this.userId, limit: this.limit}, 
+              {query: "search=" + searchText.get() + "&filter=" + genericFilter.getName()});
+  },
+  "click #clear": function(e) {
+    e.preventDefault();
+    searchText.set(''); 
+    $("#search").val("");
+    Router.go('market', {userId: this.userId, limit: this.limit}, 
+              {query: "search=" + searchText.get() + "&filter=" + genericFilter.getName()});
+  },
+
   "click .singleItem": function(e) {
     e.preventDefault();
     genericFilter.add(this);
+    var dataContext = Template.parentData(0);
+    Router.go('market', {userId: dataContext.userId, limit: dataContext.limit}, 
+              {query: "search=" + 
+                searchText.get() + "&filter=" + genericFilter.getName()});
   },
 
   'click .filter-term': function() {
     genericFilter.remove(this);
+    var dataContext = Template.parentData(0);
+    Router.go('market', {userId: dataContext.userId, limit: dataContext.limit}, 
+              {query: "search=" + 
+                searchText.get() + "&filter=" + genericFilter.getName()});
   },
 
   'mouseenter.item-info-tooltip .market .item-infoed': function(e) {
-    console.log(this);
     DraggableItems.itemInfo.mousein(e, this);
   },
 
