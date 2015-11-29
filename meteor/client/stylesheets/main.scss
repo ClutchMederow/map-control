@@ -1538,6 +1538,15 @@ nav .brand-logo img {
   }
 }
 
+.not-signed-in-chatinput {
+  min-height: 3rem;
+  // text-align: center;
+  // margin-bottom: 1.25rem;
+  a {
+    font-size: 20px;
+  }
+}
+
 // .signup-modal {
 //   height: 100% !important;
 //   position: fixed;

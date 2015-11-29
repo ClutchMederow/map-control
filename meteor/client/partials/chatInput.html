@@ -2,10 +2,16 @@
   <form>
     <div class="row valign-wrapper">
       <div class="input-field col s10 valign">
-        <i class="mdi-editor-mode-edit prefix"></i>
-        <div contenteditable="true" class="chat-box validate" id="chat_message"></div>
+        {{ #if currentUser }}
+          <i class="mdi-editor-mode-edit prefix"></i>
+          <div contenteditable="true" class="chat-box validate" id="chat_message"></div>
+        {{ else }}
+          <div class="not-signed-in-chatinput">
+            <a href="#!" class="sign-up-trigger">Sign in to chat</a>
+          </div>
+        {{ /if }}
       </div>
-      <button class="btn waves-effect waves-light valign" id="post">Post</button>
+      <button class="btn waves-effect waves-light valign" {{ isDisabled }} id="post">Post</button>
     </div>
   </form>
 </template>
