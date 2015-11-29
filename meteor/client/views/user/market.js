@@ -79,5 +79,10 @@ Template.market.events({
   'click .post-item': function(e) {
     e.preventDefault();
     Session.set('listing', true);
-  }
+  },
+
+  'click .sign-up-trigger': function(e) {
+    e.preventDefault();
+    $('#signup-modal').openModal();
+  },
 });
