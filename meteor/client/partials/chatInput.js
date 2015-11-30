@@ -27,5 +27,16 @@ Template.chatInput.events({
       e.preventDefault();
       $('#post').click();
     }
-  }
+  },
+
+  'click .sign-up-trigger': function(e) {
+    e.preventDefault();
+    $('#signup-modal').openModal();
+  },
+});
+
+Template.chatInput.helpers({
+  isDisabled: function() {
+    return !Meteor.user() ? 'disabled' : '';
+  },
 });

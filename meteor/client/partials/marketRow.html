@@ -3,7 +3,7 @@
     {{ #if timeinforow }}
       <div class="timeinforow">
         {{#if notMyListing}}
-          <span class="username">{{ data.user.profile.name }}</span> 
+          <span class="username">{{ data.user.profile.name }}</span>
         {{else}}
           <span class="username">You</span>
         {{/if}}
@@ -41,14 +41,18 @@
       {{#if showControls}}
         <div class="table-cell cell2 market-action">
           <div class="market-action-cont">
-          {{ #if notMyListing }}
-            <!-- <a class="acceptTrade" href="{{ pathFor route='makeOffer' data=getListing }}"> -->
-            <a class="acceptTrade" href="#">
-              Offer
-            </a>
-            <a href="#!" class="sendMessage">Message</a>
-            {{else}}
-            <a href="#!" class="removeListing">Remove Listing</a>
+            {{ #if currentUser }}
+              {{ #if notMyListing }}
+                <!-- <a class="acceptTrade" href="{{ pathFor route='makeOffer' data=getListing }}"> -->
+                <a class="acceptTrade" href="#">
+                  Offer
+                </a>
+                <a href="#!" class="sendMessage">Message</a>
+              {{else}}
+                <a href="#!" class="removeListing">Remove Listing</a>
+              {{ /if }}
+            {{ else }}
+              <a href="#!" class="sign-up-trigger">Sign In</a>
             {{ /if }}
           </div>
         </div>

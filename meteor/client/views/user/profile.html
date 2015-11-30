@@ -1,7 +1,19 @@
 <template name="profile">
   <div class="row">
     <div class="col s8 offset-s2">
-      {{> accessToken }}
+      <div class="card-panel pan">
+        <div class="colored-title">
+          PROFILE
+        </div>
+        {{> accessToken }}
+        <div class="row">
+          {{ #if goodToGo }}
+            <div class="col s12 center">
+              <a href="{{ pathFor route='home' }}" class="btn waves-effect light-blue darken-2">To your command center</a>
+            </div>
+          {{ /if }}
+        </div>
+      </div>
     </div>
   </div>
 </template>

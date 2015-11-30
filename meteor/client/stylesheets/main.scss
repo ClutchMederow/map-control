@@ -1525,3 +1525,36 @@ nav .brand-logo img {
     }
   }
 }
+
+.modal {
+  color: grey;
+}
+
+.steam-logon-button {
+  text-align: center;
+
+  img {
+    cursor: pointer;
+  }
+}
+
+.not-signed-in-chatinput {
+  min-height: 3rem;
+  // text-align: center;
+  // margin-bottom: 1.25rem;
+  a {
+    font-size: 20px;
+  }
+}
+
+// .signup-modal {
+//   height: 100% !important;
+//   position: fixed;
+//   z-index: 500;
+//   top: 0 !important;
+//   right: 0px;
+//   border-radius: 0;
+//   max-height: 100%;
+//   overflow: auto;
+//   width: 100%;
+// }

@@ -1,55 +1,43 @@
 <template name="accessToken">
-  <div class="card-panel pan">
-    <div class="colored-title">
-      PROFILE
+  <div class="row">
+    <div class="col s12">
+      <p>
+        Add your trade URL so our bots can send you trade offers. Without this, you will be
+        unable to add or remove items from your stash.
+      </p>
+      <p>
+        To find it:
+      </p>
+      <ol>
+        <li>
+          navigate to <a href="{{ tradeURL }}" target="_blank">{{ tradeURL }}</a>
+        </li>
+        <li>
+          near the bottom, under <strong>Third-Party Sites</strong>, copy the Trade URL
+        </li>
+        <li>
+          paste it exactly in the box below
+        </li>
+      </ol>
+      <p>Then fill in  your email address below.</p>
     </div>
-    <div class="row">
-      <div class="col s12">
-        <p>
-          Add your trade URL so our bots can send you trade offers. Without this, you will be
-          unable to add or remove items from your stash.
-        </p>
-        <p>
-          To find it:
-        </p>
-        <ol>
-          <li>
-            navigate to <a href="{{ tradeURL }}" target="_blank">{{ tradeURL }}</a>
-          </li>
-          <li>
-            near the bottom, under <strong>Third-Party Sites</strong>, copy the Trade URL
-          </li>
-          <li>
-            paste it exactly in the box below
-          </li>
-        </ol>
-        <p>Then fill in  your email address below.</p>
+  </div>
+  <div class="row">
+    <form id="tradeurl-form">
+      <div class="col s10">
+        <label for="tradeurl-input">trade url</label>
+        <input value="{{ currentTradeURL }}" placeholder="trade url" id="tradeurl-input" type="text" autocomplete="off">
       </div>
-    </div>
-    <div class="row">
-      <form id="tradeurl-form">
-        <div class="col s10">
-          <label for="tradeurl-input">trade url</label>
-          <input value="{{ currentTradeURL }}" placeholder="trade url" id="tradeurl-input" type="text" autocomplete="off">
-        </div>
-        <div class="col s10">
-          <label for="emailAddress">email</label>
-          <input value="{{ currentEmail }}" placeholder="Email address" id="emailAddress" type="email" class="validate">
-        </div>
-        <div class="input-field col s2">
-          <button class="btn waves-effect light-blue darken-1" type="submit" id="save">save</button>
-        </div>
-      </form>
-    </div>
-    <div class="row">
-    {{ #if goodToGo }}
-      <div class="col s12 center">
-        <a href="{{ pathFor route='home' }}" class="btn waves-effect light-blue darken-2">To your command center</a>
+      <div class="col s10">
+        <label for="emailAddress">email</label>
+        <input value="{{ currentEmail }}" placeholder="Email address" id="emailAddress" type="email" class="validate">
       </div>
-    {{ /if }}
-      <div class="col s10 error-msg">
-        <p>Please enter a valid trade URL and Email</p>
+      <div class="input-field col s2">
+        <button class="btn waves-effect light-blue darken-1" type="submit" id="save">save</button>
       </div>
+    </form>
+    <div class="col s10 error-msg">
+      <p>Please enter a valid trade URL and Email</p>
     </div>
   </div>
 </template>
