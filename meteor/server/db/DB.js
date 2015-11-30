@@ -627,7 +627,7 @@ _.extend(DB, {
       user2Items: offeredItems,
       user2Name: offerer.profile.name,
       user1Stage: "DONE",
-      user2Stage: "CONFIRMED",
+      user2Stage: "DONE",
       listingId: listing._id,
       createdTimestamp: new Date(),
       modifiedTimestamp: new Date()
