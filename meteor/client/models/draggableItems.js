@@ -156,7 +156,8 @@ function createTooltipHtml(data) {
     tooltipElement.append($newDiv);
   });
 
-  if (!data.tradable) {
+  // Add badge if not tradable
+  if (data.tradable === 0) {
     var $notTradable = $('<div><span>NOT TRADEABLE</span></div>');
     $notTradable.addClass('not-tradable');
     tooltipElement.append($notTradable);
