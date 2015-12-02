@@ -6,12 +6,6 @@
           <div class="input-field">
             <input placeholder="search" id="search" type="search" required>
           </div>
-          <div class="btn" id="submitSearch">
-            <span>Search</span>
-          </div>
-          <div class="btn" id="clear">
-            <span>Clear</span>
-          </div>
         </form>
       </div>
     </div>
@@ -45,8 +39,12 @@
         {{ else }}
           <div class="col s10 center">There are no items that match your search criteria</div>
         {{ /each }}
-        {{#if nextPath}}
-          <a class="load-more" href="{{nextPath}}">Load more</a>
+        {{#if Template.subscriptionsReady}}
+          {{#if hasMoreListings}}
+          <a class="btn" id="loadMore">Load more</a>
+          {{/if}}
+        {{else}}
+          <div class="loading">{{> spinner}}</div>
         {{/if}}
       </div>
     </div>

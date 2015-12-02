@@ -14,6 +14,41 @@ Template.market.onRendered(function() {
   $('.tooltipped').tooltip({delay: 50});
 });
 
+Template.market.onCreated(function() {
+  var instance = this;
+
+  //initialize reactive variables
+  instance.loaded = new ReactiveVar(0);
+  instance.limit = new ReactiveVar(5);
+
+  instance.autorun(function() {
+    var limit = instance.limit.get();
+    console.log("Asking for " + limit + " listings...");
+
+    //if subscription ready, set limit to newlimit
+    //note: this is to match publication function for security
+    var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
+    //either 'All' or a userId from router
+    var selector = filterSelector;
+    if(this.userId) {
+      selector = _.extend(filterSelector, {"user._id": this.userId});
+    }
+
+    var subscription = instance.subscribe('listings', selector, searchText.get(), 
+                                          {sort: {datePosted: -1 }, limit: limit});
+    if(subscription.ready()) {
+      console.log("> Received " + limit + " listings. \n\n");
+      instance.loaded.set(limit);
+    } else {
+      console.log("> Subscription not ready yet. \n\n");
+    }
+  });
+
+  instance.listings = function() {
+    return Listings.find();
+  };
+});
+
 Template.market.helpers({
   getListing: function() {
     return {listingId: this._id};
@@ -21,7 +56,16 @@ Template.market.helpers({
 
   filterTerms: function() {
     return genericFilter.get();
-  }
+  },
+
+  listings: function() {
+    return Template.instance().listings();
+  },
+
+  hasMoreListings: function() {
+    return Template.instance().listings().count() >= Template.instance().limit.get();
+  },
+
 });
 
 Template.market.events({
@@ -30,34 +74,13 @@ Template.market.events({
     searchText.set($(e.target).val().trim());
   }, 200),
 
-  "click #submitSearch": function(e) {
-    e.preventDefault();
-    Router.go('market', {userId: this.userId, limit: this.limit}, 
-              {query: "search=" + searchText.get() + "&filter=" + genericFilter.getName()});
-  },
-  "click #clear": function(e) {
-    e.preventDefault();
-    searchText.set(''); 
-    $("#search").val("");
-    Router.go('market', {userId: this.userId, limit: this.limit}, 
-              {query: "search=" + searchText.get() + "&filter=" + genericFilter.getName()});
-  },
-
   "click .singleItem": function(e) {
     e.preventDefault();
     genericFilter.add(this);
-    var dataContext = Template.parentData(0);
-    Router.go('market', {userId: dataContext.userId, limit: dataContext.limit}, 
-              {query: "search=" + 
-                searchText.get() + "&filter=" + genericFilter.getName()});
   },
 
   'click .filter-term': function() {
     genericFilter.remove(this);
-    var dataContext = Template.parentData(0);
-    Router.go('market', {userId: dataContext.userId, limit: dataContext.limit}, 
-              {query: "search=" + 
-                searchText.get() + "&filter=" + genericFilter.getName()});
   },
 
   'mouseenter.item-info-tooltip .market .item-infoed': function(e) {
@@ -82,4 +105,13 @@ Template.market.events({
     e.preventDefault();
     Session.set('listing', true);
   },
+
+  'click #loadMore': function(e, instance) {
+    e.preventDefault();
+    //note: could also use Template.instance()
+    var limit = instance.limit.get();
+
+    limit += 5;
+    instance.limit.set(limit);
+  }
 });

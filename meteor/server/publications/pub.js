@@ -41,17 +41,24 @@ Meteor.publish('marketItems', function(){
 
 //Note: safer to check these objects individually then
 //build a single composite options object
-Meteor.publish('listings', function(sort, limit) {
-  check(sort, {
-    datePosted: Number
-  });
+Meteor.publish('listings', function(selector, searchText, options) {
+  check(selector, Object);
+  check(searchText, String);
+  check(options, Object);
 
-  check(limit, {
-    limit: Number
-  });
 
-  var options = _.extend(sort, limit);
-  return Listings.find({ closeDate: null }, options);
+  selector = _.extend(selector, {closeDate: null});
+
+  if(searchText) {
+    var searchReg = new RegExp(searchText, 'ig');
+    selector = _.extend(selector, {$or: [{"items.name": {$in: [searchReg]}}, 
+                         {"items.internal_name": {$in: [searchReg]}}]});
+    console.log(selector);
+   return Listings.find(selector);
+  } else {
+    console.log(selector);
+    return Listings.find(selector, options);
+  }
 });
 
 Meteor.publish('transactions', function() {
