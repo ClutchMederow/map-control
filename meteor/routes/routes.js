@@ -3,6 +3,10 @@ Router.configure({
   notFoundTemplate: "notFound"
 });
 
+Router.route('/content', {
+  name: 'content',
+  template: 'content'
+});
 
 Router.route('/help', {
   name: 'help',
