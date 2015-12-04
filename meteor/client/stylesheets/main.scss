@@ -1526,6 +1526,28 @@ nav .brand-logo img {
   }
 }
 
-#addListing:hover {
-  background-color: #ffab40 !important;
+.modal {
+  color: grey;
+}
+
+.steam-logon-button {
+  text-align: center;
+
+  img {
+    cursor: pointer;
+  }
+}
+
+.not-signed-in-chatinput {
+  min-height: 3rem;
+  // text-align: center;
+  // margin-bottom: 1.25rem;
+  a {
+    font-size: 20px;
+  }
+}
+
+.embedded-payment {
+  padding: 10 0 0 0;
+  background-color: white;
 }

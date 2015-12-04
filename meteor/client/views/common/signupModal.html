@@ -1,0 +1,25 @@
+<template name="signupModal">
+  <div id="signup-modal" class="modal">
+    <div class="modal-content">
+      <h4>Sign Up</h4>
+      {{ #if currentUser }}
+        {{> accessToken }}
+      {{ else }}
+        <div class="row">
+          <div class="col s6">
+            <p>Sign up securely using your steam account. Just click the button to get started.</p>
+          </div>
+          <div class="col s6 steam-logon-button">
+            <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLoginModal">
+          </div>
+        </div>
+      {{ /if }}
+    </div>
+    {{ #if currentUser }}
+      <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close btn-flat left close-signup-modal">Cancel</a>
+        <a href="#!" class="modal-action modal-close btn-flat right close-signup-modal">Done</a>
+      </div>
+    {{ /if }}
+  </div>
+</template>

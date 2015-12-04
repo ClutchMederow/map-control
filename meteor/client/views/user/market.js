@@ -103,7 +103,8 @@ Template.market.events({
       Meteor.call('startPrivateChat', this.data.user._id);
     }
   },
-  'click #addListing': function(e) {
+
+  'click .post-item': function(e) {
     e.preventDefault();
     Session.set('listing', true);
   },
@@ -115,5 +116,10 @@ Template.market.events({
 
     limit += 5;
     instance.limit.set(limit);
-  }
+  },
+
+  'click .sign-up-trigger': function(e) {
+    e.preventDefault();
+    $('#signup-modal').openModal();
+  },
 });
