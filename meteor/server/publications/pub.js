@@ -46,19 +46,11 @@ Meteor.publish('listings', function(selector, searchText, options) {
   check(searchText, String);
   check(options, Object);
 
-
-  selector = _.extend(selector, {closeDate: null});
-
   if(searchText) {
-    var searchReg = new RegExp(searchText, 'ig');
-    selector = _.extend(selector, {$or: [{"items.name": {$in: [searchReg]}}, 
-                         {"items.internal_name": {$in: [searchReg]}}]});
-    console.log(selector);
-   return Listings.find(selector);
-  } else {
-    console.log(selector);
-    return Listings.find(selector, options);
+    var searchReg = new RegExp(searchText, 'i');
+    selector = _.extend(selector, {"items.name": searchReg});
   }
+  return Listings.find(selector, options);
 });
 
 Meteor.publish('transactions', function() {

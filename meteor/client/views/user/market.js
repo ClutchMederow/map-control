@@ -25,16 +25,18 @@ Template.market.onCreated(function() {
     var limit = instance.limit.get();
     console.log("Asking for " + limit + " listings...");
 
-    //if subscription ready, set limit to newlimit
-    //note: this is to match publication function for security
-    var filterSelector = genericFilter.getName().length ? { 'items.tags.internal_name': { $in: genericFilter.getName() }} : {};
-    //either 'All' or a userId from router
-    var selector = filterSelector;
-    if(this.userId) {
-      selector = _.extend(filterSelector, {"user._id": this.userId});
+    var filterSelector = {closeDate: null};
+
+    if(genericFilter.getName().length) {
+      filterSelector = _.extend(filterSelector, 
+        {'items.tags.internal_name': { $in: genericFilter.getName() }});
     }
 
-    var subscription = instance.subscribe('listings', selector, searchText.get(), 
+    if(this.userId) {
+      filterSelector = _.extend(filterSelector, {"user._id": this.userId});
+    }
+
+    var subscription = instance.subscribe('listings', filterSelector, searchText.get(),
                                           {sort: {datePosted: -1 }, limit: limit});
     if(subscription.ready()) {
       console.log("> Received " + limit + " listings. \n\n");
