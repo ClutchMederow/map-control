@@ -2,10 +2,6 @@ YouTubeApi = (function() {
   var apiKey = "AIzaSyAypc74Tmhr-FFmYBnvoqaRvO6LlimTfWA";
   var baseEndpoint = "https://www.googleapis.com/youtube/v3/videos";
   
-  //TODO: put in config the search terms, etc. 
-
-  var channelList = [];
-  
   return {
     initialize: function() {
       gapi.client.setApiKey(apiKey);

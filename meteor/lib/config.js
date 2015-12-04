@@ -28,7 +28,12 @@ Config = {
     maxTimePeriod: 3, //days
     maxAddAmount: 1000, //usd
     maxWithdrawAmount: 1000, //usd
-  }
+  },
+
+  youtube: {
+    tutorialChannels: ['TheWarOwl', '3kliksphilip', 'adreN_TV'],
+    proMatches: ['ESEA', 'ESL', 'FACEITvods', 'csgo.StarLadder.tv','DreamHack','playCEVO']
+  },
 };
 
 Constants = {

@@ -23,6 +23,11 @@ Router.route('/bitcoin', {
   template: 'bitcoin'
 });
 
+Router.route('/youtube', {
+  name: 'youtube',
+  template: 'youtube'
+});
+
 Router.route('/ironbucks', {
   name: 'ironBucks',
   template: 'ironBucks'
