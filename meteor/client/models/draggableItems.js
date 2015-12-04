@@ -163,6 +163,15 @@ function createTooltipHtml(data) {
     tooltipElement.append($notTradable);
   }
 
+  //add item prices
+  if(data.prices) {
+    var $prices = $('<div><br>Median Price: $' + data.prices.median_price + 
+                    '<br><br>Price Range: $' + data.prices.lowest_price + ' - $' + 
+                    data.prices.highest_price + 
+                    '<br><br>Trading Volume: ' +  data.prices.volume + '</div>');
+    $prices.addClass("item-info-type");
+    tooltipElement.append($prices);
+  }
   return tooltipElement;
 }
 

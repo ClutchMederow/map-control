@@ -14,6 +14,11 @@
     </div>
   </div>
   <div class="row">
+    <div class="col s6 offset-s3 center-align">
+      <a class="waves-effect waves-light black btn" id="addListing">Add Listing</a>
+    </div>
+  </div>
+  <div class="row">
     <div class="col s2">
       <div id="slide-out">
         {{> genericItems }}
@@ -37,6 +42,13 @@
         {{ else }}
           <div class="col s10 center">There are no items that match your search criteria</div>
         {{ /each }}
+        {{#if Template.subscriptionsReady}}
+          {{#if hasMoreListings}}
+          <a class="waves-effect waves-default center btn if-btn" id="loadMore">Load more</a>
+          {{/if}}
+        {{else}}
+          <div class="loading">{{> spinner}}</div>
+        {{/if}}
       </div>
     </div>
   </div>

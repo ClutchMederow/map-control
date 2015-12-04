@@ -39,8 +39,18 @@ Meteor.publish('marketItems', function(){
   }});
 });
 
-Meteor.publish('listings', function() {
-  return Listings.find({ closeDate: null });
+//Note: safer to check these objects individually then
+//build a single composite options object
+Meteor.publish('listings', function(selector, searchText, options) {
+  check(selector, Object);
+  check(searchText, String);
+  check(options, Object);
+
+  if(searchText) {
+    var searchReg = new RegExp(searchText, 'i');
+    selector = _.extend(selector, {"items.name": searchReg});
+  }
+  return Listings.find(selector, options);
 });
 
 Meteor.publish('transactions', function() {
