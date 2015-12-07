@@ -31,7 +31,8 @@ Config = {
   },
 
   youtube: {
-    tutorialChannels: ['TheWarOwl', '3kliksphilip', 'adreN_TV'],
+    //curseCS = adreN_TV
+    tutorialChannels: ['TheWarOwl', '3kliksphilip', 'CurseCS'],
     proMatches: ['ESEA', 'ESL', 'FACEITvods', 'csgo.StarLadder.tv','DreamHack','playCEVO']
   },
 };

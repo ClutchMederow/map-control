@@ -3,23 +3,28 @@ YouTubeApi = (function() {
   var baseEndpoint = "https://www.googleapis.com/youtube/v3/videos";
   
   return {
-    initialize: function() {
+    initialize: function(callback) {
       gapi.client.setApiKey(apiKey);
       gapi.client.load("youtube","v3").then(function() {
-        console.log("loaded");
+        callback();
       });
     },
 
-    insertChannel: function(channelName, callback) {
+    getChannelId: function(channelName, callback) {
       var paramList = {
         part: "id",
-        forUserName: channelName,
+        forUsername: channelName,
       };
       
       var request = gapi.client.youtube.channels.list(paramList);
 
-      request.execute(function(response, callback){
-        callback(error, response);
+      request.execute(function(response){
+        //TODO: handle errors here
+        if(response.items.length === 0) {
+          callback("NO ITEMS FOUND", null);
+        } else {
+          callback(null, response);
+        }
       });
 
     },
