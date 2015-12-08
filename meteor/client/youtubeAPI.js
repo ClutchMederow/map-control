@@ -29,7 +29,7 @@ YouTubeApi = (function() {
 
     },
 
-    getListOfVideos: function(queryString, channelIds, callback) {
+    getListOfVideos: function(queryString, channelId, callback) {
       //Note: due to the API restrictions, you have to 
       //search for a list of videos, then 
       //use their ids to search for viewcounts
@@ -39,8 +39,8 @@ YouTubeApi = (function() {
         paramList = _.extend(paramList, {q: queryString});
       }
 
-      if(channelIds) {
-        paramList = _.extend(paramList, {channelId: channelIds });
+      if(channelId) {
+        paramList = _.extend(paramList, {channelId: channelId});
       }
 
       var twoWeeksAgo = new Date();
@@ -57,7 +57,8 @@ YouTubeApi = (function() {
       //on click of thumbnail, boot up youtube iframe?
       var request = gapi.client.youtube.search.list(paramList);
       request.execute(function(response){
-        callback(response);
+        //handle errors
+        callback(null, response);
       });
     }   
   };
