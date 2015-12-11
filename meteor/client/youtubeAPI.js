@@ -21,7 +21,6 @@ YouTubeApi = (function() {
       request.execute(function(response){
         //TODO: handle errors here
         if(response.items.length === 0) {
-          console.log(channelName);
           callback("NO ITEMS FOUND", null);
         } else {
           callback(null, response);
