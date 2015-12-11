@@ -8,6 +8,11 @@ Router.route('/content', {
   template: 'content'
 });
 
+Router.route('/videos', {
+  name: 'videos',
+  template: 'youtube'
+});
+
 Router.route('/help', {
   name: 'help',
   template: 'help'
@@ -21,6 +26,11 @@ Router.route('/learn', {
 Router.route('/bitcoin', {
   name: 'bitcoin',
   template: 'bitcoin'
+});
+
+Router.route('/youtube', {
+  name: 'youtube',
+  template: 'youtube'
 });
 
 Router.route('/ironbucks', {
