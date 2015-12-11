@@ -8,6 +8,11 @@ Router.route('/content', {
   template: 'content'
 });
 
+Router.route('/videos', {
+  name: 'videos',
+  template: 'youtube'
+});
+
 Router.route('/help', {
   name: 'help',
   template: 'help'

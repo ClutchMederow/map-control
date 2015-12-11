@@ -60,6 +60,22 @@ YouTubeApi = (function() {
         //handle errors
         callback(null, response);
       });
-    }   
+    },
+
+    //TODO: expand this to take a list of video ids to reduce quota cost
+    getVideoDetails: function(videoId, callback) {
+      var paramList = {};
+
+      paramList = _.extend(paramList, {
+        part: "snippet,contentDetails,statistics",
+        id: videoId
+      });
+
+      var request = gapi.client.youtube.videos.list(paramList);
+      request.execute(function(response) {
+        //TODO: handle errors
+        callback(null, response);
+      });
+    }
   };
 })();
