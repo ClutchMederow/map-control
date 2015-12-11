@@ -29,7 +29,7 @@ YouTubeApi = (function() {
 
     },
 
-    getListOfVideos: function(queryString, channelId, callback) {
+    getListOfVideos: function(queryString, channelId, pageToken, callback) {
       //Note: due to the API restrictions, you have to 
       //search for a list of videos, then 
       //use their ids to search for viewcounts
@@ -43,6 +43,10 @@ YouTubeApi = (function() {
         paramList = _.extend(paramList, {channelId: channelId});
       }
 
+      if(pageToken) {
+        paramList = _.extend(paramList, {pageToken: pageToken});
+      }
+
       var twoWeeksAgo = new Date();
       twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
@@ -50,7 +54,8 @@ YouTubeApi = (function() {
         part: "snippet",
         type: "video",
         publishedAfter: twoWeeksAgo.toISOString(),
-        order: "date",
+        maxResults: 5, //actually results per page
+        order: "viewCount",
       });
 
       //Probably want to grab description, title, and thumbnail

@@ -35,6 +35,12 @@ Config = {
     tutorialChannels: ['TheWarOwl', '3kliksphilip', 'CurseCS'],
     proMatches: ['goesea', 'ESL', 'FACEITvods', 'cssltv','DreamhackMedia','playCEVO']
   },
+  youtubeSearch: {
+    searchPart: "snippet",
+    type: "video",
+    maxResults: 5,
+    daysAgo: 14
+  }
 };
 
 Constants = {
