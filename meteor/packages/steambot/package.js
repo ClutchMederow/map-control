@@ -9,6 +9,10 @@ Package.describe({
 Npm.depends({
   'steam': '0.6.7',
   'steam-tradeoffers': '1.2.3',
+  'steamcommunity': '3.14.1',
+  'steamcommunity-mobile-confirmations': '1.0.1',
+  'steam-totp': '1.1.0',
+  'steamstore': '1.2.0',
 });
 
 Package.onUse(function(api) {
