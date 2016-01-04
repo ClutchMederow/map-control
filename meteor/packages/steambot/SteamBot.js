@@ -1,19 +1,46 @@
-SteamBot = function(accountName, password, authCode, SteamAPI) {
+var fs = Npm.require("fs");
+var Future = Npm.require('fibers/future');
+var Fiber = Npm.require('fibers');
+var Steam = Npm.require('steam');
+var SteamStore = Npm.require('steamstore');
+var User = Npm.require('steam-user');
+var SteamTotp = Npm.require('steam-totp');
+var SteamTradeOffers = Npm.require('steam-tradeoffers');
+
+SteamBot = function(bot, SteamAPI) {
   this.Future = Npm.require('fibers/future');
   // TODO: verify inputs
-  var Steam = Npm.require('steam');
-  var SteamTradeOffers = Npm.require('steam-tradeoffers');
-  var SteamCommunity = Npm.require('steamcommunity');
-  var SteamStore = Npm.require('steamstore');
+  // var Steam = Npm.require('steam');
+  // var SteamTradeOffers = Npm.require('steam-tradeoffers');
+  // var SteamCommunity = Npm.require('steamcommunity');
+  // var SteamStore = Npm.require('steamstore');
 
-  this.authCode = authCode;
+  // this.authCode = authCode;
   this.SteamAPI = SteamAPI;
-  this.botName = accountName;
+  // this.botName = accountName;
+
+  // this.steam = new Steam.SteamClient();
+  // this.offers = new SteamTradeOffers();
+  // this.community = new SteamCommunity();
+  // this.store = new SteamStore();
+
+  /* ------------ */
+  var userOptions = {
+    promptSteamGuardCode: false,
+    singleSentryfile: true,
+    dataDirectory: '../../meteor/private',
+  };
 
   this.steam = new Steam.SteamClient();
-  this.offers = new SteamTradeOffers();
-  this.community = new SteamCommunity();
+  this.user = new User(this.steam, userOptions);
   this.store = new SteamStore();
+  this.offers = new SteamTradeOffers();
+
+  this.botName = bot.name;
+  this.password = bot.password;
+  this.sharedSecret = bot.twoFactor.shared_secret;
+
+  /* ------------ */
 
   this.sessionID = '';
   this.items = new Meteor.Collection(null);
@@ -27,122 +54,213 @@ SteamBot = function(accountName, password, authCode, SteamAPI) {
   this.itemsUpdatedTimestamp = new Date(1995, 11, 17);
   this.outstandingOfferCount = 0;
 
-  this.initializeTwoFactor();
+  // this.initializeTwoFactor();
 
-  this.logOnOptions = {
-    accountName: accountName,
-    password: password,
-  };
+  // this.logOnOptions = {
+  //   accountName: accountName,
+  //   password: password,
+  // };
 
   this.steam.on('error', function(err) {
     console.log(err);
     console.log(err.eresult);
   });
 
+  this.user.on('error', function(err) {
+    console.log(err);
+    console.log(err.eresult);
+  });
+
   // this.logOn();
-  this.communityLogOn();
-  this.tradeOffersLogOn();
+  // this.communityLogOn();
+  // this.tradeOffersLogOn();
   // this.webLogOn();
-  this.loadTradeToken();
+  // this.loadTradeToken();
 };
 
 SteamBot.prototype.logOn = function() {
-
   // NOTES
   // May want to reference some master list of steam servers in case we don't receive a valid one
 
   var self = this;
-  var Steam = Npm.require('steam');
-  var SteamTradeOffers = Npm.require('steam-tradeoffers');
+  var future = new Future();
 
-  if (self.steam.connected) {
-    return;
-  }
+  var baseDir = process.cwd().split('meteor')[0];
+  var tokenPath = baseDir + 'meteor/private/sentry.bin';
+  var sentry = fs.readFileSync(tokenPath);
+  this.user.setSentry(sentry);
 
-  var tokenPath;
+  var logOnOptions = {
+    accountName: self.botName,
+    password: self.password,
+    two_factor_code: self.generateAuthCode(),
+  };
 
-  if (Meteor.settings.environment === 'dev') {
-    var baseDir = process.cwd().split('meteor')[0];
-    tokenPath = baseDir + 'meteor/private/steambot-auth/' + self.logOnOptions.accountName;
-  } else {
-    tokenPath = 'assets/app/steambot-auth/' + self.logOnOptions.accountName;
-  }
+  this.steam.connect = function() {
+    this.logOn(logOnOptions);
+  };
 
-  // use the sentry token if it exists
-  if (Npm.require('fs').existsSync(tokenPath)) {
-    self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
-  } else if (self.authCode != '') {
-    self.logOnOptions['authCode'] = self.authCode;
-  }
+  console.log(this.botName + ' logging in...');
+  this.user.logOn(logOnOptions);
 
-  // use 2FA if set up
-  if (this.twoFactorCodes && this.twoFactorCodes.key) {
-    self.logOnOptions.twoFactorCode = this.twoFactorCodes.key;
-  }
+  // Steamguard event
+  this.user.on('steamGuard', function(domain, cb, lastCodeWrong) {
+    console.log('steamguard');
+    if (lastCodeWrong && !future.isResolved()) {
+      future.throw(new Error('Bad steamguard code'));
+    }
 
-  self.steam.logOn(self.logOnOptions);
-  self.steam.on('debug', console.log);
+    var code = self.generateAuthCode();
+    cb(code);
 
-  var Future = Npm.require('fibers/future');
-  var logOnFuture = new Future();
-  var logOnResolver = logOnFuture.resolver();
-
-  self.steam.once('loggedOn', function(result) {
-    console.log('Logged in!');
-    self.steam.setPersonaState(Steam.EPersonaState.Online);
-
-    // We need to avoid resolving this future more than once if we get disconnected and reconnect
-    if (!logOnFuture.isResolved())
-      logOnResolver(result);
+    /// ADD FUTURE HERE
   });
 
-  var sessionFuture = new Future();
-  var sessionResolver = sessionFuture.resolver();
+  this.user.on('error', function(err) {
+    console.log(self.botName + ' logon error');
+    future.throw(err);
+  });
 
-  self.steam.once('webSessionID', function(sessionID) {
+  // No need to include future here as webSession requires loggedOn
+  this.user.on('loggedOn', function() {
+    console.log(self.botName + ' logged in!');
+  });
+
+  // Get the webSession data to prime SteamStore
+  this.user.on('webSession', function(sessionId, cookie) {
+    console.log(self.botName + ' webSession received');
+
     self.sessionID = sessionID;
+    self.cookie = cookie;
 
-    // We need to avoid resolving this future more than once if we get disconnected and reconnect
-    if (!sessionFuture.isResolved()) {
-      sessionResolver();
+    self.store.setCookies(cookie);
+    if (!future.isResolved()) {
+      future.return();
     }
   });
 
-  // Save the token
-  self.steam.once('sentry', function(data) {
-    Npm.require('fs').writeFileSync(tokenPath, data);
-  });
-
-  Future.wait([logOnFuture, sessionFuture]);
-
-  // logOnFuture.get();
-  // sessionFuture.get();
-};
-
-SteamBot.prototype.webLogOn = function() {
-  var Future = Npm.require('fibers/future');
-  var future = new Future();
-  var self = this;
-
-  self.steam.webLogOn(function(newCookie){
-    self.cookie = newCookie;
-    self.community.setCookies(self.cookie);
-    self.store.setCookies(self.cookie);
-
-    self.offers.setup({
-      sessionID: self.sessionID,
-      webCookie: newCookie,
-    }, function(err) {
-      if (err) {
-        future.throw(err);
-      } else {
-        future.return();
-      }
-    });
-  });
-
   future.wait();
+
+  // Remove listeners to avoid resolving a future twice
+  // These are async but fuck it
+  this.user.removeListener('steamGuard')
+    .removeListener('error')
+    .removeListener('loggedOn')
+    .removeListener('webSession');
 };
+
+// SteamBot.prototype.logOn = function() {
+//   // NOTES
+//   // May want to reference some master list of steam servers in case we don't receive a valid one
+
+//   var self = this;
+//   var Steam = Npm.require('steam');
+//   var SteamTradeOffers = Npm.require('steam-tradeoffers');
+
+//   if (self.steam.connected) {
+//     return;
+//   }
+
+//   // var tokenPath;
+
+//   // if (Meteor.settings.environment === 'dev') {
+//   //   var baseDir = process.cwd().split('meteor')[0];
+//   //   tokenPath = baseDir + 'meteor/private/sentry.bin';
+//   // } else {
+//   //   tokenPath = 'assets/app/sentry.bin';
+//   // }
+
+//   // // use the sentry token if it exists
+//   // if (Npm.require('fs').existsSync(tokenPath)) {
+//   //   self.logOnOptions['shaSentryfile'] = Npm.require('fs').readFileSync(tokenPath);
+//   // } else if (self.authCode != '') {
+//   //   self.logOnOptions['authCode'] = self.authCode;
+//   // }
+
+//   // // use 2FA if set up
+//   // if (this.twoFactorCodes && this.twoFactorCodes.key) {
+//   //   self.logOnOptions.twoFactorCode = this.twoFactorCodes.key;
+//   // }
+
+//   var logOnOptions = {
+//     accountName: self.botName,
+//     password: self.password,
+//     twoFactorCode: self.generateAuthCode(),
+//   };
+
+//   self.steam.logOn(logOnOptions);
+//   self.steam.on('debug', console.log);
+
+//   var Future = Npm.require('fibers/future');
+//   var logOnFuture = new Future();
+//   var logOnResolver = logOnFuture.resolver();
+
+//   self.steam.once('loggedOn', function(result) {
+//     console.log('Logged in!');
+//     self.steam.setPersonaState(Steam.EPersonaState.Online);
+
+//     // We need to avoid resolving this future more than once if we get disconnected and reconnect
+//     if (!logOnFuture.isResolved())
+//       logOnResolver(result);
+//   });
+
+//   var sessionFuture = new Future();
+//   var sessionResolver = sessionFuture.resolver();
+
+//   self.steam.once('webSessionID', function(sessionID) {
+//     self.sessionID = sessionID;
+
+//     // We need to avoid resolving this future more than once if we get disconnected and reconnect
+//     if (!sessionFuture.isResolved()) {
+//       sessionResolver();
+//     }
+//   });
+
+//   // Save the token
+//   self.steam.once('sentry', function(data) {
+//     Npm.require('fs').writeFileSync(tokenPath, data);
+//   });
+
+//   Future.wait([logOnFuture, sessionFuture]);
+
+//   // logOnFuture.get();
+//   // sessionFuture.get();
+// };
+
+// SteamBot.prototype.webLogOn = function() {
+// };
+
+SteamBot.prototype.generateAuthCode = function() {
+  if (!this.sharedSecret) {
+    throw new Error('No shared secret present');
+  }
+  return SteamTotp.generateAuthCode(this.sharedSecret);
+};
+
+// SteamBot.prototype.webLogOn = function() {
+//   var Future = Npm.require('fibers/future');
+//   var future = new Future();
+//   var self = this;
+
+//   self.steam.webLogOn(function(newCookie){
+//     self.cookie = newCookie;
+//     self.community.setCookies(self.cookie);
+//     self.store.setCookies(self.cookie);
+
+//     self.offers.setup({
+//       sessionID: self.sessionID,
+//       webCookie: newCookie,
+//     }, function(err) {
+//       if (err) {
+//         future.throw(err);
+//       } else {
+//         future.return();
+//       }
+//     });
+//   });
+
+//   future.wait();
+// };
 
 SteamBot.prototype.tradeOffersLogOn = function() {
   var self = this;
@@ -522,95 +640,95 @@ SteamBot.prototype.cancelOldOffers = function(offers) {
   });
 };
 
-SteamBot.prototype.setupPhone = function() {
-  var phone = '+19524512592';
+// SteamBot.prototype.setupPhone = function() {
+//   var phone = '+19524512592';
 
-  var future = new this.Future();
+//   var future = new this.Future();
 
-  this.store.addPhoneNumber(phone, function(err) {
-    if (err) {
-      console.log(err);
-      future.throw();
-    } else {
-      console.log('Phone verification sent');
-      future.return();
-    }
-  });
+//   this.store.addPhoneNumber(phone, function(err) {
+//     if (err) {
+//       console.log(err);
+//       future.throw();
+//     } else {
+//       console.log('Phone verification sent');
+//       future.return();
+//     }
+//   });
 
-  future.wait();
-};
+//   future.wait();
+// };
 
-SteamBot.prototype.confirmPhone = function(code) {
-  var future = new this.Future();
+// SteamBot.prototype.confirmPhone = function(code) {
+//   var future = new this.Future();
 
-  this.store.verifyPhoneNumber(code, function(err) {
-    if (err) {
-      console.log(err);
-      future.throw();
-    } else {
-      console.log('Number successfully added!');
-      future.return();
-    }
-  });
+//   this.store.verifyPhoneNumber(code, function(err) {
+//     if (err) {
+//       console.log(err);
+//       future.throw();
+//     } else {
+//       console.log('Number successfully added!');
+//       future.return();
+//     }
+//   });
 
-  return future.wait();
-};
+//   return future.wait();
+// };
 
-SteamBot.prototype.enableTwoFactor = function() {
-  var future = new this.Future();
+// SteamBot.prototype.enableTwoFactor = function() {
+//   var future = new this.Future();
 
-  this.community.enableTwoFactor(function(err, res) {
-    if (err) {
-      future.throw(err);
-    } else {
-      future.return(res);
-    }
-  });
+//   this.community.enableTwoFactor(function(err, res) {
+//     if (err) {
+//       future.throw(err);
+//     } else {
+//       future.return(res);
+//     }
+//   });
 
-  var result = future.wait();
-  Bots.upsert({ name: this.botName }, { $set: { twoFactor: result } });
-  console.log('Two factor phone verification sent');
-};
+//   var result = future.wait();
+//   Bots.upsert({ name: this.botName }, { $set: { twoFactor: result } });
+//   console.log('Two factor phone verification sent');
+// };
 
-SteamBot.prototype.finalizeTwoFactor = function(code) {
-  var future = new this.Future();
+// SteamBot.prototype.finalizeTwoFactor = function(code) {
+//   var future = new this.Future();
 
-  var bot = Bots.findOne({ name: this.botName });
-  this.community.finalizeTwoFactor(bot.twoFactor.shared_secret, code, function(err) {
-    if (err) {
-      future.throw(err);
-    } else {
-      future.return();
-    }
-  });
+//   var bot = Bots.findOne({ name: this.botName });
+//   this.community.finalizeTwoFactor(bot.twoFactor.shared_secret, code, function(err) {
+//     if (err) {
+//       future.throw(err);
+//     } else {
+//       future.return();
+//     }
+//   });
 
-  future.wait();
-  console.log('Successfully finalized two factor');
-};
+//   future.wait();
+//   console.log('Successfully finalized two factor');
+// };
 
-SteamBot.prototype.initializeTwoFactor = function() {
-  var SteamTotp = Npm.require('steam-totp');
+// SteamBot.prototype.initializeTwoFactor = function() {
+//   var SteamTotp = Npm.require('steam-totp');
 
-  var bot = Bots.findOne({ name: this.botName });
-  if (!bot) {
-    console.log('Two factor not yet set up');
-    return;
-    // throw new Error('No bot found in collection');
-  }
+//   var bot = Bots.findOne({ name: this.botName });
+//   if (!bot) {
+//     console.log('Two factor not yet set up');
+//     return;
+//     // throw new Error('No bot found in collection');
+//   }
 
-  var timekey = Math.round(Date.now() / 1000);
-  var sharedSecret = bot.twoFactor.shared_secret.toString('base64');
-  var code = SteamTotp.generateAuthCode(sharedSecret);
+//   var timekey = Math.round(Date.now() / 1000);
+//   var sharedSecret = bot.twoFactor.shared_secret.toString('base64');
+//   var code = SteamTotp.generateAuthCode(sharedSecret);
 
-  this.twoFactorCodes = {
-    timekey: timekey,
-    sharedSecret: sharedSecret,
-    key: code,
-  };
+//   this.twoFactorCodes = {
+//     timekey: timekey,
+//     sharedSecret: sharedSecret,
+//     key: code,
+//   };
 
-  console.log(sharedSecret);
-  console.log(code);
-};
+//   console.log(sharedSecret);
+//   console.log(code);
+// };
 
 SteamBot.prototype.confirmMobile = function() {
   var future = new this.Future();
@@ -649,14 +767,14 @@ SteamBot.prototype.alignTime = function() {
   return diff;
 };
 
-SteamBot.addExternalCode = function(accountName) {
-  var fs = Npm.require('fs');
-  var baseDir = process.cwd().split('meteor')[0];
-  var filename = baseDir + 'scripts/setup2FA/' + accountName + '.2fa';
+// SteamBot.addExternalCode = function(accountName) {
+//   var fs = Npm.require('fs');
+//   var baseDir = process.cwd().split('meteor')[0];
+//   var filename = baseDir + 'scripts/setup2FA/' + accountName + '.2fa';
 
-  var data = JSON.parse(fs.readFileSync(filename, 'utf8'));
-  Bots.upsert({ name: accountName }, { $set: { twoFactor: data } });
-};
+//   var data = JSON.parse(fs.readFileSync(filename, 'utf8'));
+//   Bots.upsert({ name: accountName }, { $set: { twoFactor: data } });
+// };
 
 SteamBot.prototype.communityLogOn = function() {
   var self = this;

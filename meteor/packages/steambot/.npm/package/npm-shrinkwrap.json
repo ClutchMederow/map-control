@@ -332,6 +332,341 @@
         }
       }
     },
+    "steam-user": {
+      "version": "3.3.0",
+      "dependencies": {
+        "steamid": {
+          "version": "0.3.1",
+          "dependencies": {
+            "cuint": {
+              "version": "0.1.5"
+            }
+          }
+        },
+        "appdirectory": {
+          "version": "0.1.0"
+        },
+        "protobufjs": {
+          "version": "4.1.3",
+          "dependencies": {
+            "ascli": {
+              "version": "1.0.0",
+              "dependencies": {
+                "colour": {
+                  "version": "0.7.1"
+                },
+                "optjs": {
+                  "version": "3.2.1-boom"
+                }
+              }
+            },
+            "bytebuffer": {
+              "version": "4.1.0",
+              "dependencies": {
+                "long": {
+                  "version": "2.4.0"
+                },
+                "bufferview": {
+                  "version": "1.0.1"
+                }
+              }
+            },
+            "glob": {
+              "version": "5.0.15",
+              "dependencies": {
+                "inflight": {
+                  "version": "1.0.4",
+                  "dependencies": {
+                    "wrappy": {
+                      "version": "1.0.1"
+                    }
+                  }
+                },
+                "inherits": {
+                  "version": "2.0.1"
+                },
+                "minimatch": {
+                  "version": "3.0.0",
+                  "dependencies": {
+                    "brace-expansion": {
+                      "version": "1.1.2",
+                      "dependencies": {
+                        "balanced-match": {
+                          "version": "0.3.0"
+                        },
+                        "concat-map": {
+                          "version": "0.0.1"
+                        }
+                      }
+                    }
+                  }
+                },
+                "once": {
+                  "version": "1.3.3",
+                  "dependencies": {
+                    "wrappy": {
+                      "version": "1.0.1"
+                    }
+                  }
+                },
+                "path-is-absolute": {
+                  "version": "1.0.0"
+                }
+              }
+            },
+            "yargs": {
+              "version": "3.31.0",
+              "dependencies": {
+                "camelcase": {
+                  "version": "2.0.1"
+                },
+                "cliui": {
+                  "version": "3.1.0",
+                  "dependencies": {
+                    "strip-ansi": {
+                      "version": "3.0.0",
+                      "dependencies": {
+                        "ansi-regex": {
+                          "version": "2.0.0"
+                        }
+                      }
+                    },
+                    "wrap-ansi": {
+                      "version": "1.0.0"
+                    }
+                  }
+                },
+                "decamelize": {
+                  "version": "1.1.2",
+                  "dependencies": {
+                    "escape-string-regexp": {
+                      "version": "1.0.4"
+                    }
+                  }
+                },
+                "os-locale": {
+                  "version": "1.4.0",
+                  "dependencies": {
+                    "lcid": {
+                      "version": "1.0.0",
+                      "dependencies": {
+                        "invert-kv": {
+                          "version": "1.0.0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "string-width": {
+                  "version": "1.0.1",
+                  "dependencies": {
+                    "code-point-at": {
+                      "version": "1.0.0",
+                      "dependencies": {
+                        "number-is-nan": {
+                          "version": "1.0.0"
+                        }
+                      }
+                    },
+                    "is-fullwidth-code-point": {
+                      "version": "1.0.0",
+                      "dependencies": {
+                        "number-is-nan": {
+                          "version": "1.0.0"
+                        }
+                      }
+                    },
+                    "strip-ansi": {
+                      "version": "3.0.0",
+                      "dependencies": {
+                        "ansi-regex": {
+                          "version": "2.0.0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "window-size": {
+                  "version": "0.1.4"
+                },
+                "y18n": {
+                  "version": "3.2.0"
+                }
+              }
+            }
+          }
+        },
+        "steam-client": {
+          "version": "1.1.1",
+          "dependencies": {
+            "adm-zip": {
+              "version": "0.4.7"
+            },
+            "buffer-crc32": {
+              "version": "0.2.5"
+            },
+            "bytebuffer": {
+              "version": "https://sinopia.doctormckay.com/bytebuffer/-/bytebuffer-5.0.0.tgz"
+            },
+            "steam-resources": {
+              "version": "git://github.com/seishun/node-steam-resources.git#1403939a12ba467a4b82c8ccbc279bbcdad43588"
+            },
+            "ansi-regex": {
+              "version": "https://sinopia.doctormckay.com/ansi-regex/-/ansi-regex-2.0.0.tgz"
+            },
+            "ascli": {
+              "version": "https://sinopia.doctormckay.com/ascli/-/ascli-1.0.0.tgz"
+            },
+            "balanced-match": {
+              "version": "https://sinopia.doctormckay.com/balanced-match/-/balanced-match-0.3.0.tgz"
+            },
+            "brace-expansion": {
+              "version": "https://sinopia.doctormckay.com/brace-expansion/-/brace-expansion-1.1.2.tgz"
+            },
+            "bufferview": {
+              "version": "https://sinopia.doctormckay.com/bufferview/-/bufferview-1.0.1.tgz"
+            },
+            "camelcase": {
+              "version": "https://sinopia.doctormckay.com/camelcase/-/camelcase-2.0.1.tgz"
+            },
+            "code-point-at": {
+              "version": "https://sinopia.doctormckay.com/code-point-at/-/code-point-at-1.0.0.tgz"
+            },
+            "cliui": {
+              "version": "https://sinopia.doctormckay.com/cliui/-/cliui-3.1.0.tgz"
+            },
+            "colour": {
+              "version": "https://sinopia.doctormckay.com/colour/-/colour-0.7.1.tgz"
+            },
+            "concat-map": {
+              "version": "https://sinopia.doctormckay.com/concat-map/-/concat-map-0.0.1.tgz"
+            },
+            "decamelize": {
+              "version": "https://sinopia.doctormckay.com/decamelize/-/decamelize-1.1.1.tgz"
+            },
+            "glob": {
+              "version": "https://sinopia.doctormckay.com/glob/-/glob-5.0.15.tgz"
+            },
+            "inherits": {
+              "version": "https://sinopia.doctormckay.com/inherits/-/inherits-2.0.1.tgz"
+            },
+            "inflight": {
+              "version": "https://sinopia.doctormckay.com/inflight/-/inflight-1.0.4.tgz"
+            },
+            "invert-kv": {
+              "version": "https://sinopia.doctormckay.com/invert-kv/-/invert-kv-1.0.0.tgz"
+            },
+            "is-fullwidth-code-point": {
+              "version": "https://sinopia.doctormckay.com/is-fullwidth-code-point/-/is-fullwidth-code-point-1.0.0.tgz"
+            },
+            "lcid": {
+              "version": "https://sinopia.doctormckay.com/lcid/-/lcid-1.0.0.tgz"
+            },
+            "long": {
+              "version": "https://sinopia.doctormckay.com/long/-/long-3.0.1.tgz"
+            },
+            "minimatch": {
+              "version": "https://sinopia.doctormckay.com/minimatch/-/minimatch-3.0.0.tgz"
+            },
+            "number-is-nan": {
+              "version": "https://sinopia.doctormckay.com/number-is-nan/-/number-is-nan-1.0.0.tgz"
+            },
+            "once": {
+              "version": "https://sinopia.doctormckay.com/once/-/once-1.3.3.tgz"
+            },
+            "optjs": {
+              "version": "https://sinopia.doctormckay.com/optjs/-/optjs-3.2.1-boom.tgz"
+            },
+            "os-locale": {
+              "version": "https://sinopia.doctormckay.com/os-locale/-/os-locale-1.4.0.tgz"
+            },
+            "path-is-absolute": {
+              "version": "https://sinopia.doctormckay.com/path-is-absolute/-/path-is-absolute-1.0.0.tgz"
+            },
+            "string-width": {
+              "version": "https://sinopia.doctormckay.com/string-width/-/string-width-1.0.1.tgz"
+            },
+            "strip-ansi": {
+              "version": "https://sinopia.doctormckay.com/strip-ansi/-/strip-ansi-3.0.0.tgz"
+            },
+            "window-size": {
+              "version": "https://sinopia.doctormckay.com/window-size/-/window-size-0.1.4.tgz"
+            },
+            "wrap-ansi": {
+              "version": "https://sinopia.doctormckay.com/wrap-ansi/-/wrap-ansi-1.0.0.tgz"
+            },
+            "wrappy": {
+              "version": "https://sinopia.doctormckay.com/wrappy/-/wrappy-1.0.1.tgz"
+            },
+            "y18n": {
+              "version": "https://sinopia.doctormckay.com/y18n/-/y18n-3.2.0.tgz"
+            },
+            "yargs": {
+              "version": "https://sinopia.doctormckay.com/yargs/-/yargs-3.31.0.tgz"
+            },
+            "protobufjs": {
+              "version": "https://sinopia.doctormckay.com/protobufjs/-/protobufjs-4.1.3.tgz",
+              "dependencies": {
+                "bytebuffer": {
+                  "version": "https://sinopia.doctormckay.com/bytebuffer/-/bytebuffer-4.1.0.tgz"
+                },
+                "long": {
+                  "version": "https://sinopia.doctormckay.com/long/-/long-2.4.0.tgz"
+                }
+              }
+            }
+          }
+        },
+        "bytebuffer": {
+          "version": "5.0.0",
+          "dependencies": {
+            "long": {
+              "version": "3.0.1"
+            }
+          }
+        },
+        "steam-crypto": {
+          "version": "0.0.1"
+        },
+        "vdf": {
+          "version": "0.0.2",
+          "dependencies": {
+            "util": {
+              "version": "0.10.3",
+              "dependencies": {
+                "inherits": {
+                  "version": "2.0.1"
+                }
+              }
+            }
+          }
+        },
+        "binarykvparser": {
+          "version": "2.0.0",
+          "dependencies": {
+            "bytebuffer": {
+              "version": "4.1.0",
+              "dependencies": {
+                "long": {
+                  "version": "2.4.0"
+                },
+                "bufferview": {
+                  "version": "1.0.1"
+                }
+              }
+            }
+          }
+        },
+        "file-manager": {
+          "version": "1.0.0",
+          "dependencies": {
+            "async": {
+              "version": "1.5.1"
+            }
+          }
+        }
+      }
+    },
     "steamcommunity": {
       "version": "3.14.1",
       "dependencies": {

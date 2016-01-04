@@ -24,7 +24,7 @@ function doBots(bots) {
     // var bots = JSON.parse(fs.readFileSync(botPath, 'utf8')).bots;
 
     // bots.forEach(function(bot) {
-    var bot = new SteamBot(bots[9]);
+    var bot = new SteamBot(bots[11]);
     setUpBot(bot);
     // });
 

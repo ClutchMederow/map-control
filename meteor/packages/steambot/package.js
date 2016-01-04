@@ -8,6 +8,8 @@ Package.describe({
 
 Npm.depends({
   'steam': '0.6.7',
+  'steam-user': '3.3.0',
+  'steamstore': '1.3.0',
   'steam-tradeoffers': '1.2.3',
   'steamcommunity': '3.14.1',
   'steamcommunity-mobile-confirmations': '1.0.1',
