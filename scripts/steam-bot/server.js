@@ -2,6 +2,10 @@ var fs = require("fs");
 var Future = require('fibers/future');
 var Fiber = require('fibers');
 var SteamBot = require('./app/SteamBot');
+var Server = require('mongo-sync').Server;
+
+var db;
+var Bots;
 
 // var MongoClient = require('mongodb').MongoClient;
 // var ObjectId = require('mongodb').ObjectID;
@@ -30,8 +34,16 @@ var port = process.env.PORT || 5080;
 var router = express.Router();
 
 router.post('/dispatcher', function(req, res) {
-  console.log(req.body.botName);
-  res.json({ message: 'hooray! welcome to our api!' });
+  var future = new Future();
+
+  Fiber(function() {
+    var botName = req.body.botName;
+    getBots(future, botName);
+    var bot = future.wait();
+    var steamBot = new SteamBot(bot);
+    console.log(steamBot);
+    res.json({ bot: bot });
+  }).run();
 });
 
 // REGISTER OUR ROUTES
@@ -42,7 +54,17 @@ app.listen(port);
 console.log('Server running on port ' + port);
 
 // grand plan
-// 1. Get bots working on server
+// 1. Get bots working on server - should probably use mostly the 2fa login code and some original code
 // 2. refactor dispatcher to work outside of meteor
-// 3. refactor DB to work outside of meteor
+// 3. refactor DB to work outside of meteor or else rpc call for it
 // 4.
+
+function getBots(future, botName) {
+  var bot = Bots.findOne({ name: botName });
+  future.return(bot);
+}
+
+Fiber(function() {
+  db = new Server('localhost:3001').db('meteor');
+  Bots = db.getCollection('bots');
+}).run();
