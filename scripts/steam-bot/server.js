@@ -41,7 +41,10 @@ router.post('/dispatcher', function(req, res) {
     getBots(future, botName);
     var bot = future.wait();
     var steamBot = new SteamBot(bot);
-    console.log(steamBot);
+    steamBot.logOn();
+    steamBot.tradeOffersLogOn();
+    steamBot.loadBotInventory();
+    console.log(steamBot.getBotItems());
     res.json({ bot: bot });
   }).run();
 });
