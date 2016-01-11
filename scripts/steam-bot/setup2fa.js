@@ -30,10 +30,12 @@ function doBots(botData) {
 }
 
 function setUpBot(bot) {
-  Fiber(function() {
+  // Fiber(function() {
 
     // Log on
     bot.logOn();
+
+    // bot.requestValidationEmail();
 
     // Add phone
     // addPhone(bot);
@@ -45,8 +47,8 @@ function setUpBot(bot) {
     // confirm2Fa(bot);
 
     // db.close();
-    process.exit();
-  }).run();
+    // process.exit();
+  // }).run();
 }
 
 function addPhone(bot) {

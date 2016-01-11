@@ -1,11 +1,19 @@
-var fs = require("fs");
+// to integrate with meteor app
+global.IS_BOT_SERVER = true;
+
+var _ = require('underscore');
+var fs = require('fs');
 var Future = require('fibers/future');
 var Fiber = require('fibers');
 var SteamBot = require('./app/SteamBot');
-var Server = require('mongo-sync').Server;
+// var Bridge = require('./app/Bridge.js');
+var db = require('../../meteor/server/db/db.js');
 
-var db;
-var Bots;
+
+var Mongo = require('mongo-sync');
+var Server = Mongo.Server;
+
+var MongoDB;
 
 // var MongoClient = require('mongodb').MongoClient;
 // var ObjectId = require('mongodb').ObjectID;
@@ -44,8 +52,7 @@ router.post('/dispatcher', function(req, res) {
     steamBot.logOn();
     steamBot.tradeOffersLogOn();
     steamBot.loadBotInventory();
-    console.log(steamBot.getBotItems());
-    res.json({ bot: bot });
+    res.json({ bot: steamBot.items });
   }).run();
 });
 
@@ -68,6 +75,8 @@ function getBots(future, botName) {
 }
 
 Fiber(function() {
-  db = new Server('localhost:3001').db('meteor');
-  Bots = db.getCollection('bots');
+  MongoDB = new Server('localhost:3001').db('meteor');
+  // Bots = MongoDB.getCollection('bots');
+  console.log(db);
+  // console.log(process.ENV);
 }).run();

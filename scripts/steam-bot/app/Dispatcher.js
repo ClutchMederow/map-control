@@ -1,4 +1,4 @@
-Dispatcher = (function(SteamAPI, SteamBot) {
+var Dispatcher = (function(SteamBot, DB) {
 
   // Holds objects that represent all bots, using the botName as the key
   var bots = {};
@@ -44,7 +44,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   // Attempts to procure a new bot
   function getNewBot(bot) {
     try {
-      return new SteamBot(bot.name, bot.password, bot.authCode, SteamAPI);
+      return new SteamBot(bot.name, bot.password, bot.authCode);
     } catch(e) {
       console.log(e);
     }
@@ -301,7 +301,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var self = this;
 
       // Grab all the bots we have
-      botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
+      // botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
+      // var botsFromMongo = Bots.find({})
 
       // Initialize them
       bots = initalizeBots(botsFromFile);
@@ -423,7 +424,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       acceptOffersTask.execute();
     },
   }
-})(SteamAPI, SteamBot);
+})(SteamBot);
 
 _.extend(Dispatcher, {
   jobType: Object.freeze({
@@ -445,3 +446,5 @@ _.extend(Dispatcher, {
     TIMEOUT: 'TIMEOUT'
   }),
 });
+
+module.exports = Dispatcher;

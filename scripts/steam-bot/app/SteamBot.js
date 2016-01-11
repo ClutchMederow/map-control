@@ -11,7 +11,7 @@ var _ = require('underscore');
 
 SteamBot = function(bot) {
   var userOptions = {
-    // promptSteamGuardCode: false,
+    promptSteamGuardCode: false,
     singleSentryfile: true,
     dataDirectory: '../../meteor/private',
   };
@@ -44,72 +44,81 @@ SteamBot = function(bot) {
 SteamBot.prototype.logOn = function() {
   var self = this;
   var future = new Future();
-  console.log('Logging in');
+  console.log(this.botName + ' logging in');
 
-  // var tokenPath = '../../meteor/private/sentry.bin';
+  // bots 1-5 have their own sentry, should fix this sometime
   var tokenPath = '../../meteor/private/steambot-auth/' + self.botName;
+  if (!fs.existsSync(tokenPath)) {
+    tokenPath = '../../meteor/private/sentry.bin';
+  }
+
   var sentry = fs.readFileSync(tokenPath);
-  // this.user.setSentry(sentry);
+  this.user.setSentry(sentry);
 
   var logOnOptions = {
       accountName: self.botName,
       password: self.password,
-      // twoFactorCode: self.generateAuthCode(),
-      // authCode: 'Q65YM',
+      twoFactorCode: self.generateAuthCode(),
   };
-
-  this.user.logOn(logOnOptions);
 
   function steamGuardHandler(domain, cb, lastCodeWrong) {
     var self = this;
 
     console.log('steamguard');
-    if (lastCodeWrong && !future.isResolved()) {
-      future.throw(new Error('Bad steamguard code'));
-    }
 
-    future.throw('Need steamguard code. Check email.');
+    // only resolve if in this block
+    if (!future.isResolved()) {
+      if (lastCodeWrong) {
+        future.throw(new Error('Bad steamguard code'));
+      } else {
+        future.throw('Need steamguard code. Check email.');
+      }
+    }
     // var code = // get the code here
     // cb(code);
   }
 
-  this.user.on('steamGuard', steamGuardHandler);
-
-  this.user.on('error', function(err) {
+  function errorHandler(err) {
     console.log('error');
     console.log(arguments);
 
     if (err.eresult === 5) {
-      console.log('Sending validation email');
-      self.user.requestValidationEmail(function() {
-        console.log(arguments);
-      });
+      console.log('invalid pw');
     }
-  });
+  }
 
-  this.user.on('loggedOn', function() {
+  function loggedOnHandler() {
     console.log('logged on');
     console.log(arguments);
-  });
+  }
 
-  this.user.on('webSession', function(sessionId, cookies) {
+  function webSessionHandler(sessionId, cookies) {
     console.log('websession received');
 
     self.sessionId = sessionId;
     self.cookies = cookies;
 
     self.store.setCookies(cookies);
+
     if (!future.isResolved()) {
       future.return();
     }
-  });
+  }
+
+  this.user.on('steamGuard', steamGuardHandler);
+  this.user.on('error', errorHandler);
+  this.user.on('loggedOn', loggedOnHandler);
+  this.user.on('webSession', webSessionHandler);
+
+  this.user.logOn(logOnOptions);
 
   future.wait();
+
+  self.setupTradeOffers();
 };
 
-SteamBot.prototype.tradeOffersLogOn = function() {
+SteamBot.prototype.setupTradeOffers = function() {
   var self = this;
-  var future = new Future();
 
   if (!self.cookies || !self.sessionId) {
     throw new Error('No sessionId or cookies');
@@ -122,6 +131,18 @@ SteamBot.prototype.tradeOffersLogOn = function() {
   });
 
   console.log('Tradeoffers initialized');
+};
+
+SteamBot.prototype.requestValidationEmail = function() {
+  var future = new Future();
+  console.log('Sending validation email');
+
+  this.user.requestValidationEmail(function() {
+    console.log(arguments);
+    future.return();
+  });
+
+  future.wait();
 };
 
 SteamBot.prototype.getApiKey = function() {

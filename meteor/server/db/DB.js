@@ -1,4 +1,15 @@
-_.extend(DB, {
+if ((typeof _) === 'undefined') {
+  if ((typeof require) === 'undefined') {
+    var require = function() {};
+  }
+  _ = require.main.require('underscore');
+
+  if (typeof DB === 'undefined') {
+    DB = {};
+  }
+}
+
+var partialDB = {
   // for dev purposes - REMOVE
   migrate: function() {
     Meteor.users.find().forEach(function(user) {
@@ -830,23 +841,10 @@ _.extend(DB, {
   removeListing: function(listingId) {
     Listings.remove(listingId);
   }
-});
+};
 
-// Always make sure that changing the items resets the trade state
-RealTimeTrade.before.update(function(userId, doc, fieldNames, modifier, options) {
-  if (fieldNames && _.intersection(fieldNames, [ 'user1Items', 'user2Items' ]).length > 0) {
+_.extend(DB, partialDB)
 
-    // double check to not change any states of confirmed trades
-    if (doc.user1Stage === 'CONFIRMED' && doc.user2Stage === 'CONFIRMED') {
-      return;
-    }
-
-    if (doc.user1Stage === 'DONE' || doc.user1Stage === 'CONFIRMED') {
-      DB.setTradeStage(doc._id, "user1Stage", "TRADING");
-    }
-
-    if (doc.user2Stage === 'DONE' || doc.user2Stage === 'CONFIRMED') {
-      DB.setTradeStage(doc._id, "user2Stage", "TRADING");
-    }
-  }
-});
+if (global.IS_BOT_SERVER) {
+  module.exports = partialDB;
+}
