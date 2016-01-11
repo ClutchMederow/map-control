@@ -6,14 +6,34 @@ var fs = require('fs');
 var Future = require('fibers/future');
 var Fiber = require('fibers');
 var SteamBot = require('./app/SteamBot');
-// var Bridge = require('./app/Bridge.js');
-var db = require('../../meteor/server/db/db.js');
-
-
+var DB = require('../../meteor/server/db/db.js');
+var DispatcherConstructor = require('./app/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
+var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
 
 var MongoDB;
+var Dispatcher;
+var Collections = {};
+
+function initializeCollections() {
+  global.Bots = MongoDB.getCollection('bots');
+  global.Users = MongoDB.getCollection('users');
+  global.Meteor = {
+    users: global.Users
+  };
+  global.Tradeoffers = MongoDB.getCollection('tradeoffers');
+  global.Items = MongoDB.getCollection('items');
+
+  // global. = MongoDB.getCollection('tradeoffers');
+  // global.Tradeoffers = MongoDB.getCollection('tradeoffers');
+  // global.Tradeoffers = MongoDB.getCollection('tradeoffers');
+
+  // this is bad but I can't find a better way
+  // mongo-sync doesn't expose the Cursor object
+  Bots.find().__proto__.fetch = Bots.find().__proto__.toArray;
+  addItemUtilityFunctions(Items);
+}
 
 // var MongoClient = require('mongodb').MongoClient;
 // var ObjectId = require('mongodb').ObjectID;
@@ -63,12 +83,6 @@ app.use('/api', router);
 app.listen(port);
 console.log('Server running on port ' + port);
 
-// grand plan
-// 1. Get bots working on server - should probably use mostly the 2fa login code and some original code
-// 2. refactor dispatcher to work outside of meteor
-// 3. refactor DB to work outside of meteor or else rpc call for it
-// 4.
-
 function getBots(future, botName) {
   var bot = Bots.findOne({ name: botName });
   future.return(bot);
@@ -76,7 +90,7 @@ function getBots(future, botName) {
 
 Fiber(function() {
   MongoDB = new Server('localhost:3001').db('meteor');
-  // Bots = MongoDB.getCollection('bots');
-  console.log(db);
-  // console.log(process.ENV);
+  initializeCollections();
+  Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
+  process.exit();
 }).run();

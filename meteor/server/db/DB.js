@@ -1,3 +1,4 @@
+// for integration with node server
 if ((typeof _) === 'undefined') {
   if ((typeof require) === 'undefined') {
     var require = function() {};
@@ -843,7 +844,7 @@ var partialDB = {
   }
 };
 
-_.extend(DB, partialDB)
+_.extend(DB, partialDB);
 
 if (global.IS_BOT_SERVER) {
   module.exports = partialDB;

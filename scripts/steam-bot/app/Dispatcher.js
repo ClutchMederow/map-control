@@ -1,4 +1,6 @@
-var Dispatcher = (function(SteamBot, DB) {
+var _ = require('underscore');
+
+var Dispatcher = function(SteamBot, DB) {
 
   // Holds objects that represent all bots, using the botName as the key
   var bots = {};
@@ -8,10 +10,10 @@ var Dispatcher = (function(SteamBot, DB) {
 
   var checkOutstandingPollHandle;
 
-  function initalizeBots(Bots) {
+  function initalizeBots(allBots) {
 
     // Clone this so we can fuck with it
-    var botList = _.map(Bots, _.clone);
+    var botList = _.map(allBots, _.clone);
     var out = {};
 
     // First run through to initialize
@@ -44,7 +46,7 @@ var Dispatcher = (function(SteamBot, DB) {
   // Attempts to procure a new bot
   function getNewBot(bot) {
     try {
-      return new SteamBot(bot.name, bot.password, bot.authCode);
+      return new SteamBot(bot);
     } catch(e) {
       console.log(e);
     }
@@ -52,7 +54,7 @@ var Dispatcher = (function(SteamBot, DB) {
 
   // Gets a user's bot if it exists, otherwise assigns one
   function getUsersBot (userId) {
-    var user = Meteor.users.findOne(userId);
+    var user = Users.findOne(userId);
     var botName;
 
     if (!user || !user.profile)
@@ -302,7 +304,7 @@ var Dispatcher = (function(SteamBot, DB) {
 
       // Grab all the bots we have
       // botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
-      // var botsFromMongo = Bots.find({})
+      var botsFromMongo = Bots.find({})
 
       // Initialize them
       bots = initalizeBots(botsFromFile);
@@ -423,8 +425,8 @@ var Dispatcher = (function(SteamBot, DB) {
       // Accept all offers
       acceptOffersTask.execute();
     },
-  }
-})(SteamBot);
+  };
+};
 
 _.extend(Dispatcher, {
   jobType: Object.freeze({
