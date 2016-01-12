@@ -8,6 +8,7 @@ var Offers = require('steam-tradeoffers');
 var SteamTotp = require('steam-totp');
 var getApiKey = require('steam-web-api-key');
 var _ = require('underscore');
+var moment = require('moment');
 
 SteamBot = function(bot) {
   var userOptions = {
@@ -39,6 +40,8 @@ SteamBot = function(bot) {
 
   // Random date in the past
   this.itemsUpdatedTimestamp = new Date(1995, 11, 17);
+
+  this.logOn();
 };
 
 SteamBot.prototype.logOn = function() {
@@ -145,7 +148,7 @@ SteamBot.prototype.requestValidationEmail = function() {
   future.wait();
 };
 
-SteamBot.prototype.getApiKey = function() {
+SteamBot.prototype.getApiKey = function(callback) {
   var self = this;
 
   if (this.apiKey) {

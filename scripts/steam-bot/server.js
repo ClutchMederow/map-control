@@ -11,6 +11,8 @@ var DispatcherConstructor = require('./app/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
 var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
+require('../../meteor/lib/config');
+require('../../meteor/lib/Enums');
 
 var MongoDB;
 var Dispatcher;
@@ -25,28 +27,11 @@ function initializeCollections() {
   global.Tradeoffers = MongoDB.getCollection('tradeoffers');
   global.Items = MongoDB.getCollection('items');
 
-  // global. = MongoDB.getCollection('tradeoffers');
-  // global.Tradeoffers = MongoDB.getCollection('tradeoffers');
-  // global.Tradeoffers = MongoDB.getCollection('tradeoffers');
-
   // this is bad but I can't find a better way
   // mongo-sync doesn't expose the Cursor object
   Bots.find().__proto__.fetch = Bots.find().__proto__.toArray;
   addItemUtilityFunctions(Items);
 }
-
-// var MongoClient = require('mongodb').MongoClient;
-// var ObjectId = require('mongodb').ObjectID;
-// var assert = require('assert');
-
-// var url = 'mongodb://localhost:3001/meteor';
-// MongoClient.connect(url, function(err, db) {
-//   var Bots = db.collection('bots');
-//   Bots.find().toArray(function(err, bots) {
-//     // do stuff here
-//     db.close();
-//   });
-// });
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -61,23 +46,36 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 5080;
 var router = express.Router();
 
-router.post('/dispatcher', function(req, res) {
-  var future = new Future();
+router.post('/test', function(req, res) {
+  console.log(req.body);
+  res.json({ hey: 'there', me: 'drew' });
+});
 
+router.post('/deposit', function(req, res) {
   Fiber(function() {
-    var botName = req.body.botName;
-    getBots(future, botName);
-    var bot = future.wait();
-    var steamBot = new SteamBot(bot);
-    steamBot.logOn();
-    steamBot.tradeOffersLogOn();
-    steamBot.loadBotInventory();
-    res.json({ bot: steamBot.items });
+    try {
+      console.log(req.body);
+      var userId = req.body.userId;
+      var items = req.body.items;
+
+      var out = Dispatcher.depositItems(userId, items);
+
+      res.json({ res: out });
+    } catch(e) {
+      console.log(e);
+      res.status(500).send('Error');
+      throw e;
+    }
   }).run();
 });
 
+router.post('/test', function(req, res) {
+  console.log(req.body);
+  res.json({ hey: 'there', me: 'drew' });
+});
+
 // REGISTER OUR ROUTES
-app.use('/api', router);
+app.use('/dispatcher', router);
 
 // START THE SERVER
 app.listen(port);
@@ -92,5 +90,19 @@ Fiber(function() {
   MongoDB = new Server('localhost:3001').db('meteor');
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
-  process.exit();
+  Dispatcher.init();
+  // process.exit();
 }).run();
+
+  // var future = new Future();
+
+  // Fiber(function() {
+  //   var botName = req.body.botName;
+  //   getBots(future, botName);
+  //   var bot = future.wait();
+  //   var steamBot = new SteamBot(bot);
+  //   steamBot.logOn();
+  //   steamBot.tradeOffersLogOn();
+  //   steamBot.loadBotInventory();
+  //   res.json({ bot: steamBot.items });
+  // }).run();

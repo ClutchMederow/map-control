@@ -1,6 +1,6 @@
 var _ = require('underscore');
 
-var Dispatcher = function(SteamBot, DB) {
+var Dispatcher = function(SteamBot, DB, Collections) {
 
   // Holds objects that represent all bots, using the botName as the key
   var bots = {};
@@ -54,7 +54,7 @@ var Dispatcher = function(SteamBot, DB) {
 
   // Gets a user's bot if it exists, otherwise assigns one
   function getUsersBot (userId) {
-    var user = Users.findOne(userId);
+    var user = Meteor.users.findOne(userId);
     var botName;
 
     if (!user || !user.profile)
@@ -71,7 +71,7 @@ var Dispatcher = function(SteamBot, DB) {
     var usersBot = bots[botName];
 
     if (!usersBot) {
-      throw new Meteor.Error('OUT_OF_BOTS', 'There are no bots available to process your request');
+      throw new Error('OUT_OF_BOTS', 'There are no bots available to process your request');
     }
 
     // Verify that the bot assigned to the player has enough space
@@ -96,7 +96,7 @@ var Dispatcher = function(SteamBot, DB) {
     });
 
     if (!botWithMinInv) {
-      throw new Meteor.Error('OUT_OF_BOTS');
+      throw new Error('OUT_OF_BOTS');
     }
 
     return botWithMinInv;
@@ -168,7 +168,7 @@ var Dispatcher = function(SteamBot, DB) {
 
   return {
     getBot: function(botName) {
-      check(botName, String);
+      // check(botName, String);
 
       return bots[botName];
     },
@@ -176,7 +176,7 @@ var Dispatcher = function(SteamBot, DB) {
     getUsersBot: getUsersBot,
 
     getBotSteamId: function(botName) {
-      check(botName, String);
+      // check(botName, String);
 
       if (!bots[botName]) {
         throw new Error('Bot does not exist for botName: ' + botName);
@@ -186,8 +186,8 @@ var Dispatcher = function(SteamBot, DB) {
     },
 
     depositItems: function(userId, items) {
-      check(userId, String);
-      check(items, [String]);
+      // check(userId, String);
+      // check(items, [String]);
 
       var bot = getUsersBot(userId);
 
@@ -207,7 +207,7 @@ var Dispatcher = function(SteamBot, DB) {
         DB.items.revertStatus(items);
 
         if (e.toString().indexOf('has declined your trade request') > -1) {
-          throw new Meteor.Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
+          throw new Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
         } else {
           throw e;
         }
@@ -217,8 +217,8 @@ var Dispatcher = function(SteamBot, DB) {
     },
 
     withdrawItems: function(userId, items) {
-      check(userId, String);
-      check(items, [String]);
+      // check(userId, String);
+      // check(items, [String]);
 
       if (!items.length) {
         throw new Meteor.Error('BAD_ARGUMENTS', 'No items in transaction');
@@ -304,10 +304,10 @@ var Dispatcher = function(SteamBot, DB) {
 
       // Grab all the bots we have
       // botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
-      var botsFromMongo = Bots.find({})
+      var botsFromMongo = Bots.find({ enabled: true }).fetch();
 
       // Initialize them
-      bots = initalizeBots(botsFromFile);
+      bots = initalizeBots(botsFromMongo);
 
       // Set the initial index so we aren't biased toward bot 0
       botIndex = Math.round(Math.random()*(_.keys(bots).length - 1));
@@ -342,13 +342,13 @@ var Dispatcher = function(SteamBot, DB) {
 
     startPolling: function() {
       console.log('Polling started');
-      checkOutstandingPollHandle = Meteor.setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
+      checkOutstandingPollHandle = setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
     },
 
     stopPolling: function() {
       console.log('Polling stopped');
       if (checkOutstandingPollHandle) {
-        Meteor.clearInterval(checkOutstandingPollHandle);
+        clearInterval(checkOutstandingPollHandle);
       }
     },
 
