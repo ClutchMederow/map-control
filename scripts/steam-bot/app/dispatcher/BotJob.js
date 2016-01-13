@@ -1,9 +1,11 @@
+var DB = require('../../../../meteor/server/db/db.js');
 var Future = require('fibers/future');
 var _ = require('underscore');
 var Constants = require('../Constants');
 var Random = require('../../lib/random');
+var SteamBot = require('../SteamBot');
 
-var BotJob = function(bot, jobType, taskId, options, DBLayer) {
+var BotJob = function(bot, jobType, taskId, options) {
 
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
@@ -16,7 +18,7 @@ var BotJob = function(bot, jobType, taskId, options, DBLayer) {
   this._bot = bot;
 
   // We pass in DB here for easy mocking during tests
-  this._DB = DBLayer;
+  this._DB = DB;
 
   // Fields to be stringified
   this.jobType = jobType;
@@ -242,6 +244,7 @@ BotJob.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
+  console.log(this);
   this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 

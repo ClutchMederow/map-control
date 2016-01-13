@@ -99,7 +99,6 @@ Fiber(function() {
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();
-  // process.exit();
 }).run();
 
   // var future = new Future();
@@ -114,3 +113,16 @@ Fiber(function() {
   //   steamBot.loadBotInventory();
   //   res.json({ bot: steamBot.items });
   // }).run();
+
+
+/// current problems:
+// does not return an ID, return some kind of doc after update and insert....
+// insert without specifying ID will insert using ObjectID, need to change this
+// Moved DB to here, please cut dead code
+
+
+
+
+
+
+
