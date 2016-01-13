@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var Constants = require('../Constants');
 
 var Dispatcher = function(SteamBot, DB, Collections) {
 
@@ -113,8 +114,8 @@ var Dispatcher = function(SteamBot, DB, Collections) {
 
         // Remove this after testing - there should never not be an old offer
         if (oldOffer) {
-          if (oldOffer.jobType === Dispatcher.jobType.DEPOSIT_ITEMS ||
-              oldOffer.jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+          if (oldOffer.jobType === Constants.jobType.DEPOSIT_ITEMS ||
+              oldOffer.jobType === Constants.jobType.WITHDRAW_ITEMS) {
             updateOffer(offer, oldOffer, bot);
           }
         }
@@ -150,7 +151,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
         items: itemArray,
         otherBot: transferBot
       };
-      return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+      return new BotJob(bot, Constants.jobType.INTERNAL_TRANSFER, taskId, options, DB);
     });
 
     return sendOffersJobs;
@@ -160,7 +161,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
 
     var acceptanceJobs = _.map(offerIdsToAccept, function(tradeofferId) {
       var options = { tradeofferId: tradeofferId };
-      return new BotJob(transferBot, Dispatcher.jobType.ACCEPT_OFFER, acceptTaskId, options, DB);
+      return new BotJob(transferBot, Constants.jobType.ACCEPT_OFFER, acceptTaskId, options, DB);
     });
 
     return acceptanceJobs;
@@ -199,10 +200,10 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       };
 
       console.log(1);
-      var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
+      var taskId = DB.tasks.createNew(Constants.jobType.DEPOSIT_ITEMS, userId, items);
 
       console.log(2);
-      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
+      var job = new BotJob(bot, Constants.jobType.DEPOSIT_ITEMS, taskId, options, DB);
 
       console.log(3);
       var task = new Task([job], false, taskId, DB);
@@ -258,10 +259,10 @@ var Dispatcher = function(SteamBot, DB, Collections) {
         }
 
         // Change the status so they can't be involved in any other transactions
-        var test = DB.items.changeStatus(Dispatcher.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
+        var test = DB.items.changeStatus(Constants.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
 
         // Create the task to send out all trade offers to internal bots
-        var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, userId, items);
+        var taskId = DB.tasks.createNew(Constants.jobType.INTERNAL_TRANSFER, userId, items);
         var sendOffersJobs = getJobsToSendOffers(transferBot, groupedItems, taskId);
 
         // Only execute if items are not already on the bot
@@ -272,7 +273,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
           var offerIdsToAccept = sendRequestsTask.execute();
 
           // Create the task to accept all internal outstanding tradeoffers
-          var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, userId, null);
+          var acceptTaskId = DB.tasks.createNew(Constants.jobType.ACCEPT_OFFER, userId, null);
           var acceptanceJobs = getJobsToAcceptOffers(transferBot, offerIdsToAccept, acceptTaskId);
           var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
 
@@ -289,8 +290,8 @@ var Dispatcher = function(SteamBot, DB, Collections) {
           userId: userId
         };
 
-        var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
-        var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
+        var sendItemsToUserTaskId = DB.tasks.createNew(Constants.jobType.WITHDRAW_ITEMS, userId, items);
+        var withdrawJob = new BotJob(transferBot, Constants.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
 
         // Cancel all existing transactions
@@ -416,17 +417,17 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       var newBot = Dispatcher.getBot(newBotName);
       var oldBot = Dispatcher.getBot(item.botName);
 
-      var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, 'internal', [ itemId ]);
+      var taskId = DB.tasks.createNew(Constants.jobType.INTERNAL_TRANSFER, 'internal', [ itemId ]);
       var options = {
         items: [ itemId ],
         otherBot: newBot
       };
-      var job = new BotJob(oldBot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+      var job = new BotJob(oldBot, Constants.jobType.INTERNAL_TRANSFER, taskId, options, DB);
 
       var offerIdsToAccept = job.execute();
 
       // Create the task to accept all internal outstanding tradeoffers
-      var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, 'internal', null);
+      var acceptTaskId = DB.tasks.createNew(Constants.jobType.ACCEPT_OFFER, 'internal', null);
       var acceptanceJobs = getJobsToAcceptOffers(newBot, offerIdsToAccept, acceptTaskId);
       var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
 
@@ -435,26 +436,5 @@ var Dispatcher = function(SteamBot, DB, Collections) {
     },
   };
 };
-
-_.extend(Dispatcher, {
-  jobType: Object.freeze({
-    DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
-    WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
-    INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
-    ACCEPT_OFFER: 'ACCEPT_OFFER',
-    TASK: 'TASK'
-  }),
-
-  jobStatus: Object.freeze({
-    COMPLETE: 'COMPLETE',
-    FAILED: 'FAILED',
-    ROLLBACK_FAILED: 'ROLLBACK_FAILED',
-    QUEUED: 'QUEUED',
-    PENDING: 'PENDING',
-    READY: 'READY',
-    CANCELLED: 'CANCELLED',
-    TIMEOUT: 'TIMEOUT'
-  }),
-});
 
 module.exports = Dispatcher;

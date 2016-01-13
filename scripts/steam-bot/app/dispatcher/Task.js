@@ -1,6 +1,7 @@
 var Future = require('fibers/future');
 var _ = require('underscore');
-var Random = require('../lib/random');
+var Random = require('../../lib/random');
+var Constants = require('../Constants');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
 Task = function(jobs, ordered, taskId, DBLayer) {
@@ -43,10 +44,10 @@ Task = function(jobs, ordered, taskId, DBLayer) {
   this._DB = DBLayer;
 
   // We are now ready
-  this.jobType = Dispatcher.jobType.TASK;
+  this.jobType = Constants.jobType.TASK;
   this.jobId = Random.id();
   this.returnValues = [];
-  this._setStatus(Dispatcher.jobStatus.READY);
+  this._setStatus(Constants.jobStatus.READY);
 };
 
 // Saves all non-private fields in a collection
@@ -73,7 +74,7 @@ Task.prototype._setStatus = function(status) {
 Task.prototype.execute = function() {
   var self = this;
 
-  this._setStatus(Dispatcher.jobStatus.PENDING);
+  this._setStatus(Constants.jobStatus.PENDING);
 
   try {
     if (self._ordered === true) {
@@ -84,11 +85,11 @@ Task.prototype.execute = function() {
       self._executeParallel();
     }
 
-    if (self.status === Dispatcher.jobStatus.FAILED) {
+    if (self.status === Constants.jobStatus.FAILED) {
       throw new Error('CANCELLED');
     }
 
-    self._setStatus(Dispatcher.jobStatus.COMPLETE);
+    self._setStatus(Constants.jobStatus.COMPLETE);
   } catch(e) {
     self.cancel();
     throw e;
@@ -163,17 +164,17 @@ Task.prototype.cancel = function() {
   var self = this;
 
   // Only cancel if completed or pending, otherise do nothing
-  if (this.status !== Dispatcher.jobStatus.FAILED) {
+  if (this.status !== Constants.jobStatus.FAILED) {
 
     // cancels and rolls back each parallel job
     _.each(this._jobs, function(job) {
 
       // Prevents this from being called further up the chain
-      if (job.status !== Dispatcher.jobType.FAILED)
+      if (job.status !== Constants.jobType.FAILED)
         job.cancel();
     });
   }
 
   // Ensures all synchronous jobs get cancelled
-  this._setStatus(Dispatcher.jobStatus.FAILED);
+  this._setStatus(Constants.jobStatus.FAILED);
 };

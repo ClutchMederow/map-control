@@ -1,0 +1,22 @@
+var Constants = {
+  jobType: {
+    DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
+    WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
+    INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
+    ACCEPT_OFFER: 'ACCEPT_OFFER',
+    TASK: 'TASK'
+  },
+
+  jobStatus: {
+    COMPLETE: 'COMPLETE',
+    FAILED: 'FAILED',
+    ROLLBACK_FAILED: 'ROLLBACK_FAILED',
+    QUEUED: 'QUEUED',
+    PENDING: 'PENDING',
+    READY: 'READY',
+    CANCELLED: 'CANCELLED',
+    TIMEOUT: 'TIMEOUT'
+  },
+};
+
+module.exports = Constants;

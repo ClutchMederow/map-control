@@ -1,7 +1,9 @@
-TradeJob = function(itemId, newUserId, taskId, DBLayer) {
-  check(itemId, String);
-  check(userId, String);
-  check(DBLayer, Object);
+var Constants = require('../Constants');
+
+var TradeJob = function(itemId, newUserId, taskId, DBLayer) {
+  // check(itemId, String);
+  // check(userId, String);
+  // check(DBLayer, Object);
 
   // Public members - will be serialized
   this.itemId = itemId;
@@ -16,31 +18,31 @@ TradeJob = function(itemId, newUserId, taskId, DBLayer) {
   this.oldUserId = this._DB.items.getItemOwner(this.itemId)._id;
 
   // My body is ready
-  this._setStatus(Dispatcher.jobStatus.READY);
+  this._setStatus(Constants.jobStatus.READY);
 };
 
 // Doesn't need to be asynchronous - should be instant
 TradeJob.prototype.execute = function(callback) {
-  this._setStatus(Dispatcher.jobStatus.PENDING);
+  this._setStatus(Constants.jobStatus.PENDING);
   try {
     var res = this._DB.items.reassignOwner(this.itemId, this.newUserId);
-    this._setStatus(Dispatcher.jobStatus.COMPLETE);
+    this._setStatus(Constants.jobStatus.COMPLETE);
     callback(null, res);
   } catch(e) {
     this.error = e.message;
-    this._setStatus(Dispatcher.jobStatus.FAILED);
+    this._setStatus(Constants.jobStatus.FAILED);
     callback(e);
   }
 };
 
 // Only need to roll it back if it is complete
 TradeJob.prototype.cancel = function() {
-  if (this.jobStatus === Dispatcher.jobStatus.COMPLETE) {
+  if (this.jobStatus === Constants.jobStatus.COMPLETE) {
     try {
       this._DB.items.reassignOwner(this.itemId, this.oldUserId);
     } catch(e) {
       this.rollbackError = e.message;
-      this._setStatus(Dispatcher.jobStatus.ROLLBACK_FAILED);
+      this._setStatus(Constants.jobStatus.ROLLBACK_FAILED);
     }
   }
 };
@@ -65,3 +67,5 @@ TradeJob.prototype._setStatus = function(status) {
   this.status = status;
   this._save();
 };
+
+module.exports = TradeJob;

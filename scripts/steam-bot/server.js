@@ -11,6 +11,8 @@ var DispatcherConstructor = require('./app/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
 var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
+
+// Global
 require('../../meteor/lib/config');
 require('../../meteor/lib/Enums');
 
