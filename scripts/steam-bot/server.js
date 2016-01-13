@@ -7,7 +7,7 @@ var Future = require('fibers/future');
 var Fiber = require('fibers');
 var SteamBot = require('./app/SteamBot');
 var DB = require('../../meteor/server/db/db.js');
-var DispatcherConstructor = require('./app/Dispatcher');
+var DispatcherConstructor = require('./app/dispatcher/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
 var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
@@ -15,6 +15,11 @@ var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
 // Global
 require('../../meteor/lib/config');
 require('../../meteor/lib/Enums');
+
+// Ignore Meteor check function
+// TODO: Should port this over soon
+global.check = function() {};
+global.Match = { Where: function() {} };
 
 var MongoDB;
 var Dispatcher;
@@ -28,6 +33,7 @@ function initializeCollections() {
   };
   global.Tradeoffers = MongoDB.getCollection('tradeoffers');
   global.Items = MongoDB.getCollection('items');
+  global.Tasks = MongoDB.getCollection('tasks');
 
   // this is bad but I can't find a better way
   // mongo-sync doesn't expose the Cursor object

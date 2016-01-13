@@ -1,7 +1,7 @@
-// var DB = require('../../../meteor/server/db/db.js');
 var Future = require('fibers/future');
 var _ = require('underscore');
 var Constants = require('../Constants');
+var Random = require('../../lib/random');
 
 var BotJob = function(bot, jobType, taskId, options, DBLayer) {
 

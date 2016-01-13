@@ -4,12 +4,13 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "babel-node": "nodemon --exec babel-node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.0",
     "body-parser": "^1.14.2",
     "crypto": "0.0.3",
     "express": "^4.13.3",
@@ -25,5 +26,8 @@
     "steam-web-api-key": "0.0.3",
     "steamstore": "^1.3.0",
     "underscore": "^1.8.3"
+  },
+  "babel": {
+    "presets": ["es2015"]
   }
 }

@@ -233,7 +233,7 @@ function createAleaGeneratorWithGeneratedSeed() {
     {seeds: [new Date, height, width, agent, Math.random()]});
 };
 
-Random = new RandomGenerator(RandomGenerator.Type.NODE_CRYPTO);
+var Random = new RandomGenerator(RandomGenerator.Type.NODE_CRYPTO);
 
 // Create a non-cryptographically secure PRNG with a given seed (using
 // the Alea algorithm)
@@ -247,3 +247,5 @@ Random.createWithSeeds = function (...seeds) {
 // Used like `Random`, but much faster and not cryptographically
 // secure
 Random.insecure = createAleaGeneratorWithGeneratedSeed();
+
+module.exports = Random;

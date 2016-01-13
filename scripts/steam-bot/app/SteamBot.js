@@ -10,7 +10,7 @@ var getApiKey = require('steam-web-api-key');
 var _ = require('underscore');
 var moment = require('moment');
 
-SteamBot = function(bot) {
+var SteamBot = function(bot) {
   var userOptions = {
     promptSteamGuardCode: false,
     singleSentryfile: true,

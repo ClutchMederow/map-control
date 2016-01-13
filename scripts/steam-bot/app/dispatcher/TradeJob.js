@@ -1,4 +1,5 @@
 var Constants = require('../Constants');
+var Random = require('../../lib/random');
 
 var TradeJob = function(itemId, newUserId, taskId, DBLayer) {
   // check(itemId, String);

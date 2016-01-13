@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var Constants = require('../Constants');
+var BotJob = require('./BotJob');
 
 var Dispatcher = function(SteamBot, DB, Collections) {
 
