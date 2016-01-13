@@ -59,7 +59,7 @@ var partialDB = {
 
       doc.$set.modifiedTimestamp = new Date();
 
-      return Meteor.users.update(userId, doc);
+      return Meteor.users.update({ _id: userId }, doc);
     },
 
     // Adds a bot to a user for the first time
@@ -68,9 +68,9 @@ var partialDB = {
         throw new Error('BAD_ARGUMENTS');
 
       var doc = { $set: { 'profile.botName': botName } };
-      DB.users.update(userId, doc);
+      DB.users.update({ _id: userId }, doc);
 
-      return Meteor.users.findOne(userId).profile.botName;
+      return Meteor.users.findOne({ _id: userId }).profile.botName;
     },
 
     updateTradeURL: function(userId, tradeURL, email) {
@@ -109,7 +109,7 @@ var partialDB = {
       }
       doc.$set.modifiedTimestamp = new Date();
 
-      return Tasks.update(taskId, doc);
+      return Tasks.update({ _id: taskId }, doc);
     },
 
     insert: function(doc) {

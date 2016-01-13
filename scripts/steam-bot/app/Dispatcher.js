@@ -54,7 +54,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
 
   // Gets a user's bot if it exists, otherwise assigns one
   function getUsersBot (userId) {
-    var user = Meteor.users.findOne(userId);
+    var user = Meteor.users.findOne({ _id: userId });
     var botName;
 
     if (!user || !user.profile)
@@ -189,21 +189,29 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       // check(userId, String);
       // check(items, [String]);
 
+      console.log(0);
+
       var bot = getUsersBot(userId);
 
-        var options = {
-          items: items,
-          userId: userId
-        };
+      var options = {
+        items: items,
+        userId: userId
+      };
 
-        var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
+      console.log(1);
+      var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
 
-        var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
-        var task = new Task([job], false, taskId, DB);
+      console.log(2);
+      var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
+
+      console.log(3);
+      var task = new Task([job], false, taskId, DB);
 
       try {
+        console.log(4);
         task.execute();
       } catch (e) {
+        console.log(5);
         DB.items.revertStatus(items);
 
         if (e.toString().indexOf('has declined your trade request') > -1) {

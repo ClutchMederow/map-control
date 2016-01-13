@@ -1,12 +1,13 @@
-var Future = Npm.require('fibers/future');
+var Future = require('fibers/future');
+var _ = require('underscore');
 
 BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
   if (!(bot instanceof SteamBot))
     throw new Error('INVALID_BOT');
 
-  check(taskId, String);
-  check(DBLayer, Object);
+  // check(taskId, String);
+  // check(DBLayer, Object);
 
   // private fields
   this._taskId = taskId;
@@ -22,10 +23,10 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
   // Set up the object depending on job type
   if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
 
-    check(options, {
-      items: [String],
-      userId: String
-    });
+    // check(options, {
+    //   items: [String],
+    //   userId: String
+    // });
 
     if (options.items.length < 1)
       throw new Error('NO_ITEMS');
@@ -35,10 +36,10 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
   } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
 
-    check(options, {
-      items: [String],
-      userId: String
-    });
+    // check(options, {
+    //   items: [String],
+    //   userId: String
+    // });
 
     if (options.items.length < 1)
       throw new Error('NO_ITEMS');
@@ -48,10 +49,10 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
   } else if (jobType === Dispatcher.jobType.INTERNAL_TRANSFER) {
 
-    check(options, {
-      items: [String],
-      otherBot: SteamBot
-    });
+    // check(options, {
+    //   items: [String],
+    //   otherBot: SteamBot
+    // });
 
     this.items = options.items;
     this._otherBot = options.otherBot;
@@ -60,9 +61,9 @@ BotJob = function(bot, jobType, taskId, options, DBLayer) {
 
   } else if (jobType === Dispatcher.jobType.ACCEPT_OFFER) {
 
-    check(options, {
-      tradeofferId: String,
-    });
+    // check(options, {
+    //   tradeofferId: String,
+    // });
 
     this.tradeofferId = options.tradeofferId;
   }
@@ -75,8 +76,8 @@ BotJob.prototype._executeDeposit = function() {
 
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
-  var steamId = Meteor.users.findOne(this.userId).services.steam.id;
-  var tradeToken = Meteor.users.findOne(this.userId).profile.tradeToken;
+  var steamId = Meteor.users.findOne({ _id: this.userId }).services.steam.id;
+  var tradeToken = Meteor.users.findOne({ _id: this.userId }).profile.tradeToken;
 
   if (!tradeToken) {
     console.log('INVALID_TOKEN, steamid: ' + steamId);
@@ -103,8 +104,8 @@ BotJob.prototype._executeWithdrawal = function() {
 
   // Find item assetIds
   // var itemsWithAssetIds = self._bot.getItemObjsWithIds(self.steamId, self._itemDocuments);
-  var steamId = Meteor.users.findOne(this.userId).services.steam.id;
-  var tradeToken = Meteor.users.findOne(this.userId).profile.tradeToken;
+  var steamId = Meteor.users.findOne({ _id: this.userId }).services.steam.id;
+  var tradeToken = Meteor.users.findOne({ _id: this.userId }).profile.tradeToken;
 
   if (!tradeToken) {
     throw new Error('INVALID_TOKEN, steamid: ' + steamId);
