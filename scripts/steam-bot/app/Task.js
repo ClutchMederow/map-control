@@ -1,33 +1,35 @@
-var Future = Npm.require('fibers/future');
+var Future = require('fibers/future');
+var _ = require('underscore');
+var Random = require('../lib/random');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
 Task = function(jobs, ordered, taskId, DBLayer) {
   var self = this;
 
-  check(ordered, Boolean);
-  check(jobs, Array);
-  check(taskId, String);
-  check(DBLayer, Object);
+  // check(ordered, Boolean);
+  // check(jobs, Array);
+  // check(taskId, String);
+  // check(DBLayer, Object);
 
   // Since JS doesn't have interfaces, this will have to do
   // All jobs must have the properties defined below
-  check(jobs, Match.Where(function() {
-    _.each(jobs, function(job) {
-      if (typeof job.execute !== 'function')
-        return false;
+  // check(jobs, Match.Where(function() {
+  //   _.each(jobs, function(job) {
+  //     if (typeof job.execute !== 'function')
+  //       return false;
 
-      if (typeof job.status !== 'string')
-        return false;
+  //     if (typeof job.status !== 'string')
+  //       return false;
 
-      if (typeof job.cancel !== 'function')
-        return false;
+  //     if (typeof job.cancel !== 'function')
+  //       return false;
 
-      if (typeof job.jobId !== 'string')
-        return false;
-    });
+  //     if (typeof job.jobId !== 'string')
+  //       return false;
+  //   });
 
-    return true;
-  }));
+  //   return true;
+  // }));
 
   if (!(jobs.length > 0))
     throw new Error('Bad number of jobs passed to task');
@@ -122,7 +124,7 @@ Task.prototype._executeParallel = function() {
         }
       }
     })(thisFut, job);
-    Meteor.setTimeout(closedFunc, 0);
+    setTimeout(closedFunc, 0);
   });
 
 
@@ -148,45 +150,12 @@ Task.prototype._executeParallel = function() {
 
 // Executes each job serially
 Task.prototype._executeSerial = function() {
-
-  // var jobFut = new Future();
-  // var index = 0;
-
-  // // Runs the next job in the sequence
-  // function getNextOrResolve(error, result) {
-  //   if (error) {
-
-  //     // Resolve the future with an error and do not execute any more jobs in the chain
-  //     jobFut.throw(error);
-  //     return;
-
-  //   } else if (index < self._jobs.length && self.status !== Dispatcher.jobStatus.FAILED) {
-
-  //     // Executes the next job, passing this same function as a callback
-  //     self._jobs[index++].execute(getNextOrResolve);
-
-  //   } else {
-
-  //     // If there are no more jobs, resolve the future and exit the loop
-  //     jobFut.return();
-  //     return;
-  //   }
-  // }
-
-
   _.each(this._jobs, function(job) {
     var res = job.execute();
 
     // Save the return values
     this.returnValues.push(res);
   });
-
-  // // Call this to kick off the sequence
-  // getNextOrResolve();
-
-  // // Wait for the future to be resolved
-  // // Will throw if the future.throw is calld
-  // jobFut.wait();
 };
 
 // TODO: figure out how this will interact with the observe callback
