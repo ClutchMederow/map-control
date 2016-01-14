@@ -1,15 +1,3 @@
-// for integration with node server
-if ((typeof _) === 'undefined') {
-  if ((typeof require) === 'undefined') {
-    var require = function() {};
-  }
-  _ = require.main.require('underscore');
-
-  if (typeof DB === 'undefined') {
-    DB = {};
-  }
-}
-
 var partialDB = {
   // for dev purposes - REMOVE
   migrate: function() {
@@ -850,7 +838,3 @@ var partialDB = {
 };
 
 _.extend(DB, partialDB);
-
-if (global.IS_BOT_SERVER) {
-  module.exports = partialDB;
-}

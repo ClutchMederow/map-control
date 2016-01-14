@@ -1,61 +1,56 @@
-// for integration with node server
-if ((typeof _) === 'undefined') {
-  if ((typeof require) === 'undefined') {
-    var require = function() {};
-  }
-  _ = require.main.require('underscore');
+var _ = require('underscore');
+var Random = require('../../lib/random');
+var Enums = require('../../../../meteor/lib/Enums');
+var DbListings = require('./db_listings');
+var assign = require('object-assign');
 
-  if (typeof DB === 'undefined') {
-    DB = {};
-  }
-}
+var DB = {
+  // // for dev purposes - REMOVE
+  // migrate: function() {
+  //   Meteor.users.find().forEach(function(user) {
+  //     Meteor.users.update(user._id, {$set: {
+  //       "profile.ironBucks": 0,
+  //       "profile.firstTimeUser": true
+  //     }});
+  //   });
+  // },
 
-var partialDB = {
-  // for dev purposes - REMOVE
-  migrate: function() {
-    Meteor.users.find().forEach(function(user) {
-      Meteor.users.update(user._id, {$set: {
-        "profile.ironBucks": 0,
-        "profile.firstTimeUser": true
-      }});
-    });
-  },
+  // insertChat: function(attributes) {
+  //   Messages.insert({
+  //     user: attributes.user,
+  //     channel: attributes.channel,
+  //     text: attributes.text,
+  //     items: attributes.items,
+  //     datePosted: new Date()
+  //   });
+  // },
 
-  insertChat: function(attributes) {
-    Messages.insert({
-      user: attributes.user,
-      channel: attributes.channel,
-      text: attributes.text,
-      items: attributes.items,
-      datePosted: new Date()
-    });
-  },
+  // insertPrivateChat: function(attributes) {
 
-  insertPrivateChat: function(attributes) {
+  //   // Shows the channel if a user has it hidden
+  //   var thisChannel = Channels.findOne(attributes.channel._id);
+  //   var userIds = _.pluck(thisChannel.users, 'userId');
+  //   var hiddenUsers = _.without(userIds, thisChannel.show);
 
-    // Shows the channel if a user has it hidden
-    var thisChannel = Channels.findOne(attributes.channel._id);
-    var userIds = _.pluck(thisChannel.users, 'userId');
-    var hiddenUsers = _.without(userIds, thisChannel.show);
+  //   // increments the unseen
+  //   var otherUsers = _.difference(userIds, [ attributes.user.userId ]);
 
-    // increments the unseen
-    var otherUsers = _.difference(userIds, [ attributes.user.userId ]);
+  //   _.each(otherUsers, function(other) {
+  //     DB.addUnseen(attributes.channel._id, other);
+  //   });
 
-    _.each(otherUsers, function(other) {
-      DB.addUnseen(attributes.channel._id, other);
-    });
+  //   if (hiddenUsers.length) {
+  //     Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
+  //   }
 
-    if (hiddenUsers.length) {
-      Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
-    }
-
-    return DB.insertChat(attributes);
-  },
+  //   return DB.insertChat(attributes);
+  // },
 
   users: {
     update: function(userId, doc) {
-      if (!doc.$set)
+      if (!doc.$set) {
         throw new Error('INVALID_UPDATE: Must include $set operator');
+      }
 
       doc.$set.modifiedTimestamp = new Date();
 
@@ -64,8 +59,9 @@ var partialDB = {
 
     // Adds a bot to a user for the first time
     addBot: function(userId, botName) {
-      if (!userId || !botName)
+      if (!userId || !botName) {
         throw new Error('BAD_ARGUMENTS');
+      }
 
       var doc = { $set: { 'profile.botName': botName } };
       DB.users.update({ _id: userId }, doc);
@@ -73,27 +69,27 @@ var partialDB = {
       return Meteor.users.findOne({ _id: userId }).profile.botName;
     },
 
-    updateTradeURL: function(userId, tradeURL, email) {
-      check(userId, String);
-      check(tradeURL, String);
-      check(email, String);
+    // updateTradeURL: function(userId, tradeURL, email) {
+    //   check(userId, String);
+    //   check(tradeURL, String);
+    //   check(email, String);
 
-      var token = tradeURL.split("token=")[1];
+    //   var token = tradeURL.split("token=")[1];
 
-      if (!token) {
-        throw new Error('BAD_TRADE_URL: ' + tradeURL);
-      }
+    //   if (!token) {
+    //     throw new Error('BAD_TRADE_URL: ' + tradeURL);
+    //   }
 
-      var doc = {
-        $set: {
-          'profile.tradeURL': tradeURL,
-          'profile.tradeToken': token,
-          'profile.email': email
-        }
-      };
+    //   var doc = {
+    //     $set: {
+    //       'profile.tradeURL': tradeURL,
+    //       'profile.tradeToken': token,
+    //       'profile.email': email
+    //     }
+    //   };
 
-      return DB.users.update(userId, doc);
-    }
+    //   return DB.users.update(userId, doc);
+    // }
   },
 
   tasks: {
@@ -109,27 +105,24 @@ var partialDB = {
       }
       doc.$set.modifiedTimestamp = new Date();
 
-      console.log(taskId);
-
-      return Tasks.update({ _id: taskId }, doc);
+      return Tasks.update({ _id: taskId }, doc).result.n;
     },
 
     insert: function(doc) {
-      check(doc.userId, String);
-      check(doc.jobType, Match.Where(function(item) {
-        return !!Dispatcher.jobType[item];
-      }));
+      // check(doc.userId, String);
+      // check(doc.jobType, Match.Where(function(item) {
+      //   return !!Dispatcher.jobType[item];
+      // }));
 
       doc.createdTimestamp = new Date();
       doc.modifiedTimestamp = new Date();
+      doc._id = doc._id || Random.id();
 
-      return Tasks.insert(doc);
+      Tasks.insert(doc);
+      return doc._id;
     },
 
     updateJobHistory: function(taskId, doc) {
-      console.log('updateJobHistory');
-      console.log(taskId);
-
       doc.timestamp = new Date();
 
       var updater = {
@@ -138,7 +131,9 @@ var partialDB = {
         }
       };
 
-      return DB.tasks.update(taskId, updater);
+      var selector = { _id: taskId };
+
+      return DB.tasks.update(selector, updater);
     },
 
     createNew: function(jobType, userId, items) {
@@ -154,17 +149,19 @@ var partialDB = {
 
   tradeoffers: {
     insert: function(doc) {
-      check(doc, Object);
+      // check(doc, Object);
 
       doc.createdTimestamp = new Date();
       doc.modifiedTimestamp = new Date();
+      doc._id = doc._id || Random.id();
 
-      return Tradeoffers.insert(doc);
+      Tradeoffers.insert(doc);
+      return doc._id;
     },
 
     update: function(selector, doc) {
-      check(selector, Object);
-      check(doc, Object);
+      // check(selector, Object);
+      // check(doc, Object);
 
       var setDoc = {
         $set: doc
@@ -172,17 +169,17 @@ var partialDB = {
 
       setDoc.$set.modifiedTimestamp = new Date();
 
-      return Tradeoffers.update(selector, setDoc);
+      return Tradeoffers.update(selector, setDoc).result.n;
     },
 
     insertNew: function(id, tradeofferId, userId, jobType, botName, taskId, otherBotName) {
-      check(id, String);
-      check(tradeofferId, String);
-      check(userId, String);
-      check(jobType, String);
-      check(botName, String);
-      check(taskId, String);
-      check(otherBotName, Match.Optional(String));
+      // check(id, String);
+      // check(tradeofferId, String);
+      // check(userId, String);
+      // check(jobType, String);
+      // check(botName, String);
+      // check(taskId, String);
+      // check(otherBotName, Match.Optional(String));
 
       var doc = {
         _id: id,
@@ -203,7 +200,7 @@ var partialDB = {
     },
 
     updateStatus: function(doc) {
-      check(doc, Object);
+      // check(doc, Object);
 
       var selector = {
         tradeofferid: doc.tradeofferid,
@@ -220,34 +217,36 @@ var partialDB = {
 
   items: {
     insert: function(doc) {
-      check(doc, Object);
+      // check(doc, Object);
 
       doc.createdTimestamp = new Date();
       doc.modifiedTimestamp = new Date();
+      doc._id = doc._id || Random.id();
 
-      return Items.insert(doc);
+      Items.insert(doc);
+      return doc._id;
     },
 
     update: function(selector, doc, options) {
       var options = options || {};
 
-      check(selector, Object);
-      check(doc, Object);
-      check(options, Object);
+      // check(selector, Object);
+      // check(doc, Object);
+      // check(options, Object);
 
       if (!doc.$set && !doc.$push)
         throw new Error('INVALID_UPDATE: Must include $set operator: Items');
 
       doc.$set.modifiedTimestamp = new Date();
 
-      return Items.update(selector, doc, options);
+      return Items.update(selector, doc, options).result.n;
     },
 
     insertNewItems: function(userId, tradeofferId, items, botName) {
-      check(userId, String);
-      check(tradeofferId, String);
-      check(items, [String]);
-      check(botName, String);
+      // check(userId, String);
+      // check(tradeofferId, String);
+      // check(items, [String]);
+      // check(botName, String);
 
       var existingOwnedItem = Items.findOne({ itemId: { $in: items }, status: Enums.ItemStatus.STASH, deleteInd: false });
 
@@ -275,63 +274,63 @@ var partialDB = {
       });
     },
 
-    // Gets an array of item documents from the ids
-    getItemsFromIds: function(items) {
-      check(items, [String]);
+    // // Gets an array of item documents from the ids
+    // getItemsFromIds: function(items) {
+    //   check(items, [String]);
 
-      var out = Items.find({ _id: { $in: items, deleteInd: false } }).fetch();
+    //   var out = Items.find({ _id: { $in: items, deleteInd: false } }).fetch();
 
-      if (out.length !== items.length)
-        throw new Error('MISSING_ITEMS', items);
+    //   if (out.length !== items.length)
+    //     throw new Error('MISSING_ITEMS', items);
 
-      return out;
+    //   return out;
 
-      // return _.map(items, function(itemId) {
-      //   return Items.findOne(itemId);
-      // });
-    },
+    //   // return _.map(items, function(itemId) {
+    //   //   return Items.findOne(itemId);
+    //   // });
+    // },
 
-    getItemOwner: function(itemId) {
-      var item = Items.findOne({ _id: itemId, deleteInd: false });
-      if (!item)
-        throw new Error('ITEM_NOT_FOUND: ' + itemId);
+    // getItemOwner: function(itemId) {
+    //   var item = Items.findOne({ _id: itemId, deleteInd: false });
+    //   if (!item)
+    //     throw new Error('ITEM_NOT_FOUND: ' + itemId);
 
-      var user = Meteor.users.findOne(item.userId);
-      if (!user)
-        throw new Error('USER_NOT_FOUND: ' + item.userId);
+    //   var user = Meteor.users.findOne(item.userId);
+    //   if (!user)
+    //     throw new Error('USER_NOT_FOUND: ' + item.userId);
 
-      return user;
-    },
+    //   return user;
+    // },
 
-    reassignOwner: function(itemId, newUserId) {
-      check(itemId, String);
-      check(newUserId, String);
+    // reassignOwner: function(itemId, newUserId) {
+    //   check(itemId, String);
+    //   check(newUserId, String);
 
-      var doc = {
-        $set: {
-          userId: newUserId
-        }
-      };
-      var selector = {
-        _id: itemId,
-        deleteInd: false
-      };
-      var options = { multi: true };
+    //   var doc = {
+    //     $set: {
+    //       userId: newUserId
+    //     }
+    //   };
+    //   var selector = {
+    //     _id: itemId,
+    //     deleteInd: false
+    //   };
+    //   var options = { multi: true };
 
-      var out = DB.items.update(selector, doc, options);
+    //   var out = DB.items.update(selector, doc, options);
 
-      if (out !== 1)
-        throw new Error('ITEM_NOT_UPDATED');
+    //   if (out !== 1)
+    //     throw new Error('ITEM_NOT_UPDATED');
 
-      return out;
-    },
+    //   return out;
+    // },
 
     changeStatus: function(tradeofferId, assetIds, status) {
-      check(tradeofferId, String);
-      check(assetIds, [String]);
-      check(status, Match.Where(function() {
-        return !!Enums.ItemStatus[status];
-      }));
+      // check(tradeofferId, String);
+      // check(assetIds, [String]);
+      // check(status, Match.Where(function() {
+      //   return !!Enums.ItemStatus[status];
+      // }));
 
       var selector = {
         itemId: { $in: assetIds },
@@ -356,7 +355,7 @@ var partialDB = {
 
     // Revert status in the case of an error
     revertStatus: function(assetIds) {
-      check(assetIds, [String]);
+      // check(assetIds, [String]);
 
       _.each(assetIds, function(assetId) {
         var item = Items.findOne({ itemId: assetId, deleteInd: false });
@@ -390,21 +389,21 @@ var partialDB = {
       });
     },
 
-    getItemBot: function(itemId, userId) {
-      check(itemId, String);
-      check(userId, String);
+    // getItemBot: function(itemId, userId) {
+    //   check(itemId, String);
+    //   check(userId, String);
 
-      var item =  Items.findOne({ userId: userId, itemId: itemId, status: Enums.ItemStatus.STASH });
-      if (!item) {
-        throw new Error('Item not found: ' + itemId)
-      }
+    //   var item =  Items.findOne({ userId: userId, itemId: itemId, status: Enums.ItemStatus.STASH });
+    //   if (!item) {
+    //     throw new Error('Item not found: ' + itemId)
+    //   }
 
-      return item.botName;
-    },
+    //   return item.botName;
+    // },
 
     assignItemsToBot: function(items, newBotName) {
-      check(items, [String]);
-      check(newBotName, String);
+      // check(items, [String]);
+      // check(newBotName, String);
 
       _.each(items, function(itemId) {
         var doc = { $set: { botName: newBotName } };
@@ -500,7 +499,7 @@ var partialDB = {
 
     // This must be called BEFORE updating the assetIds since the tradeoffer references the old IDs
     updateStatusFromOffer: function(offerId, bot) {
-      check(offerId, String);
+      // check(offerId, String);
 
       var updatedOffer = Tradeoffers.findOne({ tradeofferid: offerId });
 
@@ -547,144 +546,144 @@ var partialDB = {
     }
   },
 
-  startChat: function(user1Id, user2Id, chatType) {
-    check(user1Id, String);
-    check(user2Id, String);
+  // startChat: function(user1Id, user2Id, chatType) {
+  //   check(user1Id, String);
+  //   check(user2Id, String);
 
-    var requestor = Users.findOne(user1Id);
-    var otherUser = Users.findOne(user2Id);
+  //   var requestor = Users.findOne(user1Id);
+  //   var otherUser = Users.findOne(user2Id);
 
-    if (!requestor || !otherUser) {
-      throw new Error('NO_USER_FOUND');
-    }
+  //   if (!requestor || !otherUser) {
+  //     throw new Error('NO_USER_FOUND');
+  //   }
 
-    var chatSelector = { $and: [
-      { 'users.userId': user1Id },
-      { 'users.userId': user2Id },
-      { category: 'Private' }
-    ]};
+  //   var chatSelector = { $and: [
+  //     { 'users.userId': user1Id },
+  //     { 'users.userId': user2Id },
+  //     { category: 'Private' }
+  //   ]};
 
-    var currentChat = Channels.findOne(chatSelector);
+  //   var currentChat = Channels.findOne(chatSelector);
 
-    // If a channel between the two users already exists, just show it
-    // otherwise, create a new one
-    if (currentChat) {
+  //   // If a channel between the two users already exists, just show it
+  //   // otherwise, create a new one
+  //   if (currentChat) {
 
-      var doc = {
-        $set: { chatType: chatType }
-      };
+  //     var doc = {
+  //       $set: { chatType: chatType }
+  //     };
 
-      var isShown = (currentChat.show.indexOf(user1Id) > -1);
-      if (!isShown) {
-        doc.$push = { show: Meteor.userId() };
-      }
+  //     var isShown = (currentChat.show.indexOf(user1Id) > -1);
+  //     if (!isShown) {
+  //       doc.$push = { show: Meteor.userId() };
+  //     }
 
-      // Update the channel with chat type and let them know a new message has arrived
-      Channels.update(currentChat._id, doc);
-    } else {
-      DB.insertPrivateChannel(requestor, otherUser);
-    }
-  },
+  //     // Update the channel with chat type and let them know a new message has arrived
+  //     Channels.update(currentChat._id, doc);
+  //   } else {
+  //     DB.insertPrivateChannel(requestor, otherUser);
+  //   }
+  // },
 
-  updateUnseen: function(channelId, userId) {
-    check(channelId, String);
-    check(userId, String);
+  // updateUnseen: function(channelId, userId) {
+  //   check(channelId, String);
+  //   check(userId, String);
 
-    var selector = { _id: channelId, 'users.userId': userId };
-    var doc = { $set: { 'users.$.unseen': 0 } };
+  //   var selector = { _id: channelId, 'users.userId': userId };
+  //   var doc = { $set: { 'users.$.unseen': 0 } };
 
-    Channels.update(selector, doc);
-  },
+  //   Channels.update(selector, doc);
+  // },
 
-  addUnseen: function(channelId, userId) {
-    check(channelId, String);
-    check(userId, String);
+  // addUnseen: function(channelId, userId) {
+  //   check(channelId, String);
+  //   check(userId, String);
 
-    var selector = { _id: channelId, 'users.userId': userId };
-    var doc = { $inc: { 'users.$.unseen': 1 } };
-    Channels.update(selector, doc);
-  },
+  //   var selector = { _id: channelId, 'users.userId': userId };
+  //   var doc = { $inc: { 'users.$.unseen': 1 } };
+  //   Channels.update(selector, doc);
+  // },
 
-  insertPrivateChannel: function(requestor, otherUser, chatType) {
-    return Channels.insert({
-      //shouldn't need name for private chats
-      name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
-      publishedToUsers: [ requestor._id, otherUser._id ],
-      users: [{
-        userId: requestor._id,
-        name: requestor.profile.name,
-        avatar: requestor.services.steam.avatar,
-        unseen: 0
-      }, {
-        userId: otherUser._id,
-        name: otherUser.profile.name,
-        avatar: requestor.services.steam.avatar,
-        unseen: 0
-      }],
-      show: [ requestor._id, otherUser._id ],
-      category: 'Private',
-      chatType: chatType
-    });
-  },
+  // insertPrivateChannel: function(requestor, otherUser, chatType) {
+  //   return Channels.insert({
+  //     //shouldn't need name for private chats
+  //     name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
+  //     publishedToUsers: [ requestor._id, otherUser._id ],
+  //     users: [{
+  //       userId: requestor._id,
+  //       name: requestor.profile.name,
+  //       avatar: requestor.services.steam.avatar,
+  //       unseen: 0
+  //     }, {
+  //       userId: otherUser._id,
+  //       name: otherUser.profile.name,
+  //       avatar: requestor.services.steam.avatar,
+  //       unseen: 0
+  //     }],
+  //     show: [ requestor._id, otherUser._id ],
+  //     category: 'Private',
+  //     chatType: chatType
+  //   });
+  // },
 
-  addOffer: function(userId, listing, offeredItems) {
-    check(userId, String);
+  // addOffer: function(userId, listing, offeredItems) {
+  //   check(userId, String);
 
-    var lister = Meteor.users.findOne(listing.user._id);
-    var offerer = Meteor.users.findOne(userId);
+  //   var lister = Meteor.users.findOne(listing.user._id);
+  //   var offerer = Meteor.users.findOne(userId);
 
-    check(lister, Object);
-    check(offerer, Object);
+  //   check(lister, Object);
+  //   check(offerer, Object);
 
-    RealTimeTrade.insert({
-      user1Id: lister._id,
-      user1Items: listing.items,
-      user1Name: lister.profile.name,
-      user2Id: offerer._id,
-      user2Items: offeredItems,
-      user2Name: offerer.profile.name,
-      user1Stage: "DONE",
-      user2Stage: "DONE",
-      listingId: listing._id,
-      createdTimestamp: new Date(),
-      modifiedTimestamp: new Date()
-    });
+  //   RealTimeTrade.insert({
+  //     user1Id: lister._id,
+  //     user1Items: listing.items,
+  //     user1Name: lister.profile.name,
+  //     user2Id: offerer._id,
+  //     user2Items: offeredItems,
+  //     user2Name: offerer.profile.name,
+  //     user1Stage: "DONE",
+  //     user2Stage: "DONE",
+  //     listingId: listing._id,
+  //     createdTimestamp: new Date(),
+  //     modifiedTimestamp: new Date()
+  //   });
 
-    Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
-  },
+  //   Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
+  // },
 
-  insertRealTimeTrade: function(user1Id, user2Id) {
-    var user1 = Meteor.users.findOne(user1Id);
-    var user2 = Meteor.users.findOne(user2Id);
+  // insertRealTimeTrade: function(user1Id, user2Id) {
+  //   var user1 = Meteor.users.findOne(user1Id);
+  //   var user2 = Meteor.users.findOne(user2Id);
 
-    check(user1, Object);
-    check(user2, Object);
+  //   check(user1, Object);
+  //   check(user2, Object);
 
-    RealTimeTrade.insert({
-      user1Id: user1Id,
-      user1Name: user1.profile.name,
-      user2Id: user2Id,
-      user2Name: user2.profile.name,
-      user1Stage: "INVITED",
-      user2Stage: "INVITED",
-      completed: false,
-      createdTimestamp: new Date(),
-      modifiedTimestamp: new Date()
-    });
-  },
+  //   RealTimeTrade.insert({
+  //     user1Id: user1Id,
+  //     user1Name: user1.profile.name,
+  //     user2Id: user2Id,
+  //     user2Name: user2.profile.name,
+  //     user1Stage: "INVITED",
+  //     user2Stage: "INVITED",
+  //     completed: false,
+  //     createdTimestamp: new Date(),
+  //     modifiedTimestamp: new Date()
+  //   });
+  // },
 
-  acceptRealTimeTrade: function(tradeId, channel) {
-    var doc = {
-      $set: {
-        user1Stage: "TRADING",
-        user2Stage: "TRADING",
-        channel: channel,
-        modifiedTimestamp: new Date()
-      }
-    };
+  // acceptRealTimeTrade: function(tradeId, channel) {
+  //   var doc = {
+  //     $set: {
+  //       user1Stage: "TRADING",
+  //       user2Stage: "TRADING",
+  //       channel: channel,
+  //       modifiedTimestamp: new Date()
+  //     }
+  //   };
 
-    RealTimeTrade.update(tradeId, doc);
-  },
+  //   RealTimeTrade.update(tradeId, doc);
+  // },
 
   cancelRealTimeTradeForItems: function(items) {
     // Ignore cash
@@ -717,140 +716,138 @@ var partialDB = {
     RealTimeTrade.update(selector2, doc, { multi: true });
   },
 
-  rejectRealTimeTrade: function(tradeId) {
-    var doc = {
-      //TODO: figure out better way to do rejections so we can log who rejected
-      //what?
-      //TODO: add logging
-      $set: {
-        user1Stage: "REJECTED",
-        user2Stage: "REJECTED",
-        completed: true,
-        closeDate: new Date(),
-        modifiedTimestamp: new Date()
-      }
-    };
+  // rejectRealTimeTrade: function(tradeId) {
+  //   var doc = {
+  //     //TODO: figure out better way to do rejections so we can log who rejected
+  //     //what?
+  //     //TODO: add logging
+  //     $set: {
+  //       user1Stage: "REJECTED",
+  //       user2Stage: "REJECTED",
+  //       completed: true,
+  //       closeDate: new Date(),
+  //       modifiedTimestamp: new Date()
+  //     }
+  //   };
 
-    RealTimeTrade.update(tradeId, doc);
-  },
+  //   RealTimeTrade.update(tradeId, doc);
+  // },
 
-  // addItemToTrade: function(item, tradeId, field) {
-  //   //TODO: for some reason when I use field directly in the push
-  //   //statement below I get a simple schema validation error...
-  //   //this is a little more verbose, but cleaner I suppose
-  //   if(field === "user1Items") {
-  //     RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-  //   } else if (field === "user2Items") {
-  //     RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
+  // // addItemToTrade: function(item, tradeId, field) {
+  // //   //TODO: for some reason when I use field directly in the push
+  // //   //statement below I get a simple schema validation error...
+  // //   //this is a little more verbose, but cleaner I suppose
+  // //   if(field === "user1Items") {
+  // //     RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
+  // //   } else if (field === "user2Items") {
+  // //     RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
+  // //   } else {
+  // //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+  // //   }
+  // // },
+
+  // // removeItemFromTrade: function(item, tradeId, field) {
+  // //   if(field === "user1Items") {
+  // //     RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
+  // //   } else if (field === "user2Items") {
+  // //     RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
+  // //   } else {
+  // //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+  // //   }
+  // // },
+
+  // setTradeStage: function(tradeId, field, stage) {
+  //   if(field === "user1Stage") {
+  //     RealTimeTrade.update(tradeId, {$set: { user1Stage: stage, modifiedTimestamp: new Date() } });
+  //   } else if (field === "user2Stage") {
+  //     RealTimeTrade.update(tradeId, {$set: { user2Stage: stage, modifiedTimestamp: new Date() } });
   //   } else {
-  //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
+  //     throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
   //   }
   // },
 
-  // removeItemFromTrade: function(item, tradeId, field) {
-  //   if(field === "user1Items") {
-  //     RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-  //   } else if (field === "user2Items") {
-  //     RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
-  //   } else {
-  //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
-  //   }
+  // setRealTimeCompleted: function(tradeId) {
+  //   RealTimeTrade.update(tradeId, { $set: { completed: true } });
   // },
 
-  setTradeStage: function(tradeId, field, stage) {
-    if(field === "user1Stage") {
-      RealTimeTrade.update(tradeId, {$set: { user1Stage: stage, modifiedTimestamp: new Date() } });
-    } else if (field === "user2Stage") {
-      RealTimeTrade.update(tradeId, {$set: { user2Stage: stage, modifiedTimestamp: new Date() } });
-    } else {
-      throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
-    }
-  },
+  // checkForTradeCompletion: function(tradeId) {
+  //   try {
+  //     var trade = RealTimeTrade.findOne(tradeId);
 
-  setRealTimeCompleted: function(tradeId) {
-    RealTimeTrade.update(tradeId, { $set: { completed: true } });
-  },
+  //     if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
+  //       var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
 
-  checkForTradeCompletion: function(tradeId) {
-    try {
-      var trade = RealTimeTrade.findOne(tradeId);
+  //       DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
+  //       DB.setRealTimeCompleted(tradeId);
 
-      if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
-        var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
+  //       return transId;
+  //     }
+  //   } catch (e) {
 
-        DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
-        DB.setRealTimeCompleted(tradeId);
+  //     DB.setTradeStage(tradeId, "user1Stage", "TRADING");
+  //     DB.setTradeStage(tradeId, "user2Stage", "TRADING");
 
-        return transId;
-      }
-    } catch (e) {
+  //     throw e;
+  //   }
+  // },
+  // //pass in positive number for adding ironBucks
+  // //pass in negative number of removing ironBucks
+  // //Note: $inc will create field if it doesn't exist
+  // updateIronBucks: function(userId, amount) {
+  //   var logData = {
+  //     userId:  [userId],
+  //     amount: amount,
+  //     date: new Date()
+  //   };
 
-      DB.setTradeStage(tradeId, "user1Stage", "TRADING");
-      DB.setTradeStage(tradeId, "user2Stage", "TRADING");
+  //   if(amount < 0) {
+  //     logData.type = Enums.LogType.DEBIT;
+  //   } else if (amount > 0){
+  //     logData.type = Enums.LogType.CREDIT;
+  //   } else {
+  //     throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
+  //   }
 
-      throw e;
-    }
-  },
-  //pass in positive number for adding ironBucks
-  //pass in negative number of removing ironBucks
-  //Note: $inc will create field if it doesn't exist
-  updateIronBucks: function(userId, amount) {
-    var logData = {
-      userId:  [userId],
-      amount: amount,
-      date: new Date()
-    };
+  //   console.log("userId: " + userId);
+  //   console.log("amount: " + amount);
+  //   Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
+  //   Logs.insert(logData);
+  // },
+  // addNotification: function(userId, message) {
+  //   Notifications.insert({
+  //     userId: userId,
+  //     message: message,
+  //     viewed: false
+  //   });
+  // },
+  // updateIronBucksCallback: function(body) {
+  //   var order = body.body.order;
+  //   var customer = body.body.customer;
 
-    if(amount < 0) {
-      logData.type = Enums.LogType.DEBIT;
-    } else if (amount > 0){
-      logData.type = Enums.LogType.CREDIT;
-    } else {
-      throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
-    }
+  //   //note: have to collect user email when they register?
+  //   //or maybe use uuid?
+  //   if(order.status === 'completed') {
+  //     var email = order.metadata.email;
+  //     var user = Meteor.users.findOne({"profile.email": email});
 
-    console.log("userId: " + userId);
-    console.log("amount: " + amount);
-    Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
-    Logs.insert(logData);
-  },
-  addNotification: function(userId, message) {
-    Notifications.insert({
-      userId: userId,
-      message: message,
-      viewed: false
-    });
-  },
-  updateIronBucksCallback: function(body) {
-    var order = body.body.order;
-    var customer = body.body.customer;
+  //     if(!_.isObject(user)) {
+  //       //TODO
+  //       console.log("couldn't find user...ERROR");
+  //     } else {
+  //       var amount = parseFloat(order.total_native.cents) / 100;
 
-    //note: have to collect user email when they register?
-    //or maybe use uuid?
-    if(order.status === 'completed') {
-      var email = order.metadata.email;
-      var user = Meteor.users.findOne({"profile.email": email});
-
-      if(!_.isObject(user)) {
-        //TODO
-        console.log("couldn't find user...ERROR");
-      } else {
-        var amount = parseFloat(order.total_native.cents) / 100;
-
-        DB.updateIronBucks(user._id, amount);
-      }
-    } else {
-      //TODO
-      console.log('order not completed correctly');
-    }
-  },
-  removeListing: function(listingId) {
-    Listings.remove(listingId);
-  }
+  //       DB.updateIronBucks(user._id, amount);
+  //     }
+  //   } else {
+  //     //TODO
+  //     console.log('order not completed correctly');
+  //   }
+  // },
+  // removeListing: function(listingId) {
+  //   Listings.remove(listingId);
+  // }
 };
 
-_.extend(DB, partialDB);
+assign(DB, DbListings);
 
-if (global.IS_BOT_SERVER) {
-  module.exports = partialDB;
-}
+module.exports = DB;

@@ -1,4 +1,4 @@
-Enums = {
+var LocalEnums = {
   ItemStatus: {
     PENDING_DEPOSIT: 'PENDING_DEPOSIT',
     PENDING_WITHDRAWAL: 'PENDING_WITHDRAWAL',
@@ -83,3 +83,9 @@ SteamConstants = {
     },
   },
 };
+
+if (global.IS_BOT_SERVER) {
+  module.exports = LocalEnums;
+} else {
+  Enums = LocalEnums;
+}

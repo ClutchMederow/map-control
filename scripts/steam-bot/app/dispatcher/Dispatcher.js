@@ -1,6 +1,8 @@
 var _ = require('underscore');
 var Constants = require('../Constants');
 var BotJob = require('./BotJob');
+var Task = require('./Task');
+var Enums = require('../../../../meteor/lib/Enums');
 
 var Dispatcher = function(SteamBot, DB, Collections) {
 
@@ -201,7 +203,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       };
 
       console.log(1);
-      var taskId = DB.tasks.createNew(Constants.jobType.DEPOSIT_ITEMS, userId, items);
+      var taskId = DB.tasks.createNew(Constants.jobType.DEPOSIT_ITEMS, userId, items)._id;
 
       console.log(2);
       var job = new BotJob(bot, Constants.jobType.DEPOSIT_ITEMS, taskId, options, DB);
@@ -393,7 +395,7 @@ var Dispatcher = function(SteamBot, DB, Collections) {
     },
 
     fixItem: function(itemMongoId) {
-      var item = Items.findOne(itemMongoId);
+      var item = Items.findOne({ _id: itemMongoId });
 
       var offers = Tradeoffers.find({
         items_to_receive: { $elemMatch: { assetid: item.itemId }}

@@ -18,6 +18,7 @@
     "moment": "^2.11.1",
     "mongo-sync": "^2.0.1",
     "mongoose": "^4.3.4",
+    "object-assign": "^4.0.1",
     "readline-sync": "^1.2.22",
     "steam": "^1.4.0",
     "steam-totp": "^1.2.1",
@@ -28,6 +29,8 @@
     "underscore": "^1.8.3"
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   }
 }

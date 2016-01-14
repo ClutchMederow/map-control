@@ -4,7 +4,7 @@ var Random = require('../../lib/random');
 var Constants = require('../Constants');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
-Task = function(jobs, ordered, taskId, DBLayer) {
+var Task = function(jobs, ordered, taskId, DBLayer) {
   var self = this;
 
   // check(ordered, Boolean);
@@ -178,3 +178,5 @@ Task.prototype.cancel = function() {
   // Ensures all synchronous jobs get cancelled
   this._setStatus(Constants.jobStatus.FAILED);
 };
+
+module.exports = Task;

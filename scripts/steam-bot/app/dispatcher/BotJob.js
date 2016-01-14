@@ -1,4 +1,4 @@
-var DB = require('../../../../meteor/server/db/db.js');
+var DB = require('../db/DB');
 var Future = require('fibers/future');
 var _ = require('underscore');
 var Constants = require('../Constants');
@@ -244,7 +244,6 @@ BotJob.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  console.log(this);
   this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 
