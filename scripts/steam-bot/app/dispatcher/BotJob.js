@@ -171,9 +171,13 @@ BotJob.prototype.execute = function(callback) {
 
   var future = new Future();
 
-  function functionForQueue() {
+  function functionForQueue(throwErr) {
     if (self.cancelQueue) {
       future.return();
+    }
+
+    if (throwErr) {
+      future.throw(new Error('QUEUED_BOTFUNCTION_TIMEOUT'));
     }
 
     var err, res;
@@ -204,14 +208,11 @@ BotJob.prototype.execute = function(callback) {
 
       future.return(self.tradeofferId);
     } catch(e) {
-      console.log(e);
       self.error = e;
       self._setStatus(Constants.jobStatus.FAILED);
       future.throw(e);
     }
   }
-
-  debugger;
 
   this._bot.enqueue(functionForQueue);
   return future.wait();

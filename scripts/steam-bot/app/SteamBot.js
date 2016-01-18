@@ -11,6 +11,7 @@ var _ = require('underscore');
 var moment = require('moment');
 var SteamConstants = require('./constants/SteamConstants');
 var Enums = require('./Enums');
+var SteamCommunity = require('steamcommunity');
 
 var SteamBot = function(bot) {
   var userOptions = {
@@ -21,6 +22,7 @@ var SteamBot = function(bot) {
 
   this.client = new Steam.SteamClient();
   this.user = new User(this.client, userOptions);
+  this.community = new SteamCommunity();
   this.offers = new Offers();
   this.store = new SteamStore();
 
@@ -29,6 +31,7 @@ var SteamBot = function(bot) {
   this.botName = bot.name;
   this.password = bot.password;
   this.sharedSecret = bot.twoFactor.shared_secret;
+  this.identitySecret = bot.twoFactor.identity_secret;
 
   this.items = [];
   this.sessionId = '';
@@ -104,6 +107,7 @@ SteamBot.prototype.logOn = function() {
     self.cookies = cookies;
 
     self.store.setCookies(cookies);
+    self.community.setCookies(cookies);
 
     if (!future.isResolved()) {
       future.return();
@@ -209,7 +213,7 @@ SteamBot.prototype.confirmPhone = function(code) {
   this.store.verifyPhoneNumber(code, function(err) {
     if (err) {
       console.log(err);
-      future.throw();
+      future.throw(err);
     } else {
       console.log('Number successfully added!');
       future.return();
@@ -430,7 +434,9 @@ SteamBot.prototype.takeItems = function(userSteamId, userToken, itemsToReceive, 
 };
 
 SteamBot.prototype.giveItems = function(userSteamId, userToken, itemsToGive, message) {
-  return this._makeOffer(userSteamId, userToken, itemsToGive, [], message);
+  var offerId = this._makeOffer(userSteamId, userToken, itemsToGive, [], message);
+  this.confirmMobile();
+  return offerId;
 };
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
@@ -613,44 +619,13 @@ SteamBot.prototype.enqueue = function(queuedFunction, numTries) {
   } else if (numTries <= maxTries){
     sleep(Config.bots.maxOffersRetryInterval).wait()
     this.enqueue(queuedFunction);
+  } else {
+    // throw an error if we hit this condition
+    queuedFunction(true);
   }
   // this.queue.push(queuedFunction);
   // this.executeNext();
 };
-
-// This allows us to execute the queued item right away if there are no other items in queue
-// Otherwise, it recursively calls itself every time it is done to check for
-// SteamBot.prototype.executeNext = function () {
-//   var self = this;
-
-//   if (this.outstandingOfferCount < Config.bots.maxOutstandingOffersSent) {
-
-//     if (this.queue.length === 0) {
-//       return;
-//     }
-
-//     // We are now busy, grab the next function
-//     var nextFunc = this.queue.shift();
-
-//     // Wrap the function so we can be sure to set this to free when done
-//     function wrappedQueuedFunction() {
-
-//       // Execute the next function
-//       nextFunc();
-
-//       // Call executenext again when done
-//       self.executeNext();
-//     }
-
-//     // We don't want to block here
-//     setTimeout(wrappedQueuedFunction, 0);
-//   } else {
-
-//     // if queue length is not zero, this will kick off the dequeuing process
-//     // hopefully the outstandingOfferCount will be lower next time
-//     setTimeout(executeNext, Config.bots.maxOffersRetryInterval);
-//   }
-// };
 
 SteamBot.prototype.cancelOldOffers = function(offers) {
   var nowUnix = Math.floor(Date.now() / 1000);
@@ -661,7 +636,7 @@ SteamBot.prototype.cancelOldOffers = function(offers) {
       SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateEmailPending') {
 
       if (nowUnix - offer.time_created > Config.bots.maxActiveOfferTime) {
-        console.log(nowUnix - offer.time_created > Config.bots.maxActiveOfferTime);
+        console.log(nowUnix - offer.time_created);
         self.cancelOffer(offer.tradeofferid);
       }
 
@@ -672,99 +647,31 @@ SteamBot.prototype.cancelOldOffers = function(offers) {
   });
 };
 
-// SteamBot.prototype.setupPhone = function() {
-//   var phone = '+19524512592';
+SteamBot.prototype.initializeTwoFactor = function() {
+  var timeKey = Math.round(Date.now() / 1000);
+  var identitySecret = this.identitySecret;
+  var confKey = SteamTotp.getConfirmationKey(identitySecret, timeKey, 'conf');
+  var allowKey = SteamTotp.getConfirmationKey(identitySecret, timeKey, 'allow');
 
-//   var future = new this.Future();
-
-//   this.store.addPhoneNumber(phone, function(err) {
-//     if (err) {
-//       console.log(err);
-//       future.throw();
-//     } else {
-//       console.log('Phone verification sent');
-//       future.return();
-//     }
-//   });
-
-//   future.wait();
-// };
-
-// SteamBot.prototype.confirmPhone = function(code) {
-//   var future = new this.Future();
-
-//   this.store.verifyPhoneNumber(code, function(err) {
-//     if (err) {
-//       console.log(err);
-//       future.throw();
-//     } else {
-//       console.log('Number successfully added!');
-//       future.return();
-//     }
-//   });
-
-//   return future.wait();
-// };
-
-// SteamBot.prototype.enableTwoFactor = function() {
-//   var future = new this.Future();
-
-//   this.community.enableTwoFactor(function(err, res) {
-//     if (err) {
-//       future.throw(err);
-//     } else {
-//       future.return(res);
-//     }
-//   });
-
-//   var result = future.wait();
-//   Bots.upsert({ name: this.botName }, { $set: { twoFactor: result } });
-//   console.log('Two factor phone verification sent');
-// };
-
-// SteamBot.prototype.finalizeTwoFactor = function(code) {
-//   var future = new this.Future();
-
-//   var bot = Bots.findOne({ name: this.botName });
-//   this.community.finalizeTwoFactor(bot.twoFactor.shared_secret, code, function(err) {
-//     if (err) {
-//       future.throw(err);
-//     } else {
-//       future.return();
-//     }
-//   });
-
-//   future.wait();
-//   console.log('Successfully finalized two factor');
-// };
-
-// SteamBot.prototype.initializeTwoFactor = function() {
-//   var SteamTotp = Npm.require('steam-totp');
-
-//   var bot = Bots.findOne({ name: this.botName });
-//   if (!bot) {
-//     console.log('Two factor not yet set up');
-//     return;
-//     // throw new Error('No bot found in collection');
-//   }
-
-//   var timekey = Math.round(Date.now() / 1000);
-//   var sharedSecret = bot.twoFactor.shared_secret.toString('base64');
-//   var code = SteamTotp.generateAuthCode(sharedSecret);
-
-//   this.twoFactorCodes = {
-//     timekey: timekey,
-//     sharedSecret: sharedSecret,
-//     key: code,
-//   };
-
-//   console.log(sharedSecret);
-//   console.log(code);
-// };
+  this.mobileConfirmCodes = {
+    timeKey: timeKey,
+    confKey: confKey,
+    allowKey: allowKey,
+  };
+};
 
 SteamBot.prototype.confirmMobile = function() {
-  var future = new this.Future();
-  this.community.getConfirmations(this.twoFactorCodes.timekey, key, function(err, res) {
+  var future = new Future();
+
+  if (!this.mobileConfirmCodes) {
+    this.initializeTwoFactor();
+  }
+
+  var time = this.mobileConfirmCodes.timeKey;
+  var confKey = this.mobileConfirmCodes.confKey;
+  var allowKey = this.mobileConfirmCodes.allowKey;
+
+  this.community.getConfirmations(time, confKey, function(err, res) {
     if (err) {
       future.throw(err);
     } else {
@@ -774,12 +681,9 @@ SteamBot.prototype.confirmMobile = function() {
 
   var confirmations = future.wait();
 
-  var time = this.twoFactorCodes.timekey;
-  var key = this.twoFactorCodes.key;
   var errArray = [];
-
   _.each(confirmations, function(conf) {
-    var err = confirmTrade(conf, time, key);
+    var err = confirmTrade(conf, time, allowKey);
     if (err) {
       errArray.push(err);
     }
@@ -799,49 +703,10 @@ SteamBot.prototype.alignTime = function() {
   return diff;
 };
 
-// SteamBot.addExternalCode = function(accountName) {
-//   var fs = Npm.require('fs');
-//   var baseDir = process.cwd().split('meteor')[0];
-//   var filename = baseDir + 'scripts/setup2FA/' + accountName + '.2fa';
-
-//   var data = JSON.parse(fs.readFileSync(filename, 'utf8'));
-//   Bots.upsert({ name: accountName }, { $set: { twoFactor: data } });
-// };
-
-SteamBot.prototype.communityLogOn = function() {
-  var self = this;
-
-  // use 2FA if set up
-  if (this.twoFactorCodes && this.twoFactorCodes.key) {
-    self.logOnOptions.twoFactorCode = this.twoFactorCodes.key;
-  }
-
-  var future = new Future();
-
-  this.community.login(self.logOnOptions, function(err, sessionID, cookies, steamguard) {
-    if (err) {
-      future.throw(err);
-    } else {
-      var result = {
-        sessionID: sessionID,
-        cookie: cookies,
-        steamguard: steamguard,
-      };
-
-      future.return(result);
-    }
-  });
-
-  var res = future.wait();
-
-  this.cookie = res.cookie;
-  this.sessionID = res.sessionID;
-};
-
 function confirmTrade(confirmation, time, key) {
   var future = new Future();
 
-  confirmation.respond(time, key, function(err) {
+  confirmation.respond(time, key, true, function(err) {
     if (err) {
       future.throw(err);
     } else {
@@ -874,6 +739,5 @@ function sleep(ms) {
   }, ms);
   return future;
 }
-
 
 module.exports = SteamBot;

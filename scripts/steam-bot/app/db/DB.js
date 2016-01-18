@@ -6,49 +6,9 @@ var DbListings = require('./db_listings');
 var assign = require('object-assign');
 var SteamConstants = require('../constants/SteamConstants');
 var Constants = require('../Constants');
+var IronBucks = require('../IronBucks');
 
 var DB = {
-  // // for dev purposes - REMOVE
-  // migrate: function() {
-  //   Meteor.users.find().forEach(function(user) {
-  //     Meteor.users.update(user._id, {$set: {
-  //       "profile.ironBucks": 0,
-  //       "profile.firstTimeUser": true
-  //     }});
-  //   });
-  // },
-
-  // insertChat: function(attributes) {
-  //   Messages.insert({
-  //     user: attributes.user,
-  //     channel: attributes.channel,
-  //     text: attributes.text,
-  //     items: attributes.items,
-  //     datePosted: new Date()
-  //   });
-  // },
-
-  // insertPrivateChat: function(attributes) {
-
-  //   // Shows the channel if a user has it hidden
-  //   var thisChannel = Channels.findOne(attributes.channel._id);
-  //   var userIds = _.pluck(thisChannel.users, 'userId');
-  //   var hiddenUsers = _.without(userIds, thisChannel.show);
-
-  //   // increments the unseen
-  //   var otherUsers = _.difference(userIds, [ attributes.user.userId ]);
-
-  //   _.each(otherUsers, function(other) {
-  //     DB.addUnseen(attributes.channel._id, other);
-  //   });
-
-  //   if (hiddenUsers.length) {
-  //     Channels.update(thisChannel._id, { $addToSet: { show: { $each: hiddenUsers } } });
-  //   }
-
-  //   return DB.insertChat(attributes);
-  // },
-
   users: {
     update: function(userId, doc) {
       if (!doc.$set) {
@@ -71,28 +31,6 @@ var DB = {
 
       return Meteor.users.findOne({ _id: userId }).profile.botName;
     },
-
-    // updateTradeURL: function(userId, tradeURL, email) {
-    //   check(userId, String);
-    //   check(tradeURL, String);
-    //   check(email, String);
-
-    //   var token = tradeURL.split("token=")[1];
-
-    //   if (!token) {
-    //     throw new Error('BAD_TRADE_URL: ' + tradeURL);
-    //   }
-
-    //   var doc = {
-    //     $set: {
-    //       'profile.tradeURL': tradeURL,
-    //       'profile.tradeToken': token,
-    //       'profile.email': email
-    //     }
-    //   };
-
-    //   return DB.users.update(userId, doc);
-    // }
   },
 
   tasks: {
@@ -277,57 +215,6 @@ var DB = {
       });
     },
 
-    // // Gets an array of item documents from the ids
-    // getItemsFromIds: function(items) {
-    //   check(items, [String]);
-
-    //   var out = Items.find({ _id: { $in: items, deleteInd: false } }).fetch();
-
-    //   if (out.length !== items.length)
-    //     throw new Error('MISSING_ITEMS', items);
-
-    //   return out;
-
-    //   // return _.map(items, function(itemId) {
-    //   //   return Items.findOne(itemId);
-    //   // });
-    // },
-
-    // getItemOwner: function(itemId) {
-    //   var item = Items.findOne({ _id: itemId, deleteInd: false });
-    //   if (!item)
-    //     throw new Error('ITEM_NOT_FOUND: ' + itemId);
-
-    //   var user = Meteor.users.findOne(item.userId);
-    //   if (!user)
-    //     throw new Error('USER_NOT_FOUND: ' + item.userId);
-
-    //   return user;
-    // },
-
-    // reassignOwner: function(itemId, newUserId) {
-    //   check(itemId, String);
-    //   check(newUserId, String);
-
-    //   var doc = {
-    //     $set: {
-    //       userId: newUserId
-    //     }
-    //   };
-    //   var selector = {
-    //     _id: itemId,
-    //     deleteInd: false
-    //   };
-    //   var options = { multi: true };
-
-    //   var out = DB.items.update(selector, doc, options);
-
-    //   if (out !== 1)
-    //     throw new Error('ITEM_NOT_UPDATED');
-
-    //   return out;
-    // },
-
     changeStatus: function(tradeofferId, assetIds, status) {
       // check(tradeofferId, String);
       // check(assetIds, [String]);
@@ -391,18 +278,6 @@ var DB = {
         }
       });
     },
-
-    // getItemBot: function(itemId, userId) {
-    //   check(itemId, String);
-    //   check(userId, String);
-
-    //   var item =  Items.findOne({ userId: userId, itemId: itemId, status: Enums.ItemStatus.STASH });
-    //   if (!item) {
-    //     throw new Error('Item not found: ' + itemId)
-    //   }
-
-    //   return item.botName;
-    // },
 
     assignItemsToBot: function(items, newBotName) {
       // check(items, [String]);
@@ -549,145 +424,6 @@ var DB = {
     }
   },
 
-  // startChat: function(user1Id, user2Id, chatType) {
-  //   check(user1Id, String);
-  //   check(user2Id, String);
-
-  //   var requestor = Users.findOne(user1Id);
-  //   var otherUser = Users.findOne(user2Id);
-
-  //   if (!requestor || !otherUser) {
-  //     throw new Error('NO_USER_FOUND');
-  //   }
-
-  //   var chatSelector = { $and: [
-  //     { 'users.userId': user1Id },
-  //     { 'users.userId': user2Id },
-  //     { category: 'Private' }
-  //   ]};
-
-  //   var currentChat = Channels.findOne(chatSelector);
-
-  //   // If a channel between the two users already exists, just show it
-  //   // otherwise, create a new one
-  //   if (currentChat) {
-
-  //     var doc = {
-  //       $set: { chatType: chatType }
-  //     };
-
-  //     var isShown = (currentChat.show.indexOf(user1Id) > -1);
-  //     if (!isShown) {
-  //       doc.$push = { show: Meteor.userId() };
-  //     }
-
-  //     // Update the channel with chat type and let them know a new message has arrived
-  //     Channels.update(currentChat._id, doc);
-  //   } else {
-  //     DB.insertPrivateChannel(requestor, otherUser);
-  //   }
-  // },
-
-  // updateUnseen: function(channelId, userId) {
-  //   check(channelId, String);
-  //   check(userId, String);
-
-  //   var selector = { _id: channelId, 'users.userId': userId };
-  //   var doc = { $set: { 'users.$.unseen': 0 } };
-
-  //   Channels.update(selector, doc);
-  // },
-
-  // addUnseen: function(channelId, userId) {
-  //   check(channelId, String);
-  //   check(userId, String);
-
-  //   var selector = { _id: channelId, 'users.userId': userId };
-  //   var doc = { $inc: { 'users.$.unseen': 1 } };
-  //   Channels.update(selector, doc);
-  // },
-
-  // insertPrivateChannel: function(requestor, otherUser, chatType) {
-  //   return Channels.insert({
-  //     //shouldn't need name for private chats
-  //     name: requestor.profile.name + '_' + otherUser.profile.name + Math.round(Math.random()*100),
-  //     publishedToUsers: [ requestor._id, otherUser._id ],
-  //     users: [{
-  //       userId: requestor._id,
-  //       name: requestor.profile.name,
-  //       avatar: requestor.services.steam.avatar,
-  //       unseen: 0
-  //     }, {
-  //       userId: otherUser._id,
-  //       name: otherUser.profile.name,
-  //       avatar: requestor.services.steam.avatar,
-  //       unseen: 0
-  //     }],
-  //     show: [ requestor._id, otherUser._id ],
-  //     category: 'Private',
-  //     chatType: chatType
-  //   });
-  // },
-
-  // addOffer: function(userId, listing, offeredItems) {
-  //   check(userId, String);
-
-  //   var lister = Meteor.users.findOne(listing.user._id);
-  //   var offerer = Meteor.users.findOne(userId);
-
-  //   check(lister, Object);
-  //   check(offerer, Object);
-
-  //   RealTimeTrade.insert({
-  //     user1Id: lister._id,
-  //     user1Items: listing.items,
-  //     user1Name: lister.profile.name,
-  //     user2Id: offerer._id,
-  //     user2Items: offeredItems,
-  //     user2Name: offerer.profile.name,
-  //     user1Stage: "DONE",
-  //     user2Stage: "DONE",
-  //     listingId: listing._id,
-  //     createdTimestamp: new Date(),
-  //     modifiedTimestamp: new Date()
-  //   });
-
-  //   Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
-  // },
-
-  // insertRealTimeTrade: function(user1Id, user2Id) {
-  //   var user1 = Meteor.users.findOne(user1Id);
-  //   var user2 = Meteor.users.findOne(user2Id);
-
-  //   check(user1, Object);
-  //   check(user2, Object);
-
-  //   RealTimeTrade.insert({
-  //     user1Id: user1Id,
-  //     user1Name: user1.profile.name,
-  //     user2Id: user2Id,
-  //     user2Name: user2.profile.name,
-  //     user1Stage: "INVITED",
-  //     user2Stage: "INVITED",
-  //     completed: false,
-  //     createdTimestamp: new Date(),
-  //     modifiedTimestamp: new Date()
-  //   });
-  // },
-
-  // acceptRealTimeTrade: function(tradeId, channel) {
-  //   var doc = {
-  //     $set: {
-  //       user1Stage: "TRADING",
-  //       user2Stage: "TRADING",
-  //       channel: channel,
-  //       modifiedTimestamp: new Date()
-  //     }
-  //   };
-
-  //   RealTimeTrade.update(tradeId, doc);
-  // },
-
   cancelRealTimeTradeForItems: function(items) {
     // Ignore cash
     var items = _.reject(items, function(item) {
@@ -718,139 +454,8 @@ var DB = {
     RealTimeTrade.update(selector1, doc, { multi: true });
     RealTimeTrade.update(selector2, doc, { multi: true });
   },
-
-  // rejectRealTimeTrade: function(tradeId) {
-  //   var doc = {
-  //     //TODO: figure out better way to do rejections so we can log who rejected
-  //     //what?
-  //     //TODO: add logging
-  //     $set: {
-  //       user1Stage: "REJECTED",
-  //       user2Stage: "REJECTED",
-  //       completed: true,
-  //       closeDate: new Date(),
-  //       modifiedTimestamp: new Date()
-  //     }
-  //   };
-
-  //   RealTimeTrade.update(tradeId, doc);
-  // },
-
-  // // addItemToTrade: function(item, tradeId, field) {
-  // //   //TODO: for some reason when I use field directly in the push
-  // //   //statement below I get a simple schema validation error...
-  // //   //this is a little more verbose, but cleaner I suppose
-  // //   if(field === "user1Items") {
-  // //     RealTimeTrade.update(tradeId, {$push: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-  // //   } else if (field === "user2Items") {
-  // //     RealTimeTrade.update(tradeId, {$push: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
-  // //   } else {
-  // //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
-  // //   }
-  // // },
-
-  // // removeItemFromTrade: function(item, tradeId, field) {
-  // //   if(field === "user1Items") {
-  // //     RealTimeTrade.update(tradeId, {$pull: {user1Items: item}, $set: { modifiedTimestamp: new Date() } });
-  // //   } else if (field === "user2Items") {
-  // //     RealTimeTrade.update(tradeId, {$pull: {user2Items: item}, $set: { modifiedTimestamp: new Date() } });
-  // //   } else {
-  // //     throw new Meteor.Error("INCORRECT_FIELD", "Only item fields allowed");
-  // //   }
-  // // },
-
-  // setTradeStage: function(tradeId, field, stage) {
-  //   if(field === "user1Stage") {
-  //     RealTimeTrade.update(tradeId, {$set: { user1Stage: stage, modifiedTimestamp: new Date() } });
-  //   } else if (field === "user2Stage") {
-  //     RealTimeTrade.update(tradeId, {$set: { user2Stage: stage, modifiedTimestamp: new Date() } });
-  //   } else {
-  //     throw new Meteor.Error("INCORRECT_FIELD", "Only stage fields allowed");
-  //   }
-  // },
-
-  // setRealTimeCompleted: function(tradeId) {
-  //   RealTimeTrade.update(tradeId, { $set: { completed: true } });
-  // },
-
-  // checkForTradeCompletion: function(tradeId) {
-  //   try {
-  //     var trade = RealTimeTrade.findOne(tradeId);
-
-  //     if(trade.user1Stage === "CONFIRMED" && trade.user2Stage === "CONFIRMED") {
-  //       var transId = DB.transactions.initialize(trade.user1Id, trade.user1Items, trade.user2Id, trade.user2Items);
-
-  //       DB.transactions.changeStage(transId, Enums.TransStage.ACCEPTED);
-  //       DB.setRealTimeCompleted(tradeId);
-
-  //       return transId;
-  //     }
-  //   } catch (e) {
-
-  //     DB.setTradeStage(tradeId, "user1Stage", "TRADING");
-  //     DB.setTradeStage(tradeId, "user2Stage", "TRADING");
-
-  //     throw e;
-  //   }
-  // },
-  // //pass in positive number for adding ironBucks
-  // //pass in negative number of removing ironBucks
-  // //Note: $inc will create field if it doesn't exist
-  // updateIronBucks: function(userId, amount) {
-  //   var logData = {
-  //     userId:  [userId],
-  //     amount: amount,
-  //     date: new Date()
-  //   };
-
-  //   if(amount < 0) {
-  //     logData.type = Enums.LogType.DEBIT;
-  //   } else if (amount > 0){
-  //     logData.type = Enums.LogType.CREDIT;
-  //   } else {
-  //     throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
-  //   }
-
-  //   console.log("userId: " + userId);
-  //   console.log("amount: " + amount);
-  //   Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
-  //   Logs.insert(logData);
-  // },
-  // addNotification: function(userId, message) {
-  //   Notifications.insert({
-  //     userId: userId,
-  //     message: message,
-  //     viewed: false
-  //   });
-  // },
-  // updateIronBucksCallback: function(body) {
-  //   var order = body.body.order;
-  //   var customer = body.body.customer;
-
-  //   //note: have to collect user email when they register?
-  //   //or maybe use uuid?
-  //   if(order.status === 'completed') {
-  //     var email = order.metadata.email;
-  //     var user = Meteor.users.findOne({"profile.email": email});
-
-  //     if(!_.isObject(user)) {
-  //       //TODO
-  //       console.log("couldn't find user...ERROR");
-  //     } else {
-  //       var amount = parseFloat(order.total_native.cents) / 100;
-
-  //       DB.updateIronBucks(user._id, amount);
-  //     }
-  //   } else {
-  //     //TODO
-  //     console.log('order not completed correctly');
-  //   }
-  // },
-  // removeListing: function(listingId) {
-  //   Listings.remove(listingId);
-  // }
 };
 
-assign(DB, DbListings);
+DB.listings = DbListings;
 
 module.exports = DB;

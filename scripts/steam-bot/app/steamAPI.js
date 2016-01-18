@@ -4,6 +4,7 @@ var Future = require('fibers/future');
 var Enums = require('./Enums');
 var SteamConstants = require('./constants/SteamConstants');
 var _ = require('underscore');
+var Constants = require('./Constants');
 
 //Following module pattern
 var SteamAPI = (function () {
@@ -196,6 +197,6 @@ var SteamAPI = (function () {
 
     test: getPlayerItemsWithAttributes,
   };
-}) (); //Immediately Invoked Function that returns object
+}) ();
 
 module.exports = SteamAPI;

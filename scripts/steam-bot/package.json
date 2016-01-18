@@ -27,6 +27,7 @@
     "steam-tradeoffers": "^3.0.1",
     "steam-user": "^3.3.0",
     "steam-web-api-key": "0.0.3",
+    "steamcommunity": "^3.18.1",
     "steamstore": "^1.3.0",
     "underscore": "^1.8.3"
   },

@@ -20,11 +20,12 @@ DispatcherAPI = {
     var callstring = DISPATCHER_API_URL + 'withdraw';
     var options = {
       data: {
-        // testing: testing,
+        userId: userId,
+        items: items,
       }
     };
 
-    return callBotServer(callstring, options);
+    return callBotServer(callstring, options).tradeofferId;
   },
 
   test: function(testing) {

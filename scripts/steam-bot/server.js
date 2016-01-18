@@ -34,6 +34,8 @@ function initializeCollections() {
   global.Tradeoffers = MongoDB.getCollection('tradeoffers');
   global.Items = MongoDB.getCollection('items');
   global.Tasks = MongoDB.getCollection('tasks');
+  global.Listings = MongoDB.getCollection('listings');
+  global.RealTimeTrade = MongoDB.getCollection('realTimeTrade');
 
   // this is bad but I can't find a better way
   // mongo-sync doesn't expose the Cursor object
@@ -57,11 +59,27 @@ var router = express.Router();
 router.post('/deposit', function(req, res) {
   Fiber(function() {
     try {
-      console.log(req.body);
       var userId = req.body.userId;
       var items = req.body.items;
 
       var out = Dispatcher.depositItems(userId, items);
+
+      res.json({ tradeofferId: out });
+    } catch(e) {
+      console.log(e);
+      res.status(500).send(e.message);
+      // throw e;
+    }
+  }).run();
+});
+
+router.post('/withdraw', function(req, res) {
+  Fiber(function() {
+    try {
+      var userId = req.body.userId;
+      var items = req.body.items;
+
+      var out = Dispatcher.withdrawItems(userId, items);
 
       res.json({ tradeofferId: out });
     } catch(e) {
@@ -90,8 +108,8 @@ Fiber(function() {
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();
   Dispatcher.startPolling();
-  // var meat = Dispatcher.getBot('mc_steambot_1');
-  // meat.queryOffers();
+  var meat = Dispatcher.getBot('mc_steambot_1');
+  meat.confirmMobile();
 }).run();
 
   // var future = new Future();

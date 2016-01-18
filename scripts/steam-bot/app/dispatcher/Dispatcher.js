@@ -194,8 +194,6 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       // check(userId, String);
       // check(items, [String]);
 
-      console.log(0);
-
       var bot = getUsersBot(userId);
 
       var options = {
@@ -203,20 +201,15 @@ var Dispatcher = function(SteamBot, DB, Collections) {
         userId: userId
       };
 
-      console.log(1);
       var taskId = DB.tasks.createNew(Constants.jobType.DEPOSIT_ITEMS, userId, items)._id;
 
-      console.log(2);
       var job = new BotJob(bot, Constants.jobType.DEPOSIT_ITEMS, taskId, options, DB);
 
-      console.log(3);
       var task = new Task([job], false, taskId, DB);
 
       try {
-        console.log(4);
         task.execute();
       } catch (e) {
-        console.log(5);
         DB.items.revertStatus(items);
 
         if (e.toString().indexOf('has declined your trade request') > -1) {
@@ -358,7 +351,6 @@ var Dispatcher = function(SteamBot, DB, Collections) {
     startPolling: function() {
       console.log('Polling started');
       var self = this;
-      console.log(self.checkOutstandingTradeoffers);
       checkOutstandingPollHandle = setInterval(self.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
     },
 
