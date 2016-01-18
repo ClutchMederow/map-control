@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "watch": "nodemon --exec babel-node server.js"
+    "watch": "nodemon --exec babel-node server.js",
+    "debug": "nodemon --exec babel-node --debug server.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "mongoose": "^4.3.4",
     "object-assign": "^4.0.1",
     "readline-sync": "^1.2.22",
+    "request": "^2.67.0",
     "steam": "^1.4.0",
     "steam-totp": "^1.2.1",
     "steam-tradeoffers": "^3.0.1",

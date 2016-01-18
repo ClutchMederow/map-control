@@ -2,7 +2,8 @@ var _ = require('underscore');
 var Constants = require('../Constants');
 var BotJob = require('./BotJob');
 var Task = require('./Task');
-var Enums = require('../../../../meteor/lib/Enums');
+var Enums = require('../Enums');
+var Fiber = require('fibers');
 
 var Dispatcher = function(SteamBot, DB, Collections) {
 
@@ -334,27 +335,31 @@ var Dispatcher = function(SteamBot, DB, Collections) {
     },
 
     checkOutstandingTradeoffers: function() {
-      _.each(bots, function(bot) {
-        try {
-          var offers = bot.queryOffers();
+      Fiber(function() {
+        _.each(bots, function(bot) {
+          try {
+            var offers = bot.queryOffers();
 
-          // Reload the inventory so we can match items
-          // May be null if unable to connect to steam servers
-          if (offers) {
-            updateTradeofferStatus(offers, bot);
-            bot.cancelOldOffers();
+            // Reload the inventory so we can match items
+            // May be null if unable to connect to steam servers
+            if (offers) {
+              updateTradeofferStatus(offers, bot);
+              bot.cancelOldOffers();
+            }
+
+          } catch (e) {
+            console.log(bot.botName + ': Error checking outstanding tradeoffers');
+            console.log(e.stack);
           }
-
-        } catch (e) {
-          console.log(bot.botName + ': Error checking outstanding tradeoffers');
-          console.log(e.stack);
-        }
-      });
+        });
+      }).run();
     },
 
     startPolling: function() {
       console.log('Polling started');
-      checkOutstandingPollHandle = setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
+      var self = this;
+      console.log(self.checkOutstandingTradeoffers);
+      checkOutstandingPollHandle = setInterval(self.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
     },
 
     stopPolling: function() {

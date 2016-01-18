@@ -1,8 +1,11 @@
 var _ = require('underscore');
 var Random = require('../../lib/random');
-var Enums = require('../../../../meteor/lib/Enums');
+var Enums = require('../Enums');
+var SteamAPI = require('../steamAPI');
 var DbListings = require('./db_listings');
 var assign = require('object-assign');
+var SteamConstants = require('../constants/SteamConstants');
+var Constants = require('../Constants');
 
 var DB = {
   // // for dev purposes - REMOVE
@@ -111,7 +114,7 @@ var DB = {
     insert: function(doc) {
       // check(doc.userId, String);
       // check(doc.jobType, Match.Where(function(item) {
-      //   return !!Dispatcher.jobType[item];
+      //   return !!Constants.jobType[item];
       // }));
 
       doc.createdTimestamp = new Date();
@@ -252,9 +255,9 @@ var DB = {
 
       if (existingOwnedItem) {
         if (existingOwnedItem.status === Enums.ItemStatus.PENDING_DEPOSIT) {
-          throw new Meteor.Error('Item pending deposit');
+          throw new Error('Item pending deposit');
         } else if (existingOwnedItem.status === Enums.ItemStatus.STASH) {
-          throw new Meteor.Error('Item already in stash');
+          throw new Error('Item already in stash');
         }
       }
 
@@ -462,7 +465,7 @@ var DB = {
             ];
 
             var match = true;
-            for (field in mapping) {
+            for (var field in mapping) {
 
               // Single equals here to handle number/string comparisons
               if (thisNewItem[field[0]] != item[field[1]]) {
@@ -511,20 +514,20 @@ var DB = {
         var given = _.pluck(updatedOffer.items_to_give, 'assetid');
 
         if (state === 'k_ETradeOfferStateAccepted') {
-          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+          if (jobType === Constants.jobType.DEPOSIT_ITEMS) {
 
             DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.STASH);
 
-          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+          } else if (jobType === Constants.jobType.WITHDRAW_ITEMS) {
 
             DB.items.changeStatus(updatedOffer.tradeofferid, given, Enums.ItemStatus.EXTERNAL);
           }
         } else if (state === 'k_ETradeOfferStateDeclined') {
-          if (jobType === Dispatcher.jobType.DEPOSIT_ITEMS) {
+          if (jobType === Constants.jobType.DEPOSIT_ITEMS) {
 
             DB.items.changeStatus(updatedOffer.tradeofferid, received, Enums.ItemStatus.EXTERNAL);
 
-          } else if (jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+          } else if (jobType === Constants.jobType.WITHDRAW_ITEMS) {
 
             bot.loadBotInventory();
             var botItems = bot.items.findOne({ itemId: { $in: given } });

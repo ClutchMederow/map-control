@@ -125,7 +125,7 @@ Task.prototype._executeParallel = function() {
         }
       }
     })(thisFut, job);
-    setTimeout(closedFunc, 0);
+    closedFunc();
   });
 
 

@@ -54,11 +54,6 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 5080;
 var router = express.Router();
 
-router.post('/test', function(req, res) {
-  console.log(req.body);
-  res.json({ hey: 'there', me: 'drew' });
-});
-
 router.post('/deposit', function(req, res) {
   Fiber(function() {
     try {
@@ -68,18 +63,13 @@ router.post('/deposit', function(req, res) {
 
       var out = Dispatcher.depositItems(userId, items);
 
-      res.json({ res: out });
+      res.json({ tradeofferId: out });
     } catch(e) {
       console.log(e);
-      res.status(500).send('Error');
-      throw e;
+      res.status(500).send(e.message);
+      // throw e;
     }
   }).run();
-});
-
-router.post('/test', function(req, res) {
-  console.log(req.body);
-  res.json({ hey: 'there', me: 'drew' });
 });
 
 // REGISTER OUR ROUTES
@@ -99,6 +89,9 @@ Fiber(function() {
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();
+  Dispatcher.startPolling();
+  // var meat = Dispatcher.getBot('mc_steambot_1');
+  // meat.queryOffers();
 }).run();
 
   // var future = new Future();

@@ -4,11 +4,13 @@ var _ = require('underscore');
 var Constants = require('../Constants');
 var Random = require('../../lib/random');
 var SteamBot = require('../SteamBot');
+var Enums = require('../Enums');
 
 var BotJob = function(bot, jobType, taskId, options) {
 
-  if (!(bot instanceof SteamBot))
+  if (!(bot instanceof SteamBot)) {
     throw new Error('INVALID_BOT');
+  }
 
   // check(taskId, String);
   // check(DBLayer, Object);
@@ -32,8 +34,9 @@ var BotJob = function(bot, jobType, taskId, options) {
     //   userId: String
     // });
 
-    if (options.items.length < 1)
+    if (options.items.length < 1) {
       throw new Error('NO_ITEMS');
+    }
 
     this.userId = options.userId;
     this.items = options.items;
@@ -45,8 +48,9 @@ var BotJob = function(bot, jobType, taskId, options) {
     //   userId: String
     // });
 
-    if (options.items.length < 1)
+    if (options.items.length < 1) {
       throw new Error('NO_ITEMS');
+    }
 
     this.userId = options.userId;
     this.items = options.items;
@@ -85,7 +89,7 @@ BotJob.prototype._executeDeposit = function() {
 
   if (!tradeToken) {
     console.log('INVALID_TOKEN, steamid: ' + steamId);
-    throw new Meteor.Error(Enums.MeteorError.INVALID_TOKEN, 'Your trade URL is invalid. Please go to your profile to fix it.');
+    throw new Error(Enums.MeteorError.INVALID_TOKEN, 'Your trade URL is invalid. Please go to your profile to fix it.');
   }
 
   var id = Random.id();
@@ -207,6 +211,8 @@ BotJob.prototype.execute = function(callback) {
     }
   }
 
+  debugger;
+
   this._bot.enqueue(functionForQueue);
   return future.wait();
 };
@@ -244,7 +250,7 @@ BotJob.prototype._save = function() {
 
   // The parse + stringify combo gets rid of all functions and _ prefixed fields
   var doc = JSON.parse(JSON.stringify(this, replacer));
-  this._DB.tasks.updateJobHistory(this._taskId, doc);
+  // this._DB.tasks.updateJobHistory(this._taskId, doc);
 };
 
 // Set the status and push an update to the task

@@ -9,6 +9,8 @@ var SteamTotp = require('steam-totp');
 var getApiKey = require('steam-web-api-key');
 var _ = require('underscore');
 var moment = require('moment');
+var SteamConstants = require('./constants/SteamConstants');
+var Enums = require('./Enums');
 
 var SteamBot = function(bot) {
   var userOptions = {
@@ -244,7 +246,6 @@ SteamBot.prototype.finalizeTwoFactor = function(code, shared_secret) {
   console.log('Finalizing...');
 
   self.user.finalizeTwoFactor(shared_secret, code, function(res) {
-    console.log(res);
     future.return(res);
   });
 
@@ -273,7 +274,6 @@ SteamBot.prototype.hasPhone = function() {
 };
 
 SteamBot.prototype.loadTradeToken = function() {
-  var Future = Npm.require('fibers/future');
   var future = new Future();
   var self = this;
 
@@ -329,6 +329,29 @@ SteamBot.prototype.loadBotInventory = function() {
   }
 };
 
+SteamBot.prototype.checkIfProfilePrivate = function(partnerSteamId) {
+  var options = {
+    partnerSteamId: partnerSteamId,
+    appId: 730,
+    contextId: 2
+  };
+
+  var future = new Future();
+
+  this.offers.loadPartnerInventory(options, function(err, res) {
+    if (err)
+      future.throw(err);
+    else
+      future.return(res);
+  });
+
+  try {
+    future.wait();
+  } catch(e) {
+    throw new Error(Enums.MeteorError.PRIVATE_INVENTORY, 'Unable to load inventory. Your inventory is set to private.');
+  }
+};
+
 SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
   if(!items)
     return [];
@@ -339,7 +362,6 @@ SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
     contextId: 2
   };
 
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.loadPartnerInventory(options, function(err, res) {
@@ -361,8 +383,9 @@ SteamBot.prototype.getItemObjsWithIds = function(partnerSteamId, items) {
     });
 
     // TODO: Coerce all ids to numbers
-    if(itemToFind.instanceId != '0' && foundItemArray.length !== 1)
+    if(itemToFind.instanceId != '0' && foundItemArray.length !== 1) {
       throw new Error('Bad item match: Should get 1, got ' + foundItemArray.length)
+    }
 
     return {
       appid: 730,
@@ -386,8 +409,9 @@ SteamBot.prototype.getOwnedItemObjsWithIds = function(items) {
   var out = _.map(items, function(itemToFind) {
     foundItem = _.findWhere(self.items, { classid: itemToFind.classId, instanceid: itemToFind.instanceId });
 
-    if (!foundItem)
+    if (!foundItem) {
       throw new Error('Item not found: ' + itemToFind.classId + '|' + itemToFind.instanceId);
+    }
 
     return {
       appid: 730,
@@ -411,31 +435,42 @@ SteamBot.prototype.giveItems = function(userSteamId, userToken, itemsToGive, mes
 
 // items should be in the format [{ classId: <classid>, instanceId: <instanceid> }]
 SteamBot.prototype._makeOffer = function(userSteamId, userToken, itemsToSend, itemsToReceive, message) {
+  this.checkIfProfilePrivate(userSteamId);
 
   var itemObjsToReceive = wrapItemForBot(itemsToReceive);
   var itemObjsToSend = wrapItemForBot(itemsToSend);
 
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
-  // TODO: Add some transaction id in message
-  this.offers.makeOffer({
+  var offerObj = {
     partnerSteamId: userSteamId,
     accessToken: userToken,
     itemsFromMe: itemObjsToSend,
     itemsFromThem: itemObjsToReceive,
     message: message
-  }, function(err, res){
-    if (err)
+  };
+
+  // TODO: Add some transaction id in message
+  this.offers.makeOffer(offerObj, function(err, res){
+    if (err) {
       future.throw(err);
-    else
+    } else {
       future.return(res);
+    }
   });
 
   // TODO: Add a callback to reload inventory on acceptance...?
 
-  var offer = future.wait();
-  return offer.tradeofferid;
+  try {
+    var offer = future.wait();
+    return offer.tradeofferid;
+  } catch(e) {
+    if (e.message && e.message.indexOf(SteamConstants.steamApi.errors.maxOffersOut) > -1) {
+      throw new Error(Enums.MeteorError.MAX_OFFERS_OUT);
+    } else {
+      throw e;
+    }
+  }
 };
 
 SteamBot.prototype.queryOffersReceived = function() {
@@ -448,7 +483,6 @@ SteamBot.prototype.queryOffersReceived = function() {
     // time_historical_cutoff: 0
   };
 
-  var Future = Npm.require('fibers/future');
   var future = new Future();
   this.offers.getOffers(options, function(error,result) {
     if (error)
@@ -471,7 +505,6 @@ SteamBot.prototype.queryOffers = function() {
     // time_historical_cutoff: 0
   };
 
-  var Future = Npm.require('fibers/future');
   var future = new Future();
   this.offers.getOffers(options, function(error,result) {
     if (error)
@@ -483,14 +516,17 @@ SteamBot.prototype.queryOffers = function() {
   var res = future.wait();
 
   // set the outstanding offer count
-  var activeOffers = _.where(res.response.trade_offers_sent, function(offer) {
+  var activeOffers = _.filter(res.response.trade_offers_sent, function(offer) {
+    var state = SteamConstants.offerStatus[offer.trade_offer_state];
     return [
       'k_ETradeOfferStateActive',
       'k_ETradeOfferStateCountered',
       'k_ETradeOfferStateEmailPending'
-    ].indexOf(SteamConstants.offerStatus[offer.trade_offer_state]) > -1;
+    ].indexOf(state) > -1;
   });
+
   this.outstandingOfferCount = activeOffers ? activeOffers.length : 0;
+  this.cancelOldOffers(activeOffers);
 
   return res.response.trade_offers_sent;
 };
@@ -498,7 +534,6 @@ SteamBot.prototype.queryOffers = function() {
 SteamBot.prototype.getNewItemIds = function(tradeId) {
   check(tradeId, String);
 
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.getItems({ tradeId: tradeId }, function(err, res) {
@@ -517,7 +552,6 @@ SteamBot.prototype.loggedOn = function() {
 };
 
 SteamBot.prototype.getSingleOffer = function(offerId) {
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   var options = {
@@ -537,7 +571,6 @@ SteamBot.prototype.getSingleOffer = function(offerId) {
 };
 
 SteamBot.prototype.cancelOffer = function(tradeofferId) {
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.cancelOffer({
@@ -554,7 +587,6 @@ SteamBot.prototype.cancelOffer = function(tradeofferId) {
 };
 
 SteamBot.prototype.acceptOffer = function(tradeofferId) {
-  var Future = Npm.require('fibers/future');
   var future = new Future();
 
   this.offers.acceptOffer({
@@ -570,54 +602,67 @@ SteamBot.prototype.acceptOffer = function(tradeofferId) {
   return future.wait();
 };
 
-SteamBot.prototype.enqueue = function(queuedFunction) {
-  this.queue.push(queuedFunction);
-  this.executeNext();
+SteamBot.prototype.enqueue = function(queuedFunction, numTries) {
+  var maxTries = 5;
+
+  numTries = numTries || 0;
+  numTries++;
+
+  if (this.outstandingOfferCount < Config.bots.maxOutstandingOffersSent) {
+    queuedFunction();
+  } else if (numTries <= maxTries){
+    sleep(Config.bots.maxOffersRetryInterval).wait()
+    this.enqueue(queuedFunction);
+  }
+  // this.queue.push(queuedFunction);
+  // this.executeNext();
 };
 
 // This allows us to execute the queued item right away if there are no other items in queue
 // Otherwise, it recursively calls itself every time it is done to check for
-SteamBot.prototype.executeNext = function () {
-  var self = this;
+// SteamBot.prototype.executeNext = function () {
+//   var self = this;
 
-  if (this.outstandingOfferCount < Config.bots.maxOutstandingOffersSent) {
+//   if (this.outstandingOfferCount < Config.bots.maxOutstandingOffersSent) {
 
-    if (this.queue.length === 0) {
-      return;
-    }
+//     if (this.queue.length === 0) {
+//       return;
+//     }
 
-    // We are now busy, grab the next function
-    var nextFunc = this.queue.shift();
+//     // We are now busy, grab the next function
+//     var nextFunc = this.queue.shift();
 
-    // Wrap the function so we can be sure to set this to free when done
-    function wrappedQueuedFunction() {
+//     // Wrap the function so we can be sure to set this to free when done
+//     function wrappedQueuedFunction() {
 
-      // Execute the next function
-      nextFunc();
+//       // Execute the next function
+//       nextFunc();
 
-      // Call executenext again when done
-      self.executeNext();
-    }
+//       // Call executenext again when done
+//       self.executeNext();
+//     }
 
-    // We don't want to block here
-    Meteor.setTimeout(wrappedQueuedFunction, 0);
-  } else {
+//     // We don't want to block here
+//     setTimeout(wrappedQueuedFunction, 0);
+//   } else {
 
-    // if queue length is not zero, this will kick off the dequeuing process
-    // hopefully the outstandingOfferCount will be lower next time
-    Meteor.setTimeout(executeNext, Config.bots.maxOffersRetryInterval);
-  }
-};
+//     // if queue length is not zero, this will kick off the dequeuing process
+//     // hopefully the outstandingOfferCount will be lower next time
+//     setTimeout(executeNext, Config.bots.maxOffersRetryInterval);
+//   }
+// };
 
 SteamBot.prototype.cancelOldOffers = function(offers) {
   var nowUnix = Math.floor(Date.now() / 1000);
+  var self = this;
 
   _.each(offers, function(offer) {
     if (SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateActive' ||
       SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateEmailPending') {
 
       if (nowUnix - offer.time_created > Config.bots.maxActiveOfferTime) {
-        this.cancelOffer(offer.tradeofferid);
+        console.log(nowUnix - offer.time_created > Config.bots.maxActiveOfferTime);
+        self.cancelOffer(offer.tradeofferid);
       }
 
     } else if (SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateCountered') {
@@ -771,7 +816,7 @@ SteamBot.prototype.communityLogOn = function() {
     self.logOnOptions.twoFactorCode = this.twoFactorCodes.key;
   }
 
-  var future = new this.Future();
+  var future = new Future();
 
   this.community.login(self.logOnOptions, function(err, sessionID, cookies, steamguard) {
     if (err) {
@@ -789,15 +834,12 @@ SteamBot.prototype.communityLogOn = function() {
 
   var res = future.wait();
 
-  console.log(res);
-
   this.cookie = res.cookie;
   this.sessionID = res.sessionID;
 };
 
 function confirmTrade(confirmation, time, key) {
-  var Future = Npm.require('fibers/future');
-  var future = new this.Future();
+  var future = new Future();
 
   confirmation.respond(time, key, function(err) {
     if (err) {
@@ -824,5 +866,14 @@ function wrapItemForBot(itemIds) {
     };
   });
 }
+
+function sleep(ms) {
+  var future = new Future;
+  setTimeout(function() {
+    future.return();
+  }, ms);
+  return future;
+}
+
 
 module.exports = SteamBot;

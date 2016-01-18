@@ -13,11 +13,18 @@ DispatcherAPI = {
       }
     };
 
-    return HTTP.post(callstring, options);
+    return callBotServer(callstring, options).tradeofferId;
   },
 
   withdrawItems: function(userId, items) {
+    var callstring = DISPATCHER_API_URL + 'withdraw';
+    var options = {
+      data: {
+        // testing: testing,
+      }
+    };
 
+    return callBotServer(callstring, options);
   },
 
   test: function(testing) {
@@ -28,6 +35,26 @@ DispatcherAPI = {
       }
     };
 
-    return HTTP.post(callstring, options).data;
+    return callBotServer(callstring, options);
   },
 };
+
+function callBotServer(callstring, options) {
+  try {
+    var res = HTTP.post(callstring, options);
+
+    if (res.statusCode === 200) {
+      return res.data;
+    } else {
+      throw new Error('Bad status code: ' + res.statusCode);
+    }
+  } catch (e) {
+    var errCode = e.response.content;
+    var errForClient = Enums.MeteorError[errCode]
+
+    if (errForClient) {
+      throw new Meteor.Error(errForClient);
+    }
+    throw e;
+  }
+}

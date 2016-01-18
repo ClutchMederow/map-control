@@ -1,6 +1,6 @@
 var _ = require('underscore');
 var Random = require('../../lib/random');
-var Enums = require('../../../../meteor/lib/Enums');
+var Enums = require('../Enums');
 
 var DbListings = {
 //   addListing: function(user,tradeItems, marketItems) {
