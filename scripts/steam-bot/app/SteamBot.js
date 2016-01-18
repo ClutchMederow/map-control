@@ -97,7 +97,6 @@ SteamBot.prototype.logOn = function() {
 
   function loggedOnHandler() {
     console.log('logged on');
-    console.log(arguments);
   }
 
   function webSessionHandler(sessionId, cookies) {

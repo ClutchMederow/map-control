@@ -13,7 +13,7 @@ var Server = Mongo.Server;
 var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
 var passport = require('passport');
 var Strategy = require('passport-http').BasicStrategy;
-var settings = require('./private/settings');
+var Settings = require('./private/localsettings.js');
 
 // Global
 require('../../meteor/lib/config');
@@ -41,7 +41,7 @@ app.use(bodyParser.json());
 // Authentication
 passport.use(new Strategy(
   function(username, password, cb) {
-    if (settings.username === username && settings.password === password) {
+    if (Settings.botServer.username === username && Settings.botServer.password === password) {
       return cb(null, true);
     }
     return cb(null, false);
@@ -116,7 +116,8 @@ app.listen(port);
 console.log('Server running on port ' + port);
 
 Fiber(function() {
-  MongoDB = new Server('localhost:3001').db('meteor');
+  var url = Settings.botServer.mongoUrl;
+  MongoDB = new Server(url).db('meteor');
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();
