@@ -1,4 +1,4 @@
-var DISPATCHER_API_URL = 'http://localhost:5080/dispatcher/';
+var DISPATCHER_API_URL = Meteor.settings.botServer.url;
 
 // NOTE
 // USE this.unblock() to allow other calls to be made while awaiting a response
@@ -41,6 +41,16 @@ DispatcherAPI = {
 };
 
 function callBotServer(callstring, options) {
+  var username = Meteor.settings.botServer.username;
+  var password = Meteor.settings.botServer.password;
+  var authString = username + ':' + password;
+
+  if (!username || !password) {
+    throw new Error('No botServer username or password');
+  }
+
+  options.auth = authString;
+
   try {
     var res = HTTP.post(callstring, options);
 

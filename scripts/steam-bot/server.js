@@ -11,6 +11,9 @@ var DispatcherConstructor = require('./app/dispatcher/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
 var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
+var passport = require('passport');
+var Strategy = require('passport-http').BasicStrategy;
+var settings = require('./private/settings');
 
 // Global
 require('../../meteor/lib/config');
@@ -25,24 +28,6 @@ var MongoDB;
 var Dispatcher;
 var Collections = {};
 
-function initializeCollections() {
-  global.Bots = MongoDB.getCollection('bots');
-  global.Users = MongoDB.getCollection('users');
-  global.Meteor = {
-    users: global.Users
-  };
-  global.Tradeoffers = MongoDB.getCollection('tradeoffers');
-  global.Items = MongoDB.getCollection('items');
-  global.Tasks = MongoDB.getCollection('tasks');
-  global.Listings = MongoDB.getCollection('listings');
-  global.RealTimeTrade = MongoDB.getCollection('realTimeTrade');
-
-  // this is bad but I can't find a better way
-  // mongo-sync doesn't expose the Cursor object
-  Bots.find().__proto__.fetch = Bots.find().__proto__.toArray;
-  addItemUtilityFunctions(Items);
-}
-
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -53,8 +38,41 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Authentication
+passport.use(new Strategy(
+  function(username, password, cb) {
+    if (settings.username === username && settings.password === password) {
+      return cb(null, true);
+    }
+    return cb(null, false);
+  })
+);
+
+app.all('/*', passport.authenticate('basic', { session: false }), function(req, res, next) {
+  next();
+});
+
+app.all('/*', function(req, res, next) {
+  // CORS headers
+  res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  // Set custom headers for CORS
+  res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+  if (req.method == 'OPTIONS') {
+    res.status(200).end();
+  } else {
+    next();
+  }
+});
+
 var port = process.env.PORT || 5080;
 var router = express.Router();
+
+/// test
+router.post('/test', function(req, res) {
+  console.log(arguments);
+  res.status(500).send('hello');
+});
 
 router.post('/deposit', function(req, res) {
   Fiber(function() {
@@ -97,43 +115,33 @@ app.use('/dispatcher', router);
 app.listen(port);
 console.log('Server running on port ' + port);
 
-function getBots(future, botName) {
-  var bot = Bots.findOne({ name: botName });
-  future.return(bot);
-}
-
 Fiber(function() {
   MongoDB = new Server('localhost:3001').db('meteor');
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();
   Dispatcher.startPolling();
-  var meat = Dispatcher.getBot('mc_steambot_1');
-  meat.confirmMobile();
 }).run();
 
-  // var future = new Future();
+function getBots(future, botName) {
+  var bot = Bots.findOne({ name: botName });
+  future.return(bot);
+}
 
-  // Fiber(function() {
-  //   var botName = req.body.botName;
-  //   getBots(future, botName);
-  //   var bot = future.wait();
-  //   var steamBot = new SteamBot(bot);
-  //   steamBot.logOn();
-  //   steamBot.tradeOffersLogOn();
-  //   steamBot.loadBotInventory();
-  //   res.json({ bot: steamBot.items });
-  // }).run();
+function initializeCollections() {
+  global.Bots = MongoDB.getCollection('bots');
+  global.Users = MongoDB.getCollection('users');
+  global.Meteor = {
+    users: global.Users
+  };
+  global.Tradeoffers = MongoDB.getCollection('tradeoffers');
+  global.Items = MongoDB.getCollection('items');
+  global.Tasks = MongoDB.getCollection('tasks');
+  global.Listings = MongoDB.getCollection('listings');
+  global.RealTimeTrade = MongoDB.getCollection('realTimeTrade');
 
-
-/// current problems:
-// does not return an ID, return some kind of doc after update and insert....
-// insert without specifying ID will insert using ObjectID, need to change this
-// Moved DB to here, please cut dead code
-
-
-
-
-
-
-
+  // this is bad but I can't find a better way
+  // mongo-sync doesn't expose the Cursor object
+  Bots.find().__proto__.fetch = Bots.find().__proto__.toArray;
+  addItemUtilityFunctions(Items);
+}

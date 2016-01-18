@@ -1,4 +1,4 @@
-var Settings = require('../localsettings.js');
+var Settings = require('../private/localsettings.js');
 var request = require('request');
 var Future = require('fibers/future');
 var Enums = require('./Enums');
