@@ -1,4 +1,4 @@
-_.extend(DB, {
+var partialDB = {
   // for dev purposes - REMOVE
   migrate: function() {
     Meteor.users.find().forEach(function(user) {
@@ -47,7 +47,7 @@ _.extend(DB, {
 
       doc.$set.modifiedTimestamp = new Date();
 
-      return Meteor.users.update(userId, doc);
+      return Meteor.users.update({ _id: userId }, doc);
     },
 
     // Adds a bot to a user for the first time
@@ -56,9 +56,9 @@ _.extend(DB, {
         throw new Error('BAD_ARGUMENTS');
 
       var doc = { $set: { 'profile.botName': botName } };
-      DB.users.update(userId, doc);
+      DB.users.update({ _id: userId }, doc);
 
-      return Meteor.users.findOne(userId).profile.botName;
+      return Meteor.users.findOne({ _id: userId }).profile.botName;
     },
 
     updateTradeURL: function(userId, tradeURL, email) {
@@ -97,7 +97,9 @@ _.extend(DB, {
       }
       doc.$set.modifiedTimestamp = new Date();
 
-      return Tasks.update(taskId, doc);
+      console.log(taskId);
+
+      return Tasks.update({ _id: taskId }, doc);
     },
 
     insert: function(doc) {
@@ -113,6 +115,9 @@ _.extend(DB, {
     },
 
     updateJobHistory: function(taskId, doc) {
+      console.log('updateJobHistory');
+      console.log(taskId);
+
       doc.timestamp = new Date();
 
       var updater = {
@@ -830,23 +835,6 @@ _.extend(DB, {
   removeListing: function(listingId) {
     Listings.remove(listingId);
   }
-});
+};
 
-// Always make sure that changing the items resets the trade state
-RealTimeTrade.before.update(function(userId, doc, fieldNames, modifier, options) {
-  if (fieldNames && _.intersection(fieldNames, [ 'user1Items', 'user2Items' ]).length > 0) {
-
-    // double check to not change any states of confirmed trades
-    if (doc.user1Stage === 'CONFIRMED' && doc.user2Stage === 'CONFIRMED') {
-      return;
-    }
-
-    if (doc.user1Stage === 'DONE' || doc.user1Stage === 'CONFIRMED') {
-      DB.setTradeStage(doc._id, "user1Stage", "TRADING");
-    }
-
-    if (doc.user2Stage === 'DONE' || doc.user2Stage === 'CONFIRMED') {
-      DB.setTradeStage(doc._id, "user2Stage", "TRADING");
-    }
-  }
-});
+_.extend(DB, partialDB);

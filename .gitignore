@@ -4,3 +4,5 @@
 *.swp
 *.sublime-project
 *.sublime-workspace
+node_modules
+private/

@@ -8,10 +8,14 @@ Meteor.methods({
   },
 
   depositItems: function(items) {
-    return Dispatcher.depositItems(this.userId, items);
+    check(items, [String]);
+    this.unblock();
+    return DispatcherAPI.depositItems(this.userId, items);
   },
 
   withdrawItems: function(items) {
-    return Dispatcher.withdrawItems(this.userId, items);
+    check(items, [String]);
+    this.unblock();
+    return DispatcherAPI.withdrawItems(this.userId, items);
   }
 });

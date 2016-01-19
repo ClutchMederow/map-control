@@ -1,0 +1,48 @@
+{
+  "name": "steam-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "watch": "nodemon --exec babel-node server.js",
+    "debug": "nodemon --exec babel-node --debug server.js",
+    "prebuild": "node node_modules/steam-client/scripts/prepublish.js",
+    "build": "browserify server.js -o bundle.js --im -t babelify --presets es2015"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.0",
+    "body-parser": "^1.14.2",
+    "browserify": "^13.0.0",
+    "crypto": "0.0.3",
+    "express": "^4.13.3",
+    "fibers": "^1.0.8",
+    "moment": "^2.11.1",
+    "mongo-sync": "^2.0.1",
+    "mongoose": "^4.3.4",
+    "object-assign": "^4.0.1",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "readline-sync": "^1.2.22",
+    "request": "^2.67.0",
+    "steam": "^1.4.0",
+    "steam-totp": "^1.2.1",
+    "steam-tradeoffers": "^3.0.1",
+    "steam-user": "^3.3.0",
+    "steam-web-api-key": "0.0.3",
+    "steamcommunity": "^3.18.1",
+    "steamstore": "^1.3.0",
+    "underscore": "^1.8.3"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.2.0"
+  }
+}

@@ -1,4 +1,4 @@
-Config = {
+var Config = {
   bots: {
     newBotRetries: 5,
     maxBotInventory: 1000,
@@ -31,11 +31,4 @@ Config = {
   }
 };
 
-Constants = {
-  tradeOfferURL: 'https://steamcommunity.com/tradeoffer/',
-  steamCDN: 'https://steamcommunity-a.akamaihd.net/economy/image/',
-  tradeURL: 'https://steamcommunity.com/id/meatsting/tradeoffers/privacy',
-  editProfile: 'https://steamcommunity.com/profiles/CONST_STEAM_ID/edit/settings',
-  getItemAttributesURL: 'http://api.steampowered.com/IEconItems_730/GetPlayerItems/v0001/?key=STEAM_API_KEY&SteamID=CONST_STEAM_ID'
-};
-
+module.exports = Config;

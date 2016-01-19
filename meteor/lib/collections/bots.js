@@ -1,0 +1,1 @@
+Bots = new Meteor.Collection('bots');
