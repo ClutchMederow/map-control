@@ -1,10 +1,10 @@
 var DB = require('../db/DB');
 var Future = require('fibers/future');
 var _ = require('underscore');
-var Constants = require('../Constants');
-var Random = require('../../lib/random');
-var SteamBot = require('../SteamBot');
-var Enums = require('../Enums');
+var Constants = require('../constants/Constants');
+var Random = require('../lib/random');
+var SteamBot = require('../lib/SteamBot');
+var Enums = require('../constants/Enums');
 
 var BotJob = function(bot, jobType, taskId, options) {
 

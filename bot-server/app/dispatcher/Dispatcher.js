@@ -1,9 +1,10 @@
 var _ = require('underscore');
-var Constants = require('../Constants');
+var Constants = require('../constants/Constants');
 var BotJob = require('./BotJob');
 var Task = require('./Task');
-var Enums = require('../Enums');
+var Enums = require('../constants/Enums');
 var Fiber = require('fibers');
+var Config = require('../config')
 
 var Dispatcher = function(SteamBot, DB, Collections) {
 
@@ -311,6 +312,8 @@ var Dispatcher = function(SteamBot, DB, Collections) {
       // Grab all the bots we have
       // botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
       var botsFromMongo = Bots.find({ enabled: true }).fetch();
+
+      console.log(botsFromMongo);
 
       // Initialize them
       bots = initalizeBots(botsFromMongo);

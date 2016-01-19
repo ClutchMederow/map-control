@@ -1,12 +1,12 @@
 var _ = require('underscore');
-var Random = require('../../lib/random');
-var Enums = require('../Enums');
-var SteamAPI = require('../steamAPI');
+var Random = require('../lib/random');
+var Enums = require('../constants/Enums');
+var SteamAPI = require('../lib/steamAPI');
 var DbListings = require('./db_listings');
 var assign = require('object-assign');
 var SteamConstants = require('../constants/SteamConstants');
-var Constants = require('../Constants');
-var IronBucks = require('../IronBucks');
+var Constants = require('../constants/Constants');
+var IronBucks = require('../lib/IronBucks');
 
 var DB = {
   users: {

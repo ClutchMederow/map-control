@@ -5,6 +5,7 @@ var Steam = require('steam');
 var SteamStore = require('steamstore');
 var User = require('steam-user');
 var SteamTotp = require('steam-totp');
+var Config = require('../config')
 
 SteamBot = function(bot) {
   var userOptions = {

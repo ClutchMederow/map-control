@@ -9,15 +9,15 @@ var SteamTotp = require('steam-totp');
 var getApiKey = require('steam-web-api-key');
 var _ = require('underscore');
 var moment = require('moment');
-var SteamConstants = require('./constants/SteamConstants');
-var Enums = require('./Enums');
+var SteamConstants = require('../constants/SteamConstants');
+var Enums = require('../constants/Enums');
 var SteamCommunity = require('steamcommunity');
 
 var SteamBot = function(bot) {
   var userOptions = {
     promptSteamGuardCode: false,
     singleSentryfile: true,
-    dataDirectory: '../../meteor/private',
+    dataDirectory: '../../private',
   };
 
   this.client = new Steam.SteamClient();
@@ -55,10 +55,13 @@ SteamBot.prototype.logOn = function() {
   console.log(this.botName + ' logging in');
 
   // bots 1-5 have their own sentry, should fix this sometime
-  var tokenPath = '../../meteor/private/steambot-auth/' + self.botName;
+  var tokenPath = 'private/steambot-auth/' + self.botName;
   if (!fs.existsSync(tokenPath)) {
-    tokenPath = '../../meteor/private/sentry.bin';
+    tokenPath = 'private/sentry.bin';
   }
+
+  console.log(tokenPath);
+  console.log(process.cwd());
 
   var sentry = fs.readFileSync(tokenPath);
   this.user.setSentry(sentry);

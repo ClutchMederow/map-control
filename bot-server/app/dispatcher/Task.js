@@ -1,7 +1,7 @@
 var Future = require('fibers/future');
 var _ = require('underscore');
-var Random = require('../../lib/random');
-var Constants = require('../Constants');
+var Random = require('../lib/random');
+var Constants = require('../constants/Constants');
 
 // Updates DB during each stage, which will be pushed to the client if appropriate
 var Task = function(jobs, ordered, taskId, DBLayer) {

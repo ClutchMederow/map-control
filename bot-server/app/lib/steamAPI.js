@@ -1,10 +1,10 @@
-var Settings = require('../private/localsettings.js');
+var Settings = require('../../private/localsettings.js');
 var request = require('request');
 var Future = require('fibers/future');
-var Enums = require('./Enums');
-var SteamConstants = require('./constants/SteamConstants');
+var Enums = require('../constants/Enums');
+var SteamConstants = require('../constants/SteamConstants');
 var _ = require('underscore');
-var Constants = require('./Constants');
+var Constants = require('../constants/Constants');
 
 //Following module pattern
 var SteamAPI = (function () {

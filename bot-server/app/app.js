@@ -1,23 +1,16 @@
-// to integrate with meteor app
-global.IS_BOT_SERVER = true;
-
 var _ = require('underscore');
 var fs = require('fs');
 var Future = require('fibers/future');
 var Fiber = require('fibers');
-var SteamBot = require('./app/SteamBot');
-var DB = require('./app/db/DB');
-var DispatcherConstructor = require('./app/dispatcher/Dispatcher');
+var SteamBot = require('./lib/SteamBot');
+var DB = require('./db/DB');
+var DispatcherConstructor = require('./dispatcher/Dispatcher');
 var Mongo = require('mongo-sync');
 var Server = Mongo.Server;
-var addItemUtilityFunctions = require('./app/itemUtilityFunctions');
+var addItemUtilityFunctions = require('./lib/itemUtilityFunctions');
 var passport = require('passport');
 var Strategy = require('passport-http').BasicStrategy;
-var Settings = require('./private/localsettings.js');
-
-// Global
-require('../../meteor/lib/config');
-require('../../meteor/lib/Enums');
+var Settings = require('../private/localsettings.js');
 
 // Ignore Meteor check function
 // TODO: Should port this over soon
@@ -117,7 +110,11 @@ console.log('Server running on port ' + port);
 
 Fiber(function() {
   var url = Settings.botServer.mongoUrl;
-  MongoDB = new Server(url).db('meteor');
+  var dbName = Settings.botServer.mongoDbName;
+  // var username = Settings.botServer.mongoUsername;
+  // var pw = Settings.botServer.mongoPassword;
+  MongoDB = new Server('localhost:3001').db('meteor');
+
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
   Dispatcher.init();

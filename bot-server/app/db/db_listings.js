@@ -1,7 +1,7 @@
 var _ = require('underscore');
-var Random = require('../../lib/random');
-var Enums = require('../Enums');
-var IronBucks = require('../IronBucks');
+var Random = require('../lib/random');
+var Enums = require('../constants/Enums');
+var IronBucks = require('../lib/IronBucks');
 
 var DbListings = {
 //   addListing: function(user,tradeItems, marketItems) {
