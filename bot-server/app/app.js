@@ -111,9 +111,13 @@ console.log('Server running on port ' + port);
 Fiber(function() {
   var url = Settings.botServer.mongoUrl;
   var dbName = Settings.botServer.mongoDbName;
-  // var username = Settings.botServer.mongoUsername;
-  // var pw = Settings.botServer.mongoPassword;
-  MongoDB = new Server('localhost:3001').db('meteor');
+  var username = Settings.botServer.mongoUsername;
+  var pw = Settings.botServer.mongoPassword;
+  MongoDB = new Server(url).db(dbName);
+
+  if (!MongoDB.auth(username, pw)) {
+    throw new Error('Unable to authenticate MongoDB');
+  }
 
   initializeCollections();
   Dispatcher = new DispatcherConstructor(SteamBot, DB, Collections);
