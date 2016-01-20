@@ -6,7 +6,7 @@ Config = {
 
     // in seconds
     maxInventoryCacheTime: 60,
-    maxActiveOfferTime: 2*60,
+    maxActiveOfferTime: 5*60,
 
     // in ms
     checkOutstandingInterval: 30000,

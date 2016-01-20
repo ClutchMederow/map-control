@@ -1,4 +1,12 @@
-Dispatcher = (function(SteamAPI, SteamBot) {
+var _ = require('underscore');
+var Constants = require('../constants/Constants');
+var BotJob = require('./BotJob');
+var Task = require('./Task');
+var Enums = require('../constants/Enums');
+var Fiber = require('fibers');
+var Config = require('../config')
+
+var Dispatcher = function(SteamBot, DB, Collections) {
 
   // Holds objects that represent all bots, using the botName as the key
   var bots = {};
@@ -8,10 +16,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
   var checkOutstandingPollHandle;
 
-  function initalizeBots(Bots) {
+  function initalizeBots(allBots) {
 
     // Clone this so we can fuck with it
-    var botList = _.map(Bots, _.clone);
+    var botList = _.map(allBots, _.clone);
     var out = {};
 
     // First run through to initialize
@@ -44,7 +52,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
   // Attempts to procure a new bot
   function getNewBot(bot) {
     try {
-      return new SteamBot(bot.name, bot.password, bot.authCode, SteamAPI);
+      return new SteamBot(bot);
     } catch(e) {
       console.log(e);
     }
@@ -52,7 +60,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
   // Gets a user's bot if it exists, otherwise assigns one
   function getUsersBot (userId) {
-    var user = Meteor.users.findOne(userId);
+    var user = Meteor.users.findOne({ _id: userId });
     var botName;
 
     if (!user || !user.profile)
@@ -69,7 +77,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     var usersBot = bots[botName];
 
     if (!usersBot) {
-      throw new Meteor.Error('OUT_OF_BOTS', 'There are no bots available to process your request');
+      throw new Error('OUT_OF_BOTS', 'There are no bots available to process your request');
     }
 
     // Verify that the bot assigned to the player has enough space
@@ -94,7 +102,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     });
 
     if (!botWithMinInv) {
-      throw new Meteor.Error('OUT_OF_BOTS');
+      throw new Error('OUT_OF_BOTS');
     }
 
     return botWithMinInv;
@@ -111,8 +119,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
         // Remove this after testing - there should never not be an old offer
         if (oldOffer) {
-          if (oldOffer.jobType === Dispatcher.jobType.DEPOSIT_ITEMS ||
-              oldOffer.jobType === Dispatcher.jobType.WITHDRAW_ITEMS) {
+          if (oldOffer.jobType === Constants.jobType.DEPOSIT_ITEMS ||
+              oldOffer.jobType === Constants.jobType.WITHDRAW_ITEMS) {
             updateOffer(offer, oldOffer, bot);
           }
         }
@@ -148,7 +156,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         items: itemArray,
         otherBot: transferBot
       };
-      return new BotJob(bot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+      return new BotJob(bot, Constants.jobType.INTERNAL_TRANSFER, taskId, options, DB);
     });
 
     return sendOffersJobs;
@@ -158,7 +166,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
     var acceptanceJobs = _.map(offerIdsToAccept, function(tradeofferId) {
       var options = { tradeofferId: tradeofferId };
-      return new BotJob(transferBot, Dispatcher.jobType.ACCEPT_OFFER, acceptTaskId, options, DB);
+      return new BotJob(transferBot, Constants.jobType.ACCEPT_OFFER, acceptTaskId, options, DB);
     });
 
     return acceptanceJobs;
@@ -166,7 +174,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
 
   return {
     getBot: function(botName) {
-      check(botName, String);
+      // check(botName, String);
 
       return bots[botName];
     },
@@ -174,7 +182,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     getUsersBot: getUsersBot,
 
     getBotSteamId: function(botName) {
-      check(botName, String);
+      // check(botName, String);
 
       if (!bots[botName]) {
         throw new Error('Bot does not exist for botName: ' + botName);
@@ -184,20 +192,21 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     depositItems: function(userId, items) {
-      check(userId, String);
-      check(items, [String]);
+      // check(userId, String);
+      // check(items, [String]);
 
       var bot = getUsersBot(userId);
 
-        var options = {
-          items: items,
-          userId: userId
-        };
+      var options = {
+        items: items,
+        userId: userId
+      };
 
-        var taskId = DB.tasks.createNew(Dispatcher.jobType.DEPOSIT_ITEMS, userId, items);
+      var taskId = DB.tasks.createNew(Constants.jobType.DEPOSIT_ITEMS, userId, items)._id;
 
-        var job = new BotJob(bot, Dispatcher.jobType.DEPOSIT_ITEMS, taskId, options, DB);
-        var task = new Task([job], false, taskId, DB);
+      var job = new BotJob(bot, Constants.jobType.DEPOSIT_ITEMS, taskId, options, DB);
+
+      var task = new Task([job], false, taskId, DB);
 
       try {
         task.execute();
@@ -205,7 +214,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         DB.items.revertStatus(items);
 
         if (e.toString().indexOf('has declined your trade request') > -1) {
-          throw new Meteor.Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
+          throw new Error(Enums.MeteorError.DECLINED_TRADE, 'There was an error sending your request. Please try again later.');
         } else {
           throw e;
         }
@@ -215,8 +224,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     withdrawItems: function(userId, items) {
-      check(userId, String);
-      check(items, [String]);
+      // check(userId, String);
+      // check(items, [String]);
 
       if (!items.length) {
         throw new Meteor.Error('BAD_ARGUMENTS', 'No items in transaction');
@@ -248,10 +257,10 @@ Dispatcher = (function(SteamAPI, SteamBot) {
         }
 
         // Change the status so they can't be involved in any other transactions
-        var test = DB.items.changeStatus(Dispatcher.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
+        var test = DB.items.changeStatus(Constants.jobType.INTERNAL_TRANSFER, items, Enums.ItemStatus.PENDING_WITHDRAWAL);
 
         // Create the task to send out all trade offers to internal bots
-        var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, userId, items);
+        var taskId = DB.tasks.createNew(Constants.jobType.INTERNAL_TRANSFER, userId, items);
         var sendOffersJobs = getJobsToSendOffers(transferBot, groupedItems, taskId);
 
         // Only execute if items are not already on the bot
@@ -262,7 +271,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           var offerIdsToAccept = sendRequestsTask.execute();
 
           // Create the task to accept all internal outstanding tradeoffers
-          var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, userId, null);
+          var acceptTaskId = DB.tasks.createNew(Constants.jobType.ACCEPT_OFFER, userId, null);
           var acceptanceJobs = getJobsToAcceptOffers(transferBot, offerIdsToAccept, acceptTaskId);
           var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
 
@@ -279,8 +288,8 @@ Dispatcher = (function(SteamAPI, SteamBot) {
           userId: userId
         };
 
-        var sendItemsToUserTaskId = DB.tasks.createNew(Dispatcher.jobType.WITHDRAW_ITEMS, userId, items);
-        var withdrawJob = new BotJob(transferBot, Dispatcher.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
+        var sendItemsToUserTaskId = DB.tasks.createNew(Constants.jobType.WITHDRAW_ITEMS, userId, items);
+        var withdrawJob = new BotJob(transferBot, Constants.jobType.WITHDRAW_ITEMS, sendItemsToUserTaskId, options, DB);
         var withdrawTask = new Task([withdrawJob], false, sendItemsToUserTaskId, DB);
 
         // Cancel all existing transactions
@@ -301,10 +310,13 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var self = this;
 
       // Grab all the bots we have
-      botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
+      // botsFromFile = JSON.parse(Assets.getText('bots.json')).bots;
+      var botsFromMongo = Bots.find({ enabled: true }).fetch();
+
+      console.log(botsFromMongo);
 
       // Initialize them
-      bots = initalizeBots(botsFromFile);
+      bots = initalizeBots(botsFromMongo);
 
       // Set the initial index so we aren't biased toward bot 0
       botIndex = Math.round(Math.random()*(_.keys(bots).length - 1));
@@ -319,33 +331,36 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     checkOutstandingTradeoffers: function() {
-      _.each(bots, function(bot) {
-        try {
-          var offers = bot.queryOffers();
+      Fiber(function() {
+        _.each(bots, function(bot) {
+          try {
+            var offers = bot.queryOffers();
 
-          // Reload the inventory so we can match items
-          // May be null if unable to connect to steam servers
-          if (offers) {
-            updateTradeofferStatus(offers, bot);
-            bot.cancelOldOffers();
+            // Reload the inventory so we can match items
+            // May be null if unable to connect to steam servers
+            if (offers) {
+              updateTradeofferStatus(offers, bot);
+              bot.cancelOldOffers();
+            }
+
+          } catch (e) {
+            console.log(bot.botName + ': Error checking outstanding tradeoffers');
+            console.log(e.stack);
           }
-
-        } catch (e) {
-          console.log(bot.botName + ': Error checking outstanding tradeoffers');
-          console.log(e.stack);
-        }
-      });
+        });
+      }).run();
     },
 
     startPolling: function() {
       console.log('Polling started');
-      checkOutstandingPollHandle = Meteor.setInterval(Dispatcher.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
+      var self = this;
+      checkOutstandingPollHandle = setInterval(self.checkOutstandingTradeoffers, Config.bots.checkOutstandingInterval);
     },
 
     stopPolling: function() {
       console.log('Polling stopped');
       if (checkOutstandingPollHandle) {
-        Meteor.clearInterval(checkOutstandingPollHandle);
+        clearInterval(checkOutstandingPollHandle);
       }
     },
 
@@ -380,7 +395,7 @@ Dispatcher = (function(SteamAPI, SteamBot) {
     },
 
     fixItem: function(itemMongoId) {
-      var item = Items.findOne(itemMongoId);
+      var item = Items.findOne({ _id: itemMongoId });
 
       var offers = Tradeoffers.find({
         items_to_receive: { $elemMatch: { assetid: item.itemId }}
@@ -405,43 +420,24 @@ Dispatcher = (function(SteamAPI, SteamBot) {
       var newBot = Dispatcher.getBot(newBotName);
       var oldBot = Dispatcher.getBot(item.botName);
 
-      var taskId = DB.tasks.createNew(Dispatcher.jobType.INTERNAL_TRANSFER, 'internal', [ itemId ]);
+      var taskId = DB.tasks.createNew(Constants.jobType.INTERNAL_TRANSFER, 'internal', [ itemId ]);
       var options = {
         items: [ itemId ],
         otherBot: newBot
       };
-      var job = new BotJob(oldBot, Dispatcher.jobType.INTERNAL_TRANSFER, taskId, options, DB);
+      var job = new BotJob(oldBot, Constants.jobType.INTERNAL_TRANSFER, taskId, options, DB);
 
       var offerIdsToAccept = job.execute();
 
       // Create the task to accept all internal outstanding tradeoffers
-      var acceptTaskId = DB.tasks.createNew(Dispatcher.jobType.ACCEPT_OFFER, 'internal', null);
+      var acceptTaskId = DB.tasks.createNew(Constants.jobType.ACCEPT_OFFER, 'internal', null);
       var acceptanceJobs = getJobsToAcceptOffers(newBot, offerIdsToAccept, acceptTaskId);
       var acceptOffersTask = new Task(acceptanceJobs, false, acceptTaskId, DB);
 
       // Accept all offers
       acceptOffersTask.execute();
     },
-  }
-})(SteamAPI, SteamBot);
+  };
+};
 
-_.extend(Dispatcher, {
-  jobType: Object.freeze({
-    DEPOSIT_ITEMS: 'DEPOSIT_ITEMS',
-    WITHDRAW_ITEMS: 'WITHDRAW_ITEMS',
-    INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
-    ACCEPT_OFFER: 'ACCEPT_OFFER',
-    TASK: 'TASK'
-  }),
-
-  jobStatus: Object.freeze({
-    COMPLETE: 'COMPLETE',
-    FAILED: 'FAILED',
-    ROLLBACK_FAILED: 'ROLLBACK_FAILED',
-    QUEUED: 'QUEUED',
-    PENDING: 'PENDING',
-    READY: 'READY',
-    CANCELLED: 'CANCELLED',
-    TIMEOUT: 'TIMEOUT'
-  }),
-});
+module.exports = Dispatcher;

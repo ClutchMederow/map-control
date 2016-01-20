@@ -1,0 +1,213 @@
+/* 1 */
+{
+    "_id" : "KXADeTKq8uuiDwL2a",
+    "name" : "mc_steambot_1",
+    "password" : "zCExZeyNjrA2M9zS",
+    "twoFactor" : {
+        "shared_secret" : "voxrbXM7BVCPRJti+yXSLLWF+bU=",
+        "serial_number" : "7042144387651770574",
+        "revocation_code" : "R87560",
+        "uri" : "otpauth://totp/Steam:mcsteambot1?secret=X2GGW3LTHMCVBD2ETNRPWJOSFS2YL6NV&issuer=Steam",
+        "server_time" : "1451353231",
+        "account_name" : "mc_steambot_1",
+        "token_gid" : "cfd4a5e5d5f0550",
+        "identity_secret" : "5TKfpkUuxK0L25I/SQibrIO8BdE=",
+        "secret_1" : "phFl5TzcnRaKRUPUWGAOs/uEhqE=",
+        "status" : 1
+    }
+}
+
+/* 2 */
+{
+    "_id" : "KTYJpYkjZkT5fmAKc",
+    "name" : "mc_steambot_2",
+    "password" : "77E2zdsDdMev8Fqr",
+    "authCode" : "Q65YM",
+    "twoFactor" : {
+        "shared_secret" : "WO/swVnOVveIRQBt+UCajIKpWFA=",
+        "serial_number" : "8386977887637403494",
+        "revocation_code" : "R39286",
+        "uri" : "otpauth://totp/Steam:mcsteambot2?secret=LDX6ZQKZZZLPPCCFABW7SQE2RSBKSWCQ&issuer=Steam",
+        "server_time" : "1451353877",
+        "account_name" : "mc_steambot_2",
+        "token_gid" : "4954a5dd7c41bd1",
+        "identity_secret" : "rhjCxNVEezA8+rTUEoed8pRkyQE=",
+        "secret_1" : "cYkvSr8tQzv4BKEK35rrjvqkw5I=",
+        "status" : 1
+    }
+}
+
+/* 3 */
+{
+    "_id" : "DbnhuaYhtWdFEYW9Z",
+    "name" : "mc_steambot_4",
+    "password" : "AHHRgj6vaM8pUDUb",
+    "twoFactor" : {
+        "shared_secret" : "ObXX0MgapRnq9PTqxzeQXIzDoZU=",
+        "serial_number" : "6961227577686783156",
+        "revocation_code" : "R67463",
+        "uri" : "otpauth://totp/Steam:mcsteambot4?secret=HG25PUGIDKSRT2XU6TVMON4QLSGMHIMV&issuer=Steam",
+        "server_time" : "1451354311",
+        "account_name" : "mc_steambot_4",
+        "token_gid" : "d3d4a604d018103",
+        "identity_secret" : "Q/jBiUlpX5nu3r7ruQ0cQHEVn10=",
+        "secret_1" : "PLnUCZlgnKP46DN2d+XZlDgH5Bk=",
+        "status" : 1
+    }
+}
+
+/* 4 */
+{
+    "_id" : "ZKCWtZbr7ECWipyw7",
+    "name" : "mc_steambot_5",
+    "password" : "S6ABThGcD4KqjHMQ",
+    "twoFactor" : {
+        "shared_secret" : "En2fdn6LFtX+JgHoeQcPihjFW0c=",
+        "serial_number" : "10040340159711614385",
+        "revocation_code" : "R53091",
+        "uri" : "otpauth://totp/Steam:mcsteambot5?secret=CJ6Z65T6RMLNL7RGAHUHSBYPRIMMKW2H&issuer=Steam",
+        "server_time" : "1451354733",
+        "account_name" : "mc_steambot_5",
+        "token_gid" : "c854a5db60f894e",
+        "identity_secret" : "4hzJY8z7tnSV/RzBjOBjWg+XdlY=",
+        "secret_1" : "MfCKTBKnjz/XdW97LThsic10ECg=",
+        "status" : 1
+    }
+}
+
+/* 5 */
+{
+    "_id" : "kvx4nfHoTMeAGLHmW",
+    "name" : "mc_steambot_6",
+    "password" : "ENYJSutB5DPpjbfS",
+    "authCode" : "YT932",
+    "twoFactor" : {
+        "shared_secret" : "j6mR9Z/B8XHooegV2+7zEiAomYA=",
+        "serial_number" : "6279052018105637851",
+        "revocation_code" : "R83866",
+        "uri" : "otpauth://totp/Steam:mcsteambot6?secret=R6UZD5M7YHYXD2FB5AK5X3XTCIQCRGMA&issuer=Steam",
+        "server_time" : "1451421637",
+        "account_name" : "mc_steambot_6",
+        "token_gid" : "d354a6048a18e01",
+        "identity_secret" : "6nLqtx+GU0CxgrvBABlRGHFUoyA=",
+        "secret_1" : "MHzBzasAsAfXXAThxj5qAEsw01k=",
+        "status" : 1
+    }
+}
+
+/* 6 */
+{
+    "_id" : "H3ttcgiCCyQHJwhPe",
+    "name" : "mc_steambot_7",
+    "password" : "ybwkUcDjUg2PCGfh",
+    "authCode" : "MDR4C",
+    "twoFactor" : {
+        "shared_secret" : "44xjhkvpj967aNpitPIhgzQU8e4=",
+        "serial_number" : "4015688744924641597",
+        "revocation_code" : "R69686",
+        "uri" : "otpauth://totp/Steam:mcsteambot7?secret=4OGGHBSL5GH55O3I3JRLJ4RBQM2BJ4PO&issuer=Steam",
+        "server_time" : "1451422426",
+        "account_name" : "mc_steambot_7",
+        "token_gid" : "ad94a5e99bf0b15",
+        "identity_secret" : "Vv9qrHg80ymPEQaJtF6ydxCxxSA=",
+        "secret_1" : "zC6yeYUZJEQ5ZcWgudgdL8cyU2g=",
+        "status" : 1
+    }
+}
+
+/* 7 */
+{
+    "_id" : "rQ5yfuP5n3vXJFkcK",
+    "name" : "mc_steambot_8",
+    "password" : "DWTMHCXzws5P9g6Q",
+    "authCode" : "CTTYY",
+    "twoFactor" : {
+        "shared_secret" : "bvZZ890Wb9LdFkiVb3S2OmvyUA8=",
+        "serial_number" : "17619642383661792171",
+        "revocation_code" : "R25585",
+        "uri" : "otpauth://totp/Steam:mcsteambot8?secret=N33FT465CZX5FXIWJCKW65FWHJV7EUAP&issuer=Steam",
+        "server_time" : "1451422693",
+        "account_name" : "mc_steambot_8",
+        "token_gid" : "9f94a5eb7104850",
+        "identity_secret" : "EOaYNB6TQUJMI0k98qJpup3Gzdw=",
+        "secret_1" : "o09uH1SPa3YMA0fsoBRMFMOOjWE=",
+        "status" : 1
+    }
+}
+
+/* 8 */
+{
+    "_id" : "wBWv39d4HGbaztme6",
+    "name" : "mc_steambot_9",
+    "password" : "q8QyCu6m8dwQ8G5x",
+    "authCode" : "QPN3F",
+    "twoFactor" : {
+        "shared_secret" : "vG8V3J4wbojwa1iEZFAN+WtiQSw=",
+        "serial_number" : "3113034817783295075",
+        "revocation_code" : "R23469",
+        "uri" : "otpauth://totp/Steam:mcsteambot9?secret=XRXRLXE6GBXIR4DLLCCGIUAN7FVWEQJM&issuer=Steam",
+        "server_time" : "1451423870",
+        "account_name" : "mc_steambot_9",
+        "token_gid" : "bc54a5e845df800",
+        "identity_secret" : "CrMYs08riDWLnKjA8uhiXtjCCyc=",
+        "secret_1" : "w7hyn/DeB7eGcSi67TzPWTj01aI=",
+        "status" : 1
+    }
+}
+
+/* 9 */
+{
+    "_id" : "P3gkDZX2qKS7FQe35",
+    "name" : "mc_steambot_10",
+    "password" : "pnHGjFWFfMvwB854",
+    "twoFactor" : {
+        "shared_secret" : "sMLstjaGFSGm6s2v+e/JQmzTMWg=",
+        "serial_number" : "15969185928945682247",
+        "revocation_code" : "R05229",
+        "uri" : "otpauth://totp/Steam:mcsteambot10?secret=WDBOZNRWQYKSDJXKZWX7T36JIJWNGMLI&issuer=Steam",
+        "server_time" : "1451682291",
+        "account_name" : "mc_steambot_10",
+        "token_gid" : "bb94a5df3fa173d",
+        "identity_secret" : "1JFFVSij7Oui1g0Myo35t7D69WM=",
+        "secret_1" : "dAixa2s5/Y1DFwk5y9xBRtaG2vs=",
+        "status" : 1
+    }
+}
+
+/* 10 */
+{
+    "_id" : "oms9iJnntqRRDtCxA",
+    "name" : "mc_steambot_3",
+    "password" : "ekMVBz2ZLHD7TVKy",
+    "twoFactor" : {
+        "shared_secret" : "DeBwgezB2ov3vjHnXHJc6scHr04=",
+        "serial_number" : "11187276756126403986",
+        "revocation_code" : "R80360",
+        "uri" : "otpauth://totp/Steam:mcsteambot3?secret=BXQHBAPMYHNIX556GHTVY4S45LDQPL2O&issuer=Steam",
+        "server_time" : "1450894479",
+        "account_name" : "mc_steambot_3",
+        "token_gid" : "d954a2a84d97c34",
+        "identity_secret" : "pVs4W98dq3gBiBuDL9Bwyo7ppn0=",
+        "secret_1" : "j6kzGqNGTdGu69YKBzx8lOTnSHk=",
+        "status" : 1
+    }
+}
+
+/* 11 */
+{
+    "_id" : "2HCjn9zDJDg8tkjdt",
+    "name" : "bungerblaster",
+    "password" : "igor1122",
+    "twoFactor" : {
+        "shared_secret" : "SUkSdIUv7aFm02RtXWdKYGMpu88=",
+        "serial_number" : "18060611321584077597",
+        "revocation_code" : "R71220",
+        "uri" : "otpauth://totp/Steam:bungerblaster?secret=JFERE5EFF7W2CZWTMRWV2Z2KMBRSTO6P&issuer=Steam",
+        "server_time" : "1449800384",
+        "account_name" : "bungerblaster",
+        "token_gid" : "94949257f4ca05a",
+        "identity_secret" : "6EBsi7h2a8+wuc4s2CcxIkmK3LI=",
+        "secret_1" : "Gu3YOoKs9HVrPOoUw1wCmIl981Q=",
+        "status" : 1
+    }
+}
