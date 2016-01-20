@@ -35,6 +35,9 @@ Config = {
     tutorialChannels: ['TheWarOwl', '3kliksphilip', 'CurseCS'],
     proMatches: ['goesea', 'ESL', 'FACEITvods', 'cssltv','DreamhackMedia','playCEVO']
   },
+  reddit: {
+    subreddits: ['nosleep']
+  },
   youtubeSearch: {
     searchPart: "snippet",
     type: "video",
