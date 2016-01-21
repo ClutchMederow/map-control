@@ -17,7 +17,7 @@ var SteamBot = function(bot) {
   var userOptions = {
     promptSteamGuardCode: false,
     singleSentryfile: true,
-    dataDirectory: '../../private',
+    dataDirectory: null,
   };
 
   this.client = new Steam.SteamClient();
@@ -59,9 +59,6 @@ SteamBot.prototype.logOn = function() {
   if (!fs.existsSync(tokenPath)) {
     tokenPath = 'private/sentry.bin';
   }
-
-  console.log(tokenPath);
-  console.log(process.cwd());
 
   var sentry = fs.readFileSync(tokenPath);
   this.user.setSentry(sentry);
@@ -316,8 +313,6 @@ SteamBot.prototype.loadBotInventory = function() {
     var self = this;
     var future = new Future();
 
-    console.log('Loading bot inventory...');
-
     self.offers.loadMyInventory(self.inventoryOptions, function(err, items) {
       if (err)
         future.throw(err);
@@ -328,7 +323,6 @@ SteamBot.prototype.loadBotInventory = function() {
     self.items = future.wait();
     self.itemsUpdatedTimestamp = new Date();
 
-    console.log('Bot inventory loaded!');
   } catch (e) {
     console.log(e);
     console.log('Could not load bot inventory');
@@ -638,7 +632,6 @@ SteamBot.prototype.cancelOldOffers = function(offers) {
       SteamConstants.offerStatus[offer.trade_offer_state] === 'k_ETradeOfferStateEmailPending') {
 
       if (nowUnix - offer.time_created > Config.bots.maxActiveOfferTime) {
-        console.log(nowUnix - offer.time_created);
         self.cancelOffer(offer.tradeofferid);
       }
 
