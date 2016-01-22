@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var Enums = require('../constants/Enums');
 
 function addItemUtilityFunctions(items) {
   //searchText is a string

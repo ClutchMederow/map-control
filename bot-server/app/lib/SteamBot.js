@@ -12,6 +12,7 @@ var moment = require('moment');
 var SteamConstants = require('../constants/SteamConstants');
 var Enums = require('../constants/Enums');
 var SteamCommunity = require('steamcommunity');
+var Config = require('../config');
 
 var SteamBot = function(bot) {
   var userOptions = {
