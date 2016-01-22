@@ -1,4 +1,4 @@
-var DISPATCHER_API_URL = Meteor.settings.botServer.url;
+var DISPATCHER_API_URL = process.env.BOT_SERVER_URL;
 
 // NOTE
 // USE this.unblock() to allow other calls to be made while awaiting a response
@@ -41,8 +41,8 @@ DispatcherAPI = {
 };
 
 function callBotServer(callstring, options) {
-  var username = Meteor.settings.botServer.username;
-  var password = Meteor.settings.botServer.password;
+  var username = process.env.BOT_SERVER_USERNAME;
+  var password = process.env.BOT_SERVER_PASSWORD;
   var authString = username + ':' + password;
 
   if (!username || !password) {
