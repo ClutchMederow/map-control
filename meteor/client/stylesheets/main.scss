@@ -16,6 +16,7 @@ $nav-text-color-highlight: #FFBA63;
 $nav-color: rgba(0, 0, 0, 0.27);;
 
 $text-color: rgba(0, 0, 0, 0.51);
+// $bg-color: #101010;
 $bg-color: rgba(255, 255, 255, 0.8);
 $highlight: #ffab40;
 $highlight-hover: #ffd8a6;
@@ -40,7 +41,7 @@ textarea.materialize-textarea:focus:not([readonly]) {
 }
 
 html {
-  background-color: black;
+  background-color: #101010;
   font-family: 'Lato', sans-serif;
   font-weight: 300;
 }
@@ -59,7 +60,7 @@ body:before {
   // background-image: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('images/72039.jpg');
   background-size:cover;
   width: 100%;
-  height: 300px;
+  height: 280px;
 
   // -webkit-filter: blur(5px);
   // -moz-filter: blur(5px);
