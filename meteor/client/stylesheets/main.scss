@@ -573,14 +573,14 @@ main {
 $land-br: 4px;
 
 .explain-if {
-  line-height: 1.2;
   font-size: 18px;
   padding-top: 3em;
   text-align: left;
   color: #DADADA;
+  line-height: 1.5;
 
   strong {
-    font-size: 125%;
+    // font-size: 125%;
     color: #FFAA3B;
   }
 }
@@ -859,10 +859,6 @@ $land-br: 4px;
 //     margin-left: -50%;
 //   }
 // }
-
-.land-main {
-  padding-left: 8%;
-}
 
 .land-signin {
   text-align: left;
