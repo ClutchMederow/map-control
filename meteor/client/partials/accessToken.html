@@ -23,14 +23,14 @@
     </div>
   </div>
   <div class="row">
-    <form id="tradeurl-form">
+    <form class="tradeurl-form">
       <div class="col s10">
         <label for="tradeurl-input">trade url</label>
-        <input value="{{ currentTradeURL }}" placeholder="trade url" id="tradeurl-input" type="text" autocomplete="off">
+        <input value="{{ currentTradeURL }}" placeholder="trade url" type="text" autocomplete="off" name="tradeurl">
       </div>
       <div class="col s10">
         <label for="emailAddress">email</label>
-        <input value="{{ currentEmail }}" placeholder="Email address" id="emailAddress" type="email" class="validate">
+        <input value="{{ currentEmail }}" placeholder="Email address" type="email" class="validate" name="email">
       </div>
       <div class="input-field col s2">
         <button class="btn waves-effect light-blue darken-1" type="submit" id="save">save</button>

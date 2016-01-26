@@ -29,20 +29,20 @@ Template.accessToken.helpers({
 });
 
 Template.accessToken.events({
-  'submit #tradeurl-form': function(e) {
+  'submit .tradeurl-form': function(e) {
     e.preventDefault();
     $('.error-msg').hide();
 
     try {
-      var url = $('#tradeurl-input').val();
-      var email = $('#emailAddress').val();
+      var url = $(e.target.elements['tradeurl']).val();
+      var email = $(e.target.elements['email']).val();
 
       // Do a cursory check - see if the token is present
       // we will do a more thorough check server side
       var hasToken = /&token=/.test(url);
 
       //TODO: ensure valid email
-      if (hasToken && _.isString(email)) {
+      if (hasToken && !!email) {
         Meteor.call('addTradeURL', url, email, function(error, result) {
           if (error) {
             sAlert.error('Failed to update trade URL - please try again later.');
