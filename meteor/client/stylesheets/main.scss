@@ -12,10 +12,12 @@
 $border-color: #D4D4D4;
 $nav-text-color: #ECECEC;
 $nav-text-color-highlight: #FFBA63;
-// $nav-color: #5BA4C7;
-$nav-color: rgba(0, 0, 0, 0.27);;
+// $nav-color: #101010;
+// $nav-color: #4A4A4A;
+$nav-color: rgba(0, 0, 0, 0.6);;
 
 $text-color: rgba(0, 0, 0, 0.51);
+// $bg-color: #101010;
 $bg-color: rgba(255, 255, 255, 0.8);
 $highlight: #ffab40;
 $highlight-hover: #ffd8a6;
@@ -40,12 +42,35 @@ textarea.materialize-textarea:focus:not([readonly]) {
 }
 
 html {
-  background-color: black;
+  background-color: #1D1D1D;
   font-family: 'Lato', sans-serif;
   font-weight: 300;
 }
 
-body:before {
+#landing-bg:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+
+  display: block;
+  background-image: linear-gradient( $bg-overlay, $bg-overlay ), url('images/cs1.jpg');
+  // background-image: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('images/72039.jpg');
+  background-size:cover;
+  width: 100%;
+  height: 280px;
+
+  // -webkit-filter: blur(5px);
+  // -moz-filter: blur(5px);
+  // -o-filter: blur(5px);
+  // -ms-filter: blur(5px);
+  // filter: blur(5px);
+}
+
+#site-bg:before {
   content: "";
   position: fixed;
   top: 0;
@@ -61,11 +86,12 @@ body:before {
   width: 100%;
   height: 100%;
 
-  -webkit-filter: blur(5px);
-  -moz-filter: blur(5px);
-  -o-filter: blur(5px);
-  -ms-filter: blur(5px);
-  filter: blur(5px);
+  $blur: 15px;
+  -webkit-filter: blur($blur);
+  -moz-filter: blur($blur);
+  -o-filter: blur($blur);
+  -ms-filter: blur($blur);
+  filter: blur($blur);
 }
 
 body {
@@ -83,7 +109,8 @@ body {
 nav {
   background-color: $nav-color;
   // box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.05), 0 2px 10px 0 rgba(0, 0, 0, 0.03);
-  box-shadow: none;
+  // box-shadow: none;
+  // border-bottom: 1px solid #403F3F;
 
   .brand-logo {
     color: $nav-text-color;
@@ -92,6 +119,10 @@ nav {
   ul {
     a {
       color: $nav-text-color;
+
+      &.active-route {
+        color: $nav-text-color-highlight;
+      }
 
       &:hover {
         color: $nav-text-color-highlight;
@@ -105,6 +136,10 @@ nav {
 }
 
 footer.page-footer {
+  background-color: transparent;
+}
+
+footer.page-footer .footer-copyright {
   background-color: $nav-color;
 }
 
@@ -573,14 +608,14 @@ main {
 $land-br: 4px;
 
 .explain-if {
-  line-height: 1.2;
   font-size: 18px;
   padding-top: 3em;
   text-align: left;
   color: #DADADA;
+  line-height: 1.5;
 
   strong {
-    font-size: 125%;
+    // font-size: 125%;
     color: #FFAA3B;
   }
 }
@@ -753,7 +788,7 @@ $land-br: 4px;
   }
 }
 
-#tradeurl-form {
+.tradeurl-form {
   color: #CC823E;
 
   input[type=text]:focus {
@@ -791,10 +826,12 @@ $land-br: 4px;
 }
 
 .land-sub {
-  font-size: 60px;
-  line-height: 1;
+  font-size: 20px;
+  // line-height: 1;
   font-family: 'Lato', sans-serif;
   font-weight: 100;
+  text-align: right;
+  padding: 20px;
 }
 
 .help {
@@ -823,10 +860,10 @@ $land-br: 4px;
 }
 
 .land-container {
-  width: 30%;
-  right: 20px;
-  position: absolute;
-  bottom: 90px;
+  // width: 30%;
+  // right: 20px;
+  // position: absolute;
+  // bottom: 90px;
 
   a {
     display: block;
@@ -848,19 +885,15 @@ $land-br: 4px;
   }
 }
 
-.sizing-card {
-  &:first-child {
-    margin-left: -100%;
-  }
+// .sizing-card {
+//   &:first-child {
+//     margin-left: -100%;
+//   }
 
-  &:nth-child(2) {
-    margin-left: -50%;
-  }
-}
-
-.land-main {
-  padding-left: 8%;
-}
+//   &:nth-child(2) {
+//     margin-left: -50%;
+//   }
+// }
 
 .land-signin {
   text-align: left;

@@ -55,6 +55,15 @@ Template.navbar.helpers({
   loggedIn: function() {
     return !!Meteor.user();
   },
+
+  currentRouteClass: function(name) {
+    var curr = Router.current();
+    if (curr && curr.route) {
+      return curr.route.getName() === name ? 'active-route' : '';
+    }
+
+    return '';
+  },
 });
 
 Template.navbar.events({

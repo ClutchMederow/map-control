@@ -1,61 +1,81 @@
 <template name="landing">
   <div id="landing">
-    <div class="land-main">
+    <div class="container land-main">
       <div class="row">
-        <div class="col s5">
+        <div class="col s7">
           <div class="land-brand">IRON<span>FOIL</span></div>
         </div>
-        <div class="col s6">
+        <div class="col s5">
           <h1 class="explain-if">
-            IronFoil is a marketplace where you can buy and sell Counter-Strike: Global Offensive skins for <strong>real money</strong> and make deals instantly using our <strong>realtime trade system</strong>
+            Buy and sell Counter-Strike: Global Offensive skins for <strong>real money</strong> and make deals instantly using our <strong>realtime trade system</strong>
           </h1>
         </div>
       </div>
       <div class="row">
-        <div class="col s8 land-main">
+        <div class="col s4">
           <div class="land-sub">
-            a better
-            <br>
-            way to
-            <br>
-            trade
+            Sell you skins to other IronFoil users. Instead of the 15% cut that VALVe takes, we take 10% - <strong>only on cash transations</strong>.
           </div>
-          {{ #unless currentUser }}
-            <div class="land-signin">
-              <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
-            </div>
-          {{ /unless }}
         </div>
+        <div class="col s4">
+          <div class="land-sub">
+            Haggle in real-time with anyone on the trading floor. All skin for skin trades are completely <strong>free</strong>.
+          </div>
+        </div>
+        <div class="col s4">
+          <div class="land-sub">
+            Read in-depth analyses of current market trends from CS expert <strong>Lurppis</strong>.
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col s4 hello">
           <div class="land-container">
             <div class="sizing-card">
               <div class="card">
                 <div class="card-content landing-panel pan">
                   <a href="{{ pathFor route='market' userId='all' }}">
-                    <div class="landing-panel-title">Explore <span class="landing-desc">buy and sell skins for cash</span></div>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="sizing-card">
-              <div class="card">
-                <div class="card-content landing-panel pan">
-                  <a href="{{ pathFor route='tradingFloor' }}">
-                    <div class="landing-panel-title">Trade <span class="landing-desc">in real time</span></div>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="sizing-card">
-              <div class="card">
-                <div class="card-content landing-panel pan">
-                  <a href="#">
-                    <div class="landing-panel-title">Learn <span class="landing-desc">from experts</span></div>
+                    <div class="landing-panel-title">Explore <div class="landing-desc">buy and sell skins for cash</div></div>
                   </a>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="col s4 hello">
+          <div class="land-container">
+            <div class="sizing-card">
+              <div class="card">
+                <div class="card-content landing-panel pan">
+                  <a href="{{ pathFor route='tradingFloor' }}">
+                    <div class="landing-panel-title">Trade <div class="landing-desc">in real time</div></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col s4 hello">
+          <div class="land-container">
+            <div class="sizing-card">
+              <div class="card">
+                <div class="card-content landing-panel pan">
+                  <a href="#">
+                    <div class="landing-panel-title">Learn <div class="landing-desc">from experts</div></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          {{ #unless currentUser }}
+            <div class="land-signin">
+              <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_large_border.png" width="118" height="51" border="0" id="steamLogin">
+            </div>
+          {{ /unless }}
         </div>
       </div>
     </div>
