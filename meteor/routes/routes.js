@@ -139,7 +139,7 @@ Router.route('/inventory', {
   onBeforeAction: function() {
     var userId = Meteor.userId();
 
-    if (Items.find({ userId: userId, deleteInd: false, status: Enums.ItemStatus.STASH }).count()) {
+    if (Items.find({ userId: userId, deleteInd: false, status: Enums.ItemStatus.STASH, name: { $ne: IronBucks.name } }).count()) {
       this.next();
     } else {
       this.redirect('manageStash');
