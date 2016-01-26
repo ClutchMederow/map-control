@@ -1,11 +1,15 @@
 <template name="layout">
-<div class="background-image"></div>
 <!-- Nav Bar -->
 <header>
   {{> navbar }}
 </header>
 <!-- Content Area -->
 <main>
+  {{ #if isLanding }}
+    <div id="landing-bg"></div>
+  {{ else }}
+    <div id="site-bg"></div>
+  {{ /if }}
   {{> sAlert }}
   {{> offerModal }}
   {{> realTimeModal }}
