@@ -67,6 +67,7 @@ var SkrillAPI = (function() {
       // session_id from the response in the iFrame of the Skrill
       // window client side.
       // https://pay.skrill.com/?sid=<SESSION_ID>
+      //TODO: create log entry in DB to await pending payment and double check?
       return response.session_id;
     }
   }

@@ -68,6 +68,10 @@ Router.route('/webhooks/coinbase', function() {
   where: 'server'
 });
 
+Router.route('/webhooks/skrill', function() {
+  //TODO: read in parameters, log them, then check transaction?
+});
+
 Router.route('/contact', {
   name: 'contact',
   template: 'contact'
