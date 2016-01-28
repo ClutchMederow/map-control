@@ -11,5 +11,10 @@ EasySearch.createSearchIndex('priceListIndex', {
     'sort': function() {
       return {volume: -1}
     } 
+  },
+  'query': function(searchString, opts) {
+    var query = EasySearch.getSearcher(this.use).defaultQuery(this, searchString); 
+    query.historicalData = false;
+    return query;
   }
 })

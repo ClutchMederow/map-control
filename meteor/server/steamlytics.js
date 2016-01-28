@@ -42,6 +42,7 @@ SteamlyticsApi = (function() {
         _.each(results.data.items, function(item) {
           item = _.extend(item, {timestamp: timestamp})
           item.median_net_price = parseFloat(item.median_net_price);
+          item.historicalData = false;
           PriceList.insert(item);
         });
       } catch(e) {
