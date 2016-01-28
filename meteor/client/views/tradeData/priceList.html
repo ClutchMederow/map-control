@@ -1,0 +1,71 @@
+<template name="pricelist">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <p>This is a price list of all items sold in the last 24 hours. Please
+        note that all prices are the "net" price, which means the fees from
+        various merchants (e.g. Steam Community Market) have been substracted.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6 offset-s3">
+        {{> esInput index="priceListIndex" placeholder="Search for Items"
+        allDocsOnEmpty=true}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <div class="col s6">
+          Name
+        </div>
+        <div class="col s1">
+          Volume
+        </div>
+        <div class="col s2">
+          High
+        </div>
+        <div class="col s2">
+          Average
+        </div>
+        <div class="col s1">
+          Low
+        </div>
+      </div>
+      <hr>
+      <div class="col s12">
+
+        {{#ifEsIsSearching index="priceListIndex"}}
+          <div>Loading...</div>
+        {{else}}
+          <div class="results-wrapper">
+            {{#esEach index="priceListIndex" options=options}}
+            <div class="col s6">
+              {{name}}
+            </div>
+            <div class="col s1">
+              {{volume}}
+            </div>
+            <div class="col s2">
+              {{highest_net_price}}
+            </div>
+            <div class="col s2">
+              {{average_net_price}}
+            </div>
+            <div class="col s1">
+              {{lowest_net_price}}
+            </div>
+            <br>
+            {{/esEach}}
+          </div>
+          <br>
+          {{> esLoadMoreButton index="priceListIndex" howMany=10
+          class="waves-effect waves-light btn center loadMoreButton"}}
+        {{/ifEsIsSearching}} 
+
+        {{#ifEsHasNoResults index="priceListIndex"}}
+          <div class="no-results">No results found!</div>
+        {{/ifEsHasNoResults}}
+      </div>
+    </div>
+  </div>
+</template>
