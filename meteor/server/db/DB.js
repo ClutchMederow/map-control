@@ -439,7 +439,7 @@ var partialDB = {
         //////////////
 
         // if each field specified matches the old items, update the assetid
-        _.each(oldItems, function(item) {
+        _.find(oldItems, function(item) {
           for (var i = 0; i < newItems.length; i++) {
             var thisNewItem = newItems[i];
 
@@ -479,7 +479,7 @@ var partialDB = {
               // Remove the item so it doesn't get matched again
               newItems.splice(i, 1);
 
-              break;
+              return true;
             }
           }
         });

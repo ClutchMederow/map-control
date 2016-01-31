@@ -767,6 +767,16 @@ $land-br: 4px;
   }
 }
 
+.loadMoreButton {
+  background-color: rgba(255,255,255,.4);
+  color: white;
+
+  &:hover {
+    color: black;
+    background-color: rgba(255,255,255,.8);
+  }
+}
+
 .tabs.basic {
   background-color: transparent;
 }
