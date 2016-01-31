@@ -60,6 +60,7 @@ ddp-server@1.2.2
 deps@1.0.9
 diff-sequence@1.0.1
 drewproud:jquery-ui-droppable@0.0.1
+duncanrenfrow:customblog@0.8.4
 ecmascript@0.1.6
 ecmascript-runtime@0.2.6
 ejson@1.0.7
@@ -133,7 +134,6 @@ reactive-var@1.0.6
 reload@1.1.4
 retry@1.0.4
 routepolicy@1.0.6
-ryw:customblog@0.8.4
 sacha:spin@2.3.1
 service-configuration@1.0.5
 session@1.1.1
