@@ -1,0 +1,83 @@
+<template name="blogShow">
+  <div class="container">
+    <div class="meteor-blog-single">
+      {{#with post}}
+        {{#if featuredImage}}
+          {{> blogShowFeaturedImage}}
+        {{/if}}
+      {{/with}}
+      {{#if blogReady}}
+        {{#with post}}
+          {{> blogShowBody}}
+        {{else}}
+          {{> Template.dynamic template=notFound}}
+        {{/with}}
+      {{else}}
+        {{> blogLoading}}
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="blogShowBody">
+  <div class="meteor-blog-post">
+    <div class="meteor-blog-post-main">
+      {{#unless titleBackground}}
+        <h1 class="meteor-blog-post-title text-center">
+          {{title}}
+        </h1>
+        <div class="meteor-blog-post-meta text-center">
+          {{#if isAdmin}}
+             <small><a href="#" data-action="edit-post">{{ BlogLanguage.edit }}</a></small>
+             --
+          {{/if}}
+          {{ BlogLanguage.metaAuthorBy }} {{authorName}} {{ BlogLanguage.metaAuthorOn }} {{blogFormatDate publishedAt}}
+          {{> blogTags }}
+        </div>
+      {{/unless}}
+      <div id="commentable-area">
+        {{{html}}}
+      </div>
+    </div>
+    <div class="meteor-blog-back-link pull-left">
+      <a href="{{blogPathFor 'blogIndex'}}"><i class="fa fa-caret-left"></i>{{ BlogLanguage.backToBlogIndex }}</a>
+    </div>
+    {{> shareit shareData}}
+    {{> disqus this}}
+  </div>
+</template>
+
+<template name="blogShowFeaturedImage">
+  <div class="meteor-blog-featured-image {{#if fullWidthFeaturedImage}}meteor-blog-full-width-image{{else}}meteor-blog-regular-image{{/if}}">
+    <div class="meteor-blog-aspect-ratio-placeholder" style="{{#unless fullWidthFeaturedImage}}width: {{featuredImageWidth}}px; height: {{featuredImageHeight}}px;{{/unless}}">
+      <img src="{{featuredImage}}" alt="" class="img-responsive center-block">
+      {{#if titleBackground}}
+        <div class="meteor-blog-background-title">
+          <div class="center-block">
+            <h1 class="text-center">
+              {{title}}
+              {{#if isAdmin}}
+                 <small><a href="#" data-action="edit-post">{{ BlogLanguage.edit }}</a></small>
+              {{/if}}
+            </h1>
+            <div class="meteor-blog-post-meta text-center">
+              {{ BlogLanguage.metaAuthorBy }} {{authorName}} {{ BlogLanguage.metaAuthorOn }} {{blogFormatDate publishedAt}}
+              {{> blogTags }}
+            </div>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+  {{#if fullWidthFeaturedImage}}
+    <div class="meteor-blog-aspect-ratio-fill" style="height: {{fullWidthFeaturedImageHeight}}px;"></div>
+  {{/if}}
+</template>
+
+<template name="disqus">
+  {{#if useDisqus}}
+    <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">{{ BlogLanguage.disqusPoweredBy }} <span class="logo-disqus">Disqus</span></a>
+  {{/if}}
+</template>

@@ -1,6 +1,5 @@
-//TODO: make these not global
-Channels = new Mongo.Collection(null);
-Videos = new Mongo.Collection(null);
+var Channels = new Mongo.Collection(null);
+var Videos = new Mongo.Collection(null);
 
 var loadChannels = function(channelCategory, channelNames) {
   _.each(channelNames, function(channel) {
