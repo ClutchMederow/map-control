@@ -1,10 +1,3 @@
-/*
-quality, type, name,
-what they're asking for
-market value of item
-how many people have looked at this
-picture of gun
-*/
 var searchText = new ReactiveVar('');
 Session.set('searchItems', []);
 var genericFilter = new GenericFilter();
@@ -75,6 +68,14 @@ Template.market.events({
   "keyup #search": _.throttle(function(e) {
     searchText.set($(e.target).val().trim());
   }, 200),
+
+  //preventing input from enter key,
+  //which causes redirect to home page
+  "keydown #search": function(e) {
+    if(e.which === 13) {
+      e.preventDefault();
+    }
+  },
 
   "click .singleItem": function(e) {
     e.preventDefault();
