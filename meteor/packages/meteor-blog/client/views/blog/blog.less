@@ -1,0 +1,186 @@
+@import '../../stylesheets/variables.import.less';
+
+/* METEOR BLOG INDEX */
+
+.meteor-blog-index {
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+.meteor-blog-index .meteor-blog-post {
+  border-bottom: 1px solid #EEE;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  &:last-child {
+    border-bottom: none;
+  }
+  &:after {
+    clear: both;
+    display: table;
+    content: " ";
+  }
+}
+.meteor-blog-index .meteor-blog-post > div {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  float: left;
+}
+.meteor-blog-index .meteor-blog-post-thumbnail {
+  margin-top: 20px;
+  margin-right: -15px;
+  margin-left: -15px;
+  width: 100%;
+  @media only screen and (min-width: 601px) {
+    width: 25%;
+  }
+  @media only screen and (min-width: 1201px) {
+    width: 15%;
+  }
+}
+.meteor-blog-index .meteor-blog-post-thumbnail a {
+  display: block;
+  padding: 4px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.meteor-blog-index .meteor-blog-post-thumbnail img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+.meteor-blog-index .meteor-blog-post h2 {
+  font-size: 32px;
+  line-height: 45px;
+  margin-bottom: 8px;
+  padding-right: 0px;
+  @media (max-width: 100px) {
+    padding-right: 100px;
+  }
+}
+.meteor-blog-index .meteor-blog-post-meta {
+  color: #bbb;
+  margin-bottom: 50px;
+}
+.meteor-blog-index .meteor-blog-post-meta > a {
+  color: #bbb;
+  &:hover {
+    color: #bbb;
+  }
+}
+.meteor-blog-index .meteor-blog-post-tags {
+  display: inline;
+}
+.meteor-blog-index .meteor-blog-post-tags p {
+  display: inherit;
+}
+
+/* METEOR BLOG FEATURED IMAGE */
+
+.meteor-blog-single .meteor-blog-regular-image {
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+.meteor-blog-single .meteor-blog-full-width-image {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.meteor-blog-single .meteor-blog-background-title {
+  text-shadow: black 0.2em 0.2em 0.2em;
+  color: white;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  position: absolute;
+  z-index: 10;
+}
+.meteor-blog-single .meteor-blog-aspect-ratio-placeholder {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.meteor-blog-single .meteor-blog-aspect-ratio-fill {
+  margin-bottom: 50px;
+}
+
+/* MEDIUM-INSERT PLUGIN */
+
+.meteor-blog-single .mediumInsert {
+  width: 100%;
+  margin: -1em 0 0 0 !important;
+}
+.meteor-blog-single .mediumInsert img {
+  max-width: 100%;
+}
+.meteor-blog-single .mediumInsert.small {
+  float: left;
+  width: 33.333333%;
+  margin-right: 10px !important;
+}
+.meteor-blog-single .mediumInsert.small img {
+  margin: 15px auto;
+}
+
+/* METEOR BLOG SINGLE POST */
+
+.meteor-blog-single .meteor-blog-post-main {
+  border-bottom: 1px solid #EEE;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+.meteor-blog-single .meteor-blog-post-main h2 {
+  font-size: 40px;
+  line-height: 48px;
+  margin-bottom: 8px;
+}
+.meteor-blog-single .meteor-blog-post-main img {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  margin: 30px auto;
+  display: block;
+}
+.meteor-blog-single .meteor-blog-post-main code {
+  color: inherit;
+}
+.meteor-blog-single .meteor-blog-post-title {
+  font-size: 50px;
+  margin-top: 50px;
+}
+.meteor-blog-single .meteor-blog-post-meta {
+  color: #bbb;
+  margin-bottom: 50px;
+}
+.meteor-blog-single .meteor-blog-post-meta > a {
+  color: #bbb;
+  &:hover {
+    color: #bbb;
+  }
+}
+.meteor-blog-single .meteor-blog-post-tags {
+  display: inline;
+}
+.meteor-blog-single .meteor-blog-post-tags p {
+  display: inherit;
+}
+.meteor-blog-single .meteor-blog-back-link {
+  margin-bottom: 20px;
+}
+.meteor-blog-single .meteor-blog-back-link i {
+  margin-right: 10px;
+}
+.meteor-blog-single .meteor-blog-back-link a:hover {
+  text-decoration: none;
+}
+.meteor-blog-single .share-buttons {
+  float: right !important;
+}
+.meteor-blog-single .share-buttons .btn-facebook,
+.meteor-blog-single .share-buttons .btn-twitter {
+  font-size: inherit;
+}
+.meteor-blog-single .share-buttons i {
+  margin-right: 10px;
+}
+

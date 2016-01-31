@@ -1,0 +1,48 @@
+<template name="blogIndex">
+  <div class="container">
+    <div class="meteor-blog-index">
+      {{#if blogReady}}
+        {{> blogIndexLoop posts=posts}}
+        {{blogPager}}
+      {{else}}
+        {{> blogLoading}}
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="blogIndexLoop">
+  {{#each posts}}
+    <div class="meteor-blog-post">
+      {{#if featuredImage}}
+        <div class="meteor-blog-post-thumbnail">
+          <a href="{{blogPathFor 'blogShow'}}">
+            <img src="{{featuredImage}}" alt="{{title}}">
+          </a>
+        </div>
+      {{/if}}
+      <div class="meteor-blog-post-excerpt">
+        <h2>
+          <a href="{{blogPathFor 'blogShow'}}">{{title}}</a>
+        </h2>
+        <div class="meteor-blog-post-meta">
+          {{ BlogLanguage.metaAuthorBy }} {{authorName}} {{ BlogLanguage.metaAuthorOn }} {{blogFormatDate publishedAt}}
+          {{> blogTags }}
+        </div>
+        <div class="meteor-blog-post-excerpt">
+          <small>{{{excerpt}}}</small>
+        </div>
+      </div>
+    </div>
+  {{else}}
+    {{ BlogLanguage.blogEmpty }}
+  {{/each}}
+</template>
+
+<template name="blogTags">
+  {{#if tags}}
+    <div class="meteor-blog-post-tags">
+      <p> &ndash; {{ BlogLanguage.tags }}: {{blogFormatTags tags}}</p>
+    </div>
+  {{/if}}
+</template>
