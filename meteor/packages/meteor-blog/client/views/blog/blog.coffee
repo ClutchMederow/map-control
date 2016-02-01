@@ -106,9 +106,9 @@ Template.blogShowBody.onRendered ->
       Session.set 'blog.canEditPost', authorized
 
   # Page Title
-  document.title = "#{@data.title}"
-  if Blog.settings.title
-    document.title += " | #{Blog.settings.title}"
+  # document.title = "#{@data.title}"
+  # if Blog.settings.title
+  #   document.title += " | #{Blog.settings.title}"
 
   # Hide draft/private posts from crawlers
   if @data.mode isnt 'public'
