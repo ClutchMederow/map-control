@@ -48,7 +48,9 @@ Meteor.publish('listings', function(selector, searchText, options) {
 
   if(searchText) {
     var searchReg = new RegExp(searchText, 'i');
-    selector = _.extend(selector, {"items.name": searchReg});
+    selector = _.extend(selector, {$or: [{"items.name": searchReg},
+                        {"request.name": searchReg}
+    ]});
   }
   return Listings.find(selector, options);
 });

@@ -16,13 +16,17 @@ Template.market.onCreated(function() {
 
   instance.autorun(function() {
     var limit = instance.limit.get();
-    console.log("Asking for " + limit + " listings...");
 
     var filterSelector = {closeDate: null};
 
+
+    //this needs to handle both weapons & other items (crates, keys)
+    //so need to look at both their tags we well as the name
     if(genericFilter.getName().length) {
       filterSelector = _.extend(filterSelector, 
-        {'items.tags.internal_name': { $in: genericFilter.getName() }});
+        {$or: [{'items.tags.internal_name': { $in: genericFilter.getName() }},
+          {'request.name': {$in: genericFilter.getName()}}
+        ]});
     }
 
     if(this.userId) {
@@ -32,7 +36,6 @@ Template.market.onCreated(function() {
     var subscription = instance.subscribe('listings', filterSelector, searchText.get(),
                                           {sort: {datePosted: -1 }, limit: limit});
     if(subscription.ready()) {
-      console.log("> Received " + limit + " listings. \n\n");
       instance.loaded.set(limit);
     } else {
       console.log("> Subscription not ready yet. \n\n");
