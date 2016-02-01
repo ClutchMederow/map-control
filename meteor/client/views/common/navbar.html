@@ -9,7 +9,8 @@
       <a href="{{pathFor route='landing'}}" class="brand-logo"><img src="/images/if-logo.png"></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="{{ blogPathFor 'blogIndex' }}" class="{{ currentRouteClass '(.*)' }}">Analysis</a></li>
-        <li><a href="{{ pathFor route='videos' }}" class="{{ currentRouteClass 'videos' }}">Videos</a></li>
+        <li><a href="{{ pathFor route='pricelist' }}" class="{{ currentRouteClass
+            'pricelist' }}">Prices</a></li>
         <li><a href="{{ pathFor route='tradingFloor' channel='Lobby' }}" class="{{ currentRouteClass 'tradingFloor' }}">Trading Floor</a></li>
         <li><a href="{{ pathFor route='market' userId='all' }}" class="{{ currentRouteClass 'market' }}">Market</a></li>
         {{ #if loggedIn }}
