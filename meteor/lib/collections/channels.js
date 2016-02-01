@@ -36,6 +36,12 @@ Channels.attachSchema({
     type: String,
     label: 'Type of private chat',
     optional: true
+  },
+
+  sortOrder: {
+    type: Number,
+    label: 'Sort order',
+    optional: true
   }
 });
 

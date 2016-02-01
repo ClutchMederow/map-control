@@ -1,3 +1,7 @@
 <template name="channel">
-  <div class="channel {{active}} noselect"><a href="{{ pathFor 'tradingFloor' channel=name }}">{{name}}<i class="tiny material-icons right">stop</i></a></div>
+  <li class="{{ active }}">
+    <div class="collapsible-header noselect">
+      <div class="channel noselect"><a href="{{ pathFor 'tradingFloor' channel=name }}">{{name}}<i class="tiny material-icons right">stop</i></a></div>
+    </div>
+  </li>
 </template>

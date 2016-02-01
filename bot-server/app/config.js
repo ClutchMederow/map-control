@@ -14,10 +14,6 @@ var Config = {
     maxOutstandingOffersSent: 30,
   },
 
-  tradingFloor: {
-    defaultChannel: 'Trading Floor'
-  },
-
   contactInfo: {
     email: "deltaveelabs@gmail.com"
   },

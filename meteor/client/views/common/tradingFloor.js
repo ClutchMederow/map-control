@@ -68,7 +68,7 @@ Template.tradingFloor.helpers({
   },
 
   channels: function() {
-    return Channels.find({ category: { $ne: 'Private' } });
+    return Channels.find({ category: { $ne: 'Private' } }, { sort: { sortOrder: 1 } });
   },
 
   channelsByCategory: function() {
