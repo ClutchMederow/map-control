@@ -1,5 +1,5 @@
-var Channels = new Mongo.Collection(null);
-Videos = new Mongo.Collection(null);
+Channels = new Mongo.Collection(null);
+var Videos = new Mongo.Collection(null);
 
 var loadChannels = function(channelCategory, channelNames) {
   _.each(channelNames, function(channel) {
