@@ -112,3 +112,17 @@ SyncedCron.add({
     }
   }
 });
+
+//call the price list every 25 hours
+SyncedCron.add({
+  name: "Get updated price list",
+  schedule: function(parser) {
+    return parser.text('every 25 hours');
+  },
+  job: function() {
+    //set all "current" data to be historical, then add new data (whose
+    //historical data flag is false)
+    PriceList.update({historicalData: false}, {$set: {historicalData: true}}, {multi: true});
+    SteamlyticsApi.getPricelist();
+  }
+})
