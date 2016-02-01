@@ -122,6 +122,7 @@ SyncedCron.add({
   job: function() {
     //set all "current" data to be historical, then add new data (whose
     //historical data flag is false)
+    console.log("Updating price list");
     PriceList.update({historicalData: false}, {$set: {historicalData: true}}, {multi: true});
     SteamlyticsApi.getPricelist();
   }
