@@ -28,9 +28,9 @@ Template.blogIndex.onCreated ->
 
 Template.blogIndex.onRendered ->
   # Page Title
-  document.title = "Blog"
-  if Blog.settings.title
-    document.title += " | #{Blog.settings.title}"
+  # document.title = "Blog"
+  # if Blog.settings.title
+  #   document.title += " | #{Blog.settings.title}"
 
 Template.blogIndex.helpers
   blogReady: -> Template.instance().blogReady.get()

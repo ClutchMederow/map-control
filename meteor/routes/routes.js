@@ -177,7 +177,7 @@ Router.route('/tradingfloor/:channel?',{
   template: 'tradingFloor',
   onBeforeAction: function() {
     if (!this.params.channel) {
-      this.redirect('tradingFloor', { channel: Config.tradingFloor.defaultChannel });
+      this.redirect('tradingFloor', { channel: 'Lobby' });
     } else {
       this.next();
     }

@@ -30,7 +30,7 @@ Meteor.startup(function() {
       CoinbaseCurrencies.insert(currency);
     });
   }
- 
+
   //admin user, holds ironbucks
   var adminName = Meteor.settings.adminUser.userName;
   var adminUser = getAdminUser();
@@ -85,13 +85,38 @@ Meteor.startup(function() {
     }
   });
 
-  if (environment === Enums.Environments.DEV && Channels.find().count() === 0) {
-    Channels.insert({name: 'Trading Floor',
-                    publishedToUsers: ['Public'],
-                    category: 'Trading Floor'});
-    _(5).times(function(n) {
-      Factory.create('channel');
+  if (Channels.find().count() === 0) {
+    Channels.insert({
+      name: 'Lobby',
+      publishedToUsers: ['Public'],
+      category: 'Trading Floor',
+      sortOrder: 1,
     });
+
+    Channels.insert({
+      name: 'High Value',
+      publishedToUsers: ['Public'],
+      category: 'Trading Floor',
+      sortOrder: 50,
+    });
+
+    Channels.insert({
+      name: 'Low Value',
+      publishedToUsers: ['Public'],
+      category: 'Trading Floor',
+      sortOrder: 60,
+    });
+
+    Channels.insert({
+      name: 'VIP',
+      publishedToUsers: ['Public'],
+      category: 'Trading Floor',
+      sortOrder: 100,
+    });
+
+    // _(5).times(function(n) {
+    //   Factory.create('channel');
+    // });
   }
 
   var users = Users.find().fetch();
