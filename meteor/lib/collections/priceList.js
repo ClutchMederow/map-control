@@ -1,4 +1,5 @@
 PriceList = new Mongo.Collection("priceList");
+HistoricalPriceData = new Mongo.Collection("historicalPriceData");
 
 EasySearch.createSearchIndex('priceListIndex', {
   'collection': PriceList,

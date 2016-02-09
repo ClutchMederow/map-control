@@ -9,9 +9,14 @@ SteamlyticsApi = (function() {
     //from, to = UNIX timestamps to restrict data
     getPrice: function(marketHashName, source, from, to) {
       var url = "http://csgo.steamlytics.xyz/api/v1/prices/" +
-        marketHashName + "?key=" + apiKey;
+        marketHashName;
+
       try {
-        var results = HTTP.get(url);
+        var results = HTTP.get(url, {params: {
+          key: apiKey,
+          from: from,
+          to: to
+        }});
         return results.data;
       } catch(e) {
         return false;
