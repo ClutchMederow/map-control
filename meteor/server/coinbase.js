@@ -4,16 +4,11 @@ Meteor.methods({
     //TODO: make this Enum
     var currency = "USD";
     var user = Meteor.users.findOne(this.userId);
-    var tradeHelper = TradeHelper;
-    var approvedForDeposit = tradeHelper.checkDeposit(this.userId);
-    if(approvedForDeposit) {
-      var roundedAmount = parseFloat(amount).toFixed(2);
-      return Coinbase.createCheckout(roundedAmount, currency, user.profile.email);
-    } else {
-      throw new Meteor.Error(Enums.MeteorError.EXCEEDED_DEPOSIT_RATE, 
-                            "You have deposited too much too quickly. " + 
-                            "Please wait a day or contact customer service");
-    }
+    //TODO: I'm 90% certain the below line is dumb
+    //var tradeHelper = TradeHelper;
+    //var approvedForDeposit = tradeHelper.checkDeposit(this.userId);
+    var roundedAmount = parseFloat(amount).toFixed(2);
+    return Coinbase.createCheckout(roundedAmount, currency, user.profile.email);
   },
   //TODO: rename this to withdrawMoney
   'sendMoney': function(amount) {
@@ -30,21 +25,22 @@ Meteor.methods({
     //check to make sure they have enough to withdraw including our fee
     if(approvedForWithdrawal && withdrawalAmount <= user.ironBucks) {
 
-      var withdrawalObject = checkWithdrawal(this.userId);
+      //var withdrawalObject = checkWithdrawal(this.userId);
       var logData = withdrawalObject;
       logData.date = new Date();
 
-      if(withdrawalObject.total === 0) {
+      //if(withdrawalObject.total === 0) {
 
-        logData.type = Enums.LogType.AUDIT;
-        Logs.insert(logData);
+      logData.type = Enums.LogType.AUDIT;
+      Logs.insert(logData);
 
-        DB.updateIronBucks(user._id, -withdrawalAmount);
+      DB.updateIronBucks(user._id, -withdrawalAmount);
 
-        var roundedAmount = roundCurrency(withdrawalAmount);
-        Coinbase.sendMoney(user.profile.email, roundedAmount, "USD", 
-                           "withdrawing Iron Bucks");
-      } else {
+      var roundedAmount = roundCurrency(withdrawalAmount);
+      Coinbase.sendMoney(user.profile.email, roundedAmount, "USD", 
+                         "withdrawing Iron Bucks");
+      /*
+      //} else {
         logData.type = Enums.LogType.ERROR;
 
         var logId = Logs.insert(logData);
@@ -52,6 +48,7 @@ Meteor.methods({
         sendTotalErrorEmail(logId, withdrawalObject, this.userId);
         throw new Meteor.Error("INCORRECT_WITHDRAWAL", "transactions do not match");
       }
+     */
     } else {
       if(approvedForWithdrawal) {
         throw new Meteor.Error(Enums.MeteorError.INSUFFICIENT_FUNDS, 'not enough cash');
