@@ -1,7 +1,7 @@
 var OnBeforeActions = {
-  loginRequired: function(pause) {
+  loginRequired: function(req, res, next) {
     if (!Meteor.userId()) {
-      this.render('landing');
+      this.redirect('landing');
     } else {
       this.next();
     }
@@ -9,5 +9,22 @@ var OnBeforeActions = {
 };
 
 Router.onBeforeAction(OnBeforeActions.loginRequired, {
-  except: [ 'landing', 'about', 'help', 'contact', 'tradingFloor', 'market', 'webhooksCoinbase']
+  only: [
+    'content',
+    'videos',
+    'bitcoin',
+    'ironbucks',
+    'ironbucks/add',
+    'ironbucks/withdraw',
+    'chats',
+    'steam',
+    'home',
+    'tour',
+    'notifications',
+    'inventory',
+    'transactions/:userId',
+    'managestash',
+    'profile',
+    'offer'
+  ],
 });

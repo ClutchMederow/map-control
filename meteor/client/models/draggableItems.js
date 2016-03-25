@@ -165,10 +165,10 @@ function createTooltipHtml(data) {
 
   //add item prices
   if(data.prices) {
-    var $prices = $('<div><br>Median Price: $' + data.prices.median_price + 
-                    '<br><br>Price Range: $' + data.prices.lowest_price + ' - $' + 
-                    data.prices.highest_price + 
-                    '<br><br>Trading Volume: ' +  data.prices.volume + '</div>');
+    var $prices = $('<div><div class="price-label">Median Price</div><div>$' + data.prices.median_price + '</div>' +
+                    '<div class="price-label">Price Range</div><div>$' + data.prices.lowest_price + ' - $' +
+                    data.prices.highest_price + '</div>' +
+                    '<div class="price-label">Trading Volume</div><div>' +  data.prices.volume + '</div></div>');
     $prices.addClass("item-info-type");
     tooltipElement.append($prices);
   }
@@ -402,9 +402,9 @@ var ItemDescriptionParser = {
       });
 
       if (data.floatValue !== undefined && data.floatValue !== null) {
-          var $newDiv = $('<div></div>');
-          $newDiv.addClass('item-float-value');
-          $newDiv.text('Float Value: ' + data.floatValue.toFixed(5));
+          var $newDiv = $('<div><div class="price-label">Float Value</div>' + data.floatValue.toFixed(5) + '</div>');
+          $newDiv.addClass('item-info-type');
+          // $newDiv.text('Float Value: ' + ;
           elems.push($newDiv);
       }
 
