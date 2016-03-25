@@ -28,6 +28,7 @@ var userNavOptions = {
 
 Template.navbar.rendered = function() {
   this.$(".dropdown-button").dropdown({ belowOrigin: true, hover: true });
+  this.$(".button-collapse").sideNav();
 };
 
 Template.navbar.helpers({

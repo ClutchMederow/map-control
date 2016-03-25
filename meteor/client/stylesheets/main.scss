@@ -189,6 +189,10 @@ main {
 
 .brand-logo {
   margin-left: 1em;
+
+  @media (max-width: 600px) {
+    margin-left: 0;
+  }
 }
 
 #steamLogin {
@@ -511,7 +515,12 @@ main {
   }
 
   .item-info-type {
-    color: #756D55;
+    color: #FFF4F4;
+
+    .price-label {
+      margin-top: 10px;
+      color: $nav-text-color-highlight;
+    }
   }
 
   .container-items {

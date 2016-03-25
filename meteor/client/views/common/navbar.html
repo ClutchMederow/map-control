@@ -7,11 +7,23 @@
   <nav>
     <div class="nav-wrapper">
       <a href="{{pathFor route='landing'}}" class="brand-logo"><img src="/images/if-logo.png"></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
         <li><a href="{{ blogPathFor 'blogIndex' }}" class="{{ currentRouteClass '(.*)' }}">Analysis</a></li>
 <!--         <li><a href="{{ pathFor route='pricelist' }}" class="{{ currentRouteClass
             'pricelist' }}">Prices</a></li>
  -->
+        <li><a href="{{ pathFor route='tradingFloor' channel='Lobby' }}" class="{{ currentRouteClass 'tradingFloor' }}">Trading Floor</a></li>
+        <li><a href="{{ pathFor route='market' userId='all' }}" class="{{ currentRouteClass 'market' }}">Market</a></li>
+        {{ #if loggedIn }}
+          <li><a href="{{pathFor route='inventory'}}" class="{{ currentRouteClass 'inventory' }}">Inventory</a></li>
+          <li><a href="{{pathFor route='ironBucks'}}" class="{{ currentRouteClass 'ironBucks' }}">Cash {{ironBucks}}</a></li>
+          <li><a href="{{pathFor route='home'}}" class="{{ currentRouteClass 'home' }}">Command Center</a></li>
+        {{ /if }}
+        <li><a class="dropdown-button loginDropdown" href="#!" data-activates="loginNavLink" hover="true">{{ userNavText }}<i class="material-icons right loginDropIcon">arrow_drop_down</i></a></li>
+      </ul>
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="{{ blogPathFor 'blogIndex' }}" class="{{ currentRouteClass '(.*)' }}">Analysis</a></li>
         <li><a href="{{ pathFor route='tradingFloor' channel='Lobby' }}" class="{{ currentRouteClass 'tradingFloor' }}">Trading Floor</a></li>
         <li><a href="{{ pathFor route='market' userId='all' }}" class="{{ currentRouteClass 'market' }}">Market</a></li>
         {{ #if loggedIn }}
