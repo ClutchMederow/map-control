@@ -63,6 +63,14 @@ html {
   width: 100%;
   height: 260px;
 
+  // attempted performance fix
+  // seems to work
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+
   // -webkit-filter: blur(5px);
   // -moz-filter: blur(5px);
   // -o-filter: blur(5px);
@@ -92,6 +100,14 @@ html {
   -o-filter: blur($blur);
   -ms-filter: blur($blur);
   filter: blur($blur);
+
+  // attempted performance fix
+  // seems to work
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 body {

@@ -3,10 +3,10 @@ Router.configure({
   notFoundTemplate: "notFound"
 });
 
-Router.route('/pricelist', {
-  name: 'pricelist',
-  template: 'pricelist'
-});
+// Router.route('/pricelist', {
+//   name: 'pricelist',
+//   template: 'pricelist'
+// });
 
 
 Router.route('/content', {
