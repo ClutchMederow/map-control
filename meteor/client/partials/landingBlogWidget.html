@@ -1,0 +1,20 @@
+<template name="landingBlogWidget">
+  <div class="landing-widget">
+    <div class="heading">
+      latest analyses
+    </div>
+    {{ #each latest }}
+      <a href="{{ getUrl }}">
+      {{ log }}
+
+        <div class="single-post">
+          <h3>{{ title }}</h3>
+          <div class="meta-info"> by {{ userId }}</div>
+          <div class="excerpt">
+            {{ excerpt }}
+          </div>
+        </div>
+      </a>
+    {{ /each }}
+  </div>
+</template>
