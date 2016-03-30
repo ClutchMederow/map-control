@@ -1657,6 +1657,8 @@ $blog-title: #B19478;
   b {
     color: #99BCE5;
   }
+
+
 }
 
 .meteor-blog-index {
@@ -1672,6 +1674,13 @@ $flap-color: lighten($bg-color-lighter, 10%);
 .landing-widget {
   a {
     color: inherit;
+  }
+
+  img {
+    float: right;
+    vertical-align: middle;
+    border-radius: 20px;
+    margin-right: 20px;
   }
 
   .heading {
