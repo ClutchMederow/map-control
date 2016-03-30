@@ -8,6 +8,10 @@ Router.configure({
 //   template: 'pricelist'
 // });
 
+Router.route('/chart', {
+  name: 'chart',
+  template: 'chart',
+});
 
 Router.route('/content', {
   name: 'content',
