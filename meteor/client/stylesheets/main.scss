@@ -1629,9 +1629,17 @@ nav .brand-logo img {
   background-color: white;
 }
 
-.meteor-blog-post, .meteor-blog-index {
-  background-color: rgba(1, 1, 1, 0.6);
+.meteor-blog-post {
   font-size: 16px;
+  color: #E7E7E7;
+
+  .meteor-blog-post-meta {
+    margin-bottom: 20px;
+  }
+
+  h1, h2 a {
+    color: #B19478 !important;
+  }
 
   .comment-chart-title {
     padding-top: 25px;
@@ -1641,5 +1649,13 @@ nav .brand-logo img {
 
   .if-enhanced {
     color: $slight-if-emphasis;
+  }
+}
+
+.meteor-blog-index {
+  font-size: 16px;
+
+  .meteor-blog-post {
+    background-color: rgba(1, 1, 1, 0.6);
   }
 }
