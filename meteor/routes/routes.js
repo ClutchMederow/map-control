@@ -65,8 +65,8 @@ Router.route('/webhooks/coinbase', function() {
     (Meteor.settings && Meteor.settings.coinbase_callback_secret);
 
   if(coinbaseSecret === COINBASE_SECRET) {
-    DB.updateIronBucksCallback(this.request);
 
+    DB.updateIronBucksCallback(this.request);
     this.response.statusCode = 200;
     this.response.end('complete');
   } else {
