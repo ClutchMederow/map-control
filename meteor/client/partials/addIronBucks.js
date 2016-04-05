@@ -6,7 +6,7 @@ var reactiveIronBucks = new ReactiveVar(null);
 
 var addPending = new ReactiveVar(null);
 
-Template.addIronBucks.onCreated(function(){ 
+Template.addIronBucks.onCreated(function(){
   this.subscribe('coinbaseCurrencies');
 });
 
@@ -31,7 +31,7 @@ Template.addIronBucks.helpers({
     }
   },
   currencies: function() {
-    return CoinbaseCurrencies.find(); 
+    return CoinbaseCurrencies.find();
   }
  */
   price: function() {
@@ -74,5 +74,5 @@ Template.addIronBucks.events({
   */
   'change #amount': _.debounce(function(e) {
     reactiveAmount.set(e.target.value);
-  },200)
+  },200),
 });

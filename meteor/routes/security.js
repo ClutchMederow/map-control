@@ -5,7 +5,7 @@ var OnBeforeActions = {
     } else {
       this.next();
     }
-  }
+  },
 };
 
 Router.onBeforeAction(OnBeforeActions.loginRequired, {
@@ -13,9 +13,9 @@ Router.onBeforeAction(OnBeforeActions.loginRequired, {
     'content',
     'videos',
     'bitcoin',
-    'ironbucks',
-    'ironbucks/add',
-    'ironbucks/withdraw',
+    'ironBucks',
+    'addIronBucks',
+    'withdrawIronBucks',
     'chats',
     'steam',
     'home',
@@ -25,6 +25,6 @@ Router.onBeforeAction(OnBeforeActions.loginRequired, {
     'transactions/:userId',
     'managestash',
     'profile',
-    'offer'
+    'offer',
   ],
 });
