@@ -9,7 +9,7 @@ DraggableItems = {
         start: function(e) {
           var origin = $(e.currentTarget).parent();
           closeTooltip(origin);
-        }
+        },
       });
     });
   },
@@ -21,7 +21,7 @@ DraggableItems = {
       drop: function(e, ui) {
         var itemId = $(ui.draggable[0]).data('itemid');
         callback(itemId);
-      }
+      },
     });
   },
 
@@ -42,9 +42,9 @@ DraggableItems = {
 
       if (origin.data('active')) {
         return false;
-      } else {
-        origin.data('active', true);
       }
+
+      origin.data('active', true);
 
       // Get or create the elements
       var tooltip = getTooltipElement(origin, data);
@@ -339,7 +339,7 @@ function getAnimateFunction(origin, tooltip, backdrop) {
 var ItemDescriptionParser = {
 
   // Do not display the type if it is in this array
-  ignoreTypeSub: [ IronBucks.name ],
+  ignoreTypeSub: [ IronBucks.name, undefined ],
 
   itemType: {
     CSGO_Type_WeaponCase: function(data) {

@@ -1753,3 +1753,9 @@ $flap-color: lighten($bg-color-lighter, 10%);
     }
   }
 }
+
+.custom-alert {
+  .row {
+    margin-bottom: 0;
+  }
+}

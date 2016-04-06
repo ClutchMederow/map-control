@@ -648,7 +648,7 @@ var partialDB = {
     check(user1, Object);
     check(user2, Object);
 
-    RealTimeTrade.insert({
+    return RealTimeTrade.insert({
       user1Id: user1Id,
       user1Name: user1.profile.name,
       user2Id: user2Id,
@@ -802,11 +802,12 @@ var partialDB = {
     Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
     Logs.insert(logData);
   },
-  addNotification: function(userId, message) {
+  addNotification: function(userId, message, data) {
     Notifications.insert({
-      userId: userId,
-      message: message,
-      viewed: false
+      userId,
+      message,
+      data,
+      viewed: false,
     });
   },
   updateIronBucksCallback: function(body) {
