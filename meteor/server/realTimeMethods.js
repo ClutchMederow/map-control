@@ -1,3 +1,7 @@
+function createMessageWithLink(text, href) {
+  return `<a href="${href}">${text}</a>`;
+}
+
 Meteor.methods({
   createRealTimeTrade: function(user2Id) {
     check(user2Id, String);
@@ -11,7 +15,8 @@ Meteor.methods({
     DB.insertRealTimeTrade(this.userId, user2Id);
 
     var user1 = Meteor.users.findOne(this.userId);
-    DB.addNotification(user2Id, user1.profile.name + " wants to trade with you");
+    const messageText = createMessageWithLink(`${user1.profile.name} wants to trade with you`);
+    DB.addNotification(user2Id, messageText);
   },
 
   acceptRealTimeTrade: function(tradeId) {
