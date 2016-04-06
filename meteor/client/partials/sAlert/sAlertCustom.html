@@ -1,0 +1,33 @@
+<template name="sAlertCustom">
+    <div class="s-alert-box s-alert-{{condition}} s-alert-{{position}} s-alert-effect-{{effect}} s-alert-show custom-alert" id="{{_id}}" style="{{boxPosition}}">
+        <div class="row">
+            <div class="col s12">
+                <p>{{message}}</p>
+            </div>
+        </div>
+        {{> Template.dynamic template=alertType data=this }}
+        <span class="s-alert-close"></span>
+    </div>
+</template>
+
+<template name="alertButtonsRealtime">
+    <div class="row">
+        <div class="col s12 m6">
+            <button class="btn btn-flat ignore-realtime" type="button">ignore</button>
+        </div>
+        <div class="col s12 m6">
+            <button class="btn btn-flat accept-realtime" type="button">accept</button>
+        </div>
+    </div>
+</template>
+
+<template name="alertButtonsRealtimeAccepted">
+    <div class="row">
+        <div class="col s12 m6">
+            <button class="btn btn-flat ignore-realtime" type="button">ignore</button>
+        </div>
+        <div class="col s12 m6">
+            <button class="btn btn-flat open-realtime" type="button">open</button>
+        </div>
+    </div>
+</template>

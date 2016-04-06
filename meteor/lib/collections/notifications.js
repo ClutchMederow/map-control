@@ -11,6 +11,12 @@ Notifications.attachSchema({
     type: String,
     label: "Message",
   },
+  data: {
+    type: Object,
+    label: "data",
+    blackbox: true,
+    optional: true,
+  },
   viewed: {
     type: Boolean,
     label: 'Viewed',

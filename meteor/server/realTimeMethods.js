@@ -1,22 +1,24 @@
-function createMessageWithLink(text, href) {
-  return `<a href="${href}">${text}</a>`;
-}
+/* global DB */
+/* global RealTimeTrade */
 
 Meteor.methods({
   createRealTimeTrade: function(user2Id) {
     check(user2Id, String);
-    RealTimeTrade.find({ $or: [ { user1Id: this.userId }, { user2Id: this.userId } ], completed: false, deleteInd: false}).forEach(
-      function(rtTrade) {
+    RealTimeTrade.find({ $or: [ { user1Id: this.userId }, { user2Id: this.userId } ], completed: false, deleteInd: false}).forEach(function(rtTrade) {
         if(rtTrade.user2Id === user2Id) {
           return rtTrade._id;
           // throw new Meteor.Error("EXISTING_RTT", "You have already have an active real time trade with this user");
         }
     });
-    DB.insertRealTimeTrade(this.userId, user2Id);
+    const realtimeId = DB.insertRealTimeTrade(this.userId, user2Id);
 
     var user1 = Meteor.users.findOne(this.userId);
-    const messageText = createMessageWithLink(`${user1.profile.name} wants to trade with you`);
-    DB.addNotification(user2Id, messageText);
+    const messageText = `${user1.profile.name} wants to trade with you`;
+    const data = {
+      alertType: 'realtimeCreated',
+      realtimeId,
+    };
+    DB.addNotification(user2Id, messageText, data);
   },
 
   acceptRealTimeTrade: function(tradeId) {
@@ -28,7 +30,13 @@ Meteor.methods({
       var channelId = DB.startChat(this.userId, trade.user1Id, Enums.ChatType.TRADE);
       var channel = Channels.findOne(channelId);
       DB.acceptRealTimeTrade(tradeId, channel);
-      DB.addNotification(trade.user1Id, trade.user2Name + " accepted trade");
+
+      const messageText = `${trade.user2Name} accepted trade`;
+      const data = {
+        alertType: 'realtimeAccepted',
+        realtimeId: tradeId,
+      };
+      DB.addNotification(trade.user1Id, messageText, data);
       //start private chat
       return tradeId;
     } else {
