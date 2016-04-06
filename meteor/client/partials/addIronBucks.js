@@ -41,8 +41,10 @@ Template.addIronBucks.helpers({
     }
   },
   hasEmail: function() {
-    if(Meteor.user()) {
-      return Meteor.user().profile.email;
+    if(Meteor.user() && Meteor.user().profile.email) {
+      return true;
+    } else {
+      return false;
     }
   },
   addPending: function() {
@@ -51,14 +53,18 @@ Template.addIronBucks.helpers({
 });
 
 Template.addIronBucks.events({
+  'click #cancel': function(e) {
+    Session.set('embed_code', null);
+  },
+
   'click #add': function(e) {
     Session.set('payment', null);
-    var amount = $('#amount').val();
-    if(!_.isEmpty(amount)) {
+    var amount = parseFloat($('#amount').val());
+    if(checkAmount(amount)) {
       addPending.set('pending');
       Meteor.call('createCheckout', amount, function(err, embed_code) {
         if(err) {
-          console.log(err);
+          sAlert.error(err);
           addPending.set(null);
         } else {
           Session.set('embed_code',embed_code);
@@ -76,3 +82,18 @@ Template.addIronBucks.events({
     reactiveAmount.set(e.target.value);
   },200),
 });
+
+//check the entered amount 
+function checkAmount(amount) {
+  //check(amount, Number);
+  if(!_.isNumber(amount)) {
+    sAlert.error('Please enter an amount')
+    return false;
+  } else if(amount > Config.financial.maxAddAmount) {
+    sAlert.error('Please enter an amount less than $' +
+                  Config.financial.maxAddAmount);
+    return false;
+  } else {
+    return true;
+  }
+}
