@@ -50,7 +50,6 @@ return CoinbaseCurrencies.find();
   },
 
   withdrawPending: function() {
-    console.log(withdrawPending.get());
     return withdrawPending.get();
   },
 });
@@ -58,8 +57,8 @@ return CoinbaseCurrencies.find();
 Template.withdrawIronBucks.events({
   'click #withdraw': function(e) {
     Session.set('payment', null);
-    var amount = $('#withdrawAmount').val();
-    if(!_.isEmpty(amount)) {
+    var amount = parseFloat($('#withdrawAmount').val());
+    if(checkAmount(amount)) {
       withdrawPending.set('pending');
       Meteor.call('sendMoney', amount, function(err, withdrawalAmount) {
         if(err) {
@@ -83,3 +82,20 @@ Template.withdrawIronBucks.events({
     reactiveAmount.set(e.target.value);
   },200)
 });
+
+function checkAmount(amount) {
+  //check(amount, Number);
+  if(!_.isNumber(amount)) {
+    sAlert.error('Please enter an amount')
+    return false;
+  } else if(amount > Config.financial.maxWithdrawAmount) {
+    sAlert.error('Please enter an amount less than $' +
+                  Config.financial.maxWithdrawAmount);
+    return false;
+  } else if (amount > Meteor.user().profile.ironBucks) {
+    sAlert.error("You can't take more than you have...");
+    return false;
+  } else {
+    return true;
+  }
+}

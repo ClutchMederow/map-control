@@ -1,6 +1,9 @@
 Meteor.methods({
   'createCheckout': function(amount) {
-    check(amount, String);
+    check(amount, Number);
+    if(amount > Config.financial.maxAddAmount) {
+      throw new Meteor.Error('INCORRECT_AMOUNT', 'Please add less than $' + Config.financial.maxAddAmount);
+    }
     //TODO: make this Enum
     var currency = "USD";
     var user = Meteor.users.findOne(this.userId);
@@ -12,7 +15,7 @@ Meteor.methods({
   },
   //TODO: rename this to withdrawMoney
   'sendMoney': function(amount) {
-    check(amount, String);
+    check(amount, Number);
     var currency = "USD";
 
     var user = Meteor.users.findOne(this.userId);
@@ -23,10 +26,9 @@ Meteor.methods({
     var withdrawalAmount = parseFloat(amount) / currValue(currency);
     
     //check to make sure they have enough to withdraw including our fee
-    if(approvedForWithdrawal && withdrawalAmount <= user.ironBucks) {
+    if(approvedForWithdrawal && withdrawalAmount <= user.profile.ironBucks) {
 
-      //var withdrawalObject = checkWithdrawal(this.userId);
-      var logData = withdrawalObject;
+      var logData = checkWithdrawal(this.userId);
       logData.date = new Date();
 
       //if(withdrawalObject.total === 0) {

@@ -23,6 +23,10 @@
     </div>
     <div class="col s12 m6">
       {{#if embedCode}}
+        <a class="btn btn-large waves-effect waves-light red
+        text-center" id="cancel">
+          Cancel
+        </a>
         <div class="card-panel pan embedded-payment">
           <iframe id="coinbase_inline_iframe_{{embedCode}}"
                   src="https://www.coinbase.com/checkouts/{{embedCode}}/inline"
@@ -40,7 +44,7 @@
           <div class="row">
             <div class="input-field col s8 offset-s2">
               <input id="amount" type="number">
-              <label for="amount">Amount of funds to add</label>
+              <label for="amount">Add some dollars...</label>
             </div>
           </div>
           <div class="row">
