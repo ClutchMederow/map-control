@@ -145,20 +145,7 @@ Router.route('/market/:userId', {
 
 Router.route('/inventory', {
   name: 'inventory',
-  template: 'myInventory',
-  onBeforeAction: function() {
-    //Deprecating the manageStash screen for now
-    /*
-    var userId = Meteor.userId();
-
-    if (Items.find({ userId: userId, deleteInd: false, status: Enums.ItemStatus.STASH, name: { $ne: IronBucks.name } }).count()) {
-      this.next();
-    } else {
-      this.redirect('manageStash');
-    }
-   */
-  this.redirect('manageStash');
-  }
+  template: 'manageStash',
 });
 
 Router.route('/transactions/:userId', {
