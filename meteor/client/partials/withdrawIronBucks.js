@@ -16,13 +16,9 @@ Template.withdrawIronBucks.onRendered(function() {
       $('select').material_select();
     }
   });
-  Session.set('embed_code', null);
 });
 
 Template.withdrawIronBucks.helpers({
-  embedCode: function() {
-    return Session.get('embed_code');
-  },
   /*
 conversionRate: function() {
 if(reactiveAmount.get() && reactiveCurrency.get()) {
