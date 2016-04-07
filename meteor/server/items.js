@@ -18,7 +18,7 @@ Items.before.insert(function(userId, doc) {
       updateItemPrices(doc._id, itemPrice);
     } else {
       console.log("Getting item price...");
-      getItemPrice(doc);
+      getItemPrice(doc, itemPrice);
     }
   }
 });
