@@ -16,6 +16,7 @@ Template.withdrawIronBucks.onRendered(function() {
       $('select').material_select();
     }
   });
+  Session.set('embed_code', null);
 });
 
 Template.withdrawIronBucks.helpers({

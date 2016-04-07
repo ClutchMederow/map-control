@@ -16,6 +16,7 @@ Template.addIronBucks.onRendered(function() {
       $('select').material_select();
     }
   });
+  Session.set('embed_code', null);
 });
 
 Template.addIronBucks.helpers({
@@ -86,7 +87,7 @@ Template.addIronBucks.events({
 //check the entered amount 
 function checkAmount(amount) {
   //check(amount, Number);
-  if(!_.isNumber(amount)) {
+  if(_.isNaN(amount)) {
     sAlert.error('Please enter an amount')
     return false;
   } else if(amount > Config.financial.maxAddAmount) {
