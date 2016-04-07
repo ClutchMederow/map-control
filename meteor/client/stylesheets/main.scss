@@ -572,7 +572,6 @@ main {
       color: #ee6e73;
     }
   }
-
 }
 
 @-webkit-keyframes fadeInUp {
@@ -1137,6 +1136,8 @@ $land-br: 4px;
     .pan {
       opacity: 1;
       background-color: white;
+      height: 272px;
+      overflow-y: auto;
 
       -webkit-animation-name: none;
               animation-name: none;
@@ -1451,15 +1452,15 @@ $cs-size: 400px;
 }
 
 #my-listing-items .make-offer-items {
-  height: 120px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  // height: 120px;
+  // overflow-y: scroll;
+  // overflow-x: hidden;
 }
 
 #their-listing-items .make-offer-items {
-  height: 150px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  // height: 150px;
+  // overflow-y: scroll;
+  // overflow-x: hidden;
 }
 
 .my-realtime-items {
