@@ -17,6 +17,7 @@ sufficientIronBucks = function(userId, amount) {
 };
 
 getItemPrice = function(item) {
+  var steamlyticsApi = SteamlyticsApi;
   price = steamlyticsApi.getPrice(item.name);
   //note: returned object from api doesn't include market item name
   price.name = item.name;
@@ -59,7 +60,6 @@ SyncedCron.add({
   },
 
   job: function() {
-    var steamlyticsApi = SteamlyticsApi;
     var price = null;
     Items.find().forEach(function(item) {
 
