@@ -16,6 +16,15 @@ sufficientIronBucks = function(userId, amount) {
   }
 };
 
+getItemPrice = function(item) {
+  price = steamlyticsApi.getPrice(item.name);
+  //note: returned object from api doesn't include market item name
+  price.name = item.name;
+  price.upToDate = true;
+  ItemPrices.upsert(itemPrice._id, price);
+  return updateItemPrices(item._id, price); //de-normalizing
+};
+
 //given an itemId and a price object, 
 //set the price equal to that object
 updateItemPrices = function(itemId, prices) {
@@ -58,24 +67,16 @@ SyncedCron.add({
       if (item.name === IronBucks.name) return;
 
       var itemPrice = ItemPrices.findOne({ name: item.name });
+      //if object exists
       if(_.isObject(itemPrice)) {
+        //if item price up to date
         if(itemPrice.upToDate) {
           console.log(item.name + "'s price is  already up to date");
-        } else {
-          price = steamlyticsApi.getPrice(item.name);
-          //note: returned object from api doesn't include market item name
-          price.name = item.name;
-          price.upToDate = true;
-          ItemPrices.update(itemPrice._id, price);
-          updateItemPrices(item._id, price); //de-normalizing
+        } else { //if item price not up to date
+          getItemPrice(item);
         }
-      } else {
-          price = steamlyticsApi.getPrice(item.name);
-          //note: returned object from api doesn't include market item name
-          price.name = item.name;
-          price.upToDate = false;
-          ItemPrices.insert(price);
-          updateItemPrices(item._id, price); //de-normalzing
+      } else { //if item doesn't exist
+        getItemPrice(item);
       }
     });
 
