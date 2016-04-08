@@ -36,7 +36,7 @@ DispatcherAPI = {
       }
     };
 
-    const tradeofferId = callBotServer(callstring, options).tradeofferId;
+    const tradeofferId = callBotServer(callstring, options, 3).tradeofferId;
     updateItemPricesForTradeoffer(tradeofferId);
 
     return tradeofferId;
@@ -51,7 +51,7 @@ DispatcherAPI = {
       }
     };
 
-    return callBotServer(callstring, options).tradeofferId;
+    return callBotServer(callstring, options, 3).tradeofferId;
   },
 
   test: function(testing) {
@@ -62,11 +62,11 @@ DispatcherAPI = {
       }
     };
 
-    return callBotServer(callstring, options);
+    return callBotServer(callstring, options, 3);
   },
 };
 
-function callBotServer(callstring, options) {
+function callBotServer(callstring, options, retryCount) {
   var username = process.env.BOT_SERVER_USERNAME;
   var password = process.env.BOT_SERVER_PASSWORD;
   var authString = username + ':' + password;
@@ -92,6 +92,11 @@ function callBotServer(callstring, options) {
     if (errForClient) {
       throw new Meteor.Error(errForClient);
     }
+
+    if (retryCount > 0) {
+      return callBotServer(callstring, options, retryCount - 1);
+    }
+
     throw e;
   }
 }
