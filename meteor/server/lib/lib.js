@@ -18,24 +18,30 @@ sufficientIronBucks = function(userId, amount) {
 
 getItemPrice = function(item, itemPrice) {
   check(item, Object);
-  check(item, itemPrice);
+
   var steamlyticsApi = SteamlyticsApi;
-  price = steamlyticsApi.getPrice(item.name);
+  const price = steamlyticsApi.getPrice(item.name);
   //note: returned object from api doesn't include market item name
   price.name = item.name;
   price.upToDate = true;
-  ItemPrices.upsert(itemPrice._id, price);
+
+  if (itemPrice) {
+    ItemPrices.update(itemPrice._id, price);
+  } else {
+    ItemPrices.insert(price);
+  }
+
   return updateItemPrices(item._id, price); //de-normalizing
 };
 
-//given an itemId and a price object, 
+//given an itemId and a price object,
 //set the price equal to that object
 updateItemPrices = function(itemId, prices) {
   Items.update(itemId, {$set: {prices: prices}});
 };
 
 sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
-  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com", 
+  var recepients = ['deltaveelabs@gmail.com', "therealdrewproud@gmail.com",
     "duncanrenfrow@gmail.com"];
     var options = {
       from: "deltaveelabs@gmail.com",
@@ -43,12 +49,12 @@ sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
       subject: "ERROR: Debits and Credits DO NOT match"
     };
     if(userId) {
-      options.text = "Please immediately check the application. " + 
+      options.text = "Please immediately check the application. " +
         "Financial totals did not match for userId: " + userId +
         ". The descrepancy was: " + withdrawalObject.total;
     } else {
-      options.text = "Please immediately check the application. " + 
-        "Financial totals did not match for the application" + 
+      options.text = "Please immediately check the application. " +
+        "Financial totals did not match for the application" +
         ". The descrepancy was: " + withdrawalObject.total;
     }
     Email.send(options);

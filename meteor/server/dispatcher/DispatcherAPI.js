@@ -1,7 +1,30 @@
+/* global Tradeoffers */
+/* global ItemPrices */
+/* global _ */
+
 var DISPATCHER_API_URL = process.env.BOT_SERVER_URL;
 
 // NOTE
 // USE this.unblock() to allow other calls to be made while awaiting a response
+
+function updatePriceForSingleItem(item) {
+  const itemPrice = ItemPrices.findOne({name: item.name});
+  if(_.isObject(itemPrice)) {
+    console.log("updating item with price");
+    updateItemPrices(item._id, itemPrice);
+  } else {
+    console.log("Getting item price...");
+    getItemPrice(item, null);
+  }
+}
+
+function updateItemPricesForTradeoffer(tradeofferId) {
+  const offer = Tradeoffers.findOne({ tradeofferid: tradeofferId });
+  const assetIds = _.pluck(offer.items_to_receive, 'assetid');
+  Items.find({ itemId: { $in: assetIds }}).forEach(updatePriceForSingleItem);
+}
+
+// TODO: tradeoffer doesn't have the items to receive yet
 
 DispatcherAPI = {
   depositItems: function(userId, items) {
@@ -13,7 +36,10 @@ DispatcherAPI = {
       }
     };
 
-    return callBotServer(callstring, options).tradeofferId;
+    const tradeofferId = callBotServer(callstring, options).tradeofferId;
+    updateItemPricesForTradeoffer(tradeofferId);
+
+    return tradeofferId;
   },
 
   withdrawItems: function(userId, items) {
