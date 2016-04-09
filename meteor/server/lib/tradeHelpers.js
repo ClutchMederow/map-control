@@ -1,53 +1,65 @@
 //TODO: move DB changes to DB files
 TradeHelper = (function () {
+  const calculateFee = function(amount) {
+    var fee = amount * Config.financial.fee;
+    return fee.toFixed(2);
+  }
+
+  const getMoneyToMove = function(amount) {
+    const fee = calculateFee(amount);
+    const paidAmount = amount - fee;
+    return {
+      fee,
+      paidAmount,
+    };
+  }
+
   //note: cash can only be on 1 side of trade
-  var moveCash = function(item, senderId, receiverId) {
-    var withdrawnAmount = item.amount;
-    var fee = item.amount * Config.financial.fee;
-    var roundedFee = fee.toFixed(2);
-    var transferredAmount = item.amount - roundedFee;
+  const moveCash = function(item, senderId, receiverId) {
+    const debitedAmount = item.amount;
+    const { fee, paidAmount } = getMoneyToMove(debitedAmount);
 
-    if(sufficientIronBucks(senderId, withdrawnAmount)) {
-      var adminUser = getAdminUser();
-      //remove from user1 full amount
-      DB.updateIronBucks(senderId, -withdrawnAmount);
-      Logs.insert({
-        userId: [senderId],
-        amount: -withdrawnAmount,
-        type: Enums.LogType.BUY,
-        date: new Date()
-      });
+    var adminUser = getAdminUser();
+    //remove from user1 full amount
+    DB.updateIronBucks(senderId, -debitedAmount);
+    Logs.insert({
+      userId: [senderId],
+      amount: -debitedAmount,
+      type: Enums.LogType.BUY,
+      date: new Date()
+    });
 
-      //update admin
-      DB.updateIronBucks(adminUser._id, roundedFee);
-      //Note: basically the sender pays the fee,
-      //because they are debited 100% of the ironBucks but only
-      //90% are credited to end user
-      Logs.insert({
-        userId: [senderId],
-        amount: -roundedFee,
-        type: Enums.LogType.FEE,
-        date: new Date()
-      });
+    //update admin
+    DB.updateIronBucks(adminUser._id, roundedFee);
+    //Note: basically the sender pays the fee,
+    //because they are debited 100% of the ironBucks but only
+    //90% are credited to end user
+    Logs.insert({
+      userId: [senderId],
+      amount: -roundedFee,
+      type: Enums.LogType.FEE,
+      date: new Date()
+    });
 
-      //update user2
-      DB.updateIronBucks(receiverId, transferredAmount);
-      Logs.insert({
-        userId: [receiverId],
-        amount: withdrawnAmount,
-        type: Enums.LogType.SELL,
-        date: new Date()
-      });
-      //Logs
-    } else {
-      throw new Meteor.Error("INSUFFICIENT_FUNDS",
-                             "There are not enough funds to handle this amount");
-    }
-
+    //update user2
+    DB.updateIronBucks(receiverId, transferredAmount);
+    Logs.insert({
+      userId: [receiverId],
+      amount: debitedAmount,
+      type: Enums.LogType.SELL,
+      date: new Date()
+    });
   };
 
   var moveItem = function(item, receiverId) {
     DB.items.update({ _id: item._id }, {$set: {userId: receiverId}});
+
+    Logs.insert({
+      userId: [receiverId],
+      item,
+      type: Enums.LogType.MOVE_ITEM,
+      date: new Date(),
+    });
   };
 
   //TODO: this code is not DRY, combine with checkwithdrawal code
@@ -61,6 +73,55 @@ TradeHelper = (function () {
     return sum;
   };
 
+  function getCashForUserInTransaction(field, transaction) {
+    return transaction[field]
+      .filter(item => item.name === IronBucks.name)
+      .reduce((acc, item) => item.amount + acc, 0);
+  }
+
+  // const getIronBucksForUser = (transaction, userFieldName) => Meteor.users.findOne(transaction[userFieldName]).profile.ironBucks;
+
+  const userHasItem = R.curry(function(userId, { _id }) {
+    return !!Items.findOne({ _id, userId });
+  });
+
+  const checkIfUserHasAllItems = function(userId, items) {
+    return R.all(userHasItem(userId))(items);
+  };
+
+  const checkIfBothUsersHaveItems = function(transaction) {
+    const { user1Items, user2Items, user1Id, user2Id } = transaction;
+    const isGood = checkIfUserHasAllItems(user1Id, user1Items) && checkIfUserHasAllItems(user2Id, user2Items);
+    if (!isGood) {
+      throw new Meteor.Error('BAD_ITEMS', 'Incorrect items');
+    }
+  };
+
+  const checkIfBothUsersHaveSufficientFunds = function(transaction) {
+    const { user1Id, user2Id } = transaction;
+    const user1CashToDebit = getCashForUserInTransaction('user1Items', transaction);
+    const user2CashToDebit = getCashForUserInTransaction('user2Items', transaction)
+    const isGood = sufficientIronBucks(user1Id, user1CashToDebit) && sufficientIronBucks(user2Id, user2CashToDebit);
+    if (!isGood) {
+      throw new Meteor.Error('NOT_SUFFICIENT_FUNDS', 'Insuffient funds');
+    }
+  };
+
+  const checkThatNotCashForCash = function(transaction) {
+    const user1CashToDebit = getCashForUserInTransaction('user1Items', transaction);
+    const user2CashToDebit = getCashForUserInTransaction('user2Items', transaction);
+    const isBad = !!user1CashToDebit && !!user2CashToDebit;
+    if (isBad) {
+      throw new Meteor.Error('CASH_FOR_CASH', 'Cannot have cash on both sides of a trade');
+    }
+  };
+
+  function checkIfValidTransaction(transaction) {
+    checkThatNotCashForCash(transaction);
+    checkIfBothUsersHaveSufficientFunds(transaction);
+    checkIfBothUsersHaveItems(transaction);
+  }
+
   return {
     removeItemsInTransaction: function(transaction) {
       DB.listings.cancelListingsForItems(transaction.user1Items);
@@ -71,6 +132,8 @@ TradeHelper = (function () {
     },
 
     executeTrade: function(transaction) {
+      checkIfValidTransaction(transaction);
+
       //move user1 items & cash to user 2
       _.each(transaction.user1Items, function(item) {
         //if CASH...
@@ -128,6 +191,11 @@ TradeHelper = (function () {
       } else {
         return true;
       }
-    }
+    },
+
+    test: function() {
+      const transaction = Transactions.findOne('TWPqRnPonaWbyhWds');
+      checkIfValidTransaction(transaction);
+    },
   };
 })();

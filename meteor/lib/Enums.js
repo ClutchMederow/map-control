@@ -27,6 +27,7 @@ Enums = {
     BUY: 'BUY',  //buying an item
     FEE: 'FEE', //our DL fee
     ERROR: 'ERROR', //an error
+    MOVE_ITEM: 'MOVE_ITEM',
   },
 
   ChatType: {
