@@ -61,10 +61,12 @@ Template.withdrawIronBucks.events({
         if(err) {
           console.log(err);
           withdrawPending.set(null);
+          $('#withdrawAmount').val(null);
         } else {
           //TODO: round this to two decimal places
           sAlert.success('Successfully withdrew: $' + roundCurrency(withdrawalAmount) + " USD");
           withdrawPending.set(null);
+          $('#withdrawAmount').val(null);
         }
       });
 

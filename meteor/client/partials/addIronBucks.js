@@ -67,8 +67,10 @@ Template.addIronBucks.events({
         if(err) {
           sAlert.error(err);
           addPending.set(null);
+          $('#amount').val(null);
         } else {
           Session.set('embed_code',embed_code);
+          $('#amount').val(null);
           addPending.set(null);
         }
       });
