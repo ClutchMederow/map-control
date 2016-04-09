@@ -624,7 +624,7 @@ var partialDB = {
     check(lister, Object);
     check(offerer, Object);
 
-    RealTimeTrade.insert({
+    const realtimeId = RealTimeTrade.insert({
       user1Id: lister._id,
       user1Items: listing.items,
       user1Name: lister.profile.name,
@@ -639,6 +639,11 @@ var partialDB = {
     });
 
     Meteor.users.update(userId, {$inc: {"profile.totalOffers": 1}});
+    const messageText = `${offerer.profile.name} has made you an offer on your listing`;
+    const data = {
+      alertType: 'offerMade',
+    };
+    DB.addNotification(lister._id, messageText, data);
   },
 
   insertRealTimeTrade: function(user1Id, user2Id) {
@@ -783,15 +788,16 @@ var partialDB = {
   //pass in negative number of removing ironBucks
   //Note: $inc will create field if it doesn't exist
   updateIronBucks: function(userId, amount) {
+    const numericAmount = parseFloat(amount);
     var logData = {
       userId:  [userId],
-      amount: amount,
-      date: new Date()
+      amount: numericAmount,
+      date: new Date(),
     };
 
-    if(amount < 0) {
+    if(numericAmount < 0) {
       logData.type = Enums.LogType.DEBIT;
-    } else if (amount > 0){
+    } else if (numericAmount > 0){
       logData.type = Enums.LogType.CREDIT;
     } else {
       throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
@@ -799,9 +805,10 @@ var partialDB = {
 
     console.log("userId: " + userId);
     console.log("amount: " + amount);
-    Meteor.users.update(userId, {$inc: {"profile.ironBucks": amount}});
+    Meteor.users.update(userId, {$inc: {"profile.ironBucks": numericAmount}});
     Logs.insert(logData);
   },
+
   addNotification: function(userId, message, data) {
     Notifications.insert({
       userId,
@@ -810,6 +817,7 @@ var partialDB = {
       viewed: false,
     });
   },
+
   updateIronBucksCallback: function(body) {
     var order = body.body.order;
     var customer = body.body.customer;

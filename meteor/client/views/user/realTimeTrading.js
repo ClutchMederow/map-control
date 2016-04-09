@@ -169,7 +169,7 @@ Template.realTimeTrading.helpers({
     if (stage === 'TRADING') {
       return 'Cancel';
     } else if (stage === 'DONE') {
-      return 'Undone';
+      return 'Cancel';
     } else if (stage === 'CONFIRMED') {
       return '...';
     }

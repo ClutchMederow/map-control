@@ -1,3 +1,5 @@
+/* global getAdminUser */
+
 //TODO: move DB changes to DB files
 TradeHelper = (function () {
   const calculateFee = function(amount) {
@@ -30,19 +32,19 @@ TradeHelper = (function () {
     });
 
     //update admin
-    DB.updateIronBucks(adminUser._id, roundedFee);
+    DB.updateIronBucks(adminUser._id, fee);
     //Note: basically the sender pays the fee,
     //because they are debited 100% of the ironBucks but only
     //90% are credited to end user
     Logs.insert({
       userId: [senderId],
-      amount: -roundedFee,
+      amount: -fee,
       type: Enums.LogType.FEE,
       date: new Date()
     });
 
     //update user2
-    DB.updateIronBucks(receiverId, transferredAmount);
+    DB.updateIronBucks(receiverId, paidAmount);
     Logs.insert({
       userId: [receiverId],
       amount: debitedAmount,
@@ -74,7 +76,8 @@ TradeHelper = (function () {
   };
 
   function getCashForUserInTransaction(field, transaction) {
-    return transaction[field]
+    const items = transaction[field] || [];
+    return items
       .filter(item => item.name === IronBucks.name)
       .reduce((acc, item) => item.amount + acc, 0);
   }
@@ -86,7 +89,8 @@ TradeHelper = (function () {
   });
 
   const checkIfUserHasAllItems = function(userId, items) {
-    return R.all(userHasItem(userId))(items);
+    const notNullItems = items || [];
+    return R.all(userHasItem(userId))(notNullItems);
   };
 
   const checkIfBothUsersHaveItems = function(transaction) {
