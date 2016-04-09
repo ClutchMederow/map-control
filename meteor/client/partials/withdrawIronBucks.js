@@ -82,7 +82,7 @@ Template.withdrawIronBucks.events({
 
 function checkAmount(amount) {
   //check(amount, Number);
-  if(!_.isNumber(amount)) {
+  if(_.isNaN(amount)) {
     sAlert.error('Please enter an amount')
     return false;
   } else if(amount > Config.financial.maxWithdrawAmount) {
