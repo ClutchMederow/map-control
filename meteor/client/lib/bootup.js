@@ -13,14 +13,21 @@ Meteor.startup(function () {
         offset: 0,
     });
 
+  /*
+   * use data.alertType to pick your template
+   * put use message to fill in that template
+  */
   var query = Notifications.find();
   var handle = query.observeChanges({
     added: function(id, { message, data, viewed }) {
       const alertType = data ? data.alertType : null;
       if(viewed === false) {
-        if (alertType === 'realtimeAccepted' || alertType === 'realtimeCreated') {
+        if (alertType === 'realtimeAccepted' 
+            || alertType === 'realtimeCreated'
+            || alertType === Constants.inventoryManagementTemplate
+           ) {
           sAlert.success({ message, data, timeout: 0 });
-        } else {
+        } else { //Simple notifications
           sAlert.info({ message, data });
         }
         Notifications.update({_id: id}, {$set: {viewed: true}});

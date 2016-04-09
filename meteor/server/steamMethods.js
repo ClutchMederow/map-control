@@ -10,12 +10,23 @@ Meteor.methods({
   depositItems: function(items) {
     check(items, [String]);
     this.unblock();
-    return DispatcherAPI.depositItems(this.userId, items);
+    var result = DispatcherAPI.depositItems(this.userId, items);
+    var link = '<a href="' + Constants.tradeOfferURL + result + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
+    DB.addNotification(this.userId, message, 
+                       {alertType: Constants.inventoryManagementTemplate, 
+                       link: link});
+    return result;
   },
 
   withdrawItems: function(items) {
     check(items, [String]);
     this.unblock();
-    return DispatcherAPI.withdrawItems(this.userId, items);
+    var result = DispatcherAPI.withdrawItems(this.userId, items);
+    var message = "Please click accept to withdraw items";
+    var link = '<a href="' + Constants.tradeOfferURL + result + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
+    DB.addNotification(this.userId, message, 
+                       {alertType: Constants.inventoryManagementTemplate, 
+                         link: link});
+    return result;
   }
 });

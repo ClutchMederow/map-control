@@ -81,9 +81,6 @@ function depositItems(deposits) {
   Meteor.call('depositItems', deposits, function(err, res) {
     if (err) {
       sAlert.error(err);
-    } else {
-      var message = '<a href="' + Constants.tradeOfferURL + res + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
-      sAlert.success(message, stashConfigAlert);
     }
   });
 }
@@ -92,9 +89,6 @@ function withdrawItems(withdrawals) {
   Meteor.call('withdrawItems', withdrawals, function(err, res) {
     if (err) {
       sAlert.error(err);
-    } else {
-      var message = '<a href="' + Constants.tradeOfferURL + res + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
-      sAlert.success(message, stashConfigAlert);
-    }
+    } 
   });
 }

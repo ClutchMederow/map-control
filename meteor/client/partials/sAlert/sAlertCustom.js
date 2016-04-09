@@ -5,6 +5,7 @@
 const templateMap = {
   'realtimeCreated': 'alertButtonsRealtime',
   'realtimeAccepted': 'alertButtonsRealtimeAccepted',
+   'inventoryManagement' : Constants.inventoryManagementTemplate
 };
 
 Template.sAlertCustom.helpers({
@@ -52,4 +53,13 @@ Template.sAlertCustom.events({
     const trade = RealTimeTrade.findOne({ _id: realtimeId });
     ModalHelper.openModal('realTime', trade);
   },
+
+  'click .cancelInventory': function(event) {
+    event.preventDefault();
+    sAlert.close(this._id);
+  },
+  'click .acceptInventory': function(event) {
+    event.preventDefault();
+    sAlert.close(this._id);
+  }
 });
