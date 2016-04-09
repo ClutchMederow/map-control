@@ -11,7 +11,8 @@ Meteor.methods({
     check(items, [String]);
     this.unblock();
     var result = DispatcherAPI.depositItems(this.userId, items);
-    var link = '<a href="' + Constants.tradeOfferURL + result + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
+    var message = "Please click accept to deposit items";
+    var link = Constants.tradeOfferURL + result;
     DB.addNotification(this.userId, message, 
                        {alertType: Constants.inventoryManagementTemplate, 
                        link: link});
@@ -23,7 +24,7 @@ Meteor.methods({
     this.unblock();
     var result = DispatcherAPI.withdrawItems(this.userId, items);
     var message = "Please click accept to withdraw items";
-    var link = '<a href="' + Constants.tradeOfferURL + result + '/" target="_blank" class="trade-alert">Click here to accept your trade request</a>'
+    var link = Constants.tradeOfferURL + result;
     DB.addNotification(this.userId, message, 
                        {alertType: Constants.inventoryManagementTemplate, 
                          link: link});
