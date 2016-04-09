@@ -1,11 +1,48 @@
 /* global Tradeoffers */
 /* global ItemPrices */
 /* global _ */
+/* global DB */
+/* global Constants */
+/* global Enums */
+/* global getItemPrice */
+/* global updateItemPrices */
+/* global Items */
 
 var DISPATCHER_API_URL = process.env.BOT_SERVER_URL;
 
-// NOTE
-// USE this.unblock() to allow other calls to be made while awaiting a response
+function callBotServer(callstring, options, retryCount) {
+  var username = process.env.BOT_SERVER_USERNAME;
+  var password = process.env.BOT_SERVER_PASSWORD;
+  var authString = username + ':' + password;
+
+  if (!username || !password) {
+    throw new Error('No botServer username or password');
+  }
+
+  options.auth = authString;
+
+  try {
+    var res = HTTP.post(callstring, options);
+
+    if (res.statusCode === 200) {
+      return res.data;
+    }
+    throw new Error('Bad status code: ' + res.statusCode);
+  } catch (e) {
+    var errCode = e.response ? e.response.content : null;
+    var errForClient = Enums.MeteorError[errCode]
+
+    if (errForClient) {
+      throw new Meteor.Error(errForClient);
+    }
+
+    if (retryCount > 0) {
+      return callBotServer(callstring, options, retryCount - 1);
+    }
+
+    throw e;
+  }
+}
 
 function updatePriceForSingleItem(item) {
   const itemPrice = ItemPrices.findOne({name: item.name});
@@ -24,6 +61,23 @@ function updateItemPricesForTradeoffer(tradeofferId) {
   Items.find({ itemId: { $in: assetIds }}).forEach(updatePriceForSingleItem);
 }
 
+function sendInventoryNotification(userId, tradeofferId, message) {
+  const link = Constants.tradeOfferURL + tradeofferId;
+  const data = {
+    alertType: Constants.inventoryManagementTemplate,
+    tradeofferId: tradeofferId,
+    link: link,
+  };
+  DB.addNotification(userId, message, data);
+}
+
+function sendErrorNotification(userId, message) {
+  const data = {
+    alertType: 'botError',
+  };
+  DB.addNotification(userId, message, data);
+}
+
 // TODO: tradeoffer doesn't have the items to receive yet
 
 DispatcherAPI = {
@@ -33,13 +87,22 @@ DispatcherAPI = {
       data: {
         userId: userId,
         items: items,
-      }
+      },
     };
 
-    const tradeofferId = callBotServer(callstring, options, 3).tradeofferId;
-    updateItemPricesForTradeoffer(tradeofferId);
+    try {
+      const tradeofferId = callBotServer(callstring, options, 3).tradeofferId;
 
-    return tradeofferId;
+      updateItemPricesForTradeoffer(tradeofferId);
+      sendInventoryNotification(userId, tradeofferId, 'Please click accept to deposit items');
+      return tradeofferId;
+    } catch (err) {
+      console.log('Bot server error:' + err);
+      console.log(userId);
+      console.log(items);
+      sendErrorNotification(userId, 'There was a error with our bot server. Please try again later.');
+      throw err;
+    }
   },
 
   withdrawItems: function(userId, items) {
@@ -48,10 +111,20 @@ DispatcherAPI = {
       data: {
         userId: userId,
         items: items,
-      }
+      },
     };
 
-    return callBotServer(callstring, options, 3).tradeofferId;
+    try {
+      const tradeofferId = callBotServer(callstring, options, 3).tradeofferId;
+      sendInventoryNotification(userId, tradeofferId, 'Please click accept to withdraw items');
+      return tradeofferId;
+    } catch (err) {
+      console.log('Bot server error:' + err);
+      console.log(userId);
+      console.log(items);
+      sendErrorNotification(userId, 'There was a error with our bot server. Please try again later.');
+      throw err;
+    }
   },
 
   test: function(testing) {
@@ -59,44 +132,9 @@ DispatcherAPI = {
     var options = {
       data: {
         testing: testing,
-      }
+      },
     };
 
     return callBotServer(callstring, options, 3);
   },
 };
-
-function callBotServer(callstring, options, retryCount) {
-  var username = process.env.BOT_SERVER_USERNAME;
-  var password = process.env.BOT_SERVER_PASSWORD;
-  var authString = username + ':' + password;
-
-  if (!username || !password) {
-    throw new Error('No botServer username or password');
-  }
-
-  options.auth = authString;
-
-  try {
-    var res = HTTP.post(callstring, options);
-
-    if (res.statusCode === 200) {
-      return res.data;
-    } else {
-      throw new Error('Bad status code: ' + res.statusCode);
-    }
-  } catch (e) {
-    var errCode = e.response.content;
-    var errForClient = Enums.MeteorError[errCode]
-
-    if (errForClient) {
-      throw new Meteor.Error(errForClient);
-    }
-
-    if (retryCount > 0) {
-      return callBotServer(callstring, options, retryCount - 1);
-    }
-
-    throw e;
-  }
-}

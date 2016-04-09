@@ -815,6 +815,7 @@ var partialDB = {
       message,
       data,
       viewed: false,
+      createdTimestamp: new Date(),
     });
   },
 

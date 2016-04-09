@@ -17,6 +17,8 @@ sufficientIronBucks = function(userId, amount) {
 };
 
 getItemPrice = function(item, itemPrice) {
+  console.log(item);
+  console.log(itemPrice);
   check(item, Object);
 
   var steamlyticsApi = SteamlyticsApi;

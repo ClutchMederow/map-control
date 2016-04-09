@@ -5,7 +5,7 @@
 const templateMap = {
   'realtimeCreated': 'alertButtonsRealtime',
   'realtimeAccepted': 'alertButtonsRealtimeAccepted',
-   'inventoryManagement' : Constants.inventoryManagementTemplate
+  'inventoryManagement': Constants.inventoryManagementTemplate,
 };
 
 Template.sAlertCustom.helpers({
@@ -58,8 +58,9 @@ Template.sAlertCustom.events({
     event.preventDefault();
     sAlert.close(this._id);
   },
-  'click .acceptInventory': function(event) {
-    event.preventDefault();
+
+  'click .acceptInventory': function() {
+    // event.preventDefault();
     sAlert.close(this._id);
-  }
+  },
 });

@@ -21,6 +21,16 @@ Notifications.attachSchema({
     type: Boolean,
     label: 'Viewed',
   },
+  deleteInd: {
+    type: Boolean,
+    label: 'deleteInd',
+    optional: true,
+  },
+  createdTimestamp: {
+    type: Date,
+    label: 'Internal created timestamp',
+    optional: true,
+  },
 });
 
 Notifications.allow({
