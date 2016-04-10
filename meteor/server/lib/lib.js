@@ -17,13 +17,18 @@ sufficientIronBucks = function(userId, amount) {
 };
 
 getItemPrice = function(item, itemPrice) {
-  check(item, Object);
 
   var steamlyticsApi = SteamlyticsApi;
-  const price = steamlyticsApi.getPrice(item.name);
+  let price = steamlyticsApi.getPrice(item.marketHashName);
   //note: returned object from api doesn't include market item name
-  price.name = item.name;
-  price.upToDate = true;
+  if(!price) {
+    price = {};
+    price.message = "Steamlytics returned no data";
+  } 
+
+    price.name = item.marketHashName;
+    price.updatedDate = new Date();
+    price.upToDate = true;
 
   if (itemPrice) {
     ItemPrices.update(itemPrice._id, price);
@@ -64,7 +69,7 @@ sendTotalErrorEmail = function(logId, withdrawalObject, userId) {
 SyncedCron.add({
   name: 'Update pricing information',
   schedule: function(parser) {
-    return parser.text('every 30 minutes');
+    return parser.text('every 1 minutes');
   },
 
   job: function() {
@@ -74,12 +79,12 @@ SyncedCron.add({
       // ignore ironbucks
       if (item.name === IronBucks.name) return;
 
-      var itemPrice = ItemPrices.findOne({ name: item.name });
+      var itemPrice = ItemPrices.findOne({ name: item.marketHashName });
       //if object exists
       if(_.isObject(itemPrice)) {
         //if item price up to date
         if(itemPrice.upToDate) {
-          console.log(item.name + "'s price is  already up to date");
+          console.log(item.marketHashName + "'s price is  already up to date");
         } else { //if item price not up to date
           getItemPrice(item, itemPrice);
         }

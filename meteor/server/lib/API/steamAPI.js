@@ -25,9 +25,11 @@ SteamAPI = (function () {
         floatValue = floatValue.float_value;
       }
 
+      console.log(itemDescription);
       return {
         userId: userId,
         name: itemDescription.market_name,
+        market_hash_name: itemDescription.market_hash_name,
         nameColor: itemDescription.name_color,
         backgroundColor: itemDescription.background_color,
         type: itemDescription.type,
