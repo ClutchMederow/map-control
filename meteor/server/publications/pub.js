@@ -100,7 +100,7 @@ Meteor.publish('genericItems', function() {
 });
 
 Meteor.publish('notifications', function() {
-  return Notifications.find({userId: this.userId});
+  return Notifications.find({ userId: this.userId, deleteInd: { $ne: true }});
 });
 
 Notifications._ensureIndex({"userId": 1});

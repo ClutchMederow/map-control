@@ -797,10 +797,8 @@ var partialDB = {
 
     if(numericAmount < 0) {
       logData.type = Enums.LogType.DEBIT;
-    } else if (numericAmount > 0){
-      logData.type = Enums.LogType.CREDIT;
     } else {
-      throw new Meteor.Error('AMOUNT_ERROR', 'amount should never be 0');
+      logData.type = Enums.LogType.CREDIT;
     }
 
     console.log("userId: " + userId);
@@ -815,6 +813,7 @@ var partialDB = {
       message,
       data,
       viewed: false,
+      createdTimestamp: new Date(),
     });
   },
 

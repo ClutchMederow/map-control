@@ -1,7 +1,11 @@
+/* global StashManager */
+/* global Enums */
+/* global sAlert */
+
 var stashConfigAlert = {
   timeout: 0,
   html: true,
-  onRouteClose: false
+  onRouteClose: false,
 };
 
 StashManager = function() {
@@ -38,7 +42,7 @@ StashManager.prototype.refresh = function() {
   var self = this;
 
   // Remove in case the go back from confirm page - the API items will have new ids
-  this.selectedItems.remove({});
+  this.clearSelected();
   this.userInventoryItems.remove({});
 
   Meteor.call('getPlayerInventory', function(err, res) {
@@ -89,6 +93,6 @@ function withdrawItems(withdrawals) {
   Meteor.call('withdrawItems', withdrawals, function(err, res) {
     if (err) {
       sAlert.error(err);
-    } 
+    }
   });
 }

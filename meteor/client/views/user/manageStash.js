@@ -49,6 +49,7 @@ Template.manageStash.events({
 
   'click #nextStepsHome': function(event, template) {
     event.preventDefault();
+    template.stashManager.clearSelected();
     template.stashTemplate.set('addRemoveStash');
   },
 
