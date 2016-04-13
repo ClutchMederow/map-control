@@ -353,6 +353,8 @@ main {
   .tiny-profile-img {
     vertical-align: middle;
     border-radius: 32px;
+    height: 32px;
+    width: 32px;
   }
 
   margin-bottom: 5px;
@@ -631,15 +633,15 @@ main {
   }
 
   input:-moz-placeholder { /* Firefox 18- */
-    color: black !important;  
+    color: black !important;
   }
 
   input::-moz-placeholder {  /* Firefox 19+ */
-    color: black !important;  
+    color: black !important;
   }
 
-  input:-ms-input-placeholder {  
-    color: black !important;  
+  input:-ms-input-placeholder {
+    color: black !important;
   }
 }
 

@@ -32,12 +32,12 @@
             </div>
           </div>
         {{ /if }}
-        {{ #each listings }}
-          {{> marketRow timeinforow=true data=this showControls=true leftSide=this.items rightSide=this.request }}
-        {{ else }}
-          <div class="col s10 center">There are no items that match your search criteria</div>
-        {{ /each }}
         {{#if Template.subscriptionsReady}}
+          {{ #each listings }}
+            {{> marketRow timeinforow=true data=this showControls=true leftSide=this.items rightSide=this.request }}
+          {{ else }}
+            <div class="col s10 center">There are no items that match your search criteria</div>
+          {{ /each }}
           {{#if hasMoreListings}}
           <a class="waves-effect waves-default center btn if-btn" id="loadMore">Load more</a>
           {{/if}}

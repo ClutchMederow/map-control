@@ -115,7 +115,7 @@ DispatcherAPI = {
     };
 
     try {
-      const tradeofferId = callBotServer(callstring, options, 3).tradeofferId;
+      const tradeofferId = callBotServer(callstring, options, 2).tradeofferId;
       sendInventoryNotification(userId, tradeofferId, 'Please click accept to withdraw items');
       return tradeofferId;
     } catch (err) {
@@ -135,6 +135,6 @@ DispatcherAPI = {
       },
     };
 
-    return callBotServer(callstring, options, 3);
+    return callBotServer(callstring, options, 2);
   },
 };
