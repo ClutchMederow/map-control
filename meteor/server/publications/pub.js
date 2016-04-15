@@ -2,6 +2,10 @@ Meteor.publish('chatrooms', function() {
   return ChatRooms.find();
 });
 
+Meteor.publish('priceList', function() {
+  return PriceList.find({ name: 'AWP | Dragon Lore (Minimal Wear)', median_net_price: { $ne: NaN }});
+});
+
 Meteor.publish('coinbaseCurrencies', function() {
   return CoinbaseCurrencies.find();
 });
