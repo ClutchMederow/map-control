@@ -281,17 +281,25 @@ function makeNice(point) {
         .value();
 }
 
+function getData() {
+    const mongoData = PriceList.find({}).fetch();
+    return mongoData.map(makeNice);
+}
+
+function refreshData() {
+    const data = getData();
+    $('#chart').highcharts().series[0].setData(data);
+}
+
 Template.chart.onCreated(function(){
   const template = this;
   template.autorun(function() {
     template.subscribe('priceList', function() {
       Tracker.afterFlush(function() {
-        const mongoData = PriceList.find({}).fetch();
-        const data = mongoData.map(makeNice);
-        console.log(data);
-        console.log(mongoData);
+        const data = getData();
         const options = getOptions(data);
         $('#chart').highcharts('StockChart', options);
+        template.autorun(refreshData);
       });
     });
   });
