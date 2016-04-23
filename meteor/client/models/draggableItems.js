@@ -378,7 +378,8 @@ var ItemDescriptionParser = {
         amount = data.amount;
         otherText = '';
       } else {
-        amount = Meteor.user().profile.ironBucks;
+        const user = Meteor.user();
+        amount = user ? user.profile.ironBucks : 0;
         otherText = ' available';
       }
 
