@@ -60,3 +60,4 @@ ramda:ramda
 ecmascript
 standard-minifier-css
 standard-minifier-js
+alethes:lodash

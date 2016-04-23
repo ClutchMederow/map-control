@@ -9,6 +9,7 @@ aldeed:collection2-core@1.1.1
 aldeed:schema-deny@1.0.1
 aldeed:schema-index@1.0.1
 aldeed:simple-schema@1.5.3
+alethes:lodash@0.7.1
 alisalaah:currencies@2.1.2
 allow-deny@1.0.4
 amplify@1.0.0

@@ -168,4 +168,9 @@ Meteor.startup(function() {
       Factory.create('message');
     });
   }
+
+  //load CSGO Items, the ~6000 items with quality and rarity
+  if (CSGOItems.find().count() === 0) {
+    SteamlyticsApi.getItems();
+  }
 });

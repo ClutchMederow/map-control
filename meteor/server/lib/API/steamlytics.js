@@ -69,8 +69,7 @@ SteamlyticsApi = (function() {
         var timestamp = Date.now();
         _.each(results.data.items, function(item) {
           item = _.extend(item, {timestamp: timestamp});
-          console.log(item);
-          //inseret into a collection
+          CSGOItems.insert(item);
         });
       } catch(e) {
         console.log(e);
