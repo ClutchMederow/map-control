@@ -1,9 +1,24 @@
-/* global Highcharts */
 /* global moment */
 /* global document */
 /* global PriceList */
 
-const indicators = [{
+import Highcharts from 'highcharts/highstock';
+import indicators from '../../vendor/highcharts/indicators';
+import sma from '../../vendor/highcharts/sma';
+import atr from '../../vendor/highcharts/atr';
+import ema from '../../vendor/highcharts/ema';
+import rsi from '../../vendor/highcharts/rsi';
+require('highcharts/modules/exporting')(Highcharts);
+
+window.Highcharts = Highcharts;
+// initialize highcharts
+indicators(Highcharts);
+sma(Highcharts);
+atr(Highcharts);
+ema(Highcharts);
+rsi(Highcharts);
+
+const indicatorObject = [{
   id: 'testSeries',
   type: 'sma',
   params: {
@@ -315,7 +330,7 @@ function getOptions(data) {
     textColor: '#C0C0C0',
     contrastTextColor: '#F0F0F3',
     maskColor: 'rgba(255,255,255,0.3)',
-    indicators,
+    indicators: indicatorObject,
   };
 }
 
@@ -352,7 +367,7 @@ Template.chart.onCreated(function(){
       Tracker.afterFlush(function() {
         const data = getData();
         const options = getOptions(data);
-        $('#chart').highcharts('StockChart', options);
+        Highcharts.chart('chart', options);
         template.autorun(refreshData);
       });
     });
