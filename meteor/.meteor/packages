@@ -43,7 +43,6 @@ meteorhacks:kadira
 okgrow:analytics
 sacha:spin
 matteodem:easy-search
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
@@ -59,3 +58,5 @@ check
 duncanrenfrow:customblog
 ramda:ramda
 ecmascript
+standard-minifier-css
+standard-minifier-js
