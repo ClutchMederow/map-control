@@ -8,3 +8,5 @@ node_modules
 private/
 *.DS_Store
 production.sh
+meteor/server/createFakeUser.js
+meteor/prodmeteorup.sh
