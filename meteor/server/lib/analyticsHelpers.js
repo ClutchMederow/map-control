@@ -6,7 +6,7 @@ AnalyticsHelpers = (function() {
 
     return R.compose(
       R.map((item) => _.groupBy(item, 'name')),
-      R.groupBy(item => item.rarity)
+      R.groupBy(R.prop('rarity'))
     )(items);
   };
 
