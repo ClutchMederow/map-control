@@ -1,4 +1,5 @@
 Items = new Mongo.Collection('items');
+ItemsCollections = new Mongo.Collection("itemscollections");
 
 Items.attachSchema({
   userId: {

@@ -158,7 +158,9 @@ SteamAPI = (function () {
       const text = Assets.getText(filename);
       _.each(text.split("\n"), function(line) {
         const elements = line.split(",");
-        cconsole.log(elements[0]);
+        //slice to -1 because there is extra, blank element at end of line due
+        //to trailing comma
+        ItemsCollections.insert({_id: elements[0], items: elements.slice(1,-1)});
       });
     }
   };
