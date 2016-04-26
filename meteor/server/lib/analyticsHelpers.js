@@ -10,18 +10,24 @@ AnalyticsHelpers = (function() {
     )(items);
   };
 
+  var csgoItemsArbitrageFormat = function() {
+    var csgoItems = _.indexBy(CSGOItems.find().fetch(), 'market_hash_name');
+    const priceList = PriceList.find({historicalData: false}).fetch();
+    return R.compose(
+      R.map(getItemsByRarity),
+      R.groupBy((price) => moment(price.timestamp).format("MM/DD/YYYY")),
+      R.map(price => ({...price, rarity: csgoItems[price.name].quality_color}))
+    )(priceList);
+  };
+
   return {
-    //returns all items in arbitrage format
-    //{timestamp: {quality: {name: { pricingData } } } }
-    csgoItemsArbitrageFormat: function() {
-      var csgoItems = _.indexBy(CSGOItems.find().fetch(), 'market_hash_name');
-      const priceList = PriceList.find({historicalData: false}).fetch();
-      return R.compose(
-        R.map(getItemsByRarity),
-        R.groupBy((price) => moment(price.timestamp).format("MM/DD/YYYY")),
-        R.map(price => ({...price, rarity: csgoItems[price.name].quality_color}))
-      )(priceList);
+    //insert all items in arbitrage format
+    //{timestamp: {quality: {name: { pricingData } } } } 
+    //into a collection
+    insertItemsArbitrageFormat: function() {
+      return csgoItemsArbitrageFormat();
     },
+
     testSearch: function() {
       var csgoItems = _.indexBy(CSGOItems.find().fetch(), 'market_hash_name');
       var countOfMissing = 0;

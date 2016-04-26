@@ -153,5 +153,13 @@ SteamAPI = (function () {
     parseSteamAPIInventory: parseSteamAPIInventory,
 
     test: getPlayerItemsWithAttributes,
+
+    getItemCollectionsFromFile: function(filename) {
+      const text = Assets.getText(filename);
+      _.each(text.split("\n"), function(line) {
+        const elements = line.split(",");
+        cconsole.log(elements[0]);
+      });
+    }
   };
 }) (); //Immediately Invoked Function that returns object
